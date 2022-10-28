@@ -1,15 +1,17 @@
 # bugstack虫洞栈 | Java 编程路书 v1.0 👣
 
-<div align="center">
-    <img src="https://bugstack.cn/images/roadmap/road-map-logo.png?raw=true">
-</div>
+![](https://github.com/fuzhengwei/RoadMap/blob/main/docs/logo.png)
+
+- **地图**：[https://bugstack.cn/md/other/road-map.html](https://bugstack.cn/md/other/road-map.html)
+- **介绍**：整个路书以需求承接到开发交付为视角，包括：计算机基础、系统和架构设计、环境搭建、系统开发、常用类库、调试、测试、质量分析、发布部署。通过这样的全局的视角，来告诉你在哪里，要去哪里。*点击各个技术栈可以直接进入内容*
+- **说明**：**A**——核心技术，学习完能承担大部分工作、**B**——辅助路线，学习完能更好的完成工作。
+
+---
 
 作者：小傅哥
 <br/>博客：[https://bugstack.cn](https://bugstack.cn)
 
 > 沉淀、分享、成长，让自己和他人都能有所收获！😄
-
-## 一、前言：授业解惑
 
 `我知道，你不知道的还有很多！`
 
@@ -19,10 +21,3 @@
 
 **所以**在这个22年的1024程序员👨🏻‍💻节，小傅哥编写了一版**Java 编程路书**，希望帮助到更多从事这一行业的伙伴，可以更好的了解都要学习哪些技术。并且小傅哥会不断地收集、整理、归纳出来优秀的硬核资料，帮助大家学习。
 
-## 二、查阅：路书地图
-
-- **地图**：[https://bugstack.cn/md/other/road-map.html](https://bugstack.cn/md/other/road-map.html)
-- **介绍**：整个路书以需求承接到开发交付为视角，包括：计算机基础、系统和架构设计、环境搭建、系统开发、常用类库、调试、测试、质量分析、发布部署。通过这样的全局的视角，来告诉你在哪里，要去哪里。*点击各个技术栈可以直接进入内容*
-- **说明**：**A**——核心技术，学习完能承担大部分工作、**B**——辅助路线，学习完能更好的完成工作。
-
-![](https://github.com/fuzhengwei/RoadMap/blob/main/docs/logo.png)
