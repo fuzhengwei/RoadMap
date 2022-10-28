@@ -21,7 +21,7 @@
 
 ## 二、查阅：路书地图
 
-- **地址**：路书地图：[https://bugstack.cn/md/other/road-map.html](https://bugstack.cn/md/other/road-map.html)
+- **地图**：[https://bugstack.cn/md/other/road-map.html](https://bugstack.cn/md/other/road-map.html)
 - **介绍**：整个路书以需求承接到开发交付为视角，包括：计算机基础、系统和架构设计、环境搭建、系统开发、常用类库、调试、测试、质量分析、发布部署。通过这样的全局的视角，来告诉你在哪里，要去哪里。*点击各个技术栈可以直接进入内容*
 - **说明**：**A**——核心技术，学习完能承担大部分工作、**B**——辅助路线，学习完能更好的完成工作。
 
