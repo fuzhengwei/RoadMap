@@ -158,9 +158,9 @@
     - [ ] 2-jwt
     - [ ] 3-sso
 - 063-字节码框架
-    - [ ] 1-ASM
-    - [ ] 2-Javassist
-    - [ ] 3-Byte-Buddy
+    - [x] [1-ASM](https://github.com/fuzhengwei/RoadMap/blob/main/06-%E7%B1%BB%E5%BA%93/063-%E5%AD%97%E8%8A%82%E7%A0%81%E6%A1%86%E6%9E%B6/1-ASM/ASM.md)
+    - [x] [2-Javassist](https://github.com/fuzhengwei/RoadMap/blob/main/06-%E7%B1%BB%E5%BA%93/063-%E5%AD%97%E8%8A%82%E7%A0%81%E6%A1%86%E6%9E%B6/2-Javassist/Javassist.md)
+    - [x] [3-Byte-Buddy](https://github.com/fuzhengwei/RoadMap/blob/main/06-%E7%B1%BB%E5%BA%93/063-%E5%AD%97%E8%8A%82%E7%A0%81%E6%A1%86%E6%9E%B6/3-Byte-Buddy/Byte-Buddy.md)
 - 064-网络编程
     - [ ] 1-Netty
     - [ ] 2-Mina
