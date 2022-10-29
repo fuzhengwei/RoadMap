@@ -30,7 +30,7 @@
 - 012-编程基础
     - [x] [1-数据结构](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/012-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/1-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.md)
     - [ ] 2-数学逻辑
-    - [ ] 3-设计模式
+    - [x] [3-设计模式](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/012-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/3-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.md)
 - 013-后端语言
     - [ ] 1-C语言
     - [ ] 2-Java
