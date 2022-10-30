@@ -1,0 +1,327 @@
+0
+00:00:04,509 --> 00:00:11,509
+In this video we're going to talk about type checking in cool. Thus far, we've
+
+1
+00:00:12,160 --> 00:00:16,990
+seen two examples of formal notation used to specify parts of a compiler. Regular
+
+2
+00:00:16,990 --> 00:00:21,820
+expressions were used in lexical analysis, and context free grammars which we used in
+
+3
+00:00:21,820 --> 00:00:26,060
+parsing. It turns out that there's another formalism which has gained widespread
+
+4
+00:00:26,060 --> 00:00:32,710
+acceptance in type checking, and that's logical rules of inference. If-else rules
+
+5
+00:00:32,710 --> 00:00:36,960
+are logical statements that have the form; if some hypothesis is true then some
+
+6
+00:00:36,960 --> 00:00:41,149
+conclusion is true. So, if-else rules are implication statements that some
+
+7
+00:00:41,149 --> 00:00:46,469
+hypothesis implies some conclusion And in the particular case of type checking an
+
+8
+00:00:46,469 --> 00:00:50,359
+example or typical kind of reasoning that we see in type checking is that if a
+
+9
+00:00:50,359 --> 00:00:55,120
+couple of expressions have certain types then some other expression is guaranteed
+
+10
+00:00:55,120 --> 00:00:59,639
+to have a certain type. And so clearly that the type checking statement here is
+
+11
+00:00:59,639 --> 00:01:05,369
+an example of an inference rule. An inference rule notation is just a compact
+
+12
+00:01:05,369 --> 00:01:11,940
+way of encoding these kinds of if then statements. Now if you haven't seen this
+
+13
+00:01:11,940 --> 00:01:15,970
+notation before, it will be unfamiliar, but actually it's quite easy to read with
+
+14
+00:01:15,970 --> 00:01:20,670
+practice And we'll start with a very simple system and gradually add features.
+
+15
+00:01:20,670 --> 00:01:26,000
+So we'll use a logical conjunction for the English word and, and implication for the
+
+16
+00:01:26,000 --> 00:01:32,280
+English word if and then. And now, one special thing, the string x colon t is
+
+17
+00:01:32,280 --> 00:01:38,500
+read that x has type t. So this is logical assertion saying that x has a particular
+
+18
+00:01:38,500 --> 00:01:45,500
+type. So now consider the following very simple type rule. If E one has type int,
+
+19
+00:01:46,880 --> 00:01:53,310
+and E two has type int, then E one plus E two also has type int. And we could just
+
+20
+00:01:53,310 --> 00:01:56,780
+take the definitions we gave on the previous slide and just gradually reduce
+
+21
+00:01:56,780 --> 00:02:03,170
+this to a mathematical statement. So, for example, we can replace the if then with
+
+22
+00:02:03,170 --> 00:02:08,030
+an implication. And we can replace the word and with a conjunction. And now we
+
+23
+00:02:08,030 --> 00:02:12,999
+just have these has type statements, alright? And we had a notation for that,
+
+24
+00:02:12,999 --> 00:02:17,049
+and we wind up with this purely mathematical statement that, which says
+
+25
+00:02:17,049 --> 00:02:21,349
+exactly the same thing. That if E1 has type int and E2 has type int, that implies
+
+26
+00:02:21,349 --> 00:02:27,790
+that E1 + E2 has type int. And notice that, that statement that we just wrote
+
+27
+00:02:27,790 --> 00:02:32,969
+out is a special case of an inference rule. It's a bunch of hypothesis conjoined
+
+28
+00:02:32,969 --> 00:02:39,389
+together and implies some conclusion. The traditional notation for inference rules
+
+29
+00:02:39,389 --> 00:02:44,189
+is given here. The hypotheses are written about the horizontal line, and the
+
+30
+00:02:44,189 --> 00:02:47,739
+conclusion is written below. And it means exactly the same thing as what we had on
+
+31
+00:02:47,739 --> 00:02:52,159
+the previous slide. Mainly that if all the things above the horizontal line are true.
+
+32
+00:02:52,159 --> 00:02:56,650
+These are all the hypotheses, then the thing below. The horizontal line can be
+
+33
+00:02:56,650 --> 00:03:00,629
+concluded to be true. And there's one piece of new notation here. This is the
+
+34
+00:03:00,629 --> 00:03:06,150
+turnstiles that are used for the hypotheses and the conclusion. And the
+
+35
+00:03:06,150 --> 00:03:10,989
+turnstile is read, it is provable that. And what this means is that we're just
+
+36
+00:03:10,989 --> 00:03:15,980
+going to say explicitly. That something is provable in the system of rules that we're
+
+37
+00:03:15,980 --> 00:03:20,159
+defining. So the way you would read this is that if it's provable that all these
+
+38
+00:03:20,159 --> 00:03:24,189
+hypotheses are true. So, if it's provable the first hypothesis is true, all the
+
+39
+00:03:24,189 --> 00:03:27,999
+middle hypotheses, and if it's improvable, if it's provable the last hypothesis is
+
+40
+00:03:27,999 --> 00:03:34,019
+true. Then it is provable that the conclusion is true And cool type rules are
+
+41
+00:03:34,019 --> 00:03:39,349
+going to have. The following kinds of hypothesis and conclusions we're going to
+
+42
+00:03:39,349 --> 00:03:46,180
+prove, within the system, that some expression has a particular type. So with
+
+43
+00:03:46,180 --> 00:03:49,609
+those definitions out of the way we actually have enough to write at least a
+
+44
+00:03:49,609 --> 00:03:54,249
+few simple type rules. So, if I integer literally if it's an integer class
+
+45
+00:03:54,249 --> 00:03:59,980
+interfering in my program then this rules says it is provable that I has type ENT.
+
+46
+00:03:59,980 --> 00:04:05,049
+So every integer constant has type ENT. And here's the rule for add written out
+
+47
+00:04:05,049 --> 00:04:09,739
+now in the [inaudible] rule notation. If it's provable then that E1 has type int
+
+48
+00:04:09,739 --> 00:04:15,529
+and is provable that E2 has type ENT. Then it is provable that E1 plus E2 has type
+
+49
+00:04:15,529 --> 00:04:22,390
+ENT. So notice that these rules give templates for describing how to type
+
+50
+00:04:22,390 --> 00:04:26,470
+integers and expressions. The rule for integer constants just use a generic
+
+51
+00:04:26,470 --> 00:04:30,560
+integer i. It didn't give a separate rule for every possible integer, and the rule
+
+52
+00:04:30,560 --> 00:04:34,660
+for plus used expressions e one and e two. It didn't tell you what particular
+
+53
+00:04:34,660 --> 00:04:39,340
+expressions they were. It just said give me any expression e one, any expressions e
+
+54
+00:04:39,340 --> 00:04:45,440
+one and e two that have type int. And so we can plug any expressions we want in
+
+55
+00:04:45,440 --> 00:04:50,550
+that satisfy the hypotheses, and then we can produce a complete typing for actual
+
+56
+00:04:50,550 --> 00:04:57,550
+expressions. So as a concrete example, let's show that one plus two has type ent.
+
+57
+00:04:58,220 --> 00:05:03,210
+So we want to type the expression one plus two, and since we know the rule for add
+
+58
+00:05:03,210 --> 00:05:07,690
+that means we need to construct a proof of the type of the number one, and a proof of
+
+59
+00:05:07,690 --> 00:05:12,230
+the type of the number two. And we have a rule for dealing with integer classes,
+
+60
+00:05:12,230 --> 00:05:16,150
+mainly we can prove because one is an integer class that has type ent, and we
+
+61
+00:05:16,150 --> 00:05:21,120
+can prove that two is type ent, and then now we have the two hypothesis we need for
+
+62
+00:05:21,120 --> 00:05:28,120
+the sum expression and we can prove that one plus two has type ent. So, an
+
+63
+00:05:28,470 --> 00:05:32,640
+important property of any reasonable type system is that it be sound. And sound is
+
+64
+00:05:32,640 --> 00:05:38,790
+here is a correctness condition. What we want is whatever the type system can prove
+
+65
+00:05:38,790 --> 00:05:42,560
+that some expression has the type systems has a particular type T. The if I actually
+
+66
+00:05:42,560 --> 00:05:46,840
+run that program. If I take E and I execute it on the computer the value that
+
+67
+00:05:46,840 --> 00:05:51,960
+it returns, the value that comes after running E in fact has the type predicted
+
+68
+00:05:51,960 --> 00:05:57,270
+by the type system. So, if the type system It is able to give types of things that
+
+69
+00:05:57,270 --> 00:06:01,130
+actually reflect what kind of value you get when you run the program then we say
+
+70
+00:06:01,130 --> 00:06:06,320
+that the type system is sound. Now clearly we only want sound rules but some sound
+
+71
+00:06:06,320 --> 00:06:12,040
+rules are actually quite a bit better than others, so for example. If I have an
+
+72
+00:06:12,040 --> 00:06:19,040
+integer literal And I want to give it a type, while we, we, I showed you the best
+
+73
+00:06:20,900 --> 00:06:23,660
+possible rule before where we said that [inaudible] has type [inaudible] But it
+
+74
+00:06:23,660 --> 00:06:27,860
+would also be correct, just not very precise to say that has [inaudible] has
+
+75
+00:06:27,860 --> 00:06:33,680
+type object. Certainly if I evaluate an integer I will get back an object because
+
+76
+00:06:33,680 --> 00:06:38,280
+every integer in , is also an object But this isn't all that useful because now I
+
+77
+00:06:38,280 --> 00:06:43,090
+can't do any of the integer operations And so there are lots of different sound
+
+78
+00:06:43,090 --> 00:06:47,750
+rules, there's not just one unique rule for any given [inaudible] expression that
+
+79
+00:06:47,750 --> 00:06:50,810
+will be sound, but some of them are better than others, and in the case of integer
+
+80
+00:06:50,810 --> 00:06:55,530
+literals the one we really want. Literal has type it because that is the most
+
+81
+00:06:55,530 --> 00:06:58,840
+specific type that we can give to that type of program.

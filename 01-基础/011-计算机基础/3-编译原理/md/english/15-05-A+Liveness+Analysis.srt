@@ -1,0 +1,519 @@
+0
+00:00:03,580 --> 00:00:08,260
+In this video, we're going to look at another global analysis called liveness
+
+1
+00:00:08,260 --> 00:00:14,780
+analysis. So, in the past several videos we've looked at a procedure for globally
+
+2
+00:00:14,780 --> 00:00:19,259
+propagating constants through a control flow graph And let's, here's, here's one
+
+3
+00:00:19,259 --> 00:00:23,250
+of the control flow graphs we've been looking at and recall that this algorithm
+
+4
+00:00:23,250 --> 00:00:27,039
+that we discussed would be sufficient to show that we could replace this use of x
+
+5
+00:00:27,039 --> 00:00:34,039
+here by the constant three. And once we do that. This assignment x might no longer be
+
+6
+00:00:35,500 --> 00:00:39,549
+useful. It might not be used anywhere And so we could potentially delete this
+
+7
+00:00:39,549 --> 00:00:43,269
+statement from the program And that would be a real optimization, an important
+
+8
+00:00:43,269 --> 00:00:48,549
+optimization to do. However, we can only do that if x is not used elsewhere in the
+
+9
+00:00:48,549 --> 00:00:55,010
+program. So let's be a little more careful about what we mean by saying that x is not
+
+10
+00:00:55,010 --> 00:01:00,350
+used. So down here is a use of x, a reference to x, in a statement. And,
+
+11
+00:01:00,350 --> 00:01:07,350
+clearly this particular reference to x, is, use, picking up the value that's
+
+12
+00:01:07,369 --> 00:01:13,260
+defined by this right x here. So, we say that the right of x here, is live. This
+
+13
+00:01:13,260 --> 00:01:19,240
+one is live. Okay, And what that means is that the value may be used in the future.
+
+14
+00:01:19,240 --> 00:01:26,240
+So, live, equals, may be used. In the future, Okay? So the value written to x at
+
+15
+00:01:32,070 --> 00:01:37,190
+this line of code maybe used by some subsequent instruction And here it's not
+
+16
+00:01:37,190 --> 00:01:40,080
+just that it may be used. It's actually guaranteed to be used because there's only
+
+17
+00:01:40,080 --> 00:01:44,680
+one path. And that one path has a reference to x on it before there's
+
+18
+00:01:44,680 --> 00:01:49,460
+another assignment to x. Okay? So this particular value of x as written here is
+
+19
+00:01:49,460 --> 00:01:52,979
+guaranteed to be used. But in general we don't require that. We just mean there has
+
+20
+00:01:52,979 --> 00:01:57,840
+to be a possibility that it will be used. Now in contrast let's take a look at this.
+
+21
+00:01:57,840 --> 00:02:02,990
+Other statement in this example, Here, we assign x a value three but this assignment
+
+22
+00:02:02,990 --> 00:02:09,619
+x, this value of x is never used. This one, is dead. Alright? Because the value
+
+23
+00:02:09,619 --> 00:02:15,340
+three here is overwritten by the value four before there's any use of, the
+
+24
+00:02:15,340 --> 00:02:19,730
+variable x, Okay? So this particular right to x will never see the light of day.
+
+25
+00:02:19,730 --> 00:02:24,980
+It'll never get used by any part of the program. And we say that it is dead. So,
+
+26
+00:02:24,980 --> 00:02:30,940
+to summarize a variable x is live as a statement S if, there exist some statement
+
+27
+00:02:30,940 --> 00:02:35,310
+that uses x. Okay. So, some other statement S prime that uses x, and there
+
+28
+00:02:35,310 --> 00:02:41,900
+is some path from S to S prime and there is no intervening assignments on that path
+
+29
+00:02:41,900 --> 00:02:47,280
+to x. Alright? So, there needs to be an assignment to x, at some statement S there
+
+30
+00:02:47,280 --> 00:02:54,280
+is some path through the program that reaches a read of x. Add sum statement to
+
+31
+00:02:55,200 --> 00:03:02,200
+S prime, and along that path, there is no right to x, Okay? And if this situation
+
+32
+00:03:04,110 --> 00:03:10,080
+arises, then we say that this value written in this first statement s is live.
+
+33
+00:03:10,080 --> 00:03:15,849
+Now if a value is not live, then it is dead. And a statement that assigns to x is
+
+34
+00:03:15,849 --> 00:03:20,599
+going to be dead code if x is dead after the assignment. So, if we know that
+
+35
+00:03:20,599 --> 00:03:24,900
+immediately after the assignment, immediately after this assignment to x,
+
+36
+00:03:24,900 --> 00:03:28,330
+there is no possibility that a value of x will be used in the future. Well then the
+
+37
+00:03:28,330 --> 00:03:33,360
+assignment was useless, and the entire statement can be removed. Alright, So dead
+
+38
+00:03:33,360 --> 00:03:37,379
+assignments can be deleted from the program, But notice that in order to do
+
+39
+00:03:37,379 --> 00:03:40,890
+that we have to have the liveness information. We need to know whether x is
+
+40
+00:03:40,890 --> 00:03:46,780
+dead at this point. So, once again, what we want to do is to have global
+
+41
+00:03:46,780 --> 00:03:50,940
+information about the control flow graph. In this case, the property is whether x
+
+42
+00:03:50,940 --> 00:03:54,580
+will be used in the future. We want to make that information local to a specific
+
+43
+00:03:54,580 --> 00:03:59,870
+point in the program, so we can make a local optimization decision. Alright, And
+
+44
+00:03:59,870 --> 00:04:04,709
+just like for constant propagation, we're going to define in a, an algorithm for
+
+45
+00:04:04,709 --> 00:04:08,890
+performing liveness analysis And it's going to follow the same framework. If
+
+46
+00:04:08,890 --> 00:04:12,560
+we're going to express liveness in terms of information transferred between
+
+47
+00:04:12,560 --> 00:04:16,379
+adjacent statements, just as we did for copy of constant propagation And it's
+
+48
+00:04:16,379 --> 00:04:19,549
+gonna turn out that liveness is actually quite, If it's simpler, or somewhat
+
+49
+00:04:19,548 --> 00:04:23,490
+simpler, than constant propagation, since it's just a Boolean property. Eh, you
+
+50
+00:04:23,490 --> 00:04:29,300
+know, it's either true of false. Alright So let's take a look at some of the rules
+
+51
+00:04:29,300 --> 00:04:36,300
+for liveness. So here, we're defining what it means for x to be live at this point
+
+52
+00:04:36,620 --> 00:04:41,229
+here. So we're immediately after p is x live And it's going to be live. Remember
+
+53
+00:04:41,229 --> 00:04:46,330
+what the intuition is. The intuition is that a, the variable x is live right after
+
+54
+00:04:46,330 --> 00:04:53,330
+p if the value of x is used on some path. On one of the paths that begin at p.
+
+55
+00:04:53,770 --> 00:04:57,490
+Alright, And so, in order to know whether it's live, we're going to take the
+
+56
+00:04:57,490 --> 00:05:02,860
+liveness information at each of the input points. So that would be here, here, here,
+
+57
+00:05:02,860 --> 00:05:07,289
+and here. So each of the successor statements after p And we're gonna ask, is
+
+58
+00:05:07,289 --> 00:05:11,990
+x live at any of those points? So it's just a big or over the liveness of x and
+
+59
+00:05:11,990 --> 00:05:18,990
+all of the successors of p And that's the liveness of x at the out of p. Next, let's
+
+60
+00:05:19,180 --> 00:05:23,639
+consider the effect of individual statements on the liveness of x. So, the
+
+61
+00:05:23,639 --> 00:05:27,629
+first rule is, that if we have a statement, and it reads the value of x,
+
+62
+00:05:27,629 --> 00:05:30,469
+Okay? So here, we have an assignment statement, and on the right hand side, it
+
+63
+00:05:30,469 --> 00:05:36,550
+refers to x, so its reading x Then, x is live Before that statement. Clearly, x is
+
+64
+00:05:36,550 --> 00:05:40,729
+just about to be used on the end of this statement, and so x is live at that point.
+
+65
+00:05:40,729 --> 00:05:44,860
+Alright? So if a statement, or if, if a statement reads the
+
+66
+00:05:44,860 --> 00:05:51,349
+value of x, then the in of that statement, x, is true. Sorry, the liveness of x is
+
+67
+00:05:51,349 --> 00:05:57,499
+true. A second case is when a statement writes the value of x So here we have an
+
+68
+00:05:57,499 --> 00:06:02,129
+assignment to x And the rest of the statement does not refer x Does not read
+
+69
+00:06:02,129 --> 00:06:09,129
+the value of x. So there's no x in E. Okay So in this situation x is not live before
+
+70
+00:06:13,029 --> 00:06:19,080
+the statement. X is not live or we can say that x is dead Before the statement And
+
+71
+00:06:19,080 --> 00:06:24,360
+why is that? Well, we're overriding the value of x, so whatever value, x had
+
+72
+00:06:24,360 --> 00:06:28,219
+before this statement is never gonna be read. Okay, Because the ee here, the
+
+73
+00:06:28,219 --> 00:06:32,569
+right-hand side of the assignment, doesn't refer to x And, so, immediately before the
+
+74
+00:06:32,569 --> 00:06:36,599
+statement, the current value of x is never gonna be used in the future. And so x is
+
+75
+00:06:36,599 --> 00:06:43,599
+dead at that point. And finally, the last case is what if we have a statement that
+
+76
+00:06:43,899 --> 00:06:50,149
+does not refer to x? Okay, So it neither reads no r writes x. Well, then whatever
+
+77
+00:06:50,149 --> 00:06:55,770
+the line this is of x after the statement, it has the same liveness, before this
+
+78
+00:06:55,770 --> 00:07:02,770
+statement. So if x is live here. Then x will be live here. Okay, and similarly, if
+
+79
+00:07:04,529 --> 00:07:10,669
+x is dead After the statement. Then x must be dead before the statement. And that's
+
+80
+00:07:10,669 --> 00:07:16,210
+because x if x is not use in the future after the statement S then it still want
+
+81
+00:07:16,210 --> 00:07:20,119
+be use in the future before the statement S. Since the statement S neither reads nor
+
+82
+00:07:20,119 --> 00:07:26,309
+write x. So those are the only four rules and now I can give the algorithm. So
+
+83
+00:07:26,309 --> 00:07:31,860
+initially we left the liveness information for x be false at all program points And
+
+84
+00:07:31,860 --> 00:07:36,009
+then we repeat the following until all the statements satisfy the rules one through
+
+85
+00:07:36,009 --> 00:07:40,419
+four, and just has it's the same algorithm that we used for constant propagation. We
+
+86
+00:07:40,419 --> 00:07:45,369
+pick some statement where the information is inconsistent and then up, update the
+
+87
+00:07:45,369 --> 00:07:50,399
+information at that statement with the appropriate rule. So let's do a simple
+
+88
+00:07:50,399 --> 00:07:57,399
+example, something with a loop. So let's begin, say by initializing x to zero, and
+
+89
+00:07:58,330 --> 00:08:05,330
+then what should our loop body do? Well, we can check whether x is equal to ten,
+
+90
+00:08:05,969 --> 00:08:12,969
+and if it is, we'll, we'll exit, the loop And let's assume that x is dead on exit.
+
+91
+00:08:13,619 --> 00:08:20,619
+So x is not refer to outside of the loop. In other wise if x is not ten Then we will
+
+92
+00:08:20,830 --> 00:08:25,439
+increment x and we'll branch back to the top of the loop. So this is a very, very
+
+93
+00:08:25,439 --> 00:08:30,189
+silly little program. It just counts to ten and then exits. Well let's do the
+
+94
+00:08:30,189 --> 00:08:37,189
+lightness now to see where x is life. So since x is dead here on exit it's clearly
+
+95
+00:08:38,520 --> 00:08:45,520
+gonna be dead on the out Of, of this, conditional on this branch, Okay? So I
+
+96
+00:08:45,890 --> 00:08:49,820
+should say that x is not live. So we're using booleans here, so that's x's,
+
+97
+00:08:49,820 --> 00:08:56,820
+liveness would be false And we're assuming And x is also, not live everyplace else,
+
+98
+00:08:58,030 --> 00:09:03,250
+initially. Okay And so, there's a program point in there, also Where the liveness of
+
+99
+00:09:03,250 --> 00:09:08,540
+x is false. Okay, So now, let's propagate the information. Well, so here we have
+
+100
+00:09:08,540 --> 00:09:13,360
+read of x. And let me switch colors here. So here we have a read of x. So in fact
+
+101
+00:09:13,360 --> 00:09:17,610
+the information's inconsistent here because ri ght before this statement since
+
+102
+00:09:17,610 --> 00:09:23,910
+we have a read of x, x must be live. So in fact, x is live at this point. Now notice
+
+103
+00:09:23,910 --> 00:09:30,380
+that this statement both reads and writes x. Okay? But the rule that says x is live
+
+104
+00:09:30,380 --> 00:09:36,370
+before, when we do a read, takes priority here Because, the read happens before the
+
+105
+00:09:36,370 --> 00:09:40,640
+write. So we'll read the old value of x, before we write the new value of x, Okay.
+
+106
+00:09:40,640 --> 00:09:44,330
+So the old value of x does get used, and that's why x is live immediately before
+
+107
+00:09:44,330 --> 00:09:51,330
+this statement. Okay, so then here's another, read of x. Okay, so on the, so
+
+108
+00:09:53,060 --> 00:09:57,720
+the point immediately before this when I left out one program point here, x is also
+
+109
+00:09:57,720 --> 00:10:02,820
+Y. Okay, And then following edges backwards, well, that means x is gonna be
+
+110
+00:10:02,820 --> 00:10:08,910
+live on the back edge of the loop And it's also gonna be live by going into the
+
+111
+00:10:08,910 --> 00:10:15,910
+initialization block. Alright? Now we come back around here and we see that we're
+
+112
+00:10:16,000 --> 00:10:21,890
+done 'cause x is already known to be, live within the loop body. And now, live, x is
+
+113
+00:10:21,890 --> 00:10:25,460
+also live here And then the question is, you know, what about this point on, the
+
+114
+00:10:25,460 --> 00:10:30,150
+entrance, at the entrance to the control flow graph? Well, there's a right of x And
+
+115
+00:10:30,150 --> 00:10:35,250
+with no read of x on the right-hand side. So, in fact, x, is not live on entry to
+
+116
+00:10:35,250 --> 00:10:39,470
+this control flow graph. So in fact, x is dead at this point. So whatever value x
+
+117
+00:10:39,470 --> 00:10:43,240
+has when we enter the control flow graph, it will never be used in the future.
+
+118
+00:10:43,240 --> 00:10:47,160
+Alright, and so that is the correct liveness information for every
+
+119
+00:10:47,160 --> 00:10:54,160
+program point in this example. Now another thing you can see from our little example
+
+120
+00:10:56,310 --> 00:11:01,320
+is that values change from false to true, but not the other way around. So every
+
+121
+00:11:01,320 --> 00:11:06,950
+value starts at false, and it can change at most once. To say that the value is
+
+122
+00:11:06,950 --> 00:11:11,910
+actually live, the property becomes true, and then it won't ever change back to
+
+123
+00:11:11,910 --> 00:11:18,790
+false again. So, going back to orderings, We only have two values in this analysis,
+
+124
+00:11:18,790 --> 00:11:22,820
+false and true And the ordering is that false is less than true. Okay, And we
+
+125
+00:11:22,820 --> 00:11:26,590
+know, so everything starts at the lowest possible element of the ordering and they
+
+126
+00:11:26,590 --> 00:11:30,980
+only move up, and so they can be promoted to true, but no t vice versa And so since
+
+127
+00:11:30,980 --> 00:11:34,990
+each value can only change once, termination is guaranteed. That eventually
+
+128
+00:11:34,990 --> 00:11:37,970
+we're guaranteed to have consistent information throughout the control flow
+
+129
+00:11:37,970 --> 00:11:39,760
+graph, and the analysis will terminate.

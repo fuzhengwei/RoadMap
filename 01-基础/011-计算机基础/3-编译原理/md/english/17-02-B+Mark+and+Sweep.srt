@@ -1,0 +1,427 @@
+0
+00:00:01,250 --> 00:00:03,389
+Now, this algorithm is very simple. And conceptually,
+
+1
+00:00:03,389 --> 00:00:07,410
+I think it's, it's very clear how it works. But there are a number
+
+2
+00:00:07,410 --> 00:00:12,230
+of tricky details and this is very typical of automatic memory management algorithms.
+
+3
+00:00:12,230 --> 00:00:15,269
+And there's actually a serious problem with the mark phase. And, and this is also
+
+4
+00:00:15,269 --> 00:00:19,980
+typical of, of garbage collection algorithms. Now, notice that we only run this
+
+5
+00:00:19,980 --> 00:00:25,170
+algorithm when we are out of space, okay. So, the whole point is that we're garbage
+
+6
+00:00:25,170 --> 00:00:28,869
+collecting because there's no more system memory available for allocating new
+
+7
+00:00:28,869 --> 00:00:34,320
+objects. And yet we have this to-do list, okay. And notice that the work list was not
+
+8
+00:00:34,320 --> 00:00:37,870
+bounded in size. There was no guarantee about how many elements were going
+
+9
+00:00:37,870 --> 00:00:41,640
+to be on the to-do list. And I think, it's easy to see that, that data structure
+
+10
+00:00:41,640 --> 00:00:46,480
+could actually be fairly large, alright. And so, we can't just allocate a
+
+11
+00:00:46,480 --> 00:00:50,010
+fixed amount of space for the to-do list or reserve some constant amount of space.
+
+12
+00:00:50,010 --> 00:00:53,899
+But we need to deal with the fact that we actually don't have any space at all when
+
+13
+00:00:53,899 --> 00:00:59,039
+we get around to doing a garbage collect ion. Now, there is a trick that can be used
+
+14
+00:00:59,039 --> 00:01:04,899
+to maintain the to-do list during the mark phase without having to use any extra
+
+15
+00:01:04,899 --> 00:01:08,810
+storage. And that is to do what is called pointer reversal. So, when a pointer is followed,
+
+16
+00:01:08,810 --> 00:01:12,860
+it's going to be reversed to point back to its parent. And this is going
+
+17
+00:01:12,860 --> 00:01:17,490
+to allows us actually to track what elements or what objects in the heap still
+
+18
+00:01:17,490 --> 00:01:22,470
+need to be processed without having to use any extra space. And let's just if you don't
+
+19
+00:01:22,470 --> 00:01:25,540
+understand that I'm going to do an example in just a second. I wanna mention
+
+20
+00:01:25,540 --> 00:01:29,040
+a second problem as well and that is, you know, where is the free list stored? And this
+
+21
+00:01:29,040 --> 00:01:33,439
+is a little easier to see how that works. So, the free list consists of blocks
+
+22
+00:01:33,439 --> 00:01:40,290
+of memory. And, and we just use the space in these blocks to maintain the free
+
+23
+00:01:40,290 --> 00:01:45,170
+list so perhaps the first word or something of the block of memory will contain
+
+24
+00:01:45,170 --> 00:01:49,290
+the size of the block and then the second word will point to the next block in
+
+25
+00:01:49,290 --> 00:01:53,189
+the list, you know, something like that but we can use the space in the blocks themselves
+
+26
+00:01:53,189 --> 00:01:56,619
+to maintain the free list. And so, now let's come back to this pointer reversal
+
+27
+00:01:56,619 --> 00:02:03,619
+idea. Let's say that we have some objects, okay, and we want to track reachability,
+
+28
+00:02:04,030 --> 00:02:11,030
+okay, and we can't maintain the to-do list, all right in a separate data
+
+29
+00:02:12,980 --> 00:02:16,800
+structure. And so how are we going to do that? Well, well, here's the idea when
+
+30
+00:02:16,800 --> 00:02:20,910
+we change colors. So, we're doing to come in here and we're going to mark this first
+
+31
+00:02:20,910 --> 00:02:25,900
+object. Let's say this is reachable from the root and now that this is the root the
+
+32
+00:02:25,900 --> 00:02:30,599
+first object. And now we're going to follow the pointers in this object and let's
+
+33
+00:02:30,599 --> 00:02:34,610
+say this is one here, this one here is the first pointer in the object. So, we're
+
+34
+00:02:34,610 --> 00:02:38,849
+going to follow it and then we're going to reverse it. We're going to have it
+
+35
+00:02:38,849 --> 00:02:43,950
+point back to the parent. So, now we will mark this object and then we'll follow
+
+36
+00:02:43,950 --> 00:02:47,950
+the pointers in, in this object, okay. And as we go down, we'll have this pointer
+
+37
+00:02:47,950 --> 00:02:52,769
+point back and then we'll mark this object. And now, we got no point ers
+
+38
+00:02:52,769 --> 00:02:57,629
+in this object and so we need to go back and process any pointers that weren't covered
+
+39
+00:02:57,629 --> 00:03:02,269
+in the object set that we that we have already seen, okay. And how do we find
+
+40
+00:03:02,269 --> 00:03:04,940
+our way back? Well, that's what the pointer reversal was for. So, we could follow
+
+41
+00:03:04,940 --> 00:03:09,690
+the blue arrow back here, as we come back, we'll restore the original pointer.
+
+42
+00:03:09,690 --> 00:03:12,470
+So, we'll get rid of the reversed pointer. There are no more pointers in this
+
+43
+00:03:12,470 --> 00:03:16,440
+object either so we'll go back one more object and now, of course, this pointer
+
+44
+00:03:16,440 --> 00:03:20,129
+will go away and we'll restore the original pointer, alright. And now, we're
+
+45
+00:03:20,129 --> 00:03:23,640
+in this object and we see there was a second pointer that we haven't followed yet,
+
+46
+00:03:23,640 --> 00:03:28,409
+okay. And, and then we'll follow it and we'll reverse it and we'll follow the
+
+47
+00:03:28,409 --> 00:03:33,209
+other pointer from that, reversing it, and, and then we'll mark these two objects,
+
+48
+00:03:33,209 --> 00:03:35,580
+when we get down to this object and we discover there are no additional pointers,
+
+49
+00:03:35,580 --> 00:03:39,659
+we'll be able to use this, these blue arrows here to work our way back and
+
+50
+00:03:39,659 --> 00:03:44,330
+we'll restore the red arrows as we walk back up through the objects. So, essentially
+
+51
+00:03:44,330 --> 00:03:48,720
+the point of reversal does is it helps us maintain the stack for a depth
+
+52
+00:03:48,720 --> 00:03:52,580
+for search of the graph. So, if you're doing adept for search of the graph and you
+
+53
+00:03:52,580 --> 00:03:56,610
+want to be sure that you cover all the notes that are reachable then you have to
+
+54
+00:03:56,610 --> 00:04:00,299
+be able to do the back tracking. And the, the reversed pointers allow us to do that
+
+55
+00:04:00,299 --> 00:04:05,909
+[cough]. There's one more tiny issue here with the reversed pointers. So, notice that
+
+56
+00:04:05,909 --> 00:04:09,780
+there's a little bit of a problem. So, I want to talk about reversing pointers
+
+57
+00:04:09,780 --> 00:04:14,599
+and let me draw two new objects here just to illustrate the point. Let's say,
+
+58
+00:04:14,599 --> 00:04:20,780
+I have a, a pointer from this object to that object. So, when I cross over, to
+
+59
+00:04:20,779 --> 00:04:26,470
+the object that is pointed to, what does it mean to reverse this pointer? Well the,
+
+60
+00:04:26,470 --> 00:04:29,590
+you know, the space where the pointer is actually in this object, there's no space
+
+61
+00:04:29,590 --> 00:04:36,590
+necessarily for the pointer at all in, in the object that I'm going to. And so, in fact,
+
+62
+00:04:36,740 --> 00:04:43,100
+what's going to happen let's say this was part of a chain of objects, okay.
+
+63
+00:04:43,100 --> 00:04:49,220
+And, and this problem is easily solved, the issue is just off by one problem. So,
+
+64
+00:04:49,220 --> 00:04:53,530
+I have, I have space in this object for a pointer and I can change that pointer. I don't
+
+65
+00:04:53,530 --> 00:04:56,870
+know if I even have any pointers in this object yet, alright. So, let's say this
+
+66
+00:04:56,870 --> 00:05:02,360
+is part of a chain of objects, okay, and that I've walked down this chain to, to
+
+67
+00:05:02,360 --> 00:05:07,000
+this particular object. So, as I pass over to this third object with I, the pointer
+
+68
+00:05:07,000 --> 00:05:12,240
+that I will reverse is this one and I will make it point back to the previous
+
+69
+00:05:12,240 --> 00:05:18,100
+object, okay. And then I'm just going to remember this particular object,
+
+70
+00:05:18,100 --> 00:05:22,110
+you know, I'll keep the pointer to this particular object in a register. So, I'll
+
+71
+00:05:22,110 --> 00:05:27,740
+keep the last pointer at reversed in a register. An, and a pointer to the last object
+
+72
+00:05:27,740 --> 00:05:32,199
+that I came from in a register and then when I go on to another object, I will
+
+73
+00:05:32,199 --> 00:05:37,520
+use the pointer that I'm traversing in the current object to point back to the
+
+74
+00:05:37,520 --> 00:05:41,270
+parent of the previous object, okay. So, it's just a off by one problem, I need one
+
+75
+00:05:41,270 --> 00:05:46,979
+register here to hold on to the previous object that I visited and then I can reverse
+
+76
+00:05:46,979 --> 00:05:53,979
+pointers back up to their parents and grandparents. Alright, to summarize the
+
+77
+00:05:55,160 --> 00:05:58,600
+discussion of mark-and-sweep. Space for a new object is going to be allocated
+
+78
+00:05:58,600 --> 00:06:04,060
+from the free list, little typo there. And we're always going to pick a block, we always
+
+79
+00:06:04,060 --> 00:06:07,940
+have to pick a block from the free list that is large enough to hold the object
+
+80
+00:06:07,940 --> 00:06:13,669
+that we're allocating. And in an area of the size that we need is going to
+
+81
+00:06:13,669 --> 00:06:16,490
+be allocated from that block and then the leftovers is to be put back on the free list.
+
+82
+00:06:16,490 --> 00:06:20,520
+So, let's say the free list has a block, let's say it has 100 bytes and then
+
+83
+00:06:20,520 --> 00:06:25,190
+we need an object that has 50 bytes in it. So, what will happen is that this block will
+
+84
+00:06:25,190 --> 00:06:29,900
+get split up. We'll use this first half, the first 50 for the object and then
+
+85
+00:06:29,900 --> 00:06:36,310
+this other part the leftover will get put back on to the free list. And the result of
+
+86
+00:06:36,310 --> 00:06:39,870
+that kind of strategy where we, we have to find blocks that are big enough but then
+
+87
+00:06:39,870 --> 00:06:43,930
+we might not use the entire block is that mark-and-sweep can fragment the memory.
+
+88
+00:06:43,930 --> 00:06:48,949
+We might wind up with lots of little bits of leftover memory maybe nothing
+
+89
+00:06:48,949 --> 00:06:52,400
+big enough to actually hold an object. And these blocks, these little tiny
+
+90
+00:06:52,400 --> 00:06:56,729
+blocks might be scattered all over the place. So, it's important actually, for
+
+91
+00:06:56,729 --> 00:07:03,259
+mark-and-sweep to also merge blocks whenever possible. So, it's merge free blocks,
+
+92
+00:07:03,259 --> 00:07:08,930
+when possible. So, basically when the sweep phase is working on the free list.
+
+93
+00:07:08,930 --> 00:07:13,729
+It needs to recognize when it has two adjacent blocks of memory that will be
+
+94
+00:07:13,729 --> 00:07:17,810
+immediately adjacent to each other in memory. So, if I have two blocks that are
+
+95
+00:07:17,810 --> 00:07:22,280
+contiguous, what I really want to do is to merge them into one big block and just have
+
+96
+00:07:22,280 --> 00:07:26,770
+one entry in the free list. That's a counteract fragmentation of memory. Now, one
+
+97
+00:07:26,770 --> 00:07:31,650
+big advantage and perhaps the biggest advantage of mark-and-sweep is that objects
+
+98
+00:07:31,650 --> 00:07:35,729
+are not moved during garbage collection. And that means I don't have to
+
+99
+00:07:35,729 --> 00:07:41,240
+update the pointer objects. Object stay put, they don't move as part of garbage collection.
+
+100
+00:07:41,240 --> 00:07:44,729
+And what this means is it's actually possible to adapt mark and sweet,
+
+101
+00:07:44,729 --> 00:07:51,280
+for languages like CNC++. So, in CNC++, pointers are exposed to the programmer so
+
+102
+00:07:51,280 --> 00:07:56,349
+programmers can, can manipulate pointers and test pointers and so you can't move objects
+
+103
+00:07:56,349 --> 00:08:02,300
+in CNC++ because the pointer is part of their semantics. The pointer address,
+
+104
+00:08:02,300 --> 00:08:05,449
+I should say, is part of their semantics. But it is actually possible and
+
+105
+00:08:05,449 --> 00:08:11,759
+people actually have done it to build conservative or, you know, variations of a
+
+106
+00:08:11,759 --> 00:08:16,720
+mark-and-sweep garbage collection for C++ precisely because the objects don't move.

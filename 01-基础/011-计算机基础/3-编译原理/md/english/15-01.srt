@@ -1,0 +1,359 @@
+0
+00:00:03,980 --> 00:00:07,859
+PROFESSOR: In this video, we're going to begin our discussion of global program optimization.
+
+1
+00:00:07,859 --> 00:00:12,030
+And it turns out that, in order to talk about global optimization, there's another topic
+
+2
+00:00:12,030 --> 00:00:19,030
+that we have to deal with first known as data flow analysis.
+
+3
+00:00:19,240 --> 00:00:23,910
+Let's begin by reviewing the simple basic-block optimizations. In particular, constant propagation
+
+4
+00:00:23,910 --> 00:00:29,050
+and dead code elimination. So here's a little piece of code. And you'll notice that there's
+
+5
+00:00:29,050 --> 00:00:36,050
+an assignment of a constant X. And we know from our lecture in local optimizations that
+
+6
+00:00:36,110 --> 00:00:41,250
+that constant assignment could be propagated forward to the uses of X. If the basic block
+
+7
+00:00:41,250 --> 00:00:48,250
+is in single assignment form, this is particularly easy to do. And then if the value of X here
+
+8
+00:00:48,390 --> 00:00:53,430
+is not used anyplace else in the program, that statement is dead and can be deleted.
+
+9
+00:00:53,430 --> 00:00:58,769
+So here's a simple example over a basic block combining constant propagation and dead code
+
+10
+00:00:58,769 --> 00:01:00,660
+elimination.
+
+11
+00:01:00,660 --> 00:01:07,460
+Now, these optimizations can be extended to an entire control-flow graph. So here now
+
+12
+00:01:07,460 --> 00:01:14,210
+we have a nontrivial control-flow graph. Remember, a control-flow graph is a graph of basic blocks
+
+13
+00:01:14,210 --> 00:01:20,000
+where the nodes are the basic blocks and the edges show the transfers of control between
+
+14
+00:01:20,000 --> 00:01:26,360
+basic blocks. And so this first basic block here has a testament, an if statement. And
+
+15
+00:01:26,360 --> 00:01:30,740
+it'll go to one basic block if the test is true. Into a different basic block if the
+
+16
+00:01:30,740 --> 00:01:32,930
+test is false.
+
+17
+00:01:32,930 --> 00:01:39,930
+Now, in this control-flow graph, we can observe that X is assigned a constant. And then down
+
+18
+00:01:39,960 --> 00:01:45,500
+here, there are uses of X. And, in fact, in this particular case, it is going to be safe
+
+19
+00:01:45,500 --> 00:01:51,970
+to replace this use of X by the constant 3. So just like we propagated constants in a
+
+20
+00:01:51,970 --> 00:01:58,000
+single basic block, we can also, at least in some circumstances, propagate constants
+
+21
+00:01:58,000 --> 00:02:01,070
+across entire control-flow graphs.
+
+22
+00:02:01,070 --> 00:02:08,070
+Now, it turns out that there are some situations in which it's not safe to propagate constants.
+
+23
+00:02:08,280 --> 00:02:14,879
+So here again let's observe that we have an assignment of X, an assignment of a constant
+
+24
+00:02:14,879 --> 00:02:21,879
+X, and down here we have a use of X. But we cannot replace this X here by 3. And why is
+
+25
+00:02:22,390 --> 00:02:27,209
+that? Well, that's because over here, we have another assignment X where X gets the value
+
+26
+00:02:27,209 --> 00:02:28,430
+4.
+
+27
+00:02:28,430 --> 00:02:33,670
+And the interesting thing about this example is that notice that X is only assigned constants.
+
+28
+00:02:33,670 --> 00:02:39,420
+So X is assigned a constant here, and X is assigned a constant here, but this value of
+
+29
+00:02:39,420 --> 00:02:44,780
+X down here is not known. We don't know which constant it's going to be, because if we come
+
+30
+00:02:44,780 --> 00:02:50,840
+from this path in the execution, then X will be 4. And if we come from this path, the value
+
+31
+00:02:50,840 --> 00:02:55,950
+of X will be 3. And so we can't replace x here by either one of those values, and it's
+
+32
+00:02:55,950 --> 00:03:02,189
+not safe in this case to propagate constants to this use of X.
+
+33
+00:03:02,189 --> 00:03:08,450
+And so the question then is, how do we know when it is OK to globally propagate constants?
+
+34
+00:03:08,450 --> 00:03:14,680
+Now, for constant propagation, it turns out there's a simple criteria. To replace a use
+
+35
+00:03:14,680 --> 00:03:20,129
+of x by a constant k, we have to know the following fact that on every path to the use
+
+36
+00:03:20,129 --> 00:03:25,870
+of x. So every path that leads to the use of x, the last assignment that x is, x is
+
+37
+00:03:25,870 --> 00:03:31,239
+equal to k. So every single path that goes to x-- and this make sense, I think, intuitively--
+
+38
+00:03:31,239 --> 00:03:36,349
+we must have assigned a constant x along that path. And that must, in fact, be the last
+
+39
+00:03:36,349 --> 00:03:41,159
+assignment to x on each path.
+
+40
+00:03:41,159 --> 00:03:45,549
+Let's take a look at our example again, and I'll switch colors here. So here we have the
+
+41
+00:03:45,549 --> 00:03:49,930
+assignment X equals 3, and down here we have the use of X. And now what we need to do is
+
+42
+00:03:49,930 --> 00:03:56,060
+we need to check, in order to replace this X by 3, that on every path it arrives at this
+
+43
+00:03:56,060 --> 00:04:00,909
+X. It reaches this X that X is assigned 3 along that path. Well, there are only two
+
+44
+00:04:00,909 --> 00:04:06,279
+paths. There's this path, and there's this path. And it's easy to see that this assignment
+
+45
+00:04:06,279 --> 00:04:11,319
+is on both of those paths. And therefore the last assignment done on both paths, on all
+
+46
+00:04:11,319 --> 00:04:17,540
+paths, is X equals 3. And therefore we can replace this X by 3.
+
+47
+00:04:17,540 --> 00:04:24,540
+In contrast, with this use of X in this example, we have a path here where X is assigned 3,
+
+48
+00:04:25,060 --> 00:04:31,210
+and we have a path here that reaches along this path. Let me draw the whole path, actually.
+
+49
+00:04:31,210 --> 00:04:37,060
+And along this path, the last assignment to X is 4, and so we cannot propagate any constant
+
+50
+00:04:37,060 --> 00:04:40,660
+value to this use of X.
+
+51
+00:04:40,660 --> 00:04:44,640
+In general, the correctness condition that a variable is assigned the same constant to
+
+52
+00:04:44,640 --> 00:04:50,730
+lock all paths to a use of that variable is not that easy to check, because 'quot;all paths'quot;
+
+53
+00:04:50,730 --> 00:04:55,200
+includes paths that go around loops as well as paths that go through conditionals, as
+
+54
+00:04:55,200 --> 00:05:02,200
+we saw in the example. So checking these conditions is done through a family of techniques called
+
+55
+00:05:03,370 --> 00:05:08,210
+'quot;global dataflow analysis,'quot; and it's designed specifically to check conditions like this.
+
+56
+00:05:08,210 --> 00:05:12,090
+And essentially, global dataflow analysis is called 'quot;global'quot; because it requires an
+
+57
+00:05:12,090 --> 00:05:16,990
+analysis of the entire control-flow graph.
+
+58
+00:05:16,990 --> 00:05:21,140
+Stepping back for a moment, there are many global optimization tasks that we would like
+
+59
+00:05:21,140 --> 00:05:25,960
+a compiler to perform. A constant propagation, global constant propagation, is just one of
+
+60
+00:05:25,960 --> 00:05:31,190
+those. Now, it turns out that all of these global optimization problems share several
+
+61
+00:05:31,190 --> 00:05:37,490
+common traits. So first of all, the optimization always depends on knowing some property X
+
+62
+00:05:37,490 --> 00:05:43,180
+at a particular point in the program. So we want to know some piece of very local information.
+
+63
+00:05:43,180 --> 00:05:49,410
+So, for example, is X at a particular point in the program guaranteed to be a constant?
+
+64
+00:05:49,410 --> 00:05:52,780
+OK? That's the property for a constant propagation.
+
+65
+00:05:52,780 --> 00:05:58,680
+Now, however, even though we want to know some local fact, something that's specific
+
+66
+00:05:58,680 --> 00:06:03,900
+to a particular point in the program, proving this fact requires knowledge of the entire
+
+67
+00:06:03,900 --> 00:06:08,770
+program, so at least the entire control-flow graph. So as we saw in the case of constant
+
+68
+00:06:08,770 --> 00:06:13,620
+propagation, to figure out whether X is a constant at a particular point in the program
+
+69
+00:06:13,620 --> 00:06:19,010
+requires reasoning about all the paths that lead to that statement. And that is a global
+
+70
+00:06:19,010 --> 00:06:23,380
+property. So when you think about all-paths, that could be a path from the entry point
+
+71
+00:06:23,380 --> 00:06:29,510
+of the method all the way through loops and across conditionals to the particular statement.
+
+72
+00:06:29,510 --> 00:06:35,820
+So, in general, that's a very hard problem to solve. And for certain kinds of questions,
+
+73
+00:06:35,820 --> 00:06:40,860
+it's really extremely expensive to solve it exactly. The thing that saves us is that it
+
+74
+00:06:40,860 --> 00:06:47,820
+is OK always to be conservative. So typically for these optimizations-- and if we want to
+
+75
+00:06:47,820 --> 00:06:53,050
+know some property X-- then what we really want to know is either X is definitely true--
+
+76
+00:06:53,050 --> 00:06:57,870
+So if we say that the property is true, then we have to be right. We can't make a mistake.
+
+77
+00:06:57,870 --> 00:07:03,100
+But it is always OK to say that you don't know. So it's OK to give up and say we don't
+
+78
+00:07:03,100 --> 00:07:07,140
+know whether the property holds or not. Because of the worst case, we just don't do the optimization.
+
+79
+00:07:07,140 --> 00:07:12,820
+If we can't establish the conditions that would mean it was definitely correct to the
+
+80
+00:07:12,820 --> 00:07:17,460
+optimizations, then we want to play it safe and not do the optimization.
+
+81
+00:07:17,460 --> 00:07:22,150
+So having approximate techniques or techniques that don't always give the correct answer
+
+82
+00:07:22,150 --> 00:07:27,960
+to the questions that we wanted to ask is OK as long as we are always right when we
+
+83
+00:07:27,960 --> 00:07:32,990
+say that the property holds and otherwise we just say that we don't know whether the
+
+84
+00:07:32,990 --> 00:07:36,200
+property holds or not.
+
+85
+00:07:36,200 --> 00:07:42,060
+To sum up, global dataflow analysis is a standard technique or family of techniques for solving
+
+86
+00:07:42,060 --> 00:07:47,310
+problems with the characteristics that we just discussed. And global constant propagation
+
+87
+00:07:47,310 --> 00:07:52,810
+is one example of an optimization that requires global dataflow analysis. And in the next
+
+88
+00:07:52,810 --> 00:07:57,750
+several videos, we'll be looking at global constant propagation and another dataflow
+
+89
+00:07:57,750 --> 00:07:59,590
+analysis in more detail.

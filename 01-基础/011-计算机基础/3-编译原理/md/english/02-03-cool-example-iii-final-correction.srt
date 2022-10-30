@@ -1,0 +1,695 @@
+0
+00:00:04,580 --> 00:00:08,530
+Hello again. In this video we're gonna wrap up our overview of cool with one more
+
+1
+00:00:08,530 --> 00:00:15,530
+example of writing a cool program. For our final example, let's look at a program
+
+2
+00:00:20,060 --> 00:00:26,630
+that actually manipulates some interesting data structure. So we'll begin here by
+
+3
+00:00:26,630 --> 00:00:33,630
+opening up a file. And let's call our program list dot CL this time. And as
+
+4
+00:00:33,710 --> 00:00:40,710
+usual, I will begin by writing our main routine, and our main method. And once
+
+5
+00:00:44,470 --> 00:00:51,470
+again let's, let's make this inherit from I/O so we can do the I/O routines here.
+
+6
+00:00:54,979 --> 00:01:00,409
+And let's just begin with something very simple, as always. Let's just have
+
+7
+00:01:00,409 --> 00:01:04,199
+something that prints out 'quot;Hello World'quot; but in a little bit of an unusual way.
+
+8
+00:01:04,199 --> 00:01:10,120
+Let's, we're going to end up writing a list, a list abstraction. And let's first
+
+9
+00:01:10,120 --> 00:01:13,940
+build a list by hand, or at least build the elements of a list by hand, and then
+
+10
+00:01:13,940 --> 00:01:20,250
+we'll actually build the list abstraction and put them in a list. So, let's have
+
+11
+00:01:20,250 --> 00:01:27,250
+some strings. So we will have our string hello, and this will also illustrate how
+
+12
+00:01:29,140 --> 00:01:32,910
+you do multiple LET bindings simultaneously. I shouldn't say
+
+13
+00:01:32,910 --> 00:01:38,240
+simultaneously. How you do multiple LET bindings in one LET expression. So you do
+
+14
+00:01:38,240 --> 00:01:43,300
+them by just listing them, and notice that this uses commas as a separator rather
+
+15
+00:01:43,300 --> 00:01:50,300
+than semicolons as a terminator. So this left binding is going to define three
+
+16
+00:01:52,240 --> 00:01:59,240
+names. Hello, world, and new line, all of which are strings. And then We're going to
+
+17
+00:02:10,360 --> 00:02:14,230
+now print these out on the screen, so we are going to want to be able to do out
+
+18
+00:02:14,230 --> 00:02:19,950
+string, and since main inherits from self, we can do that without an object there,
+
+19
+00:02:19,950 --> 00:02:25,870
+because it just, again, dispatches to the self object. And we want to concatenate
+
+20
+00:02:25,870 --> 00:02:31,360
+these strings together in the right order. So we'll do hello dot, and since hello is
+
+21
+00:02:31,360 --> 00:02:36,260
+a string, it can be concatenated to world, and world is a string, so it can be
+
+22
+00:02:36,260 --> 00:02:43,110
+concatenated to newline And that should do the job. And just like probably one more
+
+23
+00:02:43,110 --> 00:02:48,450
+thing about this lead this, these lead bindings here. This notice if it, the
+
+24
+00:02:48,450 --> 00:02:52,110
+comma is, the comma is the separator here, meaning it doesn't come after the last one
+
+25
+00:02:52,110 --> 00:02:56,900
+on the list. So it just separates that into the list, so it's not a terminator.
+
+26
+00:02:56,900 --> 00:03:03,900
+And now we can close up our main procedure. Close up our class definition.
+
+27
+00:03:04,660 --> 00:03:11,660
+Save it and now see if it compiles. Oh amazing! First try. And we run it, and it
+
+28
+00:03:16,260 --> 00:03:22,680
+prints hello world, as expected. So now, let's, instead of introducing the three
+
+29
+00:03:22,680 --> 00:03:25,709
+strings separately, and then concatenating them together, let's write an abstraction
+
+30
+00:03:25,709 --> 00:03:30,180
+where we can build a list of strings. And then that abstraction will have a function
+
+31
+00:03:30,180 --> 00:03:37,170
+within it to do the, to do the concatenation. Alright, so we'll have a
+
+32
+00:03:37,170 --> 00:03:44,060
+class called list. And, every list needs to, I think, to have two components. So
+
+33
+00:03:44,060 --> 00:03:48,300
+first, it's gonna have the item that's in the list, and that'll be a string. And
+
+34
+00:03:48,300 --> 00:03:52,430
+then when you have a pointer to the next, to the, to the tail of the list, to the
+
+35
+00:03:52,430 --> 00:03:58,890
+rest of the list. And so I have a next, field that, points or is another list, is
+
+36
+00:03:58,890 --> 00:04:04,209
+another list of strings. Now we need a couple of methods in order to, in order to
+
+37
+00:04:04,209 --> 00:04:09,459
+use this list. We'll need to be able to initialize a list in some way. So the
+
+38
+00:04:09,459 --> 00:04:14,170
+initialization function will take an item and, the rest of the list, the next part
+
+39
+00:04:14,170 --> 00:04:21,170
+of the list. And, what is it going to do? Well it's gonna need to set the fields of
+
+40
+00:04:21,509 --> 00:04:24,889
+the object, And so this one has to be done as a series of assignment statements. So
+
+41
+00:04:24,889 --> 00:04:31,210
+we'll need a statement block and we will set the item to be the I argument. We'll
+
+42
+00:04:31,210 --> 00:04:38,210
+set the next, attribute to be the N argument. And now, we actually want, this
+
+43
+00:04:40,349 --> 00:04:45,309
+initialized object here, this, this method here, to return the object itself. So
+
+44
+00:04:45,309 --> 00:04:49,759
+that, and that'll be convenient for chained together calls to [inaudible]. So
+
+45
+00:04:49,759 --> 00:04:55,110
+we'll have it return self. It'll return the self object. And that's the end of out
+
+46
+00:04:55,110 --> 00:05:02,110
+statement block. And then that is the end of our method. And, I made a mistake up
+
+47
+00:05:02,139 --> 00:05:06,639
+here. We've gotta declare the return type of a knit. And what it's going to return
+
+48
+00:05:06,639 --> 00:05:11,259
+of course, it returns a, a object of type list. I'll need to put a list declaration
+
+49
+00:05:11,259 --> 00:05:16,889
+there. Alright, so that takes care of, of a knit . And now we can use this to build,
+
+50
+00:05:16,889 --> 00:05:23,889
+build a list down here. So what should we do? Let's actually have a new variable
+
+51
+00:05:24,460 --> 00:05:31,460
+called list. That we'll introduce here in this lead, this series of lead bindings.
+
+52
+00:05:32,229 --> 00:05:35,710
+And let's just build a list out of these three objects. So we'll say, we'll have a
+
+53
+00:05:35,710 --> 00:05:42,710
+new list, and then we'll initialize to contain the string hello. And. What should
+
+54
+00:05:45,080 --> 00:05:50,629
+the, rest of the list be? Well that should be another list, which is initialized to
+
+55
+00:05:50,629 --> 00:05:57,629
+have the string the world. And what should be inside of that list file, is another
+
+56
+00:06:00,020 --> 00:06:05,759
+new list object, which we'll initialize to have new line. And now what do we put
+
+57
+00:06:05,759 --> 00:06:08,210
+here, actually there's a little bit of problem here isn't there? We need to put a
+
+58
+00:06:08,210 --> 00:06:13,719
+list object here. But we don't want to allocate a, a new list object, we want
+
+59
+00:06:13,719 --> 00:06:18,849
+that to be really the equivalent of a, of a null pointer. And there's no name for
+
+60
+00:06:18,849 --> 00:06:23,089
+that in Cool actually, you can't write down the name of a null pointer. It's
+
+61
+00:06:23,089 --> 00:06:29,059
+called void in Cool. There's no, there's no, no special symbol for that. So we'll
+
+62
+00:06:29,059 --> 00:06:35,330
+have to create a variable that is just not initialized. And that will be, as well,
+
+63
+00:06:35,330 --> 00:06:40,879
+uninitialized variable of type list will, in fact be void. It'll be a null pointer.
+
+64
+00:06:40,879 --> 00:06:46,699
+So let's call that nil. And it'll be a typed list, and no initializer. And so nil
+
+65
+00:06:46,699 --> 00:06:50,149
+there will point to nothing or the, the void point. And then we can use nil to
+
+66
+00:06:50,149 --> 00:06:55,259
+terminate our list here. And then we have to close off all the params for all the
+
+67
+00:06:55,259 --> 00:07:01,949
+nesting here. And I think that's it. And so that will be our list. Okay, so we have
+
+68
+00:07:01,949 --> 00:07:08,689
+a list of three strings. And now what we want to do with that is to print it out.
+
+69
+00:07:08,689 --> 00:07:12,219
+And so what we would like to do is to have a list fall off the list, and then a
+
+70
+00:07:12,219 --> 00:07:19,219
+function that's gonna flatten that list and we'll just print it. So that is the
+
+71
+00:07:19,719 --> 00:07:26,719
+what the, what the main program should do. And now. You have to write the flatten
+
+72
+00:07:27,520 --> 00:07:34,149
+function. So flatten takes no arguments. And it's going to return a string. It's
+
+73
+00:07:34,149 --> 00:07:40,639
+going to return a single string. And flatten is a pretty simple function. U h,
+
+74
+00:07:40,639 --> 00:07:46,490
+what do we have to do. Well. There's really two cases. One is if we're at the
+
+75
+00:07:46,490 --> 00:07:49,309
+end of the string, and the other is if we're not yet at the end of the string. So
+
+76
+00:07:49,309 --> 00:07:52,839
+let's, test for that. So how do we know if we're at the end of the string? Well, if
+
+77
+00:07:52,839 --> 00:07:57,259
+the next pointer is, is void, then there is no, nothing more in the string. And
+
+78
+00:07:57,259 --> 00:08:02,229
+there actually is a special test for that in Cool. It's called the isvoid, function,
+
+79
+00:08:02,229 --> 00:08:09,059
+and it's written like this. So if isvoid, of next, okay? So [inaudible] next field.
+
+80
+00:08:09,059 --> 00:08:16,059
+So if the next field is void, then what are we going to return? Keeps. Well then
+
+81
+00:08:16,569 --> 00:08:21,949
+the result here is just, the item, whatever the item was in this last element
+
+82
+00:08:21,949 --> 00:08:28,949
+of the list. And otherwise What we want to do, Well, otherwise, we want to take the
+
+83
+00:08:31,909 --> 00:08:38,909
+item and we want to concatenate onto it, the result of flattening the rest of the
+
+84
+00:08:39,490 --> 00:08:46,490
+list. And that is our flattened method. So let's see if that works. So let's compile
+
+85
+00:08:54,500 --> 00:09:01,500
+this. And we got a couple of syntax errors here. So let's go back and see what's
+
+86
+00:09:01,950 --> 00:09:08,950
+going on. So we have a syntax error here, at the end of the, the flatten method. And
+
+87
+00:09:13,460 --> 00:09:18,170
+we see that we left out the [inaudible] to close a conditional. So a conditional has
+
+88
+00:09:18,170 --> 00:09:23,980
+to be ended with, with [inaudible]. Alright, and let's see if that's working
+
+89
+00:09:23,980 --> 00:09:30,980
+now. And we still have a syntax error, at line 29. And the mistake here is that we
+
+90
+00:09:34,870 --> 00:09:41,360
+forgot to declare the type of this variable, which is a list. And then it
+
+91
+00:09:41,360 --> 00:09:46,150
+gets initialized to this to this big expression that we wrote out. Lemme just
+
+92
+00:09:46,150 --> 00:09:50,200
+do the indentation a little more nicely here. And notice, something actually is
+
+93
+00:09:50,200 --> 00:09:54,280
+worth mentioning here that this definition here, this definition of the variable
+
+94
+00:09:54,280 --> 00:10:01,280
+list. Depends on the definition of the previous variables in the let. So, each of
+
+95
+00:10:01,330 --> 00:10:06,910
+so when a let binding is made the name of the variable that's bound is actually
+
+96
+00:10:06,910 --> 00:10:12,810
+available in subsequent let expressions. So in this case this variable list makes
+
+97
+00:10:12,810 --> 00:10:18,360
+use of all of hello, world, and newline, Which we're defining earlier in the same
+
+98
+00:10:18,360 --> 00:10:25,360
+lead constr uct. Let's save this, and come over here and compile it. And we see we
+
+99
+00:10:27,870 --> 00:10:34,030
+got another bug in the code. So, we come up here. We see we I've made a mistake
+
+100
+00:10:34,030 --> 00:10:38,390
+here. I've used functional notation here calling flattened of next and what I
+
+101
+00:10:38,390 --> 00:10:43,670
+actually wanted to do was to dispatch to next on the method flattened. So, that
+
+102
+00:10:43,670 --> 00:10:49,570
+should be written like that. All right, Probably getting close now. Let's see if
+
+103
+00:10:49,570 --> 00:10:56,570
+it works yet. Well it compiles and now let's see if it runs. And indeed it does,
+
+104
+00:11:01,510 --> 00:11:06,070
+Prints out, hello world, Just as we expected. Now let's go back to our program
+
+105
+00:11:06,070 --> 00:11:11,650
+and let's generalize this list abstraction in one way. Let's say that we can have an
+
+106
+00:11:11,650 --> 00:11:17,680
+arbitrary list of objects, not just strings. And that will require us to
+
+107
+00:11:17,680 --> 00:11:22,430
+change a few things so it can be initialized now with an object. And now
+
+108
+00:11:22,430 --> 00:11:27,060
+when it comes time to flatten this list we want to reduce a string. We want to
+
+109
+00:11:27,060 --> 00:11:33,760
+present produce a print representation. But not everything in the, in the list, is
+
+110
+00:11:33,760 --> 00:11:38,870
+necessarily a string. And we need a way to traverse the list and do different things,
+
+111
+00:11:38,870 --> 00:11:41,370
+for different kinds of things that might be in the list for different types of
+
+112
+00:11:41,370 --> 00:11:46,420
+things that might be in the list. And so there's a constructing cool for the type
+
+113
+00:11:46,420 --> 00:11:53,420
+of, and, of an object, at run time and this is called, the case construct. So,
+
+114
+00:11:53,700 --> 00:11:59,240
+let me first introduce a let expression here, we'll let the string that we're
+
+115
+00:11:59,240 --> 00:12:05,910
+gonna construct, Which is of type string. And that's going to be initialized to
+
+116
+00:12:05,910 --> 00:12:11,200
+something, and now, it's going to be a case. And what do we put a case on? Well,
+
+117
+00:12:11,200 --> 00:12:14,820
+it's going to depend on the kind of thing the item is. So the item in the list could
+
+118
+00:12:14,820 --> 00:12:19,010
+be, it could be different kinds of types and we want to do a different operation
+
+119
+00:12:19,010 --> 00:12:25,980
+depending on what item actually is. So the case item and then the key word is of, and
+
+120
+00:12:25,980 --> 00:12:32,790
+now we have different branches of the case expression for different kinds of things,
+
+121
+00:12:32,790 --> 00:12:37,920
+that could be in the list. So let's say that if it's an [inaudible]. Okay, so what
+
+122
+00:12:37,920 --> 00:12:43,530
+this does, is this says that if the item is an INT, then we're going to rename it
+
+123
+00:12:43,530 --> 00:12:48,130
+to I, we're going to bind I to that integer and then we can do something with
+
+124
+00:12:48,130 --> 00:12:55,130
+I. And what would we want to do with I? Well, we'd probably want to convert it to
+
+125
+00:12:55,180 --> 00:13:02,180
+a string. So we'll do I to A 'quot;I'quot; And what if in fact. That item happened to be of
+
+126
+00:13:06,640 --> 00:13:09,830
+type string. The items in the list have to be of type string. Well, then we can just
+
+127
+00:13:09,830 --> 00:13:16,130
+use the item itself, as the string representation. And we can do this for
+
+128
+00:13:16,130 --> 00:13:18,650
+other kinds of types. If we had other kinds of types in our system, we could
+
+129
+00:13:18,650 --> 00:13:23,610
+continue to list out other, cases here, and how to convert them into a string
+
+130
+00:13:23,610 --> 00:13:26,970
+representation. But let's just have a default case here. We'll say if it's any
+
+131
+00:13:26,970 --> 00:13:30,900
+other kind of type, which would, which would be covered by having, a branch
+
+132
+00:13:30,900 --> 00:13:35,480
+saying that if it's, of, type object, we'll call it O, then we should just
+
+133
+00:13:35,480 --> 00:13:42,480
+abort. And so we should just call the abort function and quit. And that's our
+
+134
+00:13:44,260 --> 00:13:50,100
+case. It needs to be terminated with a closing keyword called esag, Again the
+
+135
+00:13:50,100 --> 00:13:57,100
+reverse of, of case. And now we can use that [inaudible] we constructed in our
+
+136
+00:13:59,070 --> 00:14:05,810
+little function here. So if, if the next field is void then we're just gonna return
+
+137
+00:14:05,810 --> 00:14:12,320
+the string. Otherwise we're gonna return this string incatenated with the
+
+138
+00:14:12,320 --> 00:14:16,980
+flattening out of the rest of the list. Kay. Now there's a couple of things we
+
+139
+00:14:16,980 --> 00:14:22,250
+have to fix up. We used the I to A method here, which means that list needs to
+
+140
+00:14:22,250 --> 00:14:29,250
+inherit. From the, conversion class A to I. And there's another issue here, I see.
+
+141
+00:14:34,760 --> 00:14:41,760
+And that's right here. So, if you notice The, the. The case statement needs to
+
+142
+00:14:43,150 --> 00:14:48,060
+produce a string. Okay, and it turns out that abort dose not return a string, abort
+
+143
+00:14:48,060 --> 00:14:52,180
+actually terminates the program, but it's type is that it returns an object. And so
+
+144
+00:14:52,180 --> 00:14:57,570
+here we have to convince the type checker, to convince, to accept this, piece of
+
+145
+00:14:57,570 --> 00:15:01,610
+code, and we need to get this branch here to type as a string. So what we can do,
+
+146
+00:15:01,610 --> 00:15:06,470
+and this is ugly, but it's the way to do it, is we put it in a block, in a
+
+147
+00:15:06,470 --> 00:15:11,810
+statement block. We call abort first, and a gain, that will just terminate the
+
+148
+00:15:11,810 --> 00:15:15,230
+program. And now we can put any string expression we want after that, and that'll
+
+149
+00:15:15,230 --> 00:15:19,560
+be the, that'll give a type string to the entire block. So we can just put the empty
+
+150
+00:15:19,560 --> 00:15:22,710
+string here, for example, and that has to be terminated with a semicolon, since this
+
+151
+00:15:22,710 --> 00:15:27,690
+isn't a block. And we can close, that, with a curly brace. Okay? So this is just
+
+152
+00:15:27,690 --> 00:15:32,250
+something we have to do, to make the type checker happy. And that may be everything
+
+153
+00:15:32,250 --> 00:15:39,250
+we needed to do. So let's try compiling this. And we have to include the diversion
+
+154
+00:15:41,950 --> 00:15:48,950
+library. And we have one syntax error. So far. And that's because we forgot to put
+
+155
+00:15:52,190 --> 00:15:59,190
+the, semicolon terminator on, on each of our, each of the, each of the, variables
+
+156
+00:15:59,620 --> 00:16:06,620
+that we were introducing in the let. Okay, got to save that. Let's try this again.
+
+157
+00:16:08,290 --> 00:16:14,110
+And, oops, I didn't actually manage to fix the syntax error. And that's because I put
+
+158
+00:16:14,110 --> 00:16:19,540
+the semicolon in the wrong place. Actually, I, I forgot. Variables that are
+
+159
+00:16:19,540 --> 00:16:26,540
+bond in a lent are separated by, by commas. But, the branches of the case have
+
+160
+00:16:27,870 --> 00:16:32,710
+to be terminated by semicolons. So, what I said before was incorrect about using
+
+161
+00:16:32,710 --> 00:16:39,060
+semicolons to terminate lent bindings. It's just in case branches where we need
+
+162
+00:16:39,060 --> 00:16:42,890
+it, In this example. Alright, anyway coming back to this let's see if it
+
+163
+00:16:42,890 --> 00:16:49,690
+compiles. And it does. And now let's run it, And it works. Now of course we haven't
+
+164
+00:16:49,690 --> 00:16:56,440
+actually exploited the ability to have different types of objects in the list. So
+
+165
+00:16:56,440 --> 00:17:03,440
+let's, let's do that. Let's add an integer in here. Type ints and let's, give it a
+
+166
+00:17:07,880 --> 00:17:14,880
+number 42. And we can insert it in here. And now we can pass any object, to a knit
+
+167
+00:17:25,019 --> 00:17:32,019
+in the first position. So we'll just put in 42 right there. And when we compile and
+
+168
+00:17:34,360 --> 00:17:41,360
+run this it just print hello world 42. If we, if everything goes as expected, And it
+
+169
+00:17:42,850 --> 00:17:46,700
+does, And that concludes our little tour of [inaudible]. There are a few features
+
+170
+00:17:46,700 --> 00:17:51,789
+that we haven't shown in these examples, but you can look in the examples
+
+171
+00:17:51,789 --> 00:17:57,330
+directory, for lots more programs - many more pro grams that will show you all the
+
+172
+00:17:57,330 --> 00:18:01,519
+different ins and outs and details of the other language features as well as the
+
+173
+00:18:01,519 --> 00:18:02,440
+ones we've covered here.

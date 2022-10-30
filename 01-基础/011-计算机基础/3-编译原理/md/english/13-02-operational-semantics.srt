@@ -1,0 +1,539 @@
+0
+00:00:04,270 --> 00:00:11,270
+In this video we're going to begin our discussion of formal operational semantics.
+
+1
+00:00:13,469 --> 00:00:18,039
+Just as we did with lexical analysis, parsing and type-checking. The first step
+
+2
+00:00:18,039 --> 00:00:22,140
+in defining what we mean by a formal operational semantics is introduced the
+
+3
+00:00:22,140 --> 00:00:27,220
+notation and it turns out that the notation we want to use for operational
+
+4
+00:00:27,220 --> 00:00:31,289
+semantics is the same or very similar in the notation we use in type-checking. We
+
+5
+00:00:31,289 --> 00:00:37,210
+are going to be using logical rule of inference. So, in the case of
+
+6
+00:00:37,210 --> 00:00:42,850
+type-checking, the kinds of inference rules we, we presented, proofing's of the
+
+7
+00:00:42,850 --> 00:00:47,610
+forms that in some context. We could show that some expression had a particular type
+
+8
+00:00:47,610 --> 00:00:53,899
+in this case to type c. And for evaluation we're going to be doing something quite
+
+9
+00:00:53,899 --> 00:00:57,700
+similar. We will show that in some contacts now that this is going to be a
+
+10
+00:00:57,700 --> 00:01:01,320
+different kind of context that we had in typing so this is going to be an
+
+11
+00:01:01,320 --> 00:01:06,049
+evaluation context as oppose to a type context and so what goes in the context
+
+12
+00:01:06,049 --> 00:01:09,340
+will actually be different. But for the moment all that really matters is there is
+
+13
+00:01:09,340 --> 00:01:15,090
+some kind of a context and in that context we're going to be able to show some
+
+14
+00:01:15,090 --> 00:01:22,090
+expression evaluates to a particular value b. So as an example, let's take a look at
+
+15
+00:01:23,990 --> 00:01:29,359
+this simple expression, e1 + e2 and let's say that using our rules which we, I
+
+16
+00:01:29,359 --> 00:01:33,969
+haven't shown you yet, but let's say we had a bunch of rules and we could show in
+
+17
+00:01:33,969 --> 00:01:40,969
+the initial context. That e1 in that same context, okay? So these context are going
+
+18
+00:01:41,939 --> 00:01:47,149
+to be the same, that e1 evaluated to the a value of five and e2 also in that same
+
+19
+00:01:47,149 --> 00:01:53,149
+context evaluated to the value of, of seven then we could prove that e1 + e2
+
+20
+00:01:53,149 --> 00:01:56,149
+evaluated to the value of twelve. If you think about it what this rule was saying
+
+21
+00:01:56,149 --> 00:02:01,729
+is that if e1 evaluates to five and e2 evaluates to seven, then if you evaluated
+
+22
+00:02:01,729 --> 00:02:05,999
+the expression e1 + e2, you're going to get the value twelve. And what's the
+
+23
+00:02:05,999 --> 00:02:12,280
+context doing, well it doesn't do a whole lot in this particular rule. But remember
+
+24
+00:02:12,280 --> 00:02:17,470
+what the context was for in type checking. The context was for giving values to the
+
+25
+00:02:17,470 --> 00:02:23,510
+free variables of the expression. And so, we need for an expres sion like e1 + e2 to
+
+26
+00:02:23,510 --> 00:02:26,470
+say something about what the values are, the variable that might appear in e1 and
+
+27
+00:02:26,470 --> 00:02:32,720
+in e2 in order to say what they evaluate to and, and therefore, to say what the
+
+28
+00:02:32,720 --> 00:02:39,720
+entire expression e1 + e2 will evaluated to. Now, let's be a little more precise
+
+29
+00:02:40,730 --> 00:02:45,780
+about what's going to go in the context. So, let's consider the evaluation of a, a
+
+30
+00:02:45,780 --> 00:02:50,850
+expression or statement like y gets x+1. Okay, so we are going to assign y the
+
+31
+00:02:50,850 --> 00:02:57,850
+value x+1 and there are two things that we have to know in order to evaluate this
+
+32
+00:02:59,120 --> 00:03:06,120
+expression. First of all, we have to know where In memory of valuable start. So, for
+
+33
+00:03:06,560 --> 00:03:11,010
+example, the variable x here, we're going to have to go and look up excess value and
+
+34
+00:03:11,010 --> 00:03:17,640
+then add one to it And then that value is going to be stored in whatever memory
+
+35
+00:03:17,640 --> 00:03:24,640
+location holds the value for y okay so there is a mapping from variables, Two
+
+36
+00:03:25,840 --> 00:03:32,840
+memory locations. Okay and that is called, In operational semantics the environment
+
+37
+00:03:34,819 --> 00:03:38,690
+and this is a little confusing maybe because it use environment for other
+
+38
+00:03:38,690 --> 00:03:42,180
+things. Okay, so now let's forget about, as all we uses of the word environment. We
+
+39
+00:03:42,180 --> 00:03:47,810
+were talking about the operational semantics, what the environment means is
+
+40
+00:03:47,810 --> 00:03:52,850
+the mapping, the association in between variables and where that variable store in
+
+41
+00:03:52,850 --> 00:03:57,480
+memory. And then in addition, we're going to need a store and that's going to tell
+
+42
+00:03:57,480 --> 00:04:03,730
+us what is in the memory. So just knowing the location for a variable isn't quite
+
+43
+00:04:03,730 --> 00:04:09,840
+enough. When we, if we know the value of x if we know the location for x, for example
+
+44
+00:04:09,840 --> 00:04:12,680
+or as, as important because we're going to get the value of x but we also have to
+
+45
+00:04:12,680 --> 00:04:19,329
+know exactly when value is stored there and so store. Is going to be a mapping for
+
+46
+00:04:19,329 --> 00:04:25,740
+memory locations Values. These are the values that are actually stored in the
+
+47
+00:04:25,740 --> 00:04:30,460
+memory so it's two levels of mapping. We associate with each variable and memory
+
+48
+00:04:30,460 --> 00:04:37,460
+location And then each memory location will have a value in it. So let's talk
+
+49
+00:04:37,539 --> 00:04:42,189
+about the notation that we're going to use for writing down the environment and the
+
+50
+00:04:42,189 --> 00:04:46,249
+store. So as we said, the variable environments have variables to locations
+
+51
+00:04:46,249 --> 00:04:51,169
+and we're going to w rite that out. In the following way, we're going to just have
+
+52
+00:04:51,169 --> 00:04:56,849
+this as a list of variables and location pairs separated by columns and this
+
+53
+00:04:56,849 --> 00:05:02,159
+environment for examples of variable a, is it location l1 And variable b is in
+
+54
+00:05:02,159 --> 00:05:07,590
+location l2. And another aspect of the environment is that it's going to keep
+
+55
+00:05:07,590 --> 00:05:11,539
+track of the variables that are in scalps and the only variables that will be
+
+56
+00:05:11,539 --> 00:05:16,469
+mentioned in the environment are those currently in sculpted in the expression
+
+57
+00:05:16,469 --> 00:05:22,539
+that is being evaluated. Now as we said, stores map memory location to values and
+
+58
+00:05:22,539 --> 00:05:27,479
+we'll also write out stores as lists of pairs. So in this case, the memory
+
+59
+00:05:27,479 --> 00:05:33,749
+location l1 in the store contains the value five and the memory location l2
+
+60
+00:05:33,749 --> 00:05:40,749
+contains the value seven And we will also separate these pairs by an arrow. And just
+
+61
+00:05:41,469 --> 00:05:45,180
+to make the stores look a little bit different from the environment so that we
+
+62
+00:05:45,180 --> 00:05:50,520
+won't confuse the two. There's an operation on stores which is to replace of
+
+63
+00:05:50,520 --> 00:05:55,389
+value or update of value. So, in this case, we're taking the store s and we're
+
+64
+00:05:55,389 --> 00:06:02,389
+updating the value at location l1 to b12 And this defines a new store s prime. So,
+
+65
+00:06:02,680 --> 00:06:07,889
+keep in mind here that the stores are just functions list in our model and so we can
+
+66
+00:06:07,889 --> 00:06:11,819
+define a new store by taking the old function or the old store has and
+
+67
+00:06:11,819 --> 00:06:18,529
+modifying it at one point. So this defines a new store as prime such if I apply s
+
+68
+00:06:18,529 --> 00:06:24,830
+prime to the location l1, I get off the new value twelve and if I apply s prime to
+
+69
+00:06:24,830 --> 00:06:31,539
+any other location, any location different from l1 I get out the value that the store
+
+70
+00:06:31,539 --> 00:06:38,539
+held in s, sorry the value of the location in store s. Now in Cool we have more
+
+71
+00:06:41,529 --> 00:06:45,259
+complicated values and integers. In particular we have objects and all the
+
+72
+00:06:45,259 --> 00:06:49,639
+objects of course are instances of some class and we're going to need a notation
+
+73
+00:06:49,639 --> 00:06:53,520
+for representing objects in our operational semantics. So we'll use the
+
+74
+00:06:53,520 --> 00:07:00,330
+following way of writing down an object. An object will begin with its class name.
+
+75
+00:07:00,330 --> 00:07:06,210
+In this case the class name x and it would be followed by a list of the attributes.
+
+76
+00:07:06,210 --> 00:07:11,529
+In this case the class x has n attributes, a1 through an And associated with each
+
+77
+00:07:11,529 --> 00:07:16,229
+attribute will be the memory location whether an attribute stored so attribute
+
+78
+00:07:16,229 --> 00:07:21,830
+a1 is stored location l1 up through attribute and which is stored at location
+
+79
+00:07:21,830 --> 00:07:27,659
+ln. And this would be a complete description of the object because we know
+
+80
+00:07:27,659 --> 00:07:34,659
+where in memory the object the object is stored. We can use the store to look up
+
+81
+00:07:34,860 --> 00:07:41,860
+the value of each of those attributes. There are few special classes in Kuhl that
+
+82
+00:07:42,219 --> 00:07:47,639
+don't have attribute names and we'll have special way overriding them. So integers
+
+83
+00:07:47,639 --> 00:07:53,770
+only have a value and, and that will be written as int with a single value in
+
+84
+00:07:53,770 --> 00:07:58,240
+parens, the value of the integer similarly for brilliance. They have a single value
+
+85
+00:07:58,240 --> 00:08:02,879
+true of false and strings have two properties, the length of the string and
+
+86
+00:08:02,879 --> 00:08:09,689
+the sting constant. There's also a special value void typed object and we'll use the
+
+87
+00:08:09,689 --> 00:08:14,860
+term void in our operational semantics to representative and briefly here, so void
+
+88
+00:08:14,860 --> 00:08:19,039
+is a, a special and that there are no operations that can be before and on void
+
+89
+00:08:19,039 --> 00:08:23,719
+except for the test is void. So, in particular, you can't dispatch the void
+
+90
+00:08:23,719 --> 00:08:27,080
+even though it has typed objects that will generate runtime error. The only thing you
+
+91
+00:08:27,080 --> 00:08:31,919
+can do is to test whether the value is void or not. And concrete implementation
+
+92
+00:08:31,919 --> 00:08:38,919
+we typically use a null pointer which represent void. Now we're ready to talk
+
+93
+00:08:39,650 --> 00:08:43,240
+about in more detail what the judgments will look like in our operational
+
+94
+00:08:43,240 --> 00:08:48,580
+semantics so the context will consist of three pieces. The first piece is a current
+
+95
+00:08:48,580 --> 00:08:53,580
+self object. The second piece is the environment which is again the mapping
+
+96
+00:08:53,580 --> 00:08:57,940
+from variables to the locations where those variables are stored and the third
+
+97
+00:08:57,940 --> 00:09:03,340
+piece is the memory, the store. The mapping from memory locations to the
+
+98
+00:09:03,340 --> 00:09:10,340
+values held at those locations, All right? So in some context, an expression e will
+
+99
+00:09:10,370 --> 00:09:15,800
+evaluate to two things. First of all, e will produce a value so for example we saw
+
+100
+00:09:15,800 --> 00:09:20,650
+before that the expressions seven + five would produce the value twelve, that's one
+
+101
+00:09:20,650 --> 00:09:25,570
+result to the evaluation. But the second thing is that we'll produce a modified
+
+102
+00:09:25,570 --> 00:09:30,960
+store. So the expression e maybe a complicated piece of code Maybe a whole
+
+103
+00:09:30,960 --> 00:09:35,020
+program is on the right and it might have a slight statements that update the
+
+104
+00:09:35,020 --> 00:09:41,320
+contents of the memory And so, after e is evaluated, there will be a new memory
+
+105
+00:09:41,320 --> 00:09:46,300
+state that we have to represent and so s prime here represents the state of memory
+
+106
+00:09:46,300 --> 00:09:52,350
+after evaluation And now, those are couple of things here. First of all the current
+
+107
+00:09:52,350 --> 00:09:58,530
+self object and the environment don't change. They are not changed by evaluation
+
+108
+00:09:58,530 --> 00:10:04,600
+so which object is the self parameter to the current method and. Well, the mapping
+
+109
+00:10:04,600 --> 00:10:11,180
+between variables and memory locations that is not modified by running a, running
+
+110
+00:10:11,180 --> 00:10:14,620
+an expression and that makes sense, I mean, you can't update the self object in
+
+111
+00:10:14,620 --> 00:10:21,240
+Kuhl and we don't have access in, in any form to re-locations or variables stored
+
+112
+00:10:21,240 --> 00:10:26,240
+and so those two things are in variant. They don't they are variant under
+
+113
+00:10:26,240 --> 00:10:30,240
+evaluation. They don't change when you run a piece of code. However, the story does
+
+114
+00:10:30,240 --> 00:10:34,560
+change so the contents in the memory may be modified so that's why we need a store
+
+115
+00:10:34,560 --> 00:10:40,520
+for both before evaluation and after evaluation. And one more detail these
+
+116
+00:10:40,520 --> 00:10:47,520
+judgments of this form always has a qualification. That judgment only holds if
+
+117
+00:10:47,620 --> 00:10:53,200
+the evaluation of e terminates. So, if e goes in to infinite loop, then you're not
+
+118
+00:10:53,200 --> 00:10:56,900
+going to get a value and you're not going to get a new store. So, this kind of the
+
+119
+00:10:56,900 --> 00:11:02,340
+judgment must always be read as saying that if e terminates, then e produces a
+
+120
+00:11:02,340 --> 00:11:09,340
+value v and a new store s prime. Summarize the results of evaluation is a value and a
+
+121
+00:11:12,130 --> 00:11:19,130
+new store. And where the new store models, the side effects of the expression And
+
+122
+00:11:19,360 --> 00:11:22,810
+once again there are something don't change as a result of evaluation. And this
+
+123
+00:11:22,810 --> 00:11:26,310
+is actually important for compilation because we'll be able to take advantage of
+
+124
+00:11:26,310 --> 00:11:30,450
+the fact that they don't change to generate efficient code so the variable
+
+125
+00:11:30,450 --> 00:11:34,420
+environment doesn't change, the value itself which object we're talking about
+
+126
+00:11:34,420 --> 00:11:39,880
+doesn't change and notice here as another detail. That the contents of the self
+
+127
+00:11:39,880 --> 00:11:43,140
+objects, the attributes inside the self object might change, they might get
+
+128
+00:11:43,140 --> 00:11:49,480
+updated but t he locations where the attributes are stored do not change. So,
+
+129
+00:11:49,480 --> 00:11:52,980
+the layout of the object where the object stored doesn't change and that's all we're
+
+130
+00:11:52,980 --> 00:11:57,870
+saying here, the actual contents of the object which of course is a part of the
+
+131
+00:11:57,870 --> 00:12:03,990
+mapping of the store, those might get updated by evaluation. And also the
+
+132
+00:12:03,990 --> 00:12:07,420
+operational semantics allows for non-terminating evaluations. That's the
+
+133
+00:12:07,420 --> 00:12:14,420
+last point here and so the meaning that the judgments only holds on the assumption
+
+134
+00:12:14,490 --> 00:12:17,890
+that the, that the expression actually completes.

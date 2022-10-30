@@ -1,0 +1,99 @@
+0
+00:00:01,670 --> 00:00:05,600
+To wrap up and summarize our discussion of the global analysis of control flow graphs,
+
+1
+00:00:05,600 --> 00:00:10,050
+we've talked about two kinds of analysis in the past several videos. Constant
+
+2
+00:00:10,050 --> 00:00:15,190
+propagation is what is called a forwards analysis Because information is pushed
+
+3
+00:00:15,190 --> 00:00:19,910
+from the inputs to the outputs. So if you think about a control flow graph. What
+
+4
+00:00:19,910 --> 00:00:23,440
+happens in control flow analysis is that information flows in this direction.
+
+5
+00:00:23,440 --> 00:00:27,710
+It flows in the same direction as computation. If I have a constant up here
+
+6
+00:00:27,710 --> 00:00:32,780
+x is assigned constant down here, and x is used later on and that constant will flow
+
+7
+00:00:32,780 --> 00:00:38,019
+forward to the uses. Okay So information flows in the same direction as computation.
+
+8
+00:00:38,019 --> 00:00:42,569
+Liveness on the other hand is a backwards analysis. Information is pushed
+
+9
+00:00:42,569 --> 00:00:48,589
+from outputs back towards inputs. So here in this example and let me change
+
+10
+00:00:48,589 --> 00:00:55,589
+colors. Here we see that x is live before the statement. And that liveness gets propagated
+
+11
+00:00:55,749 --> 00:00:59,709
+in the other direction. It gets propagated against the control, against the
+
+12
+00:00:59,709 --> 00:01:06,709
+flow, of execution, backwards towards the beginning of the program.
+
+13
+00:01:07,109 --> 00:01:11,789
+So they're many other kinds of global flow analysis in the literature. The
+
+14
+00:01:11,789 --> 00:01:15,579
+constant propagation analysis and the liveness analysis are two of the most important.
+
+15
+00:01:15,579 --> 00:01:18,049
+There is a number of others that are also very important and many, many
+
+16
+00:01:18,049 --> 00:01:22,469
+more that people have investigated. Almost all these analyses can be classified
+
+17
+00:01:22,469 --> 00:01:25,950
+as either forward or backward. There are some analyses and some important
+
+18
+00:01:25,950 --> 00:01:30,380
+ones that are neither forward nor backward. That information is basically pushed
+
+19
+00:01:30,380 --> 00:01:34,469
+in both directions. And the other thing is that the, almost all the analyses
+
+20
+00:01:34,469 --> 00:01:38,729
+in the literature that do global flow analysis anyway also follow this methodology
+
+21
+00:01:38,729 --> 00:01:43,619
+of local Rules that relay information between adjacent program points.
+
+22
+00:01:43,619 --> 00:01:47,780
+So it, it's the local rules part that's important. So we break down the complicate
+
+23
+00:01:47,780 --> 00:01:52,219
+d problem of analyzing an entire control flow graph into a collection
+
+24
+00:01:52,219 --> 00:01:55,939
+of rules that only do ver, propagate information very, very locally.

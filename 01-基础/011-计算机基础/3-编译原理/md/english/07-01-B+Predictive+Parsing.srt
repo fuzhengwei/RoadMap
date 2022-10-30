@@ -1,0 +1,547 @@
+0
+00:00:01,630 --> 00:00:06,300
+So here is the left factor grammar now type out neatly. And we
+
+1
+00:00:06,300 --> 00:00:12,730
+use this grammar to construct a parsing table. And let's not worry right now about
+
+2
+00:00:12,730 --> 00:00:19,730
+how we got this table, I'm not gonna give the algorithm right now. But, let's just say
+
+3
+00:00:20,140 --> 00:00:24,859
+that we got it somehow. And, what I'm going to explain is how we got the table.
+
+4
+00:00:24,859 --> 00:00:30,759
+So, One dimension of the table is the current left most, non-terminal in the par
+
+5
+00:00:30,759 --> 00:00:37,480
+stream. That's on the rows. And then the columns represent the next input token So,
+
+6
+00:00:37,480 --> 00:00:42,180
+the next token in the input stream. And, then the entry is the right hand side of the
+
+7
+00:00:42,180 --> 00:00:45,970
+production to use. So, which production that we should used at that point
+
+8
+00:00:45,970 --> 00:00:51,510
+in the pars. That's the production that's predicted. So let's do an example.
+
+9
+00:00:51,510 --> 00:00:57,920
+So let's look at E INT entry. So this entry right here. Now what this says is that
+
+10
+00:00:57,920 --> 00:01:01,610
+when the current nonterminal is E, meaning the left most nonterminal on the parks
+
+11
+00:01:01,610 --> 00:01:05,859
+tree and the next input is in, the thing that we see coming up in the input is
+
+12
+00:01:05,859 --> 00:01:09,969
+an integer. Then we should use the production E goes to TX. So we should expand
+
+13
+00:01:09,969 --> 00:01:16,969
+E with the children TX. Let's do another example. So when the current non-terminal
+
+14
+00:01:20,119 --> 00:01:26,630
+is Y and the current token, the current input is plus, then we should
+
+15
+00:01:26,630 --> 00:01:32,139
+use the production Y goes to epsilon. Okay, what that says is, it's a little bit
+
+16
+00:01:32,139 --> 00:01:36,799
+different situation than the previous one, it says look when you see a plus in the input
+
+17
+00:01:36,799 --> 00:01:41,389
+and your current left most non-terminal is y, the only way this parse
+
+18
+00:01:41,389 --> 00:01:45,200
+is going to succeed is if the y doesn't produce anything. You need to get rid of the
+
+19
+00:01:45,200 --> 00:01:50,340
+y and move on to a nother non-terminal whichever one is left-most after you get rid
+
+20
+00:01:50,340 --> 00:01:55,979
+of the y. If you want to have any hope of parsing this particular string. And finally,
+
+21
+00:01:55,979 --> 00:02:02,979
+notice that a lot of the entries are blank and those are error entries. So
+
+22
+00:02:03,119 --> 00:02:08,220
+let's take a look at the E star entry. That says that if the leftmost non terminal
+
+23
+00:02:08,220 --> 00:02:13,860
+is E and the next input token is a time symbol, a star. Well, then there is
+
+24
+00:02:13,860 --> 00:02:19,550
+no move that you can make. There is, there is no production you can use for E that's
+
+25
+00:02:19,550 --> 00:02:24,890
+going to successfully parse that input. And this is the point at which you would raise
+
+26
+00:02:24,890 --> 00:02:31,170
+a parsing error. In the rest of this video, I'm gonna give the algorithm for parsing
+
+27
+00:02:31,170 --> 00:02:35,240
+using a parsing table. And then in future videos, we'll explain how to construct
+
+28
+00:02:35,240 --> 00:02:39,280
+a parsing table. So the method for parsing using a parsing table is similar
+
+29
+00:02:39,280 --> 00:02:44,880
+to recursive descent. Expect that for the leftmost non terminal S in the tree,
+
+30
+00:02:44,880 --> 00:02:49,420
+we look at the next input token A. And then as we just illustrated with the examples,
+
+31
+00:02:49,420 --> 00:02:54,910
+we look up in the table the production to use at the low, at the, at the
+
+32
+00:02:54,910 --> 00:03:01,910
+entry S, A. And instead of using recursive functions, to trace out the parse
+
+33
+00:03:02,920 --> 00:03:08,910
+tree, we're going to have a stack of records that can, record the frontier. And
+
+34
+00:03:08,910 --> 00:03:13,640
+so at any point in the [inaudible] tree we will have some non-terminals that have yet
+
+35
+00:03:13,640 --> 00:03:17,980
+to be expanded. Those are always at the frontier at the current leaves of the [inaudible]
+
+36
+00:03:17,980 --> 00:03:21,700
+tree. And also there are some terminals that we have yet to match against.
+
+37
+00:03:21,700 --> 00:03:25,620
+Those will all be recorded out of stack. The important property of the stack
+
+38
+00:03:25,620 --> 00:03:30,530
+is that the left most pending terminal or non-terminal is always at the top of the stack.
+
+39
+00:03:30,530 --> 00:03:34,060
+So, either the terminal we are trying to match or the non-terminal we are
+
+40
+00:03:34,060 --> 00:03:40,550
+trying to expand will always be on top of our stack. We'll reject if we reach an error
+
+41
+00:03:40,550 --> 00:03:43,550
+state. So if we look up one of those empty entries in the table, we will reject
+
+42
+00:03:43,550 --> 00:03:47,810
+the string. And we'll accept if we reach the end of the input, and we have an empty
+
+43
+00:03:47,810 --> 00:03:54,220
+stack. Meaning we have no pending unmatched terminals or unexpanded non terminals.
+
+44
+00:03:54,220 --> 00:04:00,900
+So, here's the algorithm, we initialize the stack to just the start symbol
+
+45
+00:04:00,900 --> 00:04:07,160
+S and a special symbol $. The $ is not a part of the alphabet or you can think
+
+46
+00:04:07,160 --> 00:04:12,260
+of it we extend wherever our alphabet is with a new symbol $. $ Marks the
+
+47
+00:04:12,260 --> 00:04:16,250
+mottom of the stack and you can think of it also as marking the end of input. So,
+
+48
+00:04:16,250 --> 00:04:21,040
+this is just a way of recording where the end of the input is going to be. Okay,
+
+49
+00:04:21,040 --> 00:04:26,810
+so the, so once we've matched, something against S, then whatever's left, it better
+
+50
+00:04:26,810 --> 00:04:32,540
+be at the end of the input. That's what the, that stack, expresses. And now we're
+
+51
+00:04:32,540 --> 00:04:37,870
+at a loop, so we're gonna repeat the following moves until; we can't repeat them
+
+52
+00:04:37,870 --> 00:04:43,240
+anymore Until the stack is empty. Okay? And there's two possible moves. Let's
+
+53
+00:04:43,240 --> 00:04:47,690
+do the terminals first. So let's say the top of our stack is a terminal. So here
+
+54
+00:04:47,690 --> 00:04:52,160
+we're dividing the stack to the top of the stack and the rest of the stack. So,
+
+55
+00:04:52,160 --> 00:04:55,570
+what are we going to do if the top of the stack is a terminal? Well we're going
+
+56
+00:04:55,570 --> 00:04:59,600
+to try to match the input. So we're going to say well if the top of the stack, the terminal
+
+57
+00:04:59,600 --> 00:05:04,030
+on top of the stack, matches the next thing in the input, then we advance the
+
+58
+00:05:04,030 --> 00:05:10,180
+input. And we pop the stack. So we have successfully matched the input against
+
+59
+00:05:10,180 --> 00:05:15,030
+the, the terminal. And so that terminal is done, and we should progress into
+
+60
+00:05:15,030 --> 00:05:18,470
+the stack, and match the next thing that hasn't been handled yet. And if they
+
+61
+00:05:18,470 --> 00:05:22,810
+don't match, if the terminal that we are looking at doesn't match the next thing in
+
+62
+00:05:22,810 --> 00:05:27,380
+the input, well, that's an error. We don't have any backtracking here. There's no way
+
+63
+00:05:27,380 --> 00:05:32,040
+to parse the string, so we'll raise [inaudible]. Now the second class of moves
+
+64
+00:05:32,040 --> 00:05:36,610
+is deals with the non-terminal. So let's say at the top of the stack is the non-terminal
+
+65
+00:05:36,610 --> 00:05:40,490
+x. So remember that the top of the stack will be a non-terminal, exactly
+
+66
+00:05:40,490 --> 00:05:44,690
+when that is the left most non-terminal. So now what we, now what we
+
+67
+00:05:44,690 --> 00:05:49,830
+do is we look at our pricing table under the entry for x and the next input symbol
+
+68
+00:05:49,830 --> 00:05:54,820
+and that should give us the right hand side of a production. Okay? And now what we
+
+69
+00:05:54,820 --> 00:06:01,110
+do is we pop X off the stack, and we push the, the children of X i n the parse
+
+70
+00:06:01,110 --> 00:06:06,150
+tree under the stack. So this is the way we expand X. So now, the leftmost unhandled
+
+71
+00:06:06,150 --> 00:06:10,090
+thing in the parse is going to be Y1, because that's the first child of X.
+
+72
+00:06:10,090 --> 00:06:13,400
+And then all the other children of X are next. And then whatever else is in the
+
+73
+00:06:13,400 --> 00:06:20,080
+stack. And again, if there's no entry, for, the current non terminal and input in
+
+74
+00:06:20,080 --> 00:06:27,080
+the table, then that's an error, and the parsing stops. So let's through an example
+
+75
+00:06:29,190 --> 00:06:35,350
+using our, pricing table, and. You might want to refer back to the parsing table, have
+
+76
+00:06:35,350 --> 00:06:39,190
+not included it here, because there isn't space for it. But I'll work through
+
+77
+00:06:39,190 --> 00:06:43,730
+it, and you can go back and look at it at some point, and convince yourself that I'd
+
+78
+00:06:43,730 --> 00:06:49,550
+made the right moves. So initially, our stack is E$. So E was our start symbol, and
+
+79
+00:06:49,550 --> 00:06:53,990
+$ is our end of input symbol. And our input, we're gonna try to parse the input
+
+80
+00:06:53,990 --> 00:06:57,300
+[inaudible] times [inaudible], that's what we want to parse. And then, of course, we
+
+81
+00:06:57,300 --> 00:07:01,380
+have our new symbol $, we'll tack that onto the end of the input. And if all goes
+
+82
+00:07:01,380 --> 00:07:05,729
+well, the dollar sign on the stack will match up against the dollar sign at the end
+
+83
+00:07:05,729 --> 00:07:09,760
+of the input. Again, dollar sign here is just a way of marking. The end of the input
+
+84
+00:07:09,760 --> 00:07:15,300
+and expressing that we need to parse the entire input. And so now if you look up
+
+85
+00:07:15,300 --> 00:07:22,300
+the E int entry, so the first terminal in the, the next terminal in the input and
+
+86
+00:07:22,520 --> 00:07:25,919
+the left most [inaudible] terminal in our parse, you would see that we're actually supposed
+
+87
+00:07:25,919 --> 00:07:31,070
+to take is to use the production E goes to TX. And let me over here at the
+
+88
+00:07:31,070 --> 00:07:38,070
+same time construct our pars-trey. 'Kay, so initially our stack, again, the stack is
+
+89
+00:07:38,290 --> 00:07:42,460
+the frontier of the parstrey. Initially, all we have is the root of the
+
+90
+00:07:42,460 --> 00:07:46,090
+parstrey and that is its own frontier, it's just one symbol, we haven't processed
+
+91
+00:07:46,090 --> 00:07:51,800
+it yet. And so E is on the stack, E is unexpanded in the parstrey, and now we're
+
+92
+00:07:51,800 --> 00:07:58,800
+going to use the production E goes to TX. So we'll have, T and X added as children.
+
+93
+00:07:59,300 --> 00:08:03,960
+What happens next? Well E is popped off the stack. T and X are pushed on to the stack.
+
+94
+00:08:03,960 --> 00:08:09,430
+And now notice the frontier of the parse tree, is TX. So t hese is usually unprocessed
+
+95
+00:08:09,430 --> 00:08:15,680
+leaves Either unmatched input or unexpanded non-terminals And in fact the
+
+96
+00:08:15,680 --> 00:08:20,150
+stack records exactly which one is left most. So T is at the top of the stack.
+
+97
+00:08:20,150 --> 00:08:25,740
+X is below it, on the stack. Okay well we still haven't consumed any input.
+
+98
+00:08:25,740 --> 00:08:30,889
+And now if we look at the T, int entry it says to use T goes to int Y. And so now we
+
+99
+00:08:30,889 --> 00:08:36,830
+can expand T by [inaudible] y. And now what's going to happen is T is popped off
+
+100
+00:08:36,830 --> 00:08:43,380
+the stack. Int and Y are pushed onto the stack and now notice the stack is Int Y X
+
+101
+00:08:43,380 --> 00:08:50,380
+from top to bottom. The frontier of the parse tree is Int Y X. Okay? And now we have
+
+102
+00:08:52,680 --> 00:08:55,930
+a case where we have a terminal on top of the stack. And so now we're gonna try
+
+103
+00:08:55,930 --> 00:08:59,390
+to match it against the first terminal in the input and indeed they match. And so
+
+104
+00:08:59,390 --> 00:09:03,580
+what happens is [inaudible] just popped off the stack and the terminal and sorry the
+
+105
+00:09:03,580 --> 00:09:07,120
+input pointer advances in the input. Here I've recorded that by just discarding
+
+106
+00:09:07,120 --> 00:09:11,000
+the portion of the input that we've processed. So now we have [inaudible] left
+
+107
+00:09:11,000 --> 00:09:16,140
+to go and the inch has been removed from the stack. And so now what's on top of the
+
+108
+00:09:16,140 --> 00:09:22,899
+stack is Y. Y is indeed the leftmost unprocessed thing on the frontier. And, the
+
+109
+00:09:22,899 --> 00:09:29,240
+table says that, for non terminal Y, on, input times, we should use production
+
+110
+00:09:29,240 --> 00:09:36,240
+Y goes to times T. So let's put that in here. And now what's going to happen. Y is
+
+111
+00:09:37,110 --> 00:09:41,480
+going to be popped off the stack. Times T is going to be pushed on to the stack. And
+
+112
+00:09:41,480 --> 00:09:47,380
+now notice our stack is times T, X and the frontier, the unprocessed frontier of the
+
+113
+00:09:47,380 --> 00:09:54,070
+parse tree is times T X. Okay. So now we have another terminal on top of the stack,
+
+114
+00:09:54,070 --> 00:09:58,850
+it matches the next terminal in the input. So we pop the terminal off the stack, we advance
+
+115
+00:09:58,850 --> 00:10:04,440
+the input player. Now we have T as our left most nonterminal. Int is the next
+
+116
+00:10:04,440 --> 00:10:09,370
+thing in the input stream and the table says, well in this situation, we should use
+
+117
+00:10:09,370 --> 00:10:16,370
+the production T goes from INT Y.  What does that mean? That means that T gets popped
+
+118
+00:10:20,430 --> 00:10:25,130
+of the stack. Int and Y get pushed onto the stack. Notice that the stack is Int,
+
+119
+00:10:25,130 --> 00:10:29,440
+Y, X, and the end process frontier of the parse t ree from left to right is Int,
+
+120
+00:10:29,440 --> 00:10:35,000
+Y, X. Once again we have a terminal on top of the stack, we match it against the next
+
+121
+00:10:35,000 --> 00:10:41,240
+terminal in the input string, they match. And now we have consumed all the input, dollar
+
+122
+00:10:41,240 --> 00:10:45,540
+sign is the only thing left to go in the input. But our stack is not empty.
+
+123
+00:10:45,540 --> 00:10:49,980
+Okay and so at this point what does that mean. Well, if the stack is not empty and
+
+124
+00:10:49,980 --> 00:10:54,459
+we are out of input then everything that's left on the stack had better generate the
+
+125
+00:10:54,459 --> 00:10:58,410
+empty strings. So we'd better be using only epsilon productions from here on and
+
+126
+00:10:58,410 --> 00:11:05,410
+indeed the table says that when Y is our next non terminal and dollar sign we are at
+
+127
+00:11:05,440 --> 00:11:11,110
+the end of the input we should use the production Y goes to epsilon. So Y goes to
+
+128
+00:11:11,110 --> 00:11:16,649
+epsilon that means Y just gets pop off the stack. Epsilon gets pushed on the stack; epsilon
+
+129
+00:11:16,649 --> 00:11:20,100
+is the empty string so nothing gets pushed on the stack. And now we're down
+
+130
+00:11:20,100 --> 00:11:27,100
+to X and in the situation where X is the next non-terminal dollar sign is, we're
+
+131
+00:11:27,600 --> 00:11:32,800
+at the end of the input so dollar sign is our next symbol. Then the table also
+
+132
+00:11:32,800 --> 00:11:39,230
+says to use production X goes to epsilon. And then what happens? Well, X gets
+
+133
+00:11:39,230 --> 00:11:43,029
+popped off the stack and nothing gets pushed on because the production was X goes
+
+134
+00:11:43,029 --> 00:11:47,510
+to the empty string. And now we see we have dollar sign on top of the stack, dollar
+
+135
+00:11:47,510 --> 00:11:52,149
+sign in the input. And so we have emptied the stack. We have, reached the end
+
+136
+00:11:52,149 --> 00:11:55,810
+of the input, and so we accept. That is a successful parse.

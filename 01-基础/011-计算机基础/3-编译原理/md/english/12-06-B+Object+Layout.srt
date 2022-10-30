@@ -1,0 +1,391 @@
+0
+00:00:01,050 --> 00:00:04,510
+Now that we've dealt with the layout of an object's attributes, we can switch
+
+1
+00:00:04,510 --> 00:00:09,420
+gears and talk about how we layout its methods and how we implement dynamic dispatch.
+
+2
+00:00:09,420 --> 00:00:16,420
+So, let's consider a dispatch called e.g where e here, let's say, is a class
+
+3
+00:00:18,289 --> 00:00:24,409
+b. Okay? So what do we wanted to have happen? Well, we want to invoke the g
+
+4
+00:00:24,409 --> 00:00:29,419
+method here in class b, okay? So that seems pretty straight forward. So now let's
+
+5
+00:00:29,419 --> 00:00:34,690
+consider a slightly more complicated example. What if we are invoking e.f of if
+
+6
+00:00:34,690 --> 00:00:41,690
+we're calling the f method? Well, if we have a b object. Then we are going to want
+
+7
+00:00:42,179 --> 00:00:49,179
+to evoke this method, this f method, okay, which is the f method to find in b. But if
+
+8
+00:00:49,530 --> 00:00:54,989
+we have an a object, we want to be sure that we invoke this method, okay, this version
+
+9
+00:00:54,989 --> 00:01:01,579
+of f. Alright, and so, this f down here is said to be overridden. Okay. So, we
+
+10
+00:01:01,579 --> 00:01:08,579
+have redefined. Method f in class b and this definition replaces the method definition
+
+11
+00:01:11,260 --> 00:01:15,430
+that b would otherwise have inherited from a so in particular in class
+
+12
+00:01:15,430 --> 00:01:22,000
+c, class c also have an f method okay and if we invoke the f method, if it turns out
+
+13
+00:01:22,000 --> 00:01:26,700
+that e here is a type c then which method should get involved? Well it would be this
+
+14
+00:01:26,700 --> 00:01:33,700
+one. It would be the one defining class a so all three of these classes has an f method.
+
+15
+00:01:34,100 --> 00:01:40,140
+If the, if we do a dynamic dispatch on either a c or a object or execute
+
+16
+00:01:40,140 --> 00:01:46,840
+the one defining class a. If we do the dispatch on the b object, we will execute
+
+17
+00:01:46,840 --> 00:01:53,840
+the method defined in class b. Now every class has a fixed set of methods including
+
+18
+00:01:54,460 --> 00:01:58,960
+the inherited methods. So if you, if you look, if I tell you the name of
+
+19
+00:01:58,960 --> 00:02:05,960
+a class, then you know exactly which methods it has. Those methods never change
+
+20
+00:02:05,990 --> 00:02:11,340
+at runtime. Okay? So don't be confused here because overriding is something that's
+
+21
+00:02:11,340 --> 00:02:15,730
+done at compile time is basically a static property. South compiler can figure
+
+22
+00:02:15,730 --> 00:02:20,360
+out even though you can redefine methods in subclasses the compiler can figure out
+
+23
+00:02:20,360 --> 00:02:25,860
+a compile time all the methods of a particular class. Methods never change while
+
+24
+00:02:25,860 --> 00:02:30,440
+the prog ram is executing. Alright So, a dispatch tape of there's a table of
+
+25
+00:02:30,440 --> 00:02:35,819
+some sort is used to index these methods and this is just in the ray of method entry
+
+26
+00:02:35,819 --> 00:02:40,069
+point. So, essentially for every method of the class there's an entry in the
+
+27
+00:02:40,069 --> 00:02:44,640
+ray for that method. And just like with attributes, the method f is going to
+
+28
+00:02:44,640 --> 00:02:51,640
+live at the fixed offset. In the dispatch table for a class and all of its subclasses
+
+29
+00:02:52,280 --> 00:02:56,600
+so once we determine the position that a method lives in. It lives
+
+30
+00:02:56,600 --> 00:03:03,600
+in the dispatch table; it will stay there for any subclasses of that class. So let's
+
+31
+00:03:04,959 --> 00:03:09,150
+take a look at our example again and just a reminder the structure of the example we
+
+32
+00:03:09,150 --> 00:03:16,150
+have class a and now we only really care about the method so class a define an f method
+
+33
+00:03:17,680 --> 00:03:24,680
+and then we have class b which inherits from a. And that define the g method.
+
+34
+00:03:26,590 --> 00:03:33,590
+And then there was the class which also inherits from a which defines an h method.
+
+35
+00:03:35,780 --> 00:03:42,780
+Alright so those three classes and these methods, Okay? And so the dispatch table
+
+36
+00:03:44,540 --> 00:03:50,880
+for class a only has one method in it so it's also at zero. We store a pointer
+
+37
+00:03:50,880 --> 00:03:57,360
+to the code for the f method define an a, okay? So this is actually literally
+
+38
+00:03:57,360 --> 00:04:02,920
+just a pointer to the first instruction of the code that will run method
+
+39
+00:04:02,920 --> 00:04:07,940
+a. So this is a pointer to the caller side or the calling sequence or the
+
+40
+00:04:07,940 --> 00:04:14,940
+label labeled instruction as the entry point for the method. Now, what about let's
+
+41
+00:04:15,709 --> 00:04:21,579
+take a look next actually at class c. Okay? So class inherits from a. So what's
+
+42
+00:04:21,579 --> 00:04:25,059
+going to happen with all the methods of a and they're going to be at the
+
+43
+00:04:25,059 --> 00:04:31,800
+same off sets. So in particular, the f method will appear at offset zero in class
+
+44
+00:04:31,800 --> 00:04:36,379
+and this points to the same method as the one in a And so this inherits that method
+
+45
+00:04:36,379 --> 00:04:42,110
+from a and then class c defines its own method h and so in the next position of the
+
+46
+00:04:42,110 --> 00:04:49,110
+table goes the pointer to the code for h. And, you know, there have been more methods
+
+47
+00:04:49,479 --> 00:04:56,479
+defined in this classes than they would have appeared you know, laid out in
+
+48
+00:04:56,710 --> 00:05:00,330
+textual order just like for the attributes. So, if there have been, say, two
+
+49
+00:05:00,330 --> 00:05:05,610
+methods defined in a, then there will be two entries here fo r the first method
+
+50
+00:05:05,610 --> 00:05:10,339
+and the second method define an a and then c define a three method then there will be
+
+51
+00:05:10,339 --> 00:05:17,339
+three more entries in the table and so on. Okay. Now the interesting case is what happens
+
+52
+00:05:18,370 --> 00:05:24,759
+in class b. So in class b the f method is redefined and I forgot to indicate
+
+53
+00:05:24,759 --> 00:05:29,199
+that so let me just indicate that up here so the f method, we have a new definition
+
+54
+00:05:29,199 --> 00:05:34,699
+of the f method in class b. Okay so the important thing to see here is
+
+55
+00:05:34,699 --> 00:05:40,569
+that the pointer to the code for the f method lives in the same position. It's still
+
+56
+00:05:40,569 --> 00:05:45,759
+the first entry in the table, okay so the position of the f method in the dispatch
+
+57
+00:05:45,759 --> 00:05:49,900
+table for class b is exactly the same that never changes. What's difference
+
+58
+00:05:49,900 --> 00:05:55,159
+is just the contents of that location. The first entry in the table here points to a
+
+59
+00:05:55,159 --> 00:06:00,039
+different function. It points to the method that was defined in b instead of the
+
+60
+00:06:00,039 --> 00:06:05,529
+one that was defined in a. And then since b defines some additional methods or
+
+61
+00:06:05,529 --> 00:06:12,529
+one additional method that gets laid out after the methods for a. You may recall a
+
+62
+00:06:14,909 --> 00:06:19,689
+while ago that we talked about the object header and we mentioned this thing called
+
+63
+00:06:19,689 --> 00:06:22,860
+the dispatch pointer so this would remind ourselves what goes in the object header.
+
+64
+00:06:22,860 --> 00:06:28,800
+There is the tag and then there is the size and then there was a dispatch pointer
+
+65
+00:06:28,800 --> 00:06:35,800
+so And then following dispatch pointer where all the, all the attributes of the class
+
+66
+00:06:38,110 --> 00:06:44,039
+And now this dispatch pointer is just a pointer to the table of methods for
+
+67
+00:06:44,039 --> 00:06:51,039
+that class, okay? So this would be a pointer to the table. That contains all the
+
+68
+00:06:51,210 --> 00:06:56,419
+entries for the methods, all the entry points of the methods for that class. And
+
+69
+00:06:56,419 --> 00:07:01,099
+the reason for using this level of in direction and so, why do we have this pointer
+
+70
+00:07:01,099 --> 00:07:05,749
+to a separate table and so, why are the methods laid out like that when all
+
+71
+00:07:05,749 --> 00:07:09,589
+the attributes are just embedded directly in the class And we could, if we
+
+72
+00:07:09,589 --> 00:07:15,999
+wanted to just embed all the functions directly inside the object and, ad, you know,
+
+73
+00:07:15,999 --> 00:07:20,649
+out this whole table inside t object and, and not have this extra pointer that
+
+74
+00:07:20,649 --> 00:07:25,610
+we have to, we have to maintain and follow And in the reason for this is th at the attributes
+
+75
+00:07:25,610 --> 00:07:31,960
+are, can be updated. Okay, So, the attributes for a and object can be unique
+
+76
+00:07:31,960 --> 00:07:36,309
+object. Every object and have its own set of attributes so alright But the functions,
+
+77
+00:07:36,309 --> 00:07:41,770
+the methods for an object never change. And so the same object table can be
+
+78
+00:07:41,770 --> 00:07:48,639
+shared Between all the objects of a given class. So if I have 100 a objects well
+
+79
+00:07:48,639 --> 00:07:53,379
+then I might have 100 different version of the attributes and so each a objects
+
+80
+00:07:53,379 --> 00:07:56,809
+has its own copy of the attributes. But all those 100 a objects will
+
+81
+00:07:56,809 --> 00:08:01,330
+have the same methods and I can save a lot of space by having them share a common
+
+82
+00:08:01,330 --> 00:08:08,330
+table of the methods And again every method of the class or every class is
+
+83
+00:08:08,929 --> 00:08:15,270
+a sign and offset and we'll call that Os of f. In the dispatch table compiled times.
+
+84
+00:08:15,270 --> 00:08:18,800
+So the job of the compiler to figure out all the methods of the class and
+
+85
+00:08:18,800 --> 00:08:23,800
+then assign each of those methods, a fixed position, a fixed offset in that dispatch
+
+86
+00:08:23,800 --> 00:08:30,800
+table, So to wrap up, how do we implement dynamic dispatch? So let's say we
+
+87
+00:08:30,869 --> 00:08:37,469
+have a dispatch to an expression e and we're calling the f method. So, here's the,
+
+88
+00:08:37,469 --> 00:08:41,750
+a slightly simplified version of the sequence of steps. So first, we evaluate the
+
+89
+00:08:41,750 --> 00:08:47,949
+expression e and that's going to give us back an object x. Okay, and then we are
+
+90
+00:08:47,949 --> 00:08:52,040
+going to get the dispatch table for x, where that does come from. Well, it's in the
+
+91
+00:08:52,040 --> 00:08:56,350
+header of x so we can just take the object x itself and we know that in every
+
+92
+00:08:56,350 --> 00:09:03,350
+object at the, in the third word there is a dispatch pointer for the, that's appropriate
+
+93
+00:09:03,420 --> 00:09:08,170
+to the class of x. So, we take that table and then we look up the entry point
+
+94
+00:09:08,170 --> 00:09:14,750
+of f at the offset For f in that dispatch table And then we'll jump to that
+
+95
+00:09:14,750 --> 00:09:19,980
+to that address, okay? That's the entry point of the function and, and when we do
+
+96
+00:09:19,980 --> 00:09:25,699
+that, we're buying self to x. So the, the self parameter inside of the f method will
+
+97
+00:09:25,699 --> 00:09:26,980
+be the x object.

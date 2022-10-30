@@ -1,0 +1,63 @@
+0
+00:00:01,770 --> 00:00:05,680
+To summarize this video, The type environment gives types to the free
+
+1
+00:00:05,680 --> 00:00:09,770
+identifiers in the current scope. And this is very important, because it doesn't even
+
+2
+00:00:09,770 --> 00:00:13,500
+really makes sense to talk about type checking an expression, unless we have
+
+3
+00:00:13,500 --> 00:00:17,940
+some information for the types of the free identifiers. And the type environment is
+
+4
+00:00:17,940 --> 00:00:22,070
+just a way of formalizing that, of giving a name to some set of assumptions about
+
+5
+00:00:22,070 --> 00:00:26,760
+what the types of those free identifiers are. Notice that the type environment is
+
+6
+00:00:26,760 --> 00:00:30,450
+passed down the abstract syntax tree from the root towards the leaves. That is, as
+
+7
+00:00:30,450 --> 00:00:33,199
+we pass through definitions, the type environment is extended with new
+
+8
+00:00:33,199 --> 00:00:36,650
+definitions For example, [inaudible] expressions. And so the type environment
+
+9
+00:00:36,650 --> 00:00:40,820
+will grow as you pass from the root of the abstract syntax tree down towards the
+
+10
+00:00:40,820 --> 00:00:45,010
+leaves of the abstract syntax tree. And then the types are computed up the
+
+11
+00:00:45,010 --> 00:00:48,420
+abstract syntax tree from the leaves towards the roots. So we begin at the
+
+12
+00:00:48,420 --> 00:00:52,540
+leaves, get all the types of the leaf expressions, most of which are very easy.
+
+13
+00:00:52,540 --> 00:00:56,079
+Things like integers and string constants have the obvious types. And we just look
+
+14
+00:00:56,079 --> 00:01:00,320
+up the types of variables, in the type environment. And then we compute the types
+
+15
+00:01:00,320 --> 00:01:03,749
+for the more complicated expressions in a bottom up fashion.

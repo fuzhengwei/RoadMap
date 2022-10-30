@@ -1,0 +1,759 @@
+0
+00:00:00,440 --> 00:00:05,020
+欢迎回来, 在这个视频中, 我们要讲一些题外话
+Welcome back. In this video, we're going to take a little digression and talk about
+
+1
+00:00:05,020 --> 00:00:09,160
+正式语言。正式语言在理论计算机中扮演了重要角色
+formal languages. A formal language has played a big role in theoretical computer
+
+2
+00:00:09,160 --> 00:00:14,049
+科学, 但它们在编译器中也很重要因为在编译器内部, 
+science but they're also very important in compilers because inside of the compiler,
+
+3
+00:00:14,049 --> 00:00:18,210
+我们通常有几种不同的正式语言, 我们在操纵。
+we typically have several different formal languages that we're manipulating. A
+
+4
+00:00:18,210 --> 00:00:22,580
+正则表达式是正式语言的一个例子但它确实很有帮助
+regular expressions are one example of a formal language but it's actually helpful
+
+5
+00:00:22,580 --> 00:00:26,850
+我认为在理解常规语言和所有的正式语言时我们会看到
+I think in understanding regular languages and all the formal languages we'll see
+
+6
+00:00:26,850 --> 00:00:33,850
+后来在后面的视频中, 我们讨论了一般的正式语言, 
+later on in later videos to talk about what the formal languages in general, So,
+
+7
+00:00:34,999 --> 00:00:41,550
+让我们从定义开始, 一个正式的语言有一个字母表, 所以, 一些
+let's begin with the definition. A formal language has an alphabet, So, some set of
+
+8
+00:00:41,550 --> 00:00:48,550
+字母sigma, 然后在字母表上的一种语言就是一组字符串
+letter sigma. And then a language over that alphabet is just a set of strings of
+
+9
+00:00:48,800 --> 00:00:53,260
+从字母表中抽取的字符, 在这种情况下, 或者是常规语言, 我们有
+the characters drawn from the alphabet. So in the case or regular languages, we had
+
+10
+00:00:53,260 --> 00:00:58,010
+有一些方法可以建立一系列的字符但是其他类型的
+certain ways of building up sets of strings of characters but other kinds of
+
+11
+00:00:58,010 --> 00:01:01,999
+语言会有不同的字符串集, 一般来说, 是一种正式的语言
+languages would have different sets of strings. And in general, a formal language
+
+12
+00:01:01,999 --> 00:01:08,940
+它只是一些字母表上的任何一组字符串, 这是一种语言的例子
+is just any set of strings over some alphabet. An example of a language that
+
+13
+00:01:08,940 --> 00:01:13,030
+你们熟悉的是一种来自于英语字母的字母表它是
+you're familiar with is a form from the alphabet of English characters and it is
+
+14
+00:01:13,030 --> 00:01:19,080
+只是一组英语句子, 现在, 这不是一种正式的语言
+just the set of English sentences. Now, This is not quite a formal language and
+
+15
+00:01:19,080 --> 00:01:24,110
+我们可能不同意哪一串英文字符实际上是有效的
+that we might disagree in which string of English characters are in fact valid
+
+16
+00:01:24,110 --> 00:01:27,850
+英语句子但是我们可以想象我们可以定义一些规则
+English sentences but one could imagine that we could define some rules that we
+
+17
+00:01:27,850 --> 00:01:32,390
+会说某些字符串是英语句子而另一些则不是, 如果我们
+would say the certain strings are English sentences and others aren't. And if we
+
+18
+00:01:32,390 --> 00:01:35,990
+可以达成协议这将是一种正式的语言, 现在有很多
+could come to this on agreement this would be a fully formal language. Now a much
+
+19
+00:01:35,990 --> 00:01:41,360
+更严格的正式语言应该是这样的, 我们可以
+more rigorous formal language would be something like the following; we could
+
+20
+00:01:41,360 --> 00:01:44,950
+选择我们的字母表是问字符集, 语言是
+pick our alphabet to be the asking character set and the language to be the
+
+21
+00:01:44,950 --> 00:01:49,320
+所有有效的C程序集, 所以这绝对是一个定义良好的语言。
+set of all Valid C program. So this is definitely a very well defined language.
+
+22
+00:01:49,320 --> 00:01:55,880
+这正是C编译器所接受的输入集。
+This is exactly the set of inputs that C compilers will accept. And the, the
+
+23
+00:01:55,880 --> 00:01:59,820
+我想在这里画出的重要对比是, 字母表其实很有趣。
+important contrast I want to draw here is that the alphabet is actually interesting.
+
+24
+00:01:59,820 --> 00:02:05,530
+所以, 不同的正式语言, 你知道吗？有一个非常非常不同的字母表
+So, different formal languages, you know? Have a very, very different alphabets and
+
+25
+00:02:05,530 --> 00:02:09,229
+我们不能真正讨论什么是正式的语言或者是什么类型的字符串
+we can't really talk a bout what the formal language is or what sort of strings
+
+26
+00:02:09,229 --> 00:02:14,960
+我们感兴趣的是, 除非找到字母表, 另一个重要的概念
+we're interested in unless to find that alphabet. Another important concept for
+
+27
+00:02:14,960 --> 00:02:21,050
+许多正式语言都是一个意义函数, 通常我们有一个
+many formal languages is a meaning function. Typically we have one of the
+
+28
+00:02:21,050 --> 00:02:26,280
+我们的语言中的字符串我们称它为表达式e和表达式
+strings in our language and let's call that some expression e and the expression
+
+29
+00:02:26,280 --> 00:02:30,980
+e本身就是一段语法, 从某种意义上讲, 它是一个程序
+e by itself is just a piece of syntax. It's a program in some sense or it
+
+30
+00:02:30,980 --> 00:02:34,910
+代表了我们的一些东西, 这就是我们实际上的东西
+represents something else that we're, Which is the thing we're actually
+
+31
+00:02:34,910 --> 00:02:40,370
+感兴趣的是, 我们有一个函数L它将语言中的字符串映射到
+interested in. And so we have a Function L that maps the strings in the language to
+
+32
+00:02:40,370 --> 00:02:45,910
+它们的意思, 例如, 在正则表达式的例子中
+their meanings. And so for example in the case of the regular expressions, this
+
+33
+00:02:45,910 --> 00:02:52,910
+它是一个正则表达式, 它会映射到一组字符串。
+would be a regular expression. And that would be map to a set of strings. The
+
+34
+00:02:53,610 --> 00:02:59,090
+常规的语言, 这个正则表达式我们看到了一个例子
+regular language that, that regular expression to notes and we saw an example
+
+35
+00:02:59,090 --> 00:03:03,830
+上次我们写出了正则表达式的会议函数我们来看看
+where we wrote out the meeting function for regular expression last time so let's
+
+36
+00:03:03,830 --> 00:03:08,620
+用正则表达式作为一个例子我要先把它的意思写下来
+use regular expressions as an example and I'm gonna first write down the meaning of
+
+37
+00:03:08,620 --> 00:03:13,740
+正则表达式, 我在上个视频中把它写下来如果你们还记得
+the regular expressions. The way I wrote it down in the last video so if you recall
+
+38
+00:03:13,740 --> 00:03:20,740
+我们有一个正则表达式epsilon这表示一个集合, 它只包含一个
+we had a regular expression epsilon and that denoted a set, Which contain just one
+
+39
+00:03:21,470 --> 00:03:26,120
+字符串, 也就是空字符串, 然后我们有一个正则表达式C
+string, namely the empty string. And then we had a regular expression C for every
+
+40
+00:03:26,120 --> 00:03:31,790
+字母表中的字符也需要一个字符串, 即一个字符串
+character in the alphabet which also do need a socketing just one string namely
+
+41
+00:03:31,790 --> 00:03:36,459
+单个字符c, 然后, 我们有一堆复合表达式, 所以
+the single character C. And then, we had a bunch of compound expressions. So for
+
+42
+00:03:36,459 --> 00:03:43,459
+例如, A+B, 它等于集合A和B的结合我们有
+example, A + B. That was equal to the union of the sets A and B and we had the
+
+43
+00:03:47,500 --> 00:03:54,500
+连接, 我可以, 我可以, 听不清A和B, 这就等于
+concatenation so I could, I could [inaudible] A and B and that was equal to
+
+44
+00:03:54,510 --> 00:04:01,150
+一个叉乘, 我从每个集合中选择一个字符串并连接起来
+a cross product where I selected a string from each set in order and concatenated
+
+45
+00:04:01,150 --> 00:04:08,150
+它们在一起, 最后是迭代, 所以我可以写一个星星
+them together. And finally there was iteration so I could write a star and that
+
+46
+00:04:10,040 --> 00:04:17,040
+是联邦除以I, 大于0的集合A到I, I结束。
+was the union over I. Greater than zero of all the sets A to the I, I ends. An
+
+47
+00:04:22,660 --> 00:04:26,010
+关于这个定义的有趣之处在于你可以看到它们在映射
+interesting thing about this definition is you can see that they were mapping, over
+
+48
+00:04:26,010 --> 00:04:31,510
+我们有表达式, 我换个颜色, 这里是表达式
+we have expressions and let me switch colors here, over here we have expressions
+
+49
+00:04:31,510 --> 00:04:37,280
+这里是集合, 但这里有一些奇怪的东西
+and over here we have the sets. But there's something kind of odd about the
+
+50
+00:04:37,280 --> 00:04:41,240
+这是书面的, 不太对, 因为你们可以清楚地看到, 我们有
+way this is written and not quite right cuz you can see here we clearly, we have
+
+51
+00:04:41,240 --> 00:04:46,720
+一个表达式, 我们有一个语法A+B然后在另一边
+an expression. We have a piece of syntax A + B and then somehow on the other side
+
+52
+00:04:46,720 --> 00:04:50,270
+这个A, 这个A和这个B已经神奇地变成了我们的集合
+this, this A, this A and this B have magically turned into sets that we're
+
+53
+00:04:50,270 --> 00:04:53,630
+把这个和下面的结合在这里我们从这里选择一个元素
+taking the union of and similarly down here we're choosing an element from this
+
+54
+00:04:53,630 --> 00:04:57,370
+集合, 但是这个集合也是一个表达式, 这意味着什么？我们在某种程度上
+set but this set is also an expression and what does that mean? Somehow we're
+
+55
+00:04:57,370 --> 00:05:02,910
+把表达式中的集合合并起来这就是。意思函数是
+conflating the sets in the expressions and this is what. The meaning function is
+
+56
+00:05:02,910 --> 00:05:07,900
+想要解决这个问题, 这是他们, 或者, 或者想要弄清楚的, 所以我们, 
+intended to fix and this what they, or, or, or intended to make clear. So we, what
+
+57
+00:05:07,900 --> 00:05:14,820
+我们想说的是有一些映射, 即语言L
+we really wanted to say is that there's some mapping, That the language L epsilon
+
+58
+00:05:14,820 --> 00:05:21,820
+集合是这样的, 所以L从表达式映射到一组字符串, 好的, 
+is the set so the, so L maps from expressions into sets of strings. Okay,
+
+59
+00:05:26,810 --> 00:05:30,790
+它是一个将一个映射到另一个的函数你还没见过这个符号
+It's a function that maps one to the other and it you haven't seen this notation
+
+60
+00:05:30,790 --> 00:05:35,400
+之前, 这是描述函数的标准符号, 它表示L
+before, this is a standard notation for describing functions. It does says that L
+
+61
+00:05:35,400 --> 00:05:41,290
+是定义域中的一个函数, 在这个域中的这个范围, 好的。
+is a function from things in the domain, in this domain to this range, okay. And
+
+62
+00:05:41,290 --> 00:05:48,290
+类似地, 这个表达式的语言是集合它变得非常有用
+similarly the language of this expression is the set and it becomes really useful
+
+63
+00:05:48,360 --> 00:05:53,370
+对于复合表达式因为这里我们说的是这个表达式的语言
+for the compound expressions cuz here we say the language of this expression. Is
+
+64
+00:05:53,370 --> 00:05:58,639
+等于a的语言和B的语言现在你们可以看到
+equal to the language of a union with the language of B and now you can see the
+
+65
+00:05:58,639 --> 00:06:04,860
+递归, 首先我们用L来解释A和B我们取它的结合
+recursion. First we interpret A and B using L and we take the union of the
+
+66
+00:06:04,860 --> 00:06:09,430
+结果, 好了, 现在很清楚什么是资产, 什么是表达式
+result. Okay, so now it's clear what's asset and what's an expression and
+
+67
+00:06:09,430 --> 00:06:15,090
+类似地, a和B连接的语言, 我们要
+similarly here the language of a concatenated with B, we are going to
+
+68
+00:06:15,090 --> 00:06:21,610
+从这两个表达式的语言中选择元素然后我们将
+select elements from the language of these two expressions and then we're going to
+
+69
+00:06:21,610 --> 00:06:28,310
+从这两个集合中形成另一个集合, 最后是迭代, a的语言
+form another set from those two sets. And finally for iteration, The language of a
+
+70
+00:06:28,310 --> 00:06:32,650
+恒星等于结合了一堆表达式的意义, A
+star is equal to the union over the meaning of a bunch of expressions, A to
+
+71
+00:06:32,650 --> 00:06:36,630
+I是一个表达式, 这是一段语法我们要把它转换成A
+the I is an expression. This is a, a piece of syntax and we have to convert it to A
+
+72
+00:06:36,630 --> 00:06:43,630
+集合N的顺序来取这个联合, 关于这个, 是。正确的定义
+set N order to take the union. And so about this, is. The proper definition of
+
+73
+00:06:44,110 --> 00:06:48,550
+正则表达式的含义我们已经明确了含义函数L
+the meaning of regular expressions where we've made the meaning function L explicit
+
+74
+00:06:48,550 --> 00:06:54,900
+我们已经展示了如何递归地应用L来分解化合物
+and we've shown exactly how recursively we apply L to decompose the compound
+
+75
+00:06:54,900 --> 00:06:58,220
+表达式到几个表达式中我们计算它的含义
+expressions into several expressions that we compute the meaning of and then
+
+76
+00:06:58,220 --> 00:07:05,220
+从那些独立的小s中计算出这些集合, 还有其他的
+computed the sets from those from those separate smaller s ets. So, there's other
+
+77
+00:07:06,949 --> 00:07:11,479
+使用会议功能的原因, 我们只看到其中一个
+reasons for using a meeting function. We just saw one of them which is to make
+
+78
+00:07:11,479 --> 00:07:16,240
+清楚。在我们的定义中什么是语法, 什么是语义。
+clear. What is syntax and what is semantics in our definitions. Some parts
+
+79
+00:07:16,240 --> 00:07:21,850
+定义是表达, 有些部分是, 意思或集合
+of the definition are expression and some parts are the, the meanings or the sets
+
+80
+00:07:21,850 --> 00:07:27,350
+使用L表明, L的参数是, 程序或
+and the using L makes it clear that the arguments to L are the, the programs or
+
+81
+00:07:27,350 --> 00:07:32,289
+表达式和结果是集合, 输出是集合, 但是
+the expressions and the results Are the, the sets. The outputs are the sets, But
+
+82
+00:07:32,289 --> 00:07:37,199
+分离语法和语义还有一些其他的原因。
+there are a couple of other reasons for separating syntax and semantics. One, is
+
+83
+00:07:37,199 --> 00:07:41,080
+它允许我们把符号看作一个单独的问题, 如果我们有
+that it allows us to consider notation as a separate issue. That is if we have
+
+84
+00:07:41,080 --> 00:07:45,789
+语法和语义是不同的, 我们可以在保持语法和语法的同时改变语法
+syntax and semantics being different, then we can vary the syntax while we keep the
+
+85
+00:07:45,789 --> 00:07:50,639
+语义是一样的, 我们可能会发现, 这里有一些语法
+semantics the same and we might discover. That there, that some kinds of syntax are
+
+86
+00:07:50,639 --> 00:07:54,300
+对于我们感兴趣的问题, 对于语言来说, 比其他的更好
+better than others for the problems that we're interested in, for the languages
+
+87
+00:07:54,300 --> 00:07:58,259
+我们感兴趣的是, 分离两者的另一个原因是
+that we're interested in. And another reason for separating the two is because
+
+88
+00:07:58,259 --> 00:08:02,169
+因为语法和语义不是一对一的
+of expressions and meanings because syntax and semantics are not in one to one
+
+89
+00:08:02,169 --> 00:08:07,199
+我用正则表达式来说明这一点
+correspondents. And I actually illustrated this with regular expressions in the
+
+90
+00:08:07,199 --> 00:08:13,490
+之前的视频, 但我想在这里进行迭代, 这里有更多的内容
+previous video but I want to iterate here that, that there are generally many more
+
+91
+00:08:13,490 --> 00:08:19,319
+表达式比有意义所以这意味着可能有多种方法
+expressions than there are meanings so that means there maybe multiple way. To
+
+92
+00:08:19,319 --> 00:08:24,550
+写一个表示相同的表达式, 我想花点时间
+write an expression that means the same thing. I'd like to take a moment to
+
+93
+00:08:24,550 --> 00:08:30,630
+说明为什么将语法和语义分开是对符号有益的。
+illustrate why separating syntax from semantics is beneficial for a notation.
+
+94
+00:08:30,630 --> 00:08:35,550
+每个人都熟悉r数字系统所以我可以写一些数字
+So, everybody's familiar with the, the r number system so I can write numbers like
+
+95
+00:08:35,549 --> 00:08:42,550
+0 1 42和107有很好的算法来描述你如何添加
+zero, one. 42 and 107 and there are very nice algorithms for describing how you add
+
+96
+00:08:42,708 --> 00:08:47,850
+然后减去并乘以这些数字但是有一些更古老的符号系统
+and subtract and multiply such numbers but there are older systems of notation for
+
+97
+00:08:47,850 --> 00:08:51,709
+数字, 像罗马数字, 我可以有数字1, 我可以
+numbers. Things like the Roman numerals. I could have the number one. I could have
+
+98
+00:08:51,709 --> 00:08:58,709
+数字4, 数字10, 我认为数字40是这样写的
+the number four, the number ten and say the number 40 I think is written like that
+
+99
+00:09:00,570 --> 00:09:07,300
+关于这个数字系统的一个问题, 首先, 我要强调一下这两个
+and. And an issue with this number system, first of all, let me stress that these two
+
+100
+00:09:07,300 --> 00:09:13,300
+有相同的意思, 在这个语言中, 表达式的意义
+have the same meaning. So the, the meanings of expressions in this language
+
+101
+00:09:13,300 --> 00:09:19,360
+这些是整数, 在这个语言中是完全一样的, 所以这个概念, 
+are. Are the integers and it's exactly the same in this language. So the idea, the
+
+102
+00:09:19,360 --> 00:09:25,160
+这两个系统的均值是数字但符号是非常的
+mean ing of these two systems are just the numbers but the notation is extremely
+
+103
+00:09:25,160 --> 00:09:28,560
+不同的, 用罗马数字写的数字与a完全不同
+different. The number written in Roman numerals was completely different from a
+
+104
+00:09:28,560 --> 00:09:32,830
+用阿拉伯数字写的数字, 事实是罗马数字是真的
+number written in Arabic numerals. And the fact is that the Roman numerals are really
+
+105
+00:09:32,830 --> 00:09:38,110
+痛苦地做加法, 减法, 乘法, 事实上, 回到
+painfully to do addition and subtraction and multiplication and in fact. Back in
+
+106
+00:09:38,110 --> 00:09:43,570
+在古代, 这是一个共同的系统并不是很清楚如何去做
+ancient times when this was a common system was not very well known how to do
+
+107
+00:09:43,570 --> 00:09:49,450
+只有很少的人能熟练地进行算术运算
+it and very few people were actually good at doing arithmetic with, with the system
+
+108
+00:09:49,450 --> 00:09:53,360
+因为, 因为算法有点复杂, 当我们移动到
+because of, because the algorithms were kind of complicated. And, when we moved to
+
+109
+00:09:53,360 --> 00:10:00,360
+后来, 阿拉伯语系统, 这是一个很大的进步因为人们, 它是
+the, the Arabic system, later, That it was a big improvement because people, it was
+
+110
+00:10:00,830 --> 00:10:05,680
+人们更容易学习如何用这些数字来做基本的算术运算。
+easier for people to learn how to do basic arithmetic with these kinds of numbers.
+
+111
+00:10:05,680 --> 00:10:10,160
+在一个系统和另一个系统之间唯一改变的是
+And the only thing that changed between one system and the other was the system of
+
+112
+00:10:10,160 --> 00:10:14,330
+符号, 所以, 符号是非常重要的因为它决定了你的思维方式
+notation. And so, notation is extremely important because it governs how you think
+
+113
+00:10:14,330 --> 00:10:18,190
+它支配着你能说的事情以及你的程序
+and it governs the kinds of things you can say and the sort of procedures that you
+
+114
+00:10:18,190 --> 00:10:22,560
+使用, 所以不要低估了符号的重要性这是一个
+will use. So don't underestimate the importance of notation and this is one
+
+115
+00:10:22,560 --> 00:10:27,350
+将语法与语义分离的原因, 因为我们可以忽略
+reason for separating syntax from semantics because we can leave the idea of
+
+116
+00:10:27,350 --> 00:10:31,500
+我们要做的不仅仅是数字, 而是用不同的方式来玩
+what we're trying to do than numbers alone. And play with, with different ways
+
+117
+00:10:31,500 --> 00:10:38,500
+代表他们, 我们可能会发现有些方法比其他方法更好。
+of representing them and we might discover that some ways are better than others. The
+
+118
+00:10:38,600 --> 00:10:43,180
+我给出分离语法和语义的第三个原因是在很多有趣的方面
+third reason I gave for separating syntax and semantics is that in many interesting
+
+119
+00:10:43,180 --> 00:10:47,600
+语言、多个表达式、多个语法都是相同的
+languages, multiple expressions, multiple pieces of syntax will have the same
+
+120
+00:10:47,600 --> 00:10:52,620
+语义, 现在回到正则表达式, 让我们考虑一下正则表达式
+semantics. Now going back again to regular expressions, let's consider the regular
+
+121
+00:10:52,620 --> 00:10:58,730
+现在有很多方法来写同样的语言, 也就是
+expression zerolt;i>. Now there are many ways to write the same language which is thelt;/i>
+
+122
+00:10:58,730 --> 00:11:02,560
+所有字符串的语言, 所有长度的0串, 所以
+language of all strings of zeroes so string of zeroes of any length. So for
+
+123
+00:11:02,560 --> 00:11:09,399
+我也可以把它写成0+0, 另一种写法是
+example I could also write that as zero + zerolt;i>. Another way to write it is aslt;/i>
+
+124
+00:11:09,399 --> 00:11:16,399
+0和0, 这里你可以看到, 这个表达式都是
+epsilon + zero, zero and here you can see that, that this expression is all the
+
+125
+00:11:17,029 --> 00:11:21,550
+0的字符串至少链接1然后我们得到了epsilon的空字符串
+strings of 0s of at least link one and then we get the empty string for epsilon
+
+126
+00:11:21,550 --> 00:11:25,970
+所以这是零, 然后, 你知道吗, 这些东西的任何组合
+so that is = zero and then just, you know? Any combination of these things
+
+127
+00:11:25,970 --> 00:11:32,649
+也可以是一个eq的ui价语言, 例如一个, 等等。
+would also amount to an eq uivalent language for example that one and so on.
+
+128
+00:11:32,649 --> 00:11:36,640
+所以实际上有一个无限的, 无限的方式我可以这样写
+So there's actually an unbounded, unlimited number of way I could write this
+
+129
+00:11:36,640 --> 00:11:43,640
+语言, 但所有这些都是完全一样的如果你思考一下, 什么
+language but all of these mean exactly the same thing and if you think about it. What
+
+130
+00:11:44,100 --> 00:11:49,790
+这意味着, 一般来说, 如果我用不同的方式画出这两个域, 我想
+this means is that in general, if I draw the two domains differently, I think about
+
+131
+00:11:49,790 --> 00:11:56,029
+这里有不同的表达式这里有不同的含义
+different expressions over here and different distinct meanings over here and
+
+132
+00:11:56,029 --> 00:12:03,029
+在它们之间映射的函数L, L的函数L很多, 所以有。
+the function L that maps between them. The function L is many to one. So there are.
+
+133
+00:12:03,070 --> 00:12:10,070
+是的, 在这个空间里有很多不同的表达或片段
+Yeah. There are points in the space that where many different expressions or pieces
+
+134
+00:12:12,160 --> 00:12:19,160
+语法映射到相同的意思, 这只是一个一般的特征
+of syntax map to the same meaning. And this is just a general characteristic of
+
+135
+00:12:19,620 --> 00:12:24,089
+有趣的正式语言这在编译器中是非常重要的
+Interesting formal languages and this is actually extremely important in compilers
+
+136
+00:12:24,089 --> 00:12:28,170
+因为这是优化的基础, 事实上有很多不同之处
+because this is the basis of optimization. The fact that there are many different
+
+137
+00:12:28,170 --> 00:12:32,290
+这些程序在功能上是等同的, 这让我们可以
+programs that are actually functionally equivalent, that's what allows us to
+
+138
+00:12:32,290 --> 00:12:37,899
+用一个比另一个更快的程序来代替, 这就是我们要做的
+substitute one program that runs faster than another, that's what allows us to
+
+139
+00:12:37,899 --> 00:12:42,269
+如果一个程序运行得更快, 并且做的完全相同, 那么就替换一个程序
+replace one program with another if it runs faster and does exactly the same
+
+140
+00:12:42,269 --> 00:12:46,870
+所以我们不能进行优化, 你知道我们可以做优化的原因
+thing. So we couldn't do optimization and, you know the reason we can do optimization
+
+141
+00:12:46,870 --> 00:12:53,350
+确切地说, 因为意义函数是很多的, 所以意义是很多的
+as precisely because the meaning function is many to one. So meaning is many to one
+
+142
+00:12:53,350 --> 00:12:57,430
+记住, 重要的一点是, 它从来都不是很多, 我们不想要
+and keep in mind, important point here it's never one to many. We don't want the
+
+143
+00:12:57,430 --> 00:13:01,350
+相反的情况, 如果我们有相反的情况, L可以映射a
+opposite situation. If we have the opposite situation, Where L could map a
+
+144
+00:13:01,350 --> 00:13:07,269
+单点到两种不同的意思, 首先, 这将不再是
+single point to two different meanings. Well first of all, this would no longer be
+
+145
+00:13:07,269 --> 00:13:11,829
+一个函数, 但它也意味着某些表达式的含义
+a function but, but also it would mean that the meaning of certain expressions
+
+146
+00:13:11,829 --> 00:13:16,820
+在我们的编程语言中没有很好的定义, 那就是当你写a的时候
+say in our programming language was not well defined. That's that when you wrote a
+
+147
+00:13:16,820 --> 00:13:20,740
+程序实际上是模糊的不管它是指这个还是它的意思, 这是a
+program was actually ambiguous whether it meant this or it meant that and that's a
+
+148
+00:13:20,740 --> 00:13:26,329
+我们不喜欢的情况, 所以, 我们期望意义函数是很多的
+situation we don't like. So, we expect meaning functions to be many to one for
+
+149
+00:13:26,329 --> 00:13:32,329
+非平凡的语言, 我们不希望它们成为太多的语言, 而且
+nontrivial languages and we don't want them ever to be one too many. And that
+
+150
+00:13:32,329 --> 00:13:36,310
+今天的视频结束了, 下一次, 我们将继续, 继续
+concludes today's video. Next time, Going to go back and continue with our
+
+151
+00:13:36,310 --> 00:13:38,019
+讨论词汇分析。
+discussion of lexical analysis.

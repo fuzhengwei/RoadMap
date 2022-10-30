@@ -1,0 +1,351 @@
+0
+00:00:03,570 --> 00:00:06,490
+In this video, we're gonna talk about the main difficulty with Recursive Descent
+
+1
+00:00:06,490 --> 00:00:13,490
+Parsing, a problem known as Left Recursion. Let's consider a very simple
+
+2
+00:00:15,879 --> 00:00:22,480
+grammar that consist of only one production, s goes to s followed by a. So
+
+3
+00:00:22,480 --> 00:00:28,580
+the Recursive Descent Algorithm for this production is the following. So, we just
+
+4
+00:00:28,580 --> 00:00:34,120
+have a function called s1 for the first production of s. And it's going to succeed
+
+5
+00:00:34,120 --> 00:00:39,649
+if the function s succeeds and then after that succeeds we see a terminal a in the
+
+6
+00:00:39,649 --> 00:00:46,649
+input stream. And then we have to write a function for the symbol s itself and since
+
+7
+00:00:48,300 --> 00:00:52,500
+there's only one alternative, there's only one production for s we don't need to
+
+8
+00:00:52,500 --> 00:00:57,500
+worry about backtracking or anything. So as we'll succeed exactly when as one
+
+9
+00:00:57,500 --> 00:01:01,719
+succeed. There's only one possibility in this case and now I think you can see the
+
+10
+00:01:01,719 --> 00:01:07,810
+problem what's going to happen. Well, when we go to parse an input string, we're
+
+11
+00:01:07,810 --> 00:01:12,950
+going to call the function s which is going to call the function s1. And then
+
+12
+00:01:12,950 --> 00:01:15,590
+what the function as one gonna do well, the very first thing it's going to do is
+
+13
+00:01:15,590 --> 00:01:20,670
+to call the function s again. And as a result, the function s is going to go into
+
+14
+00:01:20,670 --> 00:01:24,700
+an infinite loop and we're never going to succeed in parsing any input. This will
+
+15
+00:01:24,700 --> 00:01:31,700
+always go into an infinite loop. So, The reason that this, this grammar doesn't
+
+16
+00:01:32,880 --> 00:01:37,840
+behave very well is because it is left recursive. And a left recursive grammar is
+
+17
+00:01:37,840 --> 00:01:41,750
+any grammar that has a non-terminal where if you start with that non-terminal and
+
+18
+00:01:41,750 --> 00:01:44,939
+you do some non-empty sequence of re-writes. Notice the plus there. You have
+
+19
+00:01:44,939 --> 00:01:49,399
+to do more than one re-write. So, if you're actually doing a sequence of
+
+20
+00:01:49,399 --> 00:01:55,560
+replacements, you get back to a situation where you have the same symbol still in
+
+21
+00:01:55,560 --> 00:02:01,530
+the left most position. And you can see, this is not going to be good for parsing.
+
+22
+00:02:01,530 --> 00:02:08,530
+So, in the case of this grammar up here, what happens while we get s goes to sa it
+
+23
+00:02:09,500 --> 00:02:16,500
+goes to saa goes to saaa. And so on and we can always get to a situation where we
+
+24
+00:02:18,100 --> 00:02:24,190
+have a long string of a's and an s on the left end of the string. And if we always
+
+25
+00:02:24,190 --> 00:02:28,350
+have an s on the left end of the string, we can never manage any input because the
+
+26
+00:02:28,350 --> 00:02:32,250
+only way we manage input is if the first thing we generate is a terminal symbol.
+
+27
+00:02:32,250 --> 00:02:35,390
+But if the first thing is always a non-terminal, we will never make any
+
+28
+00:02:35,390 --> 00:02:41,890
+progress. And, it just doesn't work. I mean, Recursive Descent does not work with
+
+29
+00:02:41,890 --> 00:02:47,460
+Left-Recursive Grammars. Well, this seems like a major problem with recursive to
+
+30
+00:02:47,460 --> 00:02:52,750
+same parsing. It is a problem but as we'll see shortly it's really not so major. So
+
+31
+00:02:52,750 --> 00:02:57,700
+let's consider a left-recursive grammar that slightly more general form. So here
+
+32
+00:02:57,700 --> 00:03:02,030
+we have two productions now for s, s goes to s followed by something alpha or it
+
+33
+00:03:02,030 --> 00:03:07,730
+goes to something else that doesn't mention s and let's call that Beta. And if
+
+34
+00:03:07,730 --> 00:03:11,370
+you think about the language that this generates, it's gonna join all strings
+
+35
+00:03:11,370 --> 00:03:17,040
+that start with a beta and then follow, and followed by any number of alphas. And,
+
+36
+00:03:17,040 --> 00:03:24,040
+but it does it in a very particular way. So if I write out some, a derivation here
+
+37
+00:03:24,400 --> 00:03:28,980
+where I used a few, where I used the first production a few times. You can see what's
+
+38
+00:03:28,980 --> 00:03:34,540
+going on. So again, s goes to s followed by alpha. And then s goes to s followed by
+
+39
+00:03:34,540 --> 00:03:40,080
+alpha, alpha and then s goes to s followed by alpha, alpha, alpha and if I repeat
+
+40
+00:03:40,080 --> 00:03:47,080
+this, I get. S followed by any number of alphas and then in one more step, I can.
+
+41
+00:03:49,200 --> 00:03:54,090
+Put in beta and I get beta followed by any number of alpha. So, that's the proof that
+
+42
+00:03:54,090 --> 00:03:58,310
+it generates that language. That language that begins with a beta and has some
+
+43
+00:03:58,310 --> 00:04:02,440
+sequence of alphas but you can see that it does it right to left, it produces the
+
+44
+00:04:02,440 --> 00:04:07,200
+right under the string first and in fact the very last thing it produces if the
+
+45
+00:04:07,200 --> 00:04:12,380
+first thing that appears in the input and that's why. It doesn't work with Recursive
+
+46
+00:04:12,380 --> 00:04:17,090
+Descent Parsing because Recursive Descent Parsing wants to see the first part of the
+
+47
+00:04:17,089 --> 00:04:22,370
+input first and then work left to right. And this grammar is built to produce the
+
+48
+00:04:22,370 --> 00:04:29,370
+string right to left. And therein lies the idea that allow us to fix the problem so
+
+49
+00:04:30,230 --> 00:04:34,730
+we can generate exactly the same language producing the strings from left to right
+
+50
+00:04:34,730 --> 00:04:39,710
+instead of right to left and th e way we do that is to replace left-recursion by
+
+51
+00:04:39,710 --> 00:04:44,780
+right-recursion. And this requires us to add one more symbol in this case to the
+
+52
+00:04:44,780 --> 00:04:50,210
+grammar so instead of having s go to something involving s on the left, we'll
+
+53
+00:04:50,210 --> 00:04:57,210
+have s go to beta so the first thing notice in the very first position and then
+
+54
+00:04:57,310 --> 00:05:01,340
+it goes to s prime and what does s prime do, well s prime produce what you would
+
+55
+00:05:01,340 --> 00:05:07,970
+expect, a sequence of alphas and it could be the empty sequence. And if you write
+
+56
+00:05:07,970 --> 00:05:14,970
+out some you know? Example derivation here we'll have s goes to beta s prime. Which
+
+57
+00:05:16,980 --> 00:05:23,630
+goes to now using the rules for s prime goes to beta alpha s prime, Goes to beta
+
+58
+00:05:23,630 --> 00:05:30,120
+alpha. Alpha s prime goes to and after any number of sequent, any number of rewrites
+
+59
+00:05:30,120 --> 00:05:37,120
+we get beta followed by sub sequence of alphas followed by s prime. And then in
+
+60
+00:05:37,250 --> 00:05:42,450
+one more step we use the Epsilon Rule here and we wind up with beta followed by some
+
+61
+00:05:42,450 --> 00:05:46,210
+number of alphas. And so you can see it generates exactly the same string as the
+
+62
+00:05:46,210 --> 00:05:50,380
+first grammar but it does so in a right-recursive way instead of a
+
+63
+00:05:50,380 --> 00:05:57,380
+left-recursive way. So in general, we may have many productions some of which are
+
+64
+00:05:59,980 --> 00:06:05,850
+left-recursive and some of which are not. And the language produced by this
+
+65
+00:06:05,850 --> 00:06:10,900
+particular form of grammar here is gonna be all the strings. They are derived from
+
+66
+00:06:10,900 --> 00:06:17,300
+asst start with one of the betas. So one of the things here that doesn't involve s
+
+67
+00:06:17,300 --> 00:06:23,920
+and it continues with zero or more instances of the alphas. And we can do
+
+68
+00:06:23,920 --> 00:06:27,800
+exactly the same trick. This is just generalizing the idea that we had before
+
+69
+00:06:27,800 --> 00:06:32,520
+where we only have one beta and one alpha to many betas and many alphas and so the
+
+70
+00:06:32,520 --> 00:06:37,830
+general form of rewriting this left-recursive grammar in using
+
+71
+00:06:37,830 --> 00:06:43,090
+right-recursion is given here. So here each of the betas appears as an
+
+72
+00:06:43,090 --> 00:06:47,389
+alternative in the first position. We only need one additional symbol s prime and
+
+73
+00:06:47,389 --> 00:06:54,389
+then the s prime rules is take care of generating any sequence of the alpha i.
+
+74
+00:06:56,000 --> 00:06:59,830
+Now it turns out that, that isn't the most general form of left recursion. There are
+
+75
+00:06:59,830 --> 00:07:05,660
+even other ways to encode left recursion in a grammar and here's another way that's
+
+76
+00:07:05,660 --> 00:07:11,770
+important. So, we may have a grammar that where nothing is obviously left-recursive.
+
+77
+00:07:11,770 --> 00:07:16,250
+So if you look here, you see that the s doesn't even appear on the right hand side
+
+78
+00:07:16,250 --> 00:07:20,520
+here. And if you look at this production here, a doesn't appear anywhere on the
+
+79
+00:07:20,520 --> 00:07:24,330
+right hand side so there's no what's called Immediate Left-Recursion in this
+
+80
+00:07:24,330 --> 00:07:29,930
+grammar. But on the other hand, there is left-recursion because s goes to a alpha
+
+81
+00:07:29,930 --> 00:07:36,930
+and then a can go to s beta. And so there we have in, in two steps produce another
+
+82
+00:07:37,020 --> 00:07:41,889
+string with s at the left end and so this is still a Left-Recursive Grammar. We just
+
+83
+00:07:41,889 --> 00:07:46,340
+delayed it by inserting other non-terminals at the left most position
+
+84
+00:07:46,340 --> 00:07:52,919
+before we got back to s. So, this left recursion can also be eliminated. In fact,
+
+85
+00:07:52,919 --> 00:07:57,600
+this can be eliminated automatically, it doesn't even require human intervention.
+
+86
+00:07:57,600 --> 00:08:00,990
+And if you look at any of the text pretty quickly in the Dragon Book, you'll find
+
+87
+00:08:00,990 --> 00:08:02,090
+algorithms were doing that.

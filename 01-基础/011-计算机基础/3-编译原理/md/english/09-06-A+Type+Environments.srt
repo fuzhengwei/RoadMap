@@ -1,0 +1,487 @@
+0
+00:00:02,790 --> 00:00:06,260
+In this video, we're gonna continue our development of Cool type checking with a
+
+1
+00:00:06,260 --> 00:00:13,260
+discussion of type environments. Let's begin by doing some more type rules. So
+
+2
+00:00:14,340 --> 00:00:19,570
+here's one for the constant false. So it's provable that the constant false has the
+
+3
+00:00:19,570 --> 00:00:23,720
+type [inaudible] and that's not surprising. If I have a string literal S,
+
+4
+00:00:23,720 --> 00:00:27,700
+then it's provable that, that has type string. And that's also not very
+
+5
+00:00:27,700 --> 00:00:34,700
+surprising. The expression new T produces an object of type T. And the type rule for
+
+6
+00:00:35,890 --> 00:00:41,270
+that is very straightforward. New T has type T. And we're just going to ignore
+
+7
+00:00:41,270 --> 00:00:45,140
+self type for now. As I mentioned in an earlier video, we'll deal with self type
+
+8
+00:00:45,140 --> 00:00:51,920
+later in a video all on its own. Here are a couple of more rules. If it's provable
+
+9
+00:00:51,920 --> 00:00:57,500
+that an expression e has type bool then an e Boolean complement of e not e also has
+
+10
+00:00:57,500 --> 00:01:03,590
+type bool. And finally perhaps our most complex rule so far, the rule for a while
+
+11
+00:01:03,590 --> 00:01:07,430
+loop, and we call that the e-1 here is the predicate of the loop, this is what
+
+12
+00:01:07,430 --> 00:01:12,060
+determines if we keep executing the loop or not, and e2 is the body of the loop.
+
+13
+00:01:12,060 --> 00:01:16,640
+And so type one is required to have type bool. It needs to be provable that e one
+
+14
+00:01:16,640 --> 00:01:20,810
+had type bool, and we allow e two, the body of the loop, to have an arbitrary
+
+15
+00:01:20,810 --> 00:01:25,520
+type. It can have any type t. It has to have some type, so it has to be type able
+
+16
+00:01:25,520 --> 00:01:30,979
+under some. Rules, but we don't care what the type is because the type of the entire
+
+17
+00:01:30,979 --> 00:01:35,220
+expression is just object. We don't actually return the, this expression
+
+18
+00:01:35,220 --> 00:01:38,450
+doesn't return an interesting value, doesn't produce an interesting value, and
+
+19
+00:01:38,450 --> 00:01:42,119
+to discourage people from trying to rely on it, we just type the whole thing as
+
+20
+00:01:42,119 --> 00:01:45,450
+object. And this is a little bit of a design decision. Now we could have
+
+21
+00:01:45,450 --> 00:01:50,500
+designed a language, for example, where the type of a while loop is, was type t.
+
+22
+00:01:50,500 --> 00:01:56,860
+And that you would get the last value of the loop that was that was executed but
+
+23
+00:01:56,860 --> 00:02:02,119
+the problems is that if E one the protocol loop is false and reaches the loop the
+
+24
+00:02:02,119 --> 00:02:07,090
+first time Then you never evaluate e two, and no value is produced, and in that case
+
+25
+00:02:07,090 --> 00:02:11,810
+you would get a, a void value. Which if so mebody tried to dereference, it would
+
+26
+00:02:11,810 --> 00:02:16,359
+result in a run time error. That's so to discourage programmers from lying On the
+
+27
+00:02:16,359 --> 00:02:23,200
+loop, producing a meaningful value. We could just type it, as object. So far,
+
+28
+00:02:23,200 --> 00:02:26,819
+it's been pretty straight forward to define reasonable type rules for every
+
+29
+00:02:26,819 --> 00:02:31,019
+construct that we've looked at. But now we actually come to a problem. Let's say we
+
+30
+00:02:31,019 --> 00:02:34,879
+have an expression which consists just of a single variable name, and that's a
+
+31
+00:02:34,879 --> 00:02:39,779
+perfectly valid, cool expression, and the question is, what is the type of that
+
+32
+00:02:39,779 --> 00:02:46,189
+variable, call it X And as you can see. When we're just looking at X by itself we
+
+33
+00:02:46,189 --> 00:02:51,919
+don't have enough information to give X a type. This local structural rule does not
+
+34
+00:02:51,919 --> 00:02:57,400
+carry any information about the type of X And stepping back one level, inference
+
+35
+00:02:57,400 --> 00:03:01,499
+rules have the property that all the information needs to be local. Everything
+
+36
+00:03:01,499 --> 00:03:07,669
+we need to know. To carry out the function of the rule has to be present in the rule
+
+37
+00:03:07,669 --> 00:03:10,999
+itself. There are no external data structures. There's nothing we're passing
+
+38
+00:03:10,999 --> 00:03:16,180
+around here that's on the side. Everything has to be encoded in this rule and, so far
+
+39
+00:03:16,180 --> 00:03:23,180
+at least, we just don't know Enough to say what the type of a variable should be. So
+
+40
+00:03:23,790 --> 00:03:27,829
+the solution to this problem is just to put more information in the rules, and
+
+41
+00:03:27,829 --> 00:03:33,199
+that's what we're going to do, so a type environment gives types for free
+
+42
+00:03:33,199 --> 00:03:38,169
+variables. So what is a free variable, a variable is free in an expression if it is
+
+43
+00:03:38,169 --> 00:03:45,169
+not defined within that expression. So for example, in the expression X, X is free.
+
+44
+00:03:47,529 --> 00:03:52,919
+In the expression x plus y (x+y), well, here this expression uses both x and y,
+
+45
+00:03:52,919 --> 00:03:58,529
+and there's no definition of either x or y in that expression, so x and y are free
+
+46
+00:03:58,529 --> 00:04:05,529
+And that expression. If I have, let Y... So I'm declaring a variable Y in X + Y.
+
+47
+00:04:09,919 --> 00:04:15,870
+Well what's free in this expression, well this expression uses X and Y but the use
+
+48
+00:04:15,870 --> 00:04:20,510
+of Y is governed by a definition of Y that occurs within the expression itself. So we
+
+49
+00:04:20,510 --> 00:04:27,470
+say here that Y is bound, Y is a bound variable in this expression but X is still
+
+50
+00:04:27,470 --> 00:04:33,510
+free, so only X is free in that expression. And the ide a here is, that if
+
+51
+00:04:33,510 --> 00:04:37,840
+I have an expression with three variables, and you want me to type check it, you have
+
+52
+00:04:37,840 --> 00:04:42,600
+to tell me what the types of those variables are. So I can type check X if
+
+53
+00:04:42,600 --> 00:04:47,730
+you tell me what the type of X is. I can type check X plus Y if you tell me the
+
+54
+00:04:47,730 --> 00:04:52,240
+types of X and Y. And I can type check this expression, this line expression, if
+
+55
+00:04:52,240 --> 00:04:55,960
+you tell me the type of its one free variable X, the type of Y. We will be
+
+56
+00:04:55,960 --> 00:05:01,150
+given a declaration by the let, but we still have to tell me what the type X is.
+
+57
+00:05:01,150 --> 00:05:04,160
+So the free variables are just those variables where you have to give me the
+
+58
+00:05:04,160 --> 00:05:09,330
+information and then I can carry out the type checking. The type environment
+
+59
+00:05:09,330 --> 00:05:13,870
+encodes this information so a type environment is a function from object
+
+60
+00:05:13,870 --> 00:05:20,870
+identifiers from variable names to types So let O be a type environment. One of
+
+61
+00:05:21,060 --> 00:05:26,350
+these functions from object identifier names types. And now we're going to extend
+
+62
+00:05:26,350 --> 00:05:30,930
+the kinds of logical statements that we prove to look like this. And the way that
+
+63
+00:05:30,930 --> 00:05:34,680
+this going to be read is that under the assumptions that variables have the types
+
+64
+00:05:34,680 --> 00:05:39,300
+given by O. So the assumptions go over here on the left side of the turnstile.
+
+65
+00:05:39,300 --> 00:05:43,050
+These are the assumptions that we're making about the free variables in E. So
+
+66
+00:05:43,050 --> 00:05:48,990
+the assumption that, excuse me, three variables. Have the types given by o is
+
+67
+00:05:48,990 --> 00:05:55,620
+provable, that's this turn style here, that the expression e has type t. And, so
+
+68
+00:05:55,620 --> 00:06:02,170
+this notation very nicely, separates what we're assuming. This is input to our,
+
+69
+00:06:02,170 --> 00:06:05,950
+process of figuring out what the type is from what we're proving. So if you tell me
+
+70
+00:06:05,950 --> 00:06:12,950
+the types of the free variables as given by o, then I can tell you, the type e. The
+
+71
+00:06:15,230 --> 00:06:19,870
+type environment has to be added to all the rules that we've gone through so far.
+
+72
+00:06:19,870 --> 00:06:24,790
+So for example, for intergal literals if I have some set of assumptions of all the
+
+73
+00:06:24,790 --> 00:06:28,910
+types of variables, that doesn't really change, it doesn't, in fact it doesn't
+
+74
+00:06:28,910 --> 00:06:32,800
+change, what the type is an intergal literal. Any intergal literal will still
+
+75
+00:06:32,800 --> 00:06:37,120
+have type int. And so in this case, for this particular kind of expression, I we
+
+76
+00:06:37,120 --> 00:06:43,180
+don't use any of our assumptio ns about the types of variables. Now, it's a little
+
+77
+00:06:43,180 --> 00:06:47,400
+bit different with the case of sum expressions. So if I have the expression E
+
+78
+00:06:47,400 --> 00:06:52,389
+one plus E two, and I have some assumptions, zero, about the types of
+
+79
+00:06:52,389 --> 00:06:58,320
+variables, well, then I want to prove that E one has type int, and I'm gonna do that
+
+80
+00:06:58,320 --> 00:07:03,840
+using the types of the variables given by zero, so E one might contain free
+
+81
+00:07:03,840 --> 00:07:06,200
+variables and I'll need to look in zero to figure out what the types of those
+
+82
+00:07:06,200 --> 00:07:11,180
+variables are. And similarly for E two, I will type E two under the same set of
+
+83
+00:07:11,180 --> 00:07:16,580
+assumptions. And if E1 has type int under the assumptions O and E2 has type int
+
+84
+00:07:16,580 --> 00:07:21,110
+under the assumptions O. Well, then I can conclude that E1 plus E2 has type int
+
+85
+00:07:21,110 --> 00:07:28,110
+under the same set of assumptions O. And we can also write new rules, so now our
+
+86
+00:07:28,340 --> 00:07:34,330
+big problem with free variables becomes a very easy problem. If I want to know what
+
+87
+00:07:34,330 --> 00:07:39,620
+the type of X is, and there's a missing O here, if I want to know what the type of X
+
+88
+00:07:39,620 --> 00:07:44,300
+is, I simply look it up in my object environment. So under the assumption that
+
+89
+00:07:44,300 --> 00:07:49,560
+the variables have the types given by O, what is the type of x? Well, I look up in
+
+90
+00:07:49,560 --> 00:07:56,560
+O what the type of X is assumed to be, and I then can prove that X has that type T.
+
+91
+00:07:58,350 --> 00:08:02,290
+So now let's take a look at a rule that actually does something interesting with
+
+92
+00:08:02,290 --> 00:08:07,520
+the variables from the point of view of the environments. So here is a [inaudible]
+
+93
+00:08:07,520 --> 00:08:10,900
+expression. And let's remind ourselves what this does. This is a [inaudible]
+
+94
+00:08:10,900 --> 00:08:16,169
+expression that has no initialization. So it says that X is going to be a new
+
+95
+00:08:16,169 --> 00:08:20,540
+variable. It's going to have type T0, and that variable is going to be visible in
+
+96
+00:08:20,540 --> 00:08:24,930
+the sub expression E1. And so, now, how am I going to type check that? Well, I'm
+
+97
+00:08:24,930 --> 00:08:29,669
+going to type check E1 in some kind of environment. And this is a new notation
+
+98
+00:08:29,669 --> 00:08:36,120
+here, so let me define what it means. So remember O is a function, it maps a,
+
+99
+00:08:36,120 --> 00:08:43,120
+variable names to types and OT/X this notation here is also a function. And what
+
+100
+00:08:43,639 --> 00:08:48,600
+this is, is the function O modified at the single point X to return T. So in
+
+101
+00:08:48,600 --> 00:08:53,680
+particular a, this function, this whole thing here is one function, this wh ole
+
+102
+00:08:53,680 --> 00:08:59,699
+thing I'm underlining here is a function, that applied to X is Returns t So that
+
+103
+00:08:59,699 --> 00:09:04,540
+says that this sort of assumptions says that x has type t and for any other
+
+104
+00:09:04,540 --> 00:09:11,540
+variable. So I apply it to some other variable y, where x is different from y.
+
+105
+00:09:12,850 --> 00:09:19,110
+Well then, I just get whatever type y has in [inaudible]. Okay? So what this rule
+
+106
+00:09:19,110 --> 00:09:25,319
+then says is that I'm going to type check E1 in the same environment O, except that
+
+107
+00:09:25,319 --> 00:09:30,089
+at point X, it's going to have the type T0. So we're gonna change just the type of
+
+108
+00:09:30,089 --> 00:09:34,550
+X that have type T0, because that's the type of the new identifier that's bound at
+
+109
+00:09:34,550 --> 00:09:37,490
+E1. And all the other types will be the same. And using those assumptions, I'll
+
+110
+00:09:37,490 --> 00:09:42,660
+try to prove that E1 has some type. I will get a type for E1. And then that will be
+
+111
+00:09:42,660 --> 00:09:49,660
+the type of the entire let expression. Now notice something about the type
+
+112
+00:09:49,730 --> 00:09:55,569
+environment. What this says is that before we type check E1, we need to modify Our
+
+113
+00:09:55,569 --> 00:10:00,689
+set of assumption. Modify our type environment to include a new assumption
+
+114
+00:10:00,689 --> 00:10:05,790
+about x, then we type check e one, and then of course when we leave, type
+
+115
+00:10:05,790 --> 00:10:10,100
+checking e one, we're going to remove that assumption about x, that new assumption,
+
+116
+00:10:10,100 --> 00:10:15,449
+because outside of the let, we just have the original set of assumptions, though.
+
+117
+00:10:15,449 --> 00:10:20,220
+And so, I hope that, that, terminology and that description reminds you of something
+
+118
+00:10:20,220 --> 00:10:24,290
+that we talked about earlier, because this type environment is really implemented by
+
+119
+00:10:24,290 --> 00:10:30,559
+the simple table. So, in our rules, The type environment that carries around the
+
+120
+00:10:30,559 --> 00:10:34,829
+information that will be stored or is typically stored in the symbol table of a
+
+121
+00:10:34,829 --> 00:10:35,189
+compiler.

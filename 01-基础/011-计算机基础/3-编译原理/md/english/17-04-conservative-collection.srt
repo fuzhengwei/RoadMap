@@ -1,0 +1,191 @@
+0
+00:00:03,340 --> 00:00:06,850
+In this very short video, I'm going to say a few words about a technique called
+
+1
+00:00:06,850 --> 00:00:13,850
+Conservative Garbage Collection that can be used for languages like C and C++. To
+
+2
+00:00:14,000 --> 00:00:18,519
+review, Automatic Memory Management relies on being able to find all the reachable
+
+3
+00:00:18,519 --> 00:00:23,660
+objects. And it also needs to be able to find all the pointers in an object. Now,
+
+4
+00:00:23,660 --> 00:00:27,310
+the difficultly with doing garbage collection for a language like C or C++ is
+
+5
+00:00:27,310 --> 00:00:31,820
+that it's very difficult or even impossible to identify the contents of
+
+6
+00:00:31,820 --> 00:00:37,470
+objects in memory with 100 percent reliability. So if we see, two words in
+
+7
+00:00:37,470 --> 00:00:42,620
+memory, you know, it might be a list cell that has, a data and next field. So we see
+
+8
+00:00:42,620 --> 00:00:48,219
+just two words here. And there are some bit patterns in here, 0's and 1's. Okay
+
+9
+00:00:48,219 --> 00:00:52,149
+how do we know whether these are both pointers? It could be that one is a
+
+10
+00:00:52,149 --> 00:00:55,670
+pointer and the, the other is not in the case of a list cell. So one of these
+
+11
+00:00:55,670 --> 00:00:59,789
+fields is just data like an injure and another one is a pointer. Or it could be
+
+12
+00:00:59,789 --> 00:01:04,969
+something like a binary tree node where both of these words are pointers. And
+
+13
+00:01:04,968 --> 00:01:09,670
+because of this weakness really in the C and C++ type systems, we just can't
+
+14
+00:01:09,670 --> 00:01:15,240
+guarantee that we know where all the pointers are. Now it turns out that it is
+
+15
+00:01:15,240 --> 00:01:19,560
+possible to extend garbage collection techniques to work with languages like C
+
+16
+00:01:19,560 --> 00:01:26,259
+and C++. And the basic idea, or insight, is that it's always okay to be
+
+17
+00:01:26,259 --> 00:01:28,859
+conservative. And if we're not sure whether something might be used in the
+
+18
+00:01:28,859 --> 00:01:33,169
+future, then we will just keep it around. And remember that graph reachability is
+
+19
+00:01:33,169 --> 00:01:38,349
+already a conservative technique. What we really want is to keep around the objects
+
+20
+00:01:38,349 --> 00:01:42,700
+that will just be used in the future, but the reachability in the object graph is an
+
+21
+00:01:42,700 --> 00:01:47,579
+approximation to that, so because reachable objects might be used. And now,
+
+22
+00:01:47,579 --> 00:01:51,149
+the problem with C and C++ is that we don't know where the pointers are. We
+
+23
+00:01:51,149 --> 00:01:54,380
+don't have a guarantee from the type system about where the pointers are. And
+
+24
+00:01:54,380 --> 00:01:58,639
+so the basic trick is that, if something looks like a pointer, then we will treat
+
+25
+00:01:58,639 --> 00:02:03,179
+it as a pointer. All we have to do is be conservative, and if we are not sure wh
+
+26
+00:02:03,179 --> 00:02:06,959
+ether a given word of memory is a pointer. Then we can just treat it as a pointer,
+
+27
+00:02:06,959 --> 00:02:11,769
+and keep whatever it points to around. If we, and as long as we are not going to
+
+28
+00:02:11,769 --> 00:02:16,450
+move it or change it, that would be okay. And so, how, how do we decide whether a
+
+29
+00:02:16,450 --> 00:02:19,950
+particular word of memory is a pointer? Well, it should be a line, meaning, you
+
+30
+00:02:19,950 --> 00:02:24,870
+know, it should end in some zeros to indicate that it was pointing, if it was a
+
+31
+00:02:24,870 --> 00:02:28,129
+pointer it was pointing to a word boundary. And then, whatever pattern it
+
+32
+00:02:28,129 --> 00:02:31,790
+is, if we interpret it as an address, it has to be a valid address. So, it should
+
+33
+00:02:31,790 --> 00:02:35,430
+point to the data segment. And Noah said, you know, these two conditions will rule
+
+34
+00:02:35,430 --> 00:02:42,060
+out all kinds of data and memory. So for example, any small integer is probably not
+
+35
+00:02:42,060 --> 00:02:46,849
+going to be interpretable as a valid address in the data segment. So, you know,
+
+36
+00:02:46,849 --> 00:02:50,579
+most likely, only things that are pointers, or very few things that are not
+
+37
+00:02:50,579 --> 00:02:54,340
+pointers will be treated as pointers. And what we're going to do then, is, if it
+
+38
+00:02:54,340 --> 00:02:57,950
+looks like a pointer, we're going to consider it to be a pointer. We'll follow
+
+39
+00:02:57,950 --> 00:03:01,709
+it, and then we'll end up overestimating the set of reachable objects. We may keep
+
+40
+00:03:01,709 --> 00:03:07,049
+around some stuff, that isn't reachable at all. But that's alright, it's always okay
+
+41
+00:03:07,049 --> 00:03:12,780
+to keep around more stuff than necessary. Now, we still can't move the object,
+
+42
+00:03:12,780 --> 00:03:15,290
+alright? Because we can't update the pointers to them. If we don't know that
+
+43
+00:03:15,290 --> 00:03:19,469
+something is a pointer, we certainly don't want to change it, okay? And, you know,
+
+44
+00:03:19,469 --> 00:03:22,760
+for example, if we thought something was a pointer, and it was actually an account
+
+45
+00:03:22,760 --> 00:03:25,670
+number, and then we updated the pointer, when we move the object, we would just
+
+46
+00:03:25,670 --> 00:03:30,010
+completely change what the program does. So, this only really works when you mark
+
+47
+00:03:30,010 --> 00:03:30,260
+this way.

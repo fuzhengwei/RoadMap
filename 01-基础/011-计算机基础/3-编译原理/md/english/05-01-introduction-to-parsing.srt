@@ -1,0 +1,243 @@
+0
+00:00:03,830 --> 00:00:08,580
+In this video, we're going to transition from lexical analysis to parsing and talk
+
+1
+00:00:08,580 --> 00:00:15,580
+a little bit about the relationship between those two compiler phases. We've
+
+2
+00:00:16,660 --> 00:00:20,560
+already talked about regular languages and it's worth mentioning that these are the
+
+3
+00:00:20,560 --> 00:00:24,810
+weakest formal languages that are widely used. But they have, of course, many
+
+4
+00:00:24,810 --> 00:00:30,150
+applications, some of which we saw in previous videos. The difficulty with
+
+5
+00:00:30,150 --> 00:00:35,110
+regular languages is that a lot of languages are simply not regular. And
+
+6
+00:00:35,110 --> 00:00:39,699
+there's some pretty important languages that can't be expressed using regular
+
+7
+00:00:39,699 --> 00:00:44,199
+expressions or finite automata. So let's consider this language which is the set of
+
+8
+00:00:44,199 --> 00:00:50,269
+all balanced parentheses. So some elements of this language would be at the string
+
+9
+00:00:50,269 --> 00:00:56,210
+one open-paren, one close-paren, two open-parens, two close-parens, three
+
+10
+00:00:56,210 --> 00:01:02,290
+open-parens, three close-parens and so on. And, you can imagine that this is actually
+
+11
+00:01:02,290 --> 00:01:05,580
+something that's fairly representative of lots of programming language construct. So
+
+12
+00:01:05,580 --> 00:01:12,580
+for example, any kind of nested arithmetic expression would fit into this class but
+
+13
+00:01:13,470 --> 00:01:20,470
+also things like nested if and else's will have this category, this characteristic.
+
+14
+00:01:21,640 --> 00:01:26,380
+And here with the nested [inaudible] it's just the f statement, the functions like
+
+15
+00:01:26,380 --> 00:01:32,490
+an open-paren. Not every languages like cool which has the explicit closing fee as
+
+16
+00:01:32,490 --> 00:01:36,450
+well but they're implicit in many languages and so there are lots of nesting
+
+17
+00:01:36,450 --> 00:01:43,450
+structure in programming languages constructs and those cannot be handled by
+
+18
+00:01:43,690 --> 00:01:50,040
+regular expressions. So this raises the question of what the regular languages can
+
+19
+00:01:50,040 --> 00:01:56,430
+express. And, why they aren't sufficient for recognizing arbitrary nesting
+
+20
+00:01:56,430 --> 00:02:01,240
+structure. So we can illustrate the limitations of regular languages and
+
+21
+00:02:01,240 --> 00:02:05,860
+Finite Automaton by looking a simple two state machine. So let's consider this
+
+22
+00:02:05,860 --> 00:02:10,330
+machine. We have one we have start state and then the other state is the accepting
+
+23
+00:02:10,330 --> 00:02:16,700
+state. And, we'll have this machine. Just be a machine that we've already seen
+
+24
+00:02:16,700 --> 00:02:23,700
+actually and it'll recognize strings with odd numbers of 1's. So if we see a one and
+
+25
+00:02:25,620 --> 00:02:29,920
+we're in the start state, we move. We now see an odd number of 1's. We move to the
+
+26
+00:02:29,920 --> 00:02:32,840
+accepting state and we stay there until we see another one. In which case, we've seen
+
+27
+00:02:32,840 --> 00:02:35,950
+even number of 1's and then we're in the start state. So whenever we see an odd
+
+28
+00:02:35,950 --> 00:02:39,540
+number of 1's, we're in the final state. Whenever we see an even number of 1's,
+
+29
+00:02:39,540 --> 00:02:44,250
+we're in the start state. And if we feed this a fairly long string of 1's, let's,
+
+30
+00:02:44,250 --> 00:02:49,240
+let's select only seven 1's in it. Then what's it going to do is going to go back
+
+31
+00:02:49,240 --> 00:02:52,890
+and forth and back and forth between these states. It's gonna wind up in the final
+
+32
+00:02:52,890 --> 00:02:57,160
+state when it gets to the last one so it'll accept but notice that it doesn't
+
+33
+00:02:57,160 --> 00:03:01,950
+know how many times it's been to that final state. It doesn't remember the
+
+34
+00:03:01,950 --> 00:03:04,880
+length of the string; it doesn't have any way of counting how many characters the
+
+35
+00:03:04,880 --> 00:03:11,880
+string had in it. And in fact, all I can count here is the parity. So in general
+
+36
+00:03:12,860 --> 00:03:19,580
+Finite Automata can really only express things where you can count modulus on k.
+
+37
+00:03:19,580 --> 00:03:26,580
+So they can count mod k for some k where k is the number of states in the machine.
+
+38
+00:03:27,349 --> 00:03:30,930
+And so, you know if I have pre-test the machine, I can keep track of whether the
+
+39
+00:03:30,930 --> 00:03:35,629
+string length is divisible by three or some other similar property but I can't do
+
+40
+00:03:35,629 --> 00:03:42,629
+things like count to an arbitrary i so if I need to recognize a language that
+
+41
+00:03:42,849 --> 00:03:46,510
+requires counting arbitrarily high like recognizing all strings of balance
+
+42
+00:03:46,510 --> 00:03:53,510
+parentheses, we can't do that with the finite set of states. So what does a
+
+43
+00:03:53,720 --> 00:03:58,940
+parser do, it takes the sequence of tokens as input from the lexer and it produces a
+
+44
+00:03:58,940 --> 00:04:05,940
+parse tree of the program. And for example in cool, here's an input expression that
+
+45
+00:04:08,700 --> 00:04:14,510
+is input to the lexical analyzer. The lexical analyzer produces this sequence of
+
+46
+00:04:14,510 --> 00:04:19,479
+tokens as its output. That's the input to the parser. Then the parser produces this
+
+47
+00:04:19,478 --> 00:04:24,469
+parse tree where the nesting structure has been made explicit. So, we have the, if
+
+48
+00:04:24,469 --> 00:04:28,460
+and else and then the three components: the predicate, the then branch and the
+
+49
+00:04:28,460 --> 00:04:35,460
+else branch of the, if To summarize, the lexer takes a string of character as input
+
+50
+00:04:36,150 --> 00:04:41,289
+and produces a string of tokens as output. That string of tok ens is the input to the
+
+51
+00:04:41,289 --> 00:04:47,300
+parser which takes a string of tokens and produces a Parse Tree of the program. And
+
+52
+00:04:47,300 --> 00:04:50,719
+it's worth mentioning a couple of thing here. First of all, sometimes the Parse
+
+53
+00:04:50,719 --> 00:04:57,430
+Tree is only implicit. So the, a compiler may never actually build the full Parse
+
+54
+00:04:57,430 --> 00:05:02,300
+Tree. We'll talk more about that later. Many compilers do build an explicit parse
+
+55
+00:05:02,300 --> 00:05:06,699
+tree but many do not. The other thing that's worth mentioning is that there are
+
+56
+00:05:06,699 --> 00:05:11,949
+compilers that do combine these two phases into one where everything is done by the
+
+57
+00:05:11,949 --> 00:05:16,029
+parser. So, the parsing technology is generally powerful enough to express
+
+58
+00:05:16,029 --> 00:05:21,319
+lexical analysis in addition to parsing. But most compilers still divide up the
+
+59
+00:05:21,319 --> 00:05:25,729
+work this way because regular expressions are such a good match for lexical analysis
+
+60
+00:05:25,729 --> 00:05:28,279
+and then the parsing is handled separately.

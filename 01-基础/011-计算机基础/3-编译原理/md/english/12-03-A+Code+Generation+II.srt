@@ -1,0 +1,783 @@
+0
+00:00:04,200 --> 00:00:08,280
+This video is a continuation of the previous video where we'll be finishing up
+
+1
+00:00:08,280 --> 00:00:12,870
+co-generation for the simple language dealing with function calls, function
+
+2
+00:00:12,870 --> 00:00:19,870
+definitions and variable references. So just to remind you what we're working on,
+
+3
+00:00:20,470 --> 00:00:24,099
+here is the simple language And again, we have a bunch of different kinds of
+
+4
+00:00:24,099 --> 00:00:30,059
+expressions And we dealt with all of these last time except for variable references
+
+5
+00:00:30,059 --> 00:00:34,500
+and function calls And of course, we also have function definitions. So, as I said
+
+6
+00:00:34,500 --> 00:00:38,080
+in the introduction these are the three constructs we'll be looking at in this
+
+7
+00:00:38,080 --> 00:00:44,700
+video. >> The main issue in designing the co-generation for function calls and
+
+8
+00:00:44,700 --> 00:00:49,500
+function definitions is that both of these will depend intimately on the layout of
+
+9
+00:00:49,500 --> 00:00:53,150
+the activation record. So really, co-generation for function calls,
+
+10
+00:00:53,150 --> 00:00:56,780
+co-generation for function definitions and the layout of the activation record all
+
+11
+00:00:56,780 --> 00:01:02,110
+need to be designed together. Now for this particular language, a very simple
+
+12
+00:01:02,110 --> 00:01:06,619
+activation record will be sufficient. Because we are using a stack machine, we
+
+13
+00:01:06,619 --> 00:01:11,399
+are modeling a stack machine in our code generation. The results of a function call
+
+14
+00:01:11,399 --> 00:01:14,560
+will always be in the accumulator and that means there is no need to store the
+
+15
+00:01:14,560 --> 00:01:18,749
+results of the function call in the activation record And furthermore, the
+
+16
+00:01:18,749 --> 00:01:22,299
+activation record will hold the actual parameters. So when we go to computer
+
+17
+00:01:22,299 --> 00:01:27,520
+function call with arguments X1 through XN, we will push those arguments onto the
+
+18
+00:01:27,520 --> 00:01:30,979
+stack And as it happens, these are the only variables in this language that are
+
+19
+00:01:30,979 --> 00:01:37,979
+no local or global variables other than the arguments to a function call And so
+
+20
+00:01:38,159 --> 00:01:41,909
+those are the only variables that will need to be stored in the activation
+
+21
+00:01:41,909 --> 00:01:47,849
+record. Now recall that the stack machine discipline guarantees that the stack
+
+22
+00:01:47,849 --> 00:01:50,829
+pointer is preserved across function calls. So the stack pointer will be
+
+23
+00:01:50,829 --> 00:01:54,279
+exactly the same when we exit from a function call, as it was when we entered
+
+24
+00:01:54,279 --> 00:01:58,459
+the function call And this means we won't need a control link in our activation
+
+25
+00:01:58,459 --> 00:02:03,319
+record. The point of a control link is to help us find the previous activat ion, and
+
+26
+00:02:03,319 --> 00:02:07,229
+since, the stack pointer is preserved, it will have no trouble finding it when we
+
+27
+00:02:07,229 --> 00:02:11,039
+return from our function call, and we'll never need to look at another activation
+
+28
+00:02:11,038 --> 00:02:17,120
+during a function call since there are no non-local variables in the language. We
+
+29
+00:02:17,120 --> 00:02:20,470
+will however need the return address and that will need to be stored somewhere in
+
+30
+00:02:20,470 --> 00:02:26,079
+the activation record And, one more thing. It turns out that a pointer to the current
+
+31
+00:02:26,079 --> 00:02:29,989
+activation will be useful. Now this is to the current activation, not to the
+
+32
+00:02:29,989 --> 00:02:36,480
+previous activation And this pointer will live in the register, FP, which stands for
+
+33
+00:02:36,480 --> 00:02:40,450
+Frame Pointer. This is a conventional, this is a, this is the register name on
+
+34
+00:02:40,450 --> 00:02:44,810
+the MIPS and the name is chosen, to denote the frame pointer And by
+
+35
+00:02:44,810 --> 00:02:48,709
+convention, the compilers put the frame pointer there. What the frame pointer is
+
+36
+00:02:48,709 --> 00:02:52,159
+good for, well it points to the current frame, so that's what the name comes from.
+
+37
+00:02:52,159 --> 00:02:58,379
+But, what it's good for, we'll see in a few minutes. Right so to summarize for
+
+38
+00:02:58,379 --> 00:03:02,799
+this language an activation record that has the caller's frame pointer, The actual
+
+39
+00:03:02,799 --> 00:03:07,469
+parameters and the return address will be sufficient. So let's consider a call to
+
+40
+00:03:07,469 --> 00:03:12,510
+the function F and has two arguments X and Y. Then at the time the call is performed
+
+41
+00:03:12,510 --> 00:03:17,379
+before we start executing the body of the function this is what the activation
+
+42
+00:03:17,379 --> 00:03:21,400
+record will look like, So we'll have the old frame pointer. So this is the frame
+
+43
+00:03:21,400 --> 00:03:25,739
+pointer that points to the caller's frame. Not to the frame of the function that
+
+44
+00:03:25,739 --> 00:03:29,439
+we're executing And the reason that it does that is that we have to save it
+
+45
+00:03:29,439 --> 00:03:32,709
+somewhere because the frame pointer register will be overwritten with the
+
+46
+00:03:32,709 --> 00:03:37,400
+frame pointer for the current activation so we have to save the old one, so that we
+
+47
+00:03:37,400 --> 00:03:42,780
+can restart the caller when we return to it, from the current function. And then
+
+48
+00:03:42,780 --> 00:03:45,859
+there the arguments of the function and those that are pushed on the stack in
+
+49
+00:03:45,859 --> 00:03:50,430
+reverse order. So the last argument is pushed on first and the first argument is
+
+50
+00:03:50,430 --> 00:03:53,700
+at the top of the stack And the reason for doing it this way is it'll make the
+
+51
+00:03:53,700 --> 00:03:59,749
+indexing to find the a rguments a little bit easier. A little bit simpler And then
+
+52
+00:03:59,749 --> 00:04:03,340
+We have the stack pointer so there's a, there's nothing here. What will go here is
+
+53
+00:04:03,340 --> 00:04:08,310
+the callee, the function that we're calling, will push on the return address.
+
+54
+00:04:08,310 --> 00:04:13,299
+So this is where the return address will go And these elements, the callers frame
+
+55
+00:04:13,299 --> 00:04:18,510
+pointer, the arguments to the function and the return address of the call function
+
+56
+00:04:18,510 --> 00:04:25,510
+will make up the activation record of F. A bit of terminology, the calling sequence
+
+57
+00:04:27,190 --> 00:04:31,670
+is the sequence of instructions that both the caller and callee to set up a function
+
+58
+00:04:31,670 --> 00:04:37,350
+invocation, okay? So that's referred to in compiler lingo as the calling sequence And
+
+59
+00:04:37,350 --> 00:04:42,850
+we're going to need a new instruction to show the calling sequence for this for,
+
+60
+00:04:42,850 --> 00:04:47,220
+for function calls. And that will be the jump and link instruction. So jump and
+
+61
+00:04:47,220 --> 00:04:52,250
+link what it does is it jumps to the label that it's given as an argument And it
+
+62
+00:04:52,250 --> 00:04:56,380
+saves the address of the next instruction after the jump in link, in the register
+
+63
+00:04:56,380 --> 00:05:01,740
+R.A. Which stands for, return address. So, what would happen in the jump in link
+
+64
+00:05:01,740 --> 00:05:05,700
+instructions, if I have jump in link to label L And then there's an add
+
+65
+00:05:05,700 --> 00:05:09,270
+instruction that comes next. I don't know what it is. It's the address of this
+
+66
+00:05:09,270 --> 00:05:13,940
+instruction, the one after the jump in the link that will be stored in the ret-, in
+
+67
+00:05:13,940 --> 00:05:18,920
+the, in the register RA. So this instruction will jump to L. It will store
+
+68
+00:05:18,920 --> 00:05:24,100
+the address of this add instruction in RAb And it will execute whatever code is at L.
+
+69
+00:05:24,100 --> 00:05:28,960
+And then the code that's at L can execute a jump back to the address in here to
+
+70
+00:05:28,960 --> 00:05:35,960
+execute the return, to the caller. So now we're ready to actually generate code for
+
+71
+00:05:36,840 --> 00:05:42,630
+a function call expression. So let's say we have the call, F of E1 To EN Where of
+
+72
+00:05:42,630 --> 00:05:46,830
+course E1 through EN are expressions. And let me change colors here. So these are
+
+73
+00:05:46,830 --> 00:05:52,310
+expressions, here, not values. So how are we going to do that? >> Well, the first
+
+74
+00:05:52,310 --> 00:05:55,590
+thing we're going to do is we're going to start building, the activation record And
+
+75
+00:05:55,590 --> 00:05:59,780
+so we save the current frame pointer. This is the frame pointer for the collar. >>
+
+76
+00:05:59,780 --> 00:06:04,210
+Okay. >> This is pointing to th e collars frame. >> Right >> And we store that at
+
+77
+00:06:04,210 --> 00:06:10,620
+the stack pointer. We have to bump the stack pointer. And then we generate code
+
+78
+00:06:10,620 --> 00:06:17,330
+for the last argument, for EN, right? And so that code gets inserted here And then
+
+79
+00:06:17,330 --> 00:06:20,620
+we push it on the stack. So we store the results of EN which will be in the
+
+80
+00:06:20,620 --> 00:06:27,270
+accumulator A0 on the stack and then we, bump the stack pointer. Alright, and we'll
+
+81
+00:06:27,270 --> 00:06:32,770
+do that for all the arguments finishing up with E-1. So, we generate code for E-1 and
+
+82
+00:06:32,770 --> 00:06:39,340
+we push it onto the stack. So, now all the arguments are on the stack and now we just
+
+83
+00:06:39,340 --> 00:06:43,340
+do the jump in link. So, we've done as much of the work or much of the calling
+
+84
+00:06:43,340 --> 00:06:48,030
+sequence as we can do on the caller's side. So, this code is executing in the
+
+85
+00:06:48,030 --> 00:06:55,030
+function in the caller. Okay, so this is the caller side of the calling sequence,
+
+86
+00:06:55,860 --> 00:06:59,420
+and it builds up as much of the activation record as it can. In particular it's
+
+87
+00:06:59,420 --> 00:07:03,350
+evaluating the actual parameters and pushing them on to the stack to form part
+
+88
+00:07:03,350 --> 00:07:07,500
+of the activation record, for the called function, and then we do the jump and
+
+89
+00:07:07,500 --> 00:07:11,690
+link. And we jump to the entry point of the function that we're calling. So we're,
+
+90
+00:07:11,690 --> 00:07:18,640
+this is a call to, to F, and so we jump to F's entry point. So a few more things to
+
+91
+00:07:18,640 --> 00:07:23,550
+note, First of all, as we discussed on the previous slide When we execute the jump in
+
+92
+00:07:23,550 --> 00:07:28,270
+link instruction that is going to save the return address in the register RA And that
+
+93
+00:07:28,270 --> 00:07:32,830
+address will be this address here, the one that comes after the, the address of the
+
+94
+00:07:32,830 --> 00:07:37,520
+next instruction, after the jump in link instruction And you'll notice also that
+
+95
+00:07:37,520 --> 00:07:43,210
+the activation record we've built so far is four times N plus four bytes. So this
+
+96
+00:07:43,210 --> 00:07:46,680
+is where N here is the number of arguments. Each argument takes up four
+
+97
+00:07:46,680 --> 00:07:51,960
+bytes, and then four bytes for the old frame pointer. Now we're ready to talk
+
+98
+00:07:51,960 --> 00:07:55,170
+about the callee side of the calling sequence And we're going to need one new
+
+99
+00:07:55,170 --> 00:07:59,880
+instruction for that. The JR instruction stands for jump register. And it just
+
+100
+00:07:59,880 --> 00:08:05,810
+jumps to the address in its register argument. So now, the callee side is the
+
+101
+00:08:05,810 --> 00:08:10,640
+code for the function definition, okay? So this is the co de that actually executes
+
+102
+00:08:10,640 --> 00:08:15,470
+the body of the function. And how do we generate code for that? Well let's take a
+
+103
+00:08:15,470 --> 00:08:20,430
+look. Now actually the very first thing that should be here is that this first
+
+104
+00:08:20,430 --> 00:08:25,500
+instruction of the call side is the entry point. So, we're missing the label
+
+105
+00:08:25,500 --> 00:08:30,930
+here So this would be labeled F entry. Okay So this is the target of the jump in
+
+106
+00:08:30,930 --> 00:08:35,529
+link instruction. And then the very first thing we do is we set up the frame
+
+107
+00:08:35,529 --> 00:08:39,539
+pointer. So we copy the current value of the stack pointer into the frame pointer.
+
+108
+00:08:39,539 --> 00:08:44,080
+That sets, that points to the end of the frame for the call-ee, for the new
+
+109
+00:08:44,080 --> 00:08:49,200
+function that's being executed. We also save the return address at the current
+
+110
+00:08:49,200 --> 00:08:52,680
+position on the stacks. Remember there was one more thing to do one thing one thing
+
+111
+00:08:52,680 --> 00:08:55,740
+that was missing. On the caller side on the caller side of the sequences which is
+
+112
+00:08:55,740 --> 00:08:59,590
+the return address. We don't know the return address until after the jumping
+
+113
+00:08:59,590 --> 00:09:05,400
+link instructions executes And so the callee is the one that has to save that
+
+114
+00:09:05,400 --> 00:09:10,890
+value. Okay so after the jumping link the RA register contains the return address
+
+115
+00:09:10,890 --> 00:09:17,230
+and that we save it into the frame. All right, and then we push the stack pointer.
+
+116
+00:09:17,230 --> 00:09:22,010
+'Kay. And now we just generate code for the body of the function. So now the, at
+
+117
+00:09:22,010 --> 00:09:26,330
+this point the activation record is completely set up, and now we can just
+
+118
+00:09:26,330 --> 00:09:30,080
+generate code for the function body. And after the function body executes, of
+
+119
+00:09:30,080 --> 00:09:35,830
+course, the stack pointer will be preserved, and, and that means that the
+
+120
+00:09:35,830 --> 00:09:40,780
+return address will be at four offset from the stack pointer, so we can load the
+
+121
+00:09:40,780 --> 00:09:46,940
+return address back into the return address register And then we can pop the
+
+122
+00:09:46,940 --> 00:09:51,530
+stack So here we're going to pop off The current frame from the stack And that's
+
+123
+00:09:51,530 --> 00:09:56,870
+going to be song size, z. Which we I haven't shown you what it is yet But,
+
+124
+00:09:56,870 --> 00:10:00,690
+we'll calculate The size of z in just a minute? This is going to be an immediate
+
+125
+00:10:00,690 --> 00:10:06,090
+value. So it's a constant that we plug in there And then we load the old frame
+
+126
+00:10:06,090 --> 00:10:11,730
+pointer. Okay So once we've incremented the stacks we popped off the existing
+
+127
+00:10:11,730 --> 00:10:17,310
+frame, and so now we're pointing at the frame pointer at the first we're, we're,
+
+128
+00:10:17,310 --> 00:10:21,500
+we're pointing at the first thing beyond the previous stack frame, and, what was
+
+129
+00:10:21,500 --> 00:10:25,370
+that, well, that was the first thing that we saved in the stack frame for F, and
+
+130
+00:10:25,370 --> 00:10:29,330
+that's the old frame pointer. So now we restore the old frame pointer so that the
+
+131
+00:10:29,330 --> 00:10:34,279
+call, the function that called us, we'll have its frame pointer back, and then now
+
+132
+00:10:34,279 --> 00:10:39,880
+we're ready to return it resume execution of the calling function. We just do that
+
+133
+00:10:39,880 --> 00:10:46,670
+by a jump register to the return address, All right? So note here that the frame
+
+134
+00:10:46,670 --> 00:10:50,250
+pointer points to the top of the frame, not the bottom of the frame. Okay? So that
+
+135
+00:10:50,250 --> 00:10:52,940
+will actually be important when we talk about how we use the frame pointer When we
+
+136
+00:10:52,940 --> 00:10:59,620
+get to talking about the variable references next And the callee pops the
+
+137
+00:10:59,620 --> 00:11:03,090
+return address, The actual arguments in the saved value of the frame pointer from
+
+138
+00:11:03,090 --> 00:11:06,170
+the stacks. So the callee pops off the entire activation record, and also
+
+139
+00:11:06,170 --> 00:11:12,700
+restores the caller's frame pointer And what's the value of Z? Well, there are N
+
+140
+00:11:12,700 --> 00:11:16,050
+arguments. Each of which take up four bytes So there's at, so the size of the
+
+141
+00:11:16,050 --> 00:11:20,730
+activation record is four times N. Plus, there are two other values. In the
+
+142
+00:11:20,730 --> 00:11:27,190
+activation record One is the return address. And the other one is the old
+
+143
+00:11:27,190 --> 00:11:32,480
+frame pointer. Okay and the space for two more words is eight bytes. So that's the
+
+144
+00:11:32,480 --> 00:11:35,810
+size of the activation record. So that's how much we have to add to the stack
+
+145
+00:11:35,810 --> 00:11:42,160
+pointer to pop the activation record for F off the stack. Just to give you a sketch
+
+146
+00:11:42,160 --> 00:11:47,570
+of, what this looks like before the call. We have the frame pointer for the caller,
+
+147
+00:11:47,570 --> 00:11:52,750
+and we have the, The current value of the stack pointer And on entry to the
+
+148
+00:11:52,750 --> 00:11:58,850
+function. Okay, after the calling after the calling functions side of the calling
+
+149
+00:11:58,850 --> 00:12:01,980
+sequence has completed what's on the stack, well, we have the old frame
+
+150
+00:12:01,980 --> 00:12:05,860
+pointer, and the two arguments, and then the stack pointer points to the next
+
+151
+00:12:05,860 --> 00:12:10,500
+unused, location. Which is where the return address will go Alright, then we do
+
+152
+00:12:10,500 --> 00:12:14,430
+the jump and link. We jump over, and the return address gets pushed on to the
+
+153
+00:12:14,430 --> 00:12:19,320
+stack, a nd the frame pointer gets moved to point two, the current value of the
+
+154
+00:12:19,320 --> 00:12:24,400
+frame. Okay, you've got to point to the top of the frame. Okay? And then after the
+
+155
+00:12:24,400 --> 00:12:26,890
+call, what has happened? Well, we've popped everything off the stack, we've
+
+156
+00:12:26,890 --> 00:12:32,089
+popped the entire. Your activation record for the call function off of the stack And
+
+157
+00:12:32,089 --> 00:12:36,339
+so now notice that we're back in the same state. So again, function calls have to
+
+158
+00:12:36,339 --> 00:12:41,279
+preserve the invariant that. The stack is preserved across the call so the stack
+
+159
+00:12:41,279 --> 00:12:48,279
+should be exactly the same after the call, as it was on entry to the call. So we are
+
+160
+00:12:48,320 --> 00:12:51,839
+almost done with code generation for simple language. The last construct we
+
+161
+00:12:51,839 --> 00:12:57,020
+need to talk about is how we generate code for variable references. Now the variables
+
+162
+00:12:57,020 --> 00:13:01,970
+of a function again are just its arguments just the parameters to the function. There
+
+163
+00:13:01,970 --> 00:13:05,540
+are no other kinds of variables in this simple language And these variables are
+
+164
+00:13:05,540 --> 00:13:09,440
+all in the activation record. So we really all we have to do is generate code to look
+
+165
+00:13:09,440 --> 00:13:15,070
+up a variable in its appropriate place in the activation record But there is one
+
+166
+00:13:15,070 --> 00:13:20,220
+problem, and that's that the stack does grow and shrink with intermediate values.
+
+167
+00:13:20,220 --> 00:13:25,380
+So when you call a function and you begin executing its body values will be popped
+
+168
+00:13:25,380 --> 00:13:30,750
+and pushed onto the stack beside the activation record. So think back to the
+
+169
+00:13:30,750 --> 00:13:35,450
+code generation for plus and minus and if then else intermediate values were being
+
+170
+00:13:35,450 --> 00:13:39,360
+pushed and popped from the stack And so what this means is that these variables
+
+171
+00:13:39,360 --> 00:13:44,980
+that are in the activation record are not at a fixed offset From the stack pointer.
+
+172
+00:13:44,980 --> 00:13:49,550
+So we can't use the stack point very easily to the side or to find those
+
+173
+00:13:49,550 --> 00:13:56,550
+variables. So the solution is to use the frame pointer. The frame pointer always
+
+174
+00:13:57,149 --> 00:14:01,360
+points to the return address in the activation record and because it doesn't
+
+175
+00:14:01,360 --> 00:14:05,230
+move during the execution of the function body, we can always find the variables at
+
+176
+00:14:05,230 --> 00:14:09,750
+the same place relative to the frame pointer. So, how do we do that? Well,
+
+177
+00:14:09,750 --> 00:14:15,899
+let's consider the i-th argument, X of I and does the i-th argument to
+
+178
+00:14:15,899 --> 00:14:22,000
+the, to the function. So where is that going to be relative to the frame pointer?
+
+179
+00:14:22,000 --> 00:14:27,880
+That will be at offset Z from the frame pointer And Z is just four times I. Right,
+
+180
+00:14:27,880 --> 00:14:33,149
+and this is actually the reason here for generating for pushing the arguments on
+
+181
+00:14:33,149 --> 00:14:36,990
+the stack in reverse order, starting with the last argument to the function, because
+
+182
+00:14:36,990 --> 00:14:40,250
+it just makes this index calculation simple. It wouldn't be that much more
+
+183
+00:14:40,250 --> 00:14:44,020
+complicated if we pushed the arguments in the other order. It just makes it a little
+
+184
+00:14:44,020 --> 00:14:49,149
+easier to see how the indexing works And anyway this index, this offset, is being
+
+185
+00:14:49,149 --> 00:14:53,140
+calculated at compile time. So, notice that this number, this four times I, is
+
+186
+00:14:53,140 --> 00:14:56,300
+something that the compiler knows, and what we're putting in the code here is
+
+187
+00:14:56,300 --> 00:15:00,190
+just a fixed offset. So, we are not actually doing that multiplication at run
+
+188
+00:15:00,190 --> 00:15:05,110
+time. See here is just a number, as computed statically by the compiler. So
+
+189
+00:15:05,110 --> 00:15:12,110
+anyway We just load and off send Z which is the four times I where I is the index,
+
+190
+00:15:12,120 --> 00:15:18,520
+the position of the variable in the list of parameters. At that offset from the
+
+191
+00:15:18,520 --> 00:15:22,190
+frame pointer, that's where XI is stored in the activation record And we just load
+
+192
+00:15:22,190 --> 00:15:26,550
+it into the accumulator. So that is the entire code generation for a variable
+
+193
+00:15:26,550 --> 00:15:33,550
+reference. Here's a little example. So for the function, the hypothetical function
+
+194
+00:15:34,580 --> 00:15:39,130
+that we've been looking at, with two parameters x and y. X is going to be at
+
+195
+00:15:39,130 --> 00:15:43,399
+the frame pointer +four and y will be at the frame pointer +eight.

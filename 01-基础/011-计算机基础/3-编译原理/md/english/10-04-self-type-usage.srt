@@ -1,0 +1,271 @@
+0
+00:00:04,350 --> 00:00:07,759
+Now that we've seen some of the operations on self type, in this video we're going to
+
+1
+00:00:07,759 --> 00:00:14,759
+talk about where self type can be used in Cool. The parser checks if self type
+
+2
+00:00:15,709 --> 00:00:19,340
+appears only where types are permitted, but that's in fact a little bit too
+
+3
+00:00:19,340 --> 00:00:24,130
+permissive. There are places where some other types can appear but self type
+
+4
+00:00:24,130 --> 00:00:28,330
+cannot, and so the purpose of this particular video is to go over the various
+
+5
+00:00:28,330 --> 00:00:34,340
+rules for the usage of self type. So let's begin with, a very simple rule. So, self
+
+6
+00:00:34,340 --> 00:00:39,010
+type is not a class name so it can't appear in a class definition, can neither
+
+7
+00:00:39,010 --> 00:00:46,010
+be the name of the class nor the class that is inherited from. In attribute
+
+8
+00:00:46,120 --> 00:00:50,219
+declarations the type of attribute in this case we have an attribute x and is
+
+9
+00:00:50,219 --> 00:00:54,829
+declared to have type t, it is okay for t to be self type so it's fine to have
+
+10
+00:00:54,829 --> 00:01:01,829
+attributes that are declared to be the self type of the class. Similarly, it's
+
+11
+00:01:02,600 --> 00:01:08,799
+fine to have local let down variables that have type self type. And it's fine to
+
+12
+00:01:08,799 --> 00:01:13,740
+allocate a new object of type self type. And what this actually does is that it
+
+13
+00:01:13,740 --> 00:01:20,009
+allocates an object that has the same dynamic type as the self object. So,
+
+14
+00:01:20,009 --> 00:01:23,670
+whatever the type of the self object happens to be, which is not necessarily
+
+15
+00:01:23,670 --> 00:01:30,170
+the type of the enclosing class at run time, the u t operation will create a new
+
+16
+00:01:30,170 --> 00:01:36,780
+object of that dynamic type. The type named in aesthetic dispatch cannot be self
+
+17
+00:01:36,780 --> 00:01:43,780
+type, again because it has to be an actual class name. Finally let's consider method
+
+18
+00:01:45,609 --> 00:01:48,189
+definitions. So, here's a very simple method definition. It has one formal
+
+19
+00:01:48,189 --> 00:01:53,689
+parameter X of type T and the method returns something of type T prime. And it
+
+20
+00:01:53,689 --> 00:01:58,729
+turns out that only T prime, only the return type can be of type self-type. No
+
+21
+00:01:58,729 --> 00:02:04,619
+argument type can be of type self-type. And to see why let's, I can show it
+
+22
+00:02:04,619 --> 00:02:09,890
+actually two different ways. Why, why this has to be the case. And we'll do both
+
+23
+00:02:09,889 --> 00:02:15,500
+because this is actually important. So, let's think about a dispatch to this a
+
+24
+00:02:15,500 --> 00:02:20,730
+method, so let's say we have some expression e, and we call method m, and we
+
+25
+00:02:20,730 --> 00:02:26,250
+have some argument e prime. And now, let's say the argument e prime As the
+
+26
+00:02:26,250 --> 00:02:33,250
+type t zero. So if you recall the rule for method calls, t zero is gonna have to be a
+
+27
+00:02:34,450 --> 00:02:39,530
+sub type of the type of the fall parameter. We're gonna be passing this in,
+
+28
+00:02:39,530 --> 00:02:43,910
+so whatever type x is declared to have here has to be a super type of the type of
+
+29
+00:02:43,910 --> 00:02:49,260
+the actual argument. So that means that t zero is going to have to be a sub type of,
+
+30
+00:02:49,260 --> 00:02:55,230
+now let's assume that the argument can be of type self type. Some view that t zero
+
+31
+00:02:55,230 --> 00:03:01,250
+has to be a subtype of self type this is in some class c wherever this is defined,
+
+32
+00:03:01,250 --> 00:03:06,780
+and remember that we said This was always false that you couldn't have self type on
+
+33
+00:03:06,780 --> 00:03:13,430
+the right hand side and a regular type on the left hand side. Because that would
+
+34
+00:03:13,430 --> 00:03:18,510
+lead to problems that would, that we would never be able to prove that in general for
+
+35
+00:03:18,510 --> 00:03:24,090
+a, that, that a type is actually a sub type of self type because self type can
+
+36
+00:03:24,090 --> 00:03:28,680
+vary over all the sub types of the class C. So that's one way to see that we can't
+
+37
+00:03:28,680 --> 00:03:34,450
+allow method parameters, to be typed self type, but it's also helpful to just think
+
+38
+00:03:34,450 --> 00:03:40,230
+about executing the code or some example code and see what can go wrong. So here's
+
+39
+00:03:40,230 --> 00:03:46,260
+an example. And let me just walk you through what happens if we allow a
+
+40
+00:03:46,260 --> 00:03:52,270
+parameter to have type self type in this example. So there are two class
+
+41
+00:03:52,270 --> 00:03:58,760
+definitions. Class A has a method comp for comparison, and it takes one argument of
+
+42
+00:03:58,760 --> 00:04:03,100
+type self-type. And it returns a bull. So the idea here is that the comparison
+
+43
+00:04:03,100 --> 00:04:07,730
+operation probably compares the, this parameter with the argument and returns
+
+44
+00:04:07,730 --> 00:04:13,170
+true or false. Then, there's a second class B, and B is a sub-type of A, it
+
+45
+00:04:13,170 --> 00:04:20,170
+inherits from A. And it has one new field B little b here of type int. And now the
+
+46
+00:04:21,649 --> 00:04:27,460
+comparison function in class B is overridden has the same signature as the
+
+47
+00:04:27,460 --> 00:04:33,370
+comparison function or the comp function in class A. But, the, the method body here
+
+48
+00:04:33,370 --> 00:04:40,370
+accesses the field B. And now let's take a look at what happens with a piece of code
+
+49
+00:04:40,990 --> 00:04:46,090
+that uses these two classes. So, here X is going to be declared to be of type A. But
+
+50
+00:04:46,090 --> 00:04:50,750
+we're going to assign it something of type B. And here we're notice that there's a
+
+51
+00:04:50,750 --> 00:04:55,370
+gap between the static type, which will be A, and the dynamic type, which will be B.
+
+52
+00:04:55,370 --> 00:05:02,370
+And that's actually key to the problem. And now, we Invoke the cup method on X and
+
+53
+00:05:03,340 --> 00:05:08,600
+we pass it a new A object. And so what happens, well this type checks just fine
+
+54
+00:05:08,600 --> 00:05:15,130
+because X is in class A. X is of type A and this argument is also of type A. So if
+
+55
+00:05:15,130 --> 00:05:18,880
+self-type if having an argument type self-type is ever going to work it has to
+
+56
+00:05:18,880 --> 00:05:25,530
+work for this example where the two static types of the, of the dispatched of this
+
+57
+00:05:25,530 --> 00:05:29,880
+parameter and the former parameter are exactly the same. So that clearly has to
+
+58
+00:05:29,880 --> 00:05:35,050
+be allowed if we allow self type as the type of the argument. And now let's think
+
+59
+00:05:35,050 --> 00:05:41,860
+about what happens when it actually executes Is going to invoke the comp
+
+60
+00:05:41,860 --> 00:05:48,260
+method in the b class okay, Because X is of dynamic type B. And then it's going to
+
+61
+00:05:48,260 --> 00:05:53,230
+take the arguments and it's going to access its B field. But the argument is of
+
+62
+00:05:53,230 --> 00:05:57,970
+dynamic type A and it has no B field. And so, this is actually going to cause a
+
+63
+00:05:57,970 --> 00:06:02,310
+runtime crash. So, and just to go over that one more time, Just to make sure that
+
+64
+00:06:02,310 --> 00:06:08,560
+it is clear. Here X has type A ut dynamic type B. The argument has static type A and
+
+65
+00:06:08,560 --> 00:06:14,430
+dynamic type A and when this method gets invoked the argument That which is of
+
+66
+00:06:14,430 --> 00:06:21,250
+dynamic type A, does not have the operations, all the fields and methods, of
+
+67
+00:06:21,250 --> 00:06:25,680
+the class B And results in a run time, undefined behavior at run time.

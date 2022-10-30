@@ -1,0 +1,595 @@
+0
+00:00:04,150 --> 00:00:08,420
+Welcome back. In this video, I'm going to outline a general algorithm for recursive
+
+1
+00:00:08,420 --> 00:00:15,420
+descent parsing. Before I dive into the details of the recursive descent parsing
+
+2
+00:00:17,600 --> 00:00:21,179
+algorithm, let me justify a couple of small things that we're going to use
+
+3
+00:00:21,179 --> 00:00:25,929
+throughout this video. Token is going to be a type and we're gonna be writing codes
+
+4
+00:00:25,929 --> 00:00:30,349
+and so token would be the type of all the tokens. And the particular tokens that
+
+5
+00:00:30,349 --> 00:00:35,800
+we'll use in the example are things like int, open-pare, close-paren, + and and
+
+6
+00:00:35,800 --> 00:00:42,620
+so token is a type and these things are instances, values of that type. And then
+
+7
+00:00:42,620 --> 00:00:47,850
+we're going to need a global variable called next that points to the next token
+
+8
+00:00:47,850 --> 00:00:54,370
+in the input string. And if you recall from the previous video, we used a big
+
+9
+00:00:54,370 --> 00:00:59,760
+arrow to point into the input to indicate our current position. The global variable
+
+10
+00:00:59,760 --> 00:01:06,760
+next is going to play the same role in our code. So let's begin. The first thing
+
+11
+00:01:06,880 --> 00:01:11,300
+we're going to do is define a number of Boolean functions and one function we have
+
+12
+00:01:11,300 --> 00:01:17,220
+to define is one that matches the given token in the input. So how does this work?
+
+13
+00:01:17,220 --> 00:01:23,310
+Well, it takes this argument, a token, okay this is a type token again. And, and
+
+14
+00:01:23,310 --> 00:01:27,640
+then it just checks whether that matches what's currently pointed to in the input
+
+15
+00:01:27,640 --> 00:01:32,500
+string so is t okay equal to the thing pointed by next and notice there's a side
+
+16
+00:01:32,500 --> 00:01:38,530
+effect, we increment the next pointer. And what's returned then is a Boolean. This is
+
+17
+00:01:38,530 --> 00:01:44,210
+either true or false. So yes the token that we passed in matches the input or no
+
+18
+00:01:44,210 --> 00:01:49,590
+it doesn't. And again, just to stress this, those at the next pointer is
+
+19
+00:01:49,590 --> 00:01:56,080
+incremented regardless of whether the match succeeded or failed. Now, another
+
+20
+00:01:56,080 --> 00:01:59,549
+thing we need to check for a matchup is the int production of asset. This is a
+
+21
+00:01:59,549 --> 00:02:06,549
+particular production of a particular nonterminal s. And we'll denote that by a
+
+22
+00:02:08,158 --> 00:02:11,989
+function that returns a Boolean and is written as s sub n. So this is, this is a
+
+23
+00:02:11,989 --> 00:02:18,150
+function that only checks for the success of one production of s. And when that, I
+
+24
+00:02:18,150 --> 00:02:21,389
+won't write out the code for that now, we'll see that in a minute. And then we're
+
+25
+00:02:21,389 --> 00:02:26,430
+gonna need another func tion that tries all the productions of s so this one is
+
+26
+00:02:26,430 --> 00:02:30,959
+going to be called just s with no subscript, no subscript and so with this
+
+27
+00:02:30,959 --> 00:02:35,859
+one, we'll succeed if any production of s can match the input, alright. So we're
+
+28
+00:02:35,859 --> 00:02:41,469
+going to have two classes of functions for each nonterminal. One class that where
+
+29
+00:02:41,469 --> 00:02:44,609
+there's one function per production and it checks, it checks just whether that
+
+30
+00:02:44,609 --> 00:02:48,760
+production can match the input and then one that combines all the productions for
+
+31
+00:02:48,760 --> 00:02:53,139
+that particular nonterminal together and checks whether any of them can match the
+
+32
+00:02:53,139 --> 00:03:00,139
+input. Okay, that's the general plan. Now, let's see how this works for some specific
+
+33
+00:03:00,980 --> 00:03:05,819
+productions, and we'll just use the same grammar that we used in the last video.
+
+34
+00:03:05,819 --> 00:03:10,349
+The first production of that grammar is e goes to t and now we wanted to do is we
+
+35
+00:03:10,349 --> 00:03:15,709
+want to write the functions that are needed to decide whether this production
+
+36
+00:03:15,709 --> 00:03:21,340
+matches some input. And this one happens to be simplicity itself and it's easy to
+
+37
+00:03:21,340 --> 00:03:25,249
+see why. So we're, first of all, we're writing the function e1, this is the
+
+38
+00:03:25,249 --> 00:03:30,069
+function that deals with the first production for e and succeeds returns true
+
+39
+00:03:30,069 --> 00:03:34,680
+only if this production succeeds in matching some input. Well. How would this
+
+40
+00:03:34,680 --> 00:03:39,400
+production match any input? Well it can only match some input if some production
+
+41
+00:03:39,400 --> 00:03:43,949
+of t matches the input and we have name for that function, that's the function t
+
+42
+00:03:43,949 --> 00:03:50,949
+which tries all the different productions for t. So e1 succeeds returns true exactly
+
+43
+00:03:51,069 --> 00:03:57,749
+when t succeeds returns true and that's all there is to this first production. For
+
+44
+00:03:57,749 --> 00:04:01,689
+the second production, we have a little more work to do. Now, e will succeed if t
+
+45
+00:04:01,689 --> 00:04:07,969
++ e can match some of the input and how does that work? Well first, t has to match
+
+46
+00:04:07,969 --> 00:04:12,409
+some of the input so some production of t has to match a portion of the input and
+
+47
+00:04:12,409 --> 00:04:18,070
+after that, we have to find a + in the input following whatever t matched and if
+
+48
+00:04:18,070 --> 00:04:24,620
++ matches then, some production for e has to match some portion of the input. And
+
+49
+00:04:24,620 --> 00:04:28,620
+notice the use of the short circuiting double end here. So this is actually
+
+50
+00:04:28,620 --> 00:04:33,770
+important where you're exploiting the semantics of do uble end and C and C++
+
+51
+00:04:33,770 --> 00:04:38,840
+which evaluates. The arguments to the double end in left to right orders. So
+
+52
+00:04:38,840 --> 00:04:43,580
+first, t will execute and notice that t has embedded within its side effects on
+
+53
+00:04:43,580 --> 00:04:49,110
+the pointer into the input. So it's incrementing the next pointer and
+
+54
+00:04:49,110 --> 00:04:54,259
+incrementing exactly however far t makes it. So whatever t manages to match, the
+
+55
+00:04:54,259 --> 00:04:58,240
+next pointer will advance that far. When this function returns, it's left pointing
+
+56
+00:04:58,240 --> 00:05:03,150
+to the next terminal that t did not match and that needs to be a plus. And the call
+
+57
+00:05:03,150 --> 00:05:07,759
+of term will increment the next pointer again which is exactly where e should pick
+
+58
+00:05:07,759 --> 00:05:12,750
+up and whatever e can match it will increment the next pointer just beyond
+
+59
+00:05:12,750 --> 00:05:17,520
+that. So, that the rest of the grammar outside of this particular call can match
+
+60
+00:05:17,520 --> 00:05:22,210
+it And then notice that this particular function is called e2 because this is the
+
+61
+00:05:22,210 --> 00:05:29,169
+function for the second production for e. Well, we have one more thing to deal with
+
+62
+00:05:29,169 --> 00:05:34,280
+for e and that is the function e itself. We need to write the function that will
+
+63
+00:05:34,280 --> 00:05:38,669
+match any alternative for e and since it's only these two productions, it just has to
+
+64
+00:05:38,669 --> 00:05:42,629
+match one of these two productions And that; this is where the backtracking is
+
+65
+00:05:42,629 --> 00:05:48,220
+dealt with. Now the only bit of state that we have to worry about in the backtracking
+
+66
+00:05:48,220 --> 00:05:53,960
+Is this next pointer so that needs to be restored if we ever have to undo our
+
+67
+00:05:53,960 --> 00:05:58,020
+decisions. And so the way we accomplish that is we just have a local variable to
+
+68
+00:05:58,020 --> 00:06:02,210
+this function called save that records the position of the next pointer before we do
+
+69
+00:06:02,210 --> 00:06:07,180
+anything. So before we try to match any input, we just remember where the next
+
+70
+00:06:07,180 --> 00:06:14,180
+point started when this function was called. Okay? And now to do to, to do the
+
+71
+00:06:14,830 --> 00:06:21,389
+alternative matching, we first try e1. And we see if it succeeds and if it, if it
+
+72
+00:06:21,389 --> 00:06:26,479
+doesn't succeed, actually let's do the succeeds case first. If this succeeds, if
+
+73
+00:06:26,479 --> 00:06:33,479
+this returns true then The semantics of double or here, it means we don't evaluate
+
+74
+00:06:33,689 --> 00:06:37,020
+e2 so this will not be evaluated. The second component here will not be
+
+75
+00:06:37,020 --> 00:06:41,870
+evaluated if e1, if e1 returns true. It'll short circuit cuz it knows that it's going
+
+76
+00:06:41,870 --> 00:06:46,770
+be tru e no matter what and it'll just stop there. And notice that whatever side
+
+77
+00:06:46,770 --> 00:06:52,439
+effects e1 has on the next pointer will be retained and will remember and when we
+
+78
+00:06:52,439 --> 00:06:56,050
+return true, the next pointer will be left pointing to the next piece of unconsumed
+
+79
+00:06:56,050 --> 00:07:00,120
+input. Now, let's consider what happens if e1 returns false. Well if e1 returns
+
+80
+00:07:00,120 --> 00:07:04,580
+false, well then the only way this or can be true is if the second component is
+
+81
+00:07:04,580 --> 00:07:08,120
+true. And what's the first thing we do? The first thing we do is restore the next
+
+82
+00:07:08,120 --> 00:07:13,849
+pointer. Okay, before we try e2. And if each returns true, then the whole thing
+
+83
+00:07:13,849 --> 00:07:19,800
+returns true and, and the e function succeeds. If the e function fails, well
+
+84
+00:07:19,800 --> 00:07:23,439
+they were out of alternatives for e and the failure is gonna be returned to the
+
+85
+00:07:23,439 --> 00:07:28,719
+next higher level production, in our derivation and it will have to backtrack
+
+86
+00:07:28,719 --> 00:07:35,169
+and try another alternative. Now finally, what about this particular statement next
+
+87
+00:07:35,169 --> 00:07:42,169
+= save here. Well, this is not strictly needed. Notice that here we save the next
+
+88
+00:07:43,310 --> 00:07:46,580
+pointer in the save variable and then the first thing, the very first thing we do if
+
+89
+00:07:46,580 --> 00:07:50,599
+we copy it back over the next again. This is just for uniformity to make all the
+
+90
+00:07:50,599 --> 00:07:53,409
+productions look the same but since this is the very first production, we actually
+
+91
+00:07:53,409 --> 00:08:00,409
+don't need this assignment statement if we don't want to have it. So let's turn our
+
+92
+00:08:01,909 --> 00:08:07,969
+attention to the non-terminal t. There are three productions. The first one is the t
+
+93
+00:08:07,969 --> 00:08:14,060
+goes to int. And that's a simple one to write. We just have to match the terminal
+
+94
+00:08:14,060 --> 00:08:19,490
+int so the next thing in the input has to be an integer and if it is, then t1
+
+95
+00:08:19,490 --> 00:08:26,490
+succeeds. T2 is slightly more complex. That's the production int t, t goes to
+
+96
+00:08:27,060 --> 00:08:32,039
+int t so we have to match an int in the input followed by a followed by
+
+97
+00:08:32,039 --> 00:08:39,039
+something that matches any production of t. The third production is t goes to (e).
+
+98
+00:08:40,789 --> 00:08:46,820
+So, what has to happen? We have to match an open-paren first and then. Something
+
+99
+00:08:46,820 --> 00:08:50,640
+that matches one of the productions of e, we call the function e there and then
+
+100
+00:08:50,640 --> 00:08:54,950
+finally a close-paren. And then putting all three of these together in the
+
+101
+00:08:54,950 --> 00:08:58,640
+function t that tries all three alternatives, we just have exactly the
+
+102
+00:08:58,640 --> 00:09:05,280
+same structure we had for e. So we saved the current input pointer and then we try
+
+103
+00:09:05,280 --> 00:09:11,030
+the alternatives t1, t2 and t3 in order and each step we restore the input point
+
+104
+00:09:11,030 --> 00:09:18,030
+before we try the next alternative. Start the parser up, we have to initialize the
+
+105
+00:09:21,250 --> 00:09:25,280
+next pointer to point to the first token in the input stream and we have to invoke
+
+106
+00:09:25,280 --> 00:09:29,120
+the function that matches anything derivable from the start symbols. So in
+
+107
+00:09:29,120 --> 00:09:36,120
+this case, that's just the function e. And recursive descent parsers are really easy
+
+108
+00:09:36,770 --> 00:09:41,210
+to implement by hand. In fact, people often do implement them by hand and just
+
+109
+00:09:41,210 --> 00:09:48,210
+following the discipline that I showed the previous slides. To wrap up this video,
+
+110
+00:09:49,200 --> 00:09:53,120
+let's work through a complete example. So here's our grammar, and here is all the
+
+111
+00:09:53,120 --> 00:09:58,690
+code for the recursive descent parser for this grammar and here is the input that
+
+112
+00:09:58,690 --> 00:10:05,350
+we'll be looking at and we're gonna just mark the next pointer pointing to the
+
+113
+00:10:05,350 --> 00:10:10,520
+initial token of the input, all right? And I'll also draw the Parse Tree that we're
+
+114
+00:10:10,520 --> 00:10:15,350
+constructing at the same time. So we'll begin by invoking the start symbol so,
+
+115
+00:10:15,350 --> 00:10:20,750
+we're gonna be trying to derive something from e. And the first thing we'll do is
+
+116
+00:10:20,750 --> 00:10:26,050
+we'll try the first production. So we'll try e1, and what does e1 do? E1 is going
+
+117
+00:10:26,050 --> 00:10:31,250
+to try t. It's gonna try to derive something from t. So, our possible Parse
+
+118
+00:10:31,250 --> 00:10:36,890
+Tree looks like this. And so we invoke t and what is t going to do is we're going
+
+119
+00:10:36,890 --> 00:10:42,460
+to try all three productions for t in order and so I was gonna call t1 and we'll
+
+120
+00:10:42,460 --> 00:10:47,040
+see that t1 is going to fail because it's going try it an int so I won't put it in
+
+121
+00:10:47,040 --> 00:10:50,000
+the parse tree since it isn't going to work but the int is not going to match the
+
+122
+00:10:50,000 --> 00:10:54,820
+open-paren. So that's going to return false which will cause us to backtrack. It
+
+123
+00:10:54,820 --> 00:11:01,340
+will reset The, the input pointer, okay? And, to the beginning of the string and
+
+124
+00:11:01,340 --> 00:11:07,670
+then it'll try t2. And t2 is also going to ask, well is the input pointer = an int?
+
+125
+00:11:07,670 --> 00:11:12,870
+And recall that the term function here always increments the input pointer. So in
+
+126
+00:11:12,870 --> 00:11:18,430
+fact, this pointer is going to move over one, one tok en but this is going to
+
+127
+00:11:18,430 --> 00:11:23,440
+return false because int doesn't match open-paren. So we'll come back here. The
+
+128
+00:11:23,440 --> 00:11:26,850
+input point will be restored back to the beginning of the string and then it's
+
+129
+00:11:26,850 --> 00:11:30,770
+gonna try the alternative t3. Now, when we finally get the t3, something good is
+
+130
+00:11:30,770 --> 00:11:34,470
+going to happen. First thing it's going to do is going to ask is the first thing in
+
+131
+00:11:34,470 --> 00:11:41,470
+input an open-paren, And in fact, it is. And so the input pointer will advance to
+
+132
+00:11:41,690 --> 00:11:47,750
+point to the int. And then it's going to try to match something derivable from e so
+
+133
+00:11:47,750 --> 00:11:53,680
+now we have our first recursive call to e. We're back here at e and it's going to try
+
+134
+00:11:53,680 --> 00:12:00,680
+e1 first and then e2. And so it calls e1 and e1 will only match something if it can
+
+135
+00:12:02,930 --> 00:12:08,680
+match t. Okay, so this is, we're down here inside of e now and now we're going to
+
+136
+00:12:08,680 --> 00:12:15,680
+call t. And what's t going to do was going to try all three productions for t in
+
+137
+00:12:17,270 --> 00:12:22,760
+order. The first one of which happens to be the single token int and that is going
+
+138
+00:12:22,760 --> 00:12:28,170
+to match. It's going to call term int; t1 is calling term int so that matches the
+
+139
+00:12:28,170 --> 00:12:33,880
+next token in the input stream. So, we're happy about that. The input pointer
+
+140
+00:12:33,880 --> 00:12:40,880
+advances again. And now, we return through all these levels of calls. T1 succeeds
+
+141
+00:12:41,170 --> 00:12:48,170
+which means that t succeeds, which means that e succeeds. Okay. And now we're back
+
+142
+00:12:49,040 --> 00:12:55,350
+here in the production for t3 and we're going to ask well is the next thing that
+
+143
+00:12:55,350 --> 00:13:00,570
+we see in the input a close-paren? And it did it is and so a close-paren we'll be
+
+144
+00:13:00,570 --> 00:13:07,570
+recorded. And now t3 will succeed which means that t succeeds, this t succeeds and
+
+145
+00:13:07,890 --> 00:13:12,470
+finally we'll return to the root call e and that returns true which means that the
+
+146
+00:13:12,470 --> 00:13:17,160
+Parse succeeded. That plus the fact that we are now at the end of the input, there
+
+147
+00:13:17,160 --> 00:13:22,430
+is no more input to consume and we have returned from the start symbol with true
+
+148
+00:13:22,430 --> 00:13:24,930
+and so we have successfully parse the input string.

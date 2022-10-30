@@ -1,0 +1,315 @@
+0
+00:00:04,089 --> 00:00:07,809
+This is the first of the series of videos on programming language semantics and in
+
+1
+00:00:07,809 --> 00:00:12,100
+particular on the semantics of cool, Before we dive into technical details
+
+2
+00:00:12,100 --> 00:00:16,059
+though I want to spend a few minutes talking about what programming language
+
+3
+00:00:16,059 --> 00:00:23,059
+semantics are and why we need them. The problem we have to address is that we need
+
+4
+00:00:24,340 --> 00:00:30,680
+some way to say what behavior we expect when we run a Kuhl program. So, for every
+
+5
+00:00:30,680 --> 00:00:35,510
+kind of Kuhl expression, for everyone we have to say what happens when it's
+
+6
+00:00:35,510 --> 00:00:40,260
+evaluated and we can regard this as the meaning of the expression. Somehow, give
+
+7
+00:00:40,260 --> 00:00:44,730
+rules to specify what a particular, what kind of computation of a particular
+
+8
+00:00:44,730 --> 00:00:51,730
+expression does. And I think it's useful to look back and see how we dealt with
+
+9
+00:00:51,920 --> 00:00:58,399
+this with similar problems in defining other parts of cool, okay the earlier
+
+10
+00:00:58,399 --> 00:01:05,149
+things that we looked at in this course. So for example For Lexical Analysis we
+
+11
+00:01:05,149 --> 00:01:10,639
+defined a family of family of tokens using regular expressions And for the, the
+
+12
+00:01:10,639 --> 00:01:16,149
+syntax of the language we used Context Free Grammars to specify the, the
+
+13
+00:01:16,149 --> 00:01:22,099
+structure of the, how words could be strong together to form valid sentences in
+
+14
+00:01:22,099 --> 00:01:29,099
+Kuhl And then for the semantic analysis we gave formal typing rules And now we're to
+
+15
+00:01:31,659 --> 00:01:34,719
+the point that we have to talk about how the programs actually running so we have
+
+16
+00:01:34,719 --> 00:01:40,299
+to give some evaluation rules and these are going to guide how we do code
+
+17
+00:01:40,299 --> 00:01:44,159
+generation of optimization or you going to determine what the program should do and
+
+18
+00:01:44,159 --> 00:01:48,329
+what kind of transformations we can do on programs to make them run faster or use a
+
+19
+00:01:48,329 --> 00:01:54,340
+space or what other, what any other kind of optimization that we would like to
+
+20
+00:01:54,340 --> 00:01:59,340
+perform. So far we've been specifying the evaluation rules somewhat indirectly.
+
+21
+00:01:59,340 --> 00:02:04,359
+We've been doing it by giving a complete compilation strategy down to stack machine
+
+22
+00:02:04,359 --> 00:02:08,910
+code and then we've been talking about the evaluation rules for the stack machine or
+
+23
+00:02:08,910 --> 00:02:14,730
+actually translation the stack machine into assembly code And that is certainly a
+
+24
+00:02:14,730 --> 00:02:19,040
+complete description. You can take the generated assembly code and get it right
+
+25
+00:02:19,040 --> 00:02:24,209
+out of the machine, and see what the program do es and that would be a, a
+
+26
+00:02:24,209 --> 00:02:30,400
+legitimate description of the behavior of the program And the question then is, you
+
+27
+00:02:30,400 --> 00:02:34,349
+know, why isn't that good enough. Why isn't just having a code generator for the
+
+28
+00:02:34,349 --> 00:02:39,599
+language. Why is that already a good enough transcription of what how the code
+
+29
+00:02:39,599 --> 00:02:45,719
+is supposed to be executed And The answer to that is maybe a little hard to
+
+30
+00:02:45,719 --> 00:02:51,480
+appreciate without having a written a few compilers But in a nutshell, people have
+
+31
+00:02:51,480 --> 00:02:56,689
+learned through hard experience that assembly language descriptions of language
+
+32
+00:02:56,689 --> 00:03:02,450
+implementations, language implementations, have a lot of irrelevant detail. There's a
+
+33
+00:03:02,450 --> 00:03:07,420
+lot of things that you have to say when you get such a complete executable
+
+34
+00:03:07,420 --> 00:03:13,859
+description that was not necessary to say about how the program executes. So for
+
+35
+00:03:13,859 --> 00:03:19,510
+example the fact that we use a stack machine, that's not intrinsic to the
+
+36
+00:03:19,510 --> 00:03:23,329
+implementation of any particular programming language. There are other
+
+37
+00:03:23,329 --> 00:03:26,689
+co-generation strategies that we could have used so you know you don't have to do
+
+38
+00:03:26,689 --> 00:03:30,359
+the stack machine to implement the language which way the stack grows.
+
+39
+00:03:30,359 --> 00:03:34,170
+Whether it grows towards high addresses or low addresses you could implement it
+
+40
+00:03:34,170 --> 00:03:38,870
+either way. How it, it, yeah, exact representation of integers in a particular
+
+41
+00:03:38,870 --> 00:03:44,530
+instructions actually used to execute or to implement certain language constructs.
+
+42
+00:03:44,530 --> 00:03:50,780
+All of these things are, are a, are one way or, or one particular way to implement
+
+43
+00:03:50,780 --> 00:03:56,279
+the language but we don't want them to, to be taken as the only way that the language
+
+44
+00:03:56,279 --> 00:04:01,480
+could be implemented. So, what we really want than it has a complete description
+
+45
+00:04:01,480 --> 00:04:06,670
+but one that is not overly restrictive One that will allow a variety of different
+
+46
+00:04:06,670 --> 00:04:13,670
+implementations. And when people have not done this when people have not tried to
+
+47
+00:04:13,700 --> 00:04:18,060
+find some relatively high level way of describing the behavior of languages,
+
+48
+00:04:18,060 --> 00:04:23,650
+they've been inevitably gotten into the situation where they a, where people would
+
+49
+00:04:23,650 --> 00:04:28,440
+just have to go and run the program on a reference implementation or to decide what
+
+50
+00:04:28,440 --> 00:04:34,919
+it does. And so this is not a very satisfying a situation because of the
+
+51
+00:04:34,919 --> 00:04:39,310
+reference implementation is not completely correct itself. It will have bugs and
+
+52
+00:04:39,310 --> 00:04:42,830
+there will be artifacts of the particular way it was implemented that you didn't
+
+53
+00:04:42,830 --> 00:04:47,080
+mean to be part of a language but because there was no better definition wind up
+
+54
+00:04:47,080 --> 00:04:53,419
+becoming fixed and have sort of accidents of the way the language was implemented
+
+55
+00:04:53,419 --> 00:05:00,419
+the first time. So there are many ways to actually specify semantics that would be
+
+56
+00:05:00,759 --> 00:05:05,860
+suitable for our task and it turns out that these are all equally powerful but
+
+57
+00:05:05,860 --> 00:05:11,120
+some of them are more suited to various tasks than others so the one that we're
+
+58
+00:05:11,120 --> 00:05:15,400
+going to be using is called operational semantics. So operational semantics
+
+59
+00:05:15,400 --> 00:05:19,810
+describes program evaluation via execution roles on an abstract machine we just gave
+
+60
+00:05:19,810 --> 00:05:24,639
+a bunch of rules that say you know from particular expression how it should be
+
+61
+00:05:24,639 --> 00:05:30,069
+executed. You can think of this as a very, very high level kind of co-generation And
+
+62
+00:05:30,069 --> 00:05:33,150
+this is most useful for specifying implementations and it is what we're going
+
+63
+00:05:33,150 --> 00:05:40,150
+to use to describe the semantics of Kuhl. I want to mention two other ways of. Of
+
+64
+00:05:41,900 --> 00:05:46,819
+specifying programming language semantics because they're, they're important and you
+
+65
+00:05:46,819 --> 00:05:51,389
+may come across them at some point outside of this class. One is the notational
+
+66
+00:05:51,389 --> 00:05:56,819
+semantics and here the programs meaning is actually given as a mathematical function.
+
+67
+00:05:56,819 --> 00:06:03,819
+So the program text is mapped to a function that goes from input and outputs
+
+68
+00:06:03,970 --> 00:06:08,750
+and this, this is, this function is an actual function that exist in the
+
+69
+00:06:08,750 --> 00:06:15,750
+mathematical sense And this is a very elegant approach but it uses complexities
+
+70
+00:06:16,379 --> 00:06:19,580
+into finding an appropriate class of functions and we don't really need to
+
+71
+00:06:19,580 --> 00:06:26,580
+consider for the purposes of just describing an implementation. And another
+
+72
+00:06:27,039 --> 00:06:32,430
+important approach is axiom semantics and here program behaviors described in some
+
+73
+00:06:32,430 --> 00:06:37,849
+kind of logic And the basic kinds of statements that you write in this language
+
+74
+00:06:37,849 --> 00:06:42,159
+or in this, in this in the axiomatic semantics is that if execution begins in a
+
+75
+00:06:42,159 --> 00:06:48,800
+state satisfying x, then it ends in the state satisfying y where x and y are
+
+76
+00:06:48,800 --> 00:06:54,669
+formulas in some logic And this is a very common foundation for syst ems that
+
+77
+00:06:54,669 --> 00:06:58,939
+analyze programs automatically that tries to prove facts about programs either to
+
+78
+00:06:58,939 --> 00:07:03,160
+prove they're correct or to discover bugs in programs.

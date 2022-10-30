@@ -1,0 +1,307 @@
+0
+00:00:05,150 --> 00:00:09,340
+In this video we're going to talk about how one takes the type checking rules and
+
+1
+00:00:09,340 --> 00:00:16,340
+translates them into an implementation. The high level overview of cool type
+
+2
+00:00:17,100 --> 00:00:21,080
+checking is that it can be implemented in a single traversal over the abstract
+
+3
+00:00:21,080 --> 00:00:26,359
+syntax tree. And there's actually two phases here. There's the top down phase,
+
+4
+00:00:26,359 --> 00:00:30,800
+in which the type environment is passed down the tree. And there's a bottom up
+
+5
+00:00:30,800 --> 00:00:36,370
+phase in which the types are passed back up. So we start at the root of the tree
+
+6
+00:00:36,370 --> 00:00:39,790
+with an initial type environment, this type of environment is passed down
+
+7
+00:00:39,790 --> 00:00:43,300
+recursively through the various nodes of the abstract syntax tree until we hit the
+
+8
+00:00:43,300 --> 00:00:47,800
+leaves. And starting at the leaves we use the environment to compute the types of
+
+9
+00:00:47,800 --> 00:00:54,800
+each sub-expression working our way back up the tree to the root. Let's start our
+
+10
+00:00:55,550 --> 00:00:58,710
+discussion of the implementation of cool type checking with one of the simpler
+
+11
+00:00:58,710 --> 00:01:02,920
+rules in the type system, the rule for addition. And let's just briefly review
+
+12
+00:01:02,920 --> 00:01:09,830
+what this rule says. It says that the type check E one plus E two, we first have to
+
+13
+00:01:09,830 --> 00:01:15,810
+type check E one, and then we have to type check the sub expression E two. And both
+
+14
+00:01:15,810 --> 00:01:21,620
+of those sub expressions have to have type end. And if they do then we can conclude
+
+15
+00:01:21,620 --> 00:01:26,850
+that the overall expression, the sum of the two sub expressions, also has type A.
+
+16
+00:01:26,850 --> 00:01:30,560
+And furthermore, this type checking is carried out in some environment. In this
+
+17
+00:01:30,560 --> 00:01:34,640
+case, the environment is the same for the entire expression and both sub
+
+18
+00:01:34,640 --> 00:01:39,550
+expressions. Just, just to remind you, there's always an object environment for
+
+19
+00:01:39,550 --> 00:01:44,390
+the object names and scope, a method environment for the methods of the various
+
+20
+00:01:44,390 --> 00:01:49,909
+classes and we always need to know the current class. Now how will we implement
+
+21
+00:01:49,909 --> 00:01:55,090
+this? Well we will have a recursive function called type check It takes two
+
+22
+00:01:55,090 --> 00:01:59,110
+arguments, it takes an [inaudible] environment and this will be a record, I'm
+
+23
+00:01:59,110 --> 00:02:03,220
+not specifying exactly how this record is declared but it is essentially going to be
+
+24
+00:02:03,220 --> 00:02:08,920
+three parts m, o, and c. And it also takes an expression, and so here we are just
+
+25
+00:02:08,919 --> 00:02:13,819
+doing the case here where the expression is E1 + E2. And what should the code look
+
+26
+00:02:13,819 --> 00:02:19,459
+like? Well, we can pretty much just read the rule and translate directly into code,
+
+27
+00:02:19,459 --> 00:02:23,260
+and this is one of the nice things about the notation for type systems, is that it
+
+28
+00:02:23,260 --> 00:02:29,730
+really tells you very, very clearly how to write the implementation from the
+
+29
+00:02:29,730 --> 00:02:34,760
+description. So what's the first thing we have to do? Well we have to type-check the
+
+30
+00:02:34,760 --> 00:02:39,870
+sub expression E1. And we can see from the rule that the environment in which E1 is
+
+31
+00:02:39,870 --> 00:02:44,819
+type checked is exactly the same as the environment of E1 plus E2. So we just pass
+
+32
+00:02:44,819 --> 00:02:49,609
+whatever our original environment argument was for E1 plus E2. We pass an, an
+
+33
+00:02:49,609 --> 00:02:54,279
+argument on, to a recursive call of the type check, to type check the sub
+
+34
+00:02:54,279 --> 00:03:00,060
+expression E1. And that type-checking will run and it will return some type T1, and
+
+35
+00:03:00,060 --> 00:03:04,529
+we don't know that T1 is an integer at this point. We're gonna have to check
+
+36
+00:03:04,529 --> 00:03:11,529
+that, so we just remember what the type of E1 is. And, furthermore we type check E2,
+
+37
+00:03:12,540 --> 00:03:17,189
+okay? And that also happens in the same environment, we can see that here in the
+
+38
+00:03:17,189 --> 00:03:24,189
+rule. And again we'll get back some type for E2, so type T2. And then we confirm
+
+39
+00:03:25,529 --> 00:03:32,529
+that both T1 and T2 are type integer. And we could have done a, the track that T1
+
+40
+00:03:32,849 --> 00:03:39,040
+is, is int a, right away, right after we had the type check T1 that would be a fine
+
+41
+00:03:39,040 --> 00:03:44,449
+thing to do. Here just to save space on the slide I have to clip the checks for T1
+
+42
+00:03:44,449 --> 00:03:51,449
+and T2 a, on one line. And if that check succeeds. If it doesn't succeed,
+
+43
+00:03:51,540 --> 00:03:55,859
+presumably there should be some code in here, to, print out an error message But
+
+44
+00:03:55,859 --> 00:04:01,269
+if that, if both T1 and T2 are in fact integers, than the type of the whole
+
+45
+00:04:01,269 --> 00:04:05,459
+expression is also an integer. So that's what's returned by this call, by the
+
+46
+00:04:05,459 --> 00:04:11,249
+outermost call here, to the type check function. So now let's take a look at a
+
+47
+00:04:11,249 --> 00:04:15,409
+somewhat more complex type checking rule and its implementation. Here's the rule
+
+48
+00:04:15,409 --> 00:04:21,519
+for a net with initialization. So we're declaring a variable x, of type t. And
+
+49
+00:04:21,519 --> 00:04:26,300
+that's going to be visible in the expression E1. But before we execute E1,
+
+50
+00:04:26,300 --> 00:04:31,169
+we're going to initialize X to the value of E0. And then after we've evaluated the
+
+51
+00:04:31,169 --> 00:04:37,389
+entire let expression, we expect to get back something of type T1 And now, for all
+
+52
+00:04:37,389 --> 00:04:41,960
+of that to work out. A few things have to be satisfied and those are listed as
+
+53
+00:04:41,960 --> 00:04:48,960
+premises here of the rule. First of all E0 has to have some type T0 which is a
+
+54
+00:04:49,330 --> 00:04:54,580
+subtype of T. And that's to guarantee that this initialization is correct, that X can
+
+55
+00:04:54,580 --> 00:05:01,580
+actually hold something of E0's type. And, for the entire expression to have type T1,
+
+56
+00:05:01,770 --> 00:05:07,300
+well then E1 has to have type T1. But that type checking is carried out in an
+
+57
+00:05:07,300 --> 00:05:12,199
+environment that's extended with the declaration for X. So we, so we also know
+
+58
+00:05:12,199 --> 00:05:19,199
+within E1, that X has type T. So now let's write the type-checking case for this. So
+
+59
+00:05:20,550 --> 00:05:24,509
+the function type check is again is gonna take an environment as argument, and now
+
+60
+00:05:24,509 --> 00:05:31,509
+we're doing a case for a led with initialization. So, just reading of the,
+
+61
+00:05:32,180 --> 00:05:35,960
+the rules and what the conditions are that we have to check, we can see that one of
+
+62
+00:05:35,960 --> 00:05:39,569
+the first things we have to do, or one of the things we have to do, is to check that
+
+63
+00:05:39,569 --> 00:05:44,909
+E zero has some type T zero. So we just have a recursive call to type check here.
+
+64
+00:05:44,909 --> 00:05:47,870
+This is carried out in the same environment as the overall expression. So
+
+65
+00:05:47,870 --> 00:05:51,539
+we just pass the environment on to the recursive call And now we're just type
+
+66
+00:05:51,539 --> 00:05:58,539
+checking E zero and we record its type T zero. So the second premise is implemented
+
+67
+00:05:59,740 --> 00:06:06,569
+like this. Now we're type checking E1 and we expect it to have some type T1, but now
+
+68
+00:06:06,569 --> 00:06:09,590
+the environment is different, so we're taking the original environment, the
+
+69
+00:06:09,590 --> 00:06:15,430
+overall environment of the expression and we're adding, a declaration that X has
+
+70
+00:06:15,430 --> 00:06:19,009
+type T to that environment. So we're extending the environment, with an
+
+71
+00:06:19,009 --> 00:06:25,400
+additional variable declaration. Okay? And so we do that type checking call, and we
+
+72
+00:06:25,400 --> 00:06:31,629
+get back a type T1. Now, we have to check that T0 is a sub-type of T. So that's a,
+
+73
+00:06:31,629 --> 00:06:37,259
+that's a call to some function that implements the sub-typing relationship,
+
+74
+00:06:37,259 --> 00:06:43,479
+and if, if that passes, if that check passes, well then we're done. And we can
+
+75
+00:06:43,479 --> 00:06:47,169
+return the type T1. And there's a little mistake here on the slide, there shouldn't
+
+76
+00:06:47,169 --> 00:06:53,740
+be a semicolon there. S o we just return T1 as the type of the entire expression.

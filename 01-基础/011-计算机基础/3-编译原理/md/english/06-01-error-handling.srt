@@ -1,0 +1,639 @@
+0
+00:00:03,709 --> 00:00:07,069
+In this video, we're going to take a rest a little bit and talk about how compilers
+
+1
+00:00:07,069 --> 00:00:10,750
+handle errors and in particular, what kind of error handling functionality is
+
+2
+00:00:10,750 --> 00:00:17,750
+available in parsers. Compiler has two relatively distinct jobs. The first is to
+
+3
+00:00:20,449 --> 00:00:25,939
+translate valid programs. That is if it gets a program from a programmer that is
+
+4
+00:00:25,939 --> 00:00:30,319
+correct, is a valid program, it needs to produce correct code for that program.
+
+5
+00:00:30,319 --> 00:00:37,319
+Now, distinct from that task is the job of giving good feedback. For erroneous
+
+6
+00:00:37,320 --> 00:00:41,320
+program and even just detecting the invalid programs we don't want to compile
+
+7
+00:00:41,320 --> 00:00:46,129
+any program that isn't a valid program in the programming language. And programming
+
+8
+00:00:46,129 --> 00:00:51,789
+languages have many different kinds of errors. Here's just a few. So for example,
+
+9
+00:00:51,789 --> 00:00:57,019
+we might have lexical errors, that's for using characters that don't even appear in
+
+10
+00:00:57,019 --> 00:01:01,039
+any balanced symbol in the language and these would be detected by lexical
+
+11
+00:01:01,039 --> 00:01:05,990
+analysis phase. We could have syntax errors and this would be the parsing
+
+12
+00:01:05,990 --> 00:01:10,299
+errors when all the individual lexical units are correct but they're assembled in
+
+13
+00:01:10,299 --> 00:01:15,890
+some way that doesn't make sense and we don't know how to compile it. There could
+
+14
+00:01:15,890 --> 00:01:20,020
+be semantic errors for example when types mismatch. Here I've declared excess in
+
+15
+00:01:20,020 --> 00:01:23,840
+integer and use it as a function and that would be the job of type checker to catch
+
+16
+00:01:23,840 --> 00:01:30,840
+those. And then Actually, there may be many errors in your program that are not
+
+17
+00:01:31,790 --> 00:01:36,360
+errors of the programming language. The program you wrote is actually a valid
+
+18
+00:01:36,360 --> 00:01:39,189
+program but it doesn't do what you intended. You're likely bugging your
+
+19
+00:01:39,189 --> 00:01:44,229
+program and so while the compiler can detect many kinds of errors, it doesn't
+
+20
+00:01:44,229 --> 00:01:48,430
+detect all of them and, you know once we get past what the compiler can do, then
+
+21
+00:01:48,430 --> 00:01:55,430
+it's up to testers and users to find the rest of the problems in the program. So,
+
+22
+00:01:56,460 --> 00:02:00,670
+what are the requirements for a good error handling? Well, we want the [inaudible]
+
+23
+00:02:00,670 --> 00:02:04,390
+report errors accurately and clearly so that we can identify what the problem is
+
+24
+00:02:04,390 --> 00:02:08,820
+quickly and fix it. The compiler itself should recover from the error, error
+
+25
+00:02:08,820 --> 00:02:13,280
+quickly. So when it hits an error, it shouldn' t take a long time to make a
+
+26
+00:02:13,280 --> 00:02:17,110
+[inaudible] on what to do before proceeding. And finally, we don't want
+
+27
+00:02:17,110 --> 00:02:21,160
+error handling to slow down the compilation of valid code. That is, we
+
+28
+00:02:21,160 --> 00:02:26,110
+shouldn't pay a price for the error handling if we're not really using it. I'm
+
+29
+00:02:26,110 --> 00:02:31,000
+going to talk about three different kinds of error handling. Panic mode and error
+
+30
+00:02:31,000 --> 00:02:36,530
+productions are the two that are used in current compiler. So these are actually
+
+31
+00:02:36,530 --> 00:02:42,530
+things that people use today. Automatic local or global correction is an idea that
+
+32
+00:02:42,530 --> 00:02:46,250
+was pursued excessively in the past. And I think it's historically quite interesting
+
+33
+00:02:46,250 --> 00:02:52,250
+particularly as a contrast what people do today and also why people try to do it a
+
+34
+00:02:52,250 --> 00:02:58,670
+long ago. [inaudible] is the simplest and most popular method of error recovery
+
+35
+00:02:58,670 --> 00:03:03,090
+that's widely used and the basic ideas that when an error is detected, the parser
+
+36
+00:03:03,090 --> 00:03:08,290
+is going to begin discarding tokens until one that has a clear role in the language
+
+37
+00:03:08,290 --> 00:03:11,780
+is found and that's going to try to restart itself and continue from that
+
+38
+00:03:11,780 --> 00:03:17,120
+point on. And these tokens, the ones that it's looking for are called the
+
+39
+00:03:17,120 --> 00:03:22,910
+Synchronizing Tokens. And these are just tokens that have a well-known role in the
+
+40
+00:03:22,910 --> 00:03:27,460
+language and so that we can reliably identify where we are. So, a typical
+
+41
+00:03:27,460 --> 00:03:31,060
+strategy might be to try to skip to the end of a statement or to the end of a
+
+42
+00:03:31,060 --> 00:03:35,600
+function if an error is found in a statement or function and then begin
+
+43
+00:03:35,600 --> 00:03:40,490
+parsing either the next statement or the next function. So let's look at a simple
+
+44
+00:03:40,490 --> 00:03:45,340
+hypothetical example of panic mode error recovery. So here's an expression. Clearly
+
+45
+00:03:45,340 --> 00:03:50,070
+it has a problem. We shouldn't have two plus signs in a row so something has gone
+
+46
+00:03:50,070 --> 00:03:54,790
+wrong here at the second plus and what's going to happen is the parser is going to
+
+47
+00:03:54,790 --> 00:03:57,940
+come along. The parser is going to be proceeding from left to right. It's gonna
+
+48
+00:03:57,940 --> 00:04:01,180
+see the open-paren, it's gonna see the number one, it's gonna see the plus
+
+49
+00:04:01,180 --> 00:04:04,980
+everything is good and then it's gonna see the second plus and it's not gonna know
+
+50
+00:04:04,980 --> 00:04:10,160
+what to do. It's going to realize. That it's stuck and that there's no expression
+
+51
+00:04:10,160 --> 00:04:15,610
+in the language that has two p lus signs in a row and it needs to do something to
+
+52
+00:04:15,610 --> 00:04:19,620
+recover. It's encountered a parsing error and it has to take some error action at
+
+53
+00:04:19,620 --> 00:04:24,629
+this point. So in panic mode recovery, what it's going to do is it's going to hit
+
+54
+00:04:24,629 --> 00:04:28,620
+the panic button. So right at this point, it's going to say I give up, I'm not
+
+55
+00:04:28,620 --> 00:04:33,810
+parsing normally anymore. It goes into a different mode. Where is simply throwing
+
+56
+00:04:33,810 --> 00:04:39,860
+away input until it finds something that it recognizes and for example, we could
+
+57
+00:04:39,860 --> 00:04:43,939
+say that the policy in this particular, for this particular kind of error, is to
+
+58
+00:04:43,939 --> 00:04:48,560
+skip ahead to the next integer and then try to continue. So, we'll just throw away
+
+59
+00:04:48,560 --> 00:04:53,479
+the plus in this case and then it would restart here at the two, expecting to see
+
+60
+00:04:53,479 --> 00:04:58,389
+another integer. Try to finish off this expression and it would treat that as one
+
+61
+00:04:58,389 --> 00:05:01,500
++ two and then the parenthesis would match and the rest of the expression would parse
+
+62
+00:05:01,500 --> 00:05:08,500
+just fine. Now in tools such Bison, which is widely used parser generator and one
+
+63
+00:05:08,550 --> 00:05:15,400
+that you may use for the project, there is a special terminal symbol called error to
+
+64
+00:05:15,400 --> 00:05:20,819
+describe how much input to skip and the productions that are given in Bison look
+
+65
+00:05:20,819 --> 00:05:26,860
+like this. So you would say at the possibilities for e are that e could be an
+
+66
+00:05:26,860 --> 00:05:32,770
+integer, e could be an. The sum of the two e's, two expressions, it could be a
+
+67
+00:05:32,770 --> 00:05:39,759
+parenthesized expression or if none of this work, okay. So these are the normal
+
+68
+00:05:39,759 --> 00:05:46,759
+productions. Alright, If none of those work, then we could try some of these
+
+69
+00:05:47,629 --> 00:05:51,909
+productions that have error in them. And error is a special symbol for Bison and it
+
+70
+00:05:51,909 --> 00:05:55,900
+says, well, these are the alternatives to try if these things over here didn't work.
+
+71
+00:05:55,900 --> 00:06:01,020
+So, if you find an error. Let's focus on this one right here so if this says that
+
+72
+00:06:01,020 --> 00:06:07,779
+if you find an error while you're trying to parse an e. Okay, we haven't actually
+
+73
+00:06:07,779 --> 00:06:11,979
+said how that works yet. We'll see that in the future videos but conceptually, the
+
+74
+00:06:11,979 --> 00:06:17,669
+parser is trying to recognize one of these kinds of expressions here. It's in a state
+
+75
+00:06:17,669 --> 00:06:20,949
+where it thinks it wanted to see an integer or a + or a parenthesized
+
+76
+00:06:20,949 --> 00:06:25,090
+expression and if that isn't working out i f it get stuck well then hit the panic
+
+77
+00:06:25,090 --> 00:06:29,330
+button and you can declare that it's in error state and it can throw away all the
+
+78
+00:06:29,330 --> 00:06:34,289
+input. This error will match all the input up to the next integer. And then this
+
+79
+00:06:34,289 --> 00:06:39,349
+whole thing could be counted as an e. As one of these things and then we will try
+
+80
+00:06:39,349 --> 00:06:44,819
+to continue the parsing. Similarly, if we encounter an error somewhere inside a pair
+
+81
+00:06:44,819 --> 00:06:50,659
+of match parenthesis, well, we could just throw away the whole thing and just reset
+
+82
+00:06:50,659 --> 00:06:53,789
+at the parenthesis boundaries and they continue parsing. So these are two
+
+83
+00:06:53,789 --> 00:06:59,779
+possible error recovery strategies if we find an error for this particular kind of
+
+84
+00:06:59,779 --> 00:07:06,360
+symbol in the grammar. And you can have these error, These productions that
+
+85
+00:07:06,360 --> 00:07:12,360
+involved the error token for, for as many different kinds of symbols in the language
+
+86
+00:07:12,360 --> 00:07:18,749
+as you like. Another common strategy is to use what are known as error productions
+
+87
+00:07:18,749 --> 00:07:23,419
+and this specify known common mistakes that programmers make adjust as
+
+88
+00:07:23,419 --> 00:07:28,120
+alternative productions in the grammar. So here's a simple example, let's say we were
+
+89
+00:07:28,120 --> 00:07:32,370
+working on a programming language or compiler for a programming language that
+
+90
+00:07:32,370 --> 00:07:37,669
+was used by a lot of mathematicians and instead of writing Five x like computer
+
+91
+00:07:37,669 --> 00:07:44,120
+scientists do, these guys always wanted to write five x to just juxtapose the five
+
+92
+00:07:44,120 --> 00:07:48,050
+and the x to look more like normal mathematical notation. And they complain
+
+93
+00:07:48,050 --> 00:07:50,949
+that this is always giving them parser errors. If the parser is just complaining
+
+94
+00:07:50,949 --> 00:07:54,979
+over and over again then this is not a well formed expression. Well, we could
+
+95
+00:07:54,979 --> 00:07:59,460
+just go in to our grammar and add a production that made of, of well form. We
+
+96
+00:07:59,460 --> 00:08:04,419
+could just say well now it's legal, if I have that one kind of expression is just
+
+97
+00:08:04,419 --> 00:08:08,089
+to have two expressions that [inaudible] opposed next to each other with no
+
+98
+00:08:08,089 --> 00:08:14,680
+intervening operator. And this, has a disadvantage obviously of complicating the
+
+99
+00:08:14,680 --> 00:08:18,180
+grammar. If we do this a lot our grammar is gonna get a lot harder to understand.
+
+100
+00:08:18,180 --> 00:08:23,779
+It's gonna be a lot harder to maintain and essentially all this is doing is promoting
+
+101
+00:08:23,779 --> 00:08:29,219
+common mistakes to alternative syntax but this is used in practice. Peo ple do this
+
+102
+00:08:29,219 --> 00:08:34,250
+sort of thing and you will see for example when you use TCC and other production C
+
+103
+00:08:34,250 --> 00:08:39,080
+compilers they will often warn you about things you're not supposed to do but
+
+104
+00:08:39,080 --> 00:08:43,040
+they'll accept them anyway and this is essentially the mechanism by which they do
+
+105
+00:08:43,039 --> 00:08:50,040
+that. Last strategy I want to talk about a little bit is error correction. So, so far
+
+106
+00:08:51,390 --> 00:08:55,570
+we've just talked about strategies for detecting errors but we could also try to
+
+107
+00:08:55,570 --> 00:08:59,700
+fix errors that is if the program has mistakes in it, the compiler could try to
+
+108
+00:08:59,700 --> 00:09:03,970
+help the program out and say oh, you obviously didn't mean to write that. Let
+
+109
+00:09:03,970 --> 00:09:09,450
+me try to find a program for you that, that works. And, these kind of corrections
+
+110
+00:09:09,450 --> 00:09:13,430
+in some sense we wanted to find programs that are nearby, programs that aren't too
+
+111
+00:09:13,430 --> 00:09:18,700
+different from the programs at the, that the programmer supplied but we couldn't
+
+112
+00:09:18,700 --> 00:09:23,010
+compile correctly. And there's a few different things that you can do to the
+
+113
+00:09:23,010 --> 00:09:27,540
+things that people have tried are things like token insertions and deletions. So
+
+114
+00:09:27,540 --> 00:09:32,390
+here you'd like to minimize the edit distance. That would be the metric that
+
+115
+00:09:32,390 --> 00:09:37,740
+you would use to determine whether a program was close to the original program,
+
+116
+00:09:37,740 --> 00:09:41,580
+that the programmer supplied. You could also do exhaustive search within some
+
+117
+00:09:41,580 --> 00:09:48,100
+bounce to try all possible programs that are close to the program that was
+
+118
+00:09:48,100 --> 00:09:53,890
+supplied. And, a couple of disadvantages to this actually, number of disadvantages.
+
+119
+00:09:53,890 --> 00:09:56,960
+You can imagine that this is hard to implement. It, it's actually quite
+
+120
+00:09:56,960 --> 00:10:01,140
+complex. This will slow down the parsing of correct programs because we need to
+
+121
+00:10:01,140 --> 00:10:07,160
+keep enough state around that we can manage the search or, or the editing in
+
+122
+00:10:07,160 --> 00:10:11,900
+the case of that way actually doing counter and error and of course nearby is
+
+123
+00:10:11,900 --> 00:10:16,740
+not really, is not really that clear what that means and various notions of nearby
+
+124
+00:10:16,740 --> 00:10:21,280
+may or may not actually take us to a program of the, the programmer would
+
+125
+00:10:21,280 --> 00:10:26,650
+actually be happy with. The best one example of error correction is the
+
+126
+00:10:26,650 --> 00:10:31,720
+compiler PL [crosstalk]. This is PL [inaudible] compiler, that's the PL part
+
+127
+00:10:31,720 --> 00:10:37,250
+and the C stands for either correction or Cornell which is where the compiler was
+
+128
+00:10:37,250 --> 00:10:41,700
+built and PL [crosstalk] is well-known for being willing to compile absolutely
+
+129
+00:10:41,700 --> 00:10:46,000
+anything. You could, you could give it the phone book. You can and people did give it
+
+130
+00:10:46,000 --> 00:10:51,380
+things like speech from Hamlet soliloquy and it would print out a lot of error
+
+131
+00:10:51,380 --> 00:10:55,020
+messages. Sometimes, these error messages would be very funny to read. And it would,
+
+132
+00:10:55,020 --> 00:11:01,410
+in the end, do correction and produce always a valid running PL [inaudible]
+
+133
+00:11:01,410 --> 00:11:06,440
+program. And you might ask why do people bother with that? It doesn't seem but that
+
+134
+00:11:06,440 --> 00:11:11,430
+may not seem very compelling To us today. And have to realize that when this work
+
+135
+00:11:11,430 --> 00:11:16,560
+was done back in the 1970s people live in a very different world. There was a very
+
+136
+00:11:16,560 --> 00:11:23,100
+slow recompilation cycle. It could take a whole day To get your program To compile
+
+137
+00:11:23,100 --> 00:11:26,880
+and run, you would essentially submit your program in the morning and you might not
+
+138
+00:11:26,880 --> 00:11:31,990
+get results back until the afternoon. And, with that kind of turnaround cycle, Even
+
+139
+00:11:31,990 --> 00:11:35,860
+one syntax error in your program was devastating. You can lose a whole day
+
+140
+00:11:35,860 --> 00:11:41,150
+because you mistype the keyword and having the compiler try to take a stab at finding
+
+141
+00:11:41,150 --> 00:11:44,630
+a working program for you if the correction was small and you save an
+
+142
+00:11:44,630 --> 00:11:48,240
+entire day, you know to think it can fix that one small mistake you made and give
+
+143
+00:11:48,240 --> 00:11:52,050
+you a valid run, that was actually a useful thing to do. And so the goal then
+
+144
+00:11:52,050 --> 00:11:56,280
+was to find as many errors in one cycle as possible. They would try, they would try
+
+145
+00:11:56,280 --> 00:12:00,940
+to find as many errors to try to recover. Find as many errors as possible. Give you
+
+146
+00:12:00,940 --> 00:12:05,230
+as good feedback as possible so you could fix as many errors, avoid as many retry
+
+147
+00:12:05,230 --> 00:12:11,530
+cycles as possible. And, and even possibly automatically correct the program. So that
+
+148
+00:12:11,530 --> 00:12:16,580
+you could see if the correction were right and, and then possibly the, the results
+
+149
+00:12:16,580 --> 00:12:19,390
+you got back were useful on the [inaudible] to do even more debugging
+
+150
+00:12:19,390 --> 00:12:23,450
+before the next round. Now today, we're in a completely different situation. We were
+
+151
+00:12:23,450 --> 00:12:28,010
+very fast, almost interactive recompilation cycle for many projects and
+
+152
+00:12:28,010 --> 00:12:31,360
+as a result, users generally aren't interested in finding many errors. They
+
+153
+00:12:31,360 --> 00:12:36,740
+ten d to correct only one error per cycle. Compilers still report many errors, I'll
+
+154
+00:12:36,740 --> 00:12:40,290
+give you lots and lots of errors but my observation certainly might have it.
+
+155
+00:12:40,290 --> 00:12:44,100
+Personally, what I see many other people do is they only fix the first one because
+
+156
+00:12:44,100 --> 00:12:49,040
+it's the most reliable and the one that definitely needs to be fixed before,
+
+157
+00:12:49,040 --> 00:12:53,290
+before you can try to compile again. If the compilation is fast enough, that's
+
+158
+00:12:53,290 --> 00:12:57,070
+probably the most proactive thing to do. And as result, complex error recovery
+
+159
+00:12:57,070 --> 00:13:00,510
+today is just less compelling than it was a few decades ago.

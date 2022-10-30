@@ -1,0 +1,639 @@
+0
+00:00:03,689 --> 00:00:07,939
+In the next few videos, we're gonna talk about how to construct LL1 parsing tables.
+
+1
+00:00:07,939 --> 00:00:11,799
+And in this particular video, we're gonna begin by looking at how be build something
+
+2
+00:00:11,799 --> 00:00:18,430
+called first sets. Before we get into the main topic of this video, which is
+
+3
+00:00:18,430 --> 00:00:22,960
+something called First Sets, we need to say a little bit about how we're going to
+
+4
+00:00:22,960 --> 00:00:26,700
+construct parsing tables, or what the conditions are for constructing LL1
+
+5
+00:00:26,700 --> 00:00:30,200
+parsing tables. And so what we're interested in knowing, we're building a,
+
+6
+00:00:30,200 --> 00:00:34,430
+we're building a parsing table. And we want to know, for a given non terminal A.
+
+7
+00:00:34,430 --> 00:00:40,030
+Kay, this is the leftmost non terminal. And a given input symbol, the next input
+
+8
+00:00:40,030 --> 00:00:44,390
+symbol T, [cough]. We want to know what con-, under what conditions we will make
+
+9
+00:00:44,390 --> 00:00:49,659
+the move A goes to alpha. We'll replace A, the non terminal by the right hand side,
+
+10
+00:00:49,659 --> 00:00:54,249
+alpha. Alright and that means that the entry, in th, the AT entry in the table
+
+11
+00:00:54,249 --> 00:00:58,079
+would be Alpha and there are two situations in which we would like to do
+
+12
+00:00:58,079 --> 00:01:05,079
+this. Alright? So the first one is if alpha can derive T in the first position,
+
+13
+00:01:05,870 --> 00:01:09,970
+That means that beginning with alpha, there is some derivation, some sequence of
+
+14
+00:01:09,970 --> 00:01:15,000
+moves, could be zero or more moves, that will result in a T appearing in the first
+
+15
+00:01:15,000 --> 00:01:21,820
+position of the string that's derived. And if there is such a derivation, then using
+
+16
+00:01:21,820 --> 00:01:26,200
+the move, A goes to alpha, at this point, when T is the next input symbol, would be
+
+17
+00:01:26,200 --> 00:01:30,220
+a good idea. Because then we would be able to match the T. Eventually, alpha could
+
+18
+00:01:30,220 --> 00:01:33,930
+generate the T, and then we'd be able to match the T, and then continue with our
+
+19
+00:01:33,930 --> 00:01:38,730
+parsing of the rest of the input. Alright, so in this situation, when alpha can
+
+20
+00:01:38,730 --> 00:01:43,480
+generate a T in the first position, we say that T is an element of the first of
+
+21
+00:01:43,480 --> 00:01:47,720
+alpha. T is one of the things, there may be more things. But T is at least one of
+
+22
+00:01:47,720 --> 00:01:52,520
+the things that alpha can produce, in the very first position. One of the terminals,
+
+23
+00:01:52,520 --> 00:01:57,930
+I should say, that alpha can produce in the very first position. Now, there's
+
+24
+00:01:57,930 --> 00:02:02,460
+another situation, a slightly, more complicated situation, in which we might
+
+25
+00:02:02,460 --> 00:02:07,370
+want to make the move, or we wou ld want to make the move, That if we see A as the
+
+26
+00:02:07,370 --> 00:02:12,530
+leftmost non terminal, and T as the next input that we'd like to replace A by, A
+
+27
+00:02:12,530 --> 00:02:18,500
+goes to alpha. Alright? And the situation here that we're going to consider is what
+
+28
+00:02:18,500 --> 00:02:25,500
+if, alpha, cannot derive T? So alpha cannot, in any sequence of moves, derive
+
+29
+00:02:27,040 --> 00:02:32,260
+T. So, in fact, what does that mean? That means T is not. Gonna be in the first of
+
+30
+00:02:32,260 --> 00:02:37,730
+alpha, okay? So, and our next input symbol is T. We're still looking at the situation
+
+31
+00:02:37,730 --> 00:02:41,990
+where we have A as the leftmost non terminal, and T as the next input symbol.
+
+32
+00:02:41,990 --> 00:02:46,470
+Now, This doesn't sound very promising. Because we have an input symbol T that we
+
+33
+00:02:46,470 --> 00:02:51,760
+want to match And the leftmost non terminal that we've got, up next, that we
+
+34
+00:02:51,760 --> 00:02:57,150
+have to do a derivation for, can't generate the T. And so, but it turns out
+
+35
+00:02:57,150 --> 00:03:02,060
+that, this, that it's not hopeless. That we actually may still be able to parse the
+
+36
+00:03:02,060 --> 00:03:08,730
+string, even in that situation, provided that alpha can go to epsilon. So if alpha
+
+37
+00:03:08,730 --> 00:03:12,840
+can derive epsilon, if alpha can go away completely, and we can basically erase the
+
+38
+00:03:12,840 --> 00:03:18,560
+alpha, then it could be that some other part of the grammar can come in and match
+
+39
+00:03:18,560 --> 00:03:22,349
+the T. Alright and so, in what situation would that be? Well, here are the
+
+40
+00:03:22,349 --> 00:03:27,430
+conditions. So, if A goes to Alpha as a production and alpha can go to epsilon via
+
+41
+00:03:27,430 --> 00:03:32,420
+zero or more moves. Alright, so alpha can eventually be completely wiped out.
+
+42
+00:03:32,420 --> 00:03:39,420
+Alright, and. If T can come immediately after A in the grammar, so there has to be
+
+43
+00:03:39,750 --> 00:03:44,720
+a derivation for this to make sense, there should be a derivation where we are using
+
+44
+00:03:44,720 --> 00:03:48,190
+the A, okay? With the A as an important piece of the derivation you know, from the
+
+45
+00:03:48,190 --> 00:03:52,860
+start symbol. And what comes immediately after the A is the next input symbol that
+
+46
+00:03:52,860 --> 00:03:59,500
+we are expecting. So in this situation, if we could get rid of the A, Then by having
+
+47
+00:03:59,500 --> 00:04:03,610
+a go at the epsilon then we'll still be on track cuz potentially some other piece of
+
+48
+00:04:03,610 --> 00:04:10,610
+grammar could come in and match the T. Alright. So in that case, we would say
+
+49
+00:04:10,730 --> 00:04:15,160
+what, what do we have to test for? What, under what conditions can we do it? Well
+
+50
+00:04:15,160 --> 00:04:19,549
+we want to be able to do this if T can come after A in the grammar and we say
+
+51
+00:04:19,548 --> 00:04:25,320
+that T is in the follow of A. T is one of the things that can come after A in the
+
+52
+00:04:25,320 --> 00:04:29,770
+grammar. Now this is an important point, and a place where people sometimes get
+
+53
+00:04:29,770 --> 00:04:34,400
+confused and so I want to, to emphasize this, notice that. We are not talking
+
+54
+00:04:34,400 --> 00:04:41,400
+about A deriving T. A does not produce T. T appears in a derivation After A, okay?
+
+55
+00:04:42,240 --> 00:04:46,600
+So the A and the T here it, it doesn't have anything to do with what A produces.
+
+56
+00:04:46,600 --> 00:04:51,480
+This has to do with where A can appear in derivations, alright? So if the T can come
+
+57
+00:04:51,480 --> 00:04:56,040
+after the A in a derivation, then we say the T is in the follow of A. Right. So in
+
+58
+00:04:56,040 --> 00:05:01,570
+this video we're gonna focus on, only this first part, the first sets. In the next
+
+59
+00:05:01,570 --> 00:05:06,090
+video, we'll look at the follow sets, and then the video after that, we'll talk
+
+60
+00:05:06,090 --> 00:05:13,090
+about how to put it all together to build this parcing table. [sound] All right,
+
+61
+00:05:14,000 --> 00:05:19,639
+let's focus now on our main topic for this video, the computation of first sets. So
+
+62
+00:05:19,639 --> 00:05:23,060
+here, first of all, we have to have a definition of what a first set is. And so
+
+63
+00:05:23,060 --> 00:05:28,660
+we're going to say, for an arbitrary, string. This is actually, x here is a
+
+64
+00:05:28,660 --> 00:05:31,520
+string. Could be a ter-, could be a single terminal, it could be a single
+
+65
+00:05:31,520 --> 00:05:35,440
+non-terminal, or it could be a string of grammar symbol. All right, and if that If
+
+66
+00:05:35,440 --> 00:05:40,630
+that X, can derive T in the first position through some sequence of moves, then we
+
+67
+00:05:40,630 --> 00:05:45,889
+say that T, T is a terminal here, is in the first of X, okay? So all the possible
+
+68
+00:05:45,889 --> 00:05:51,900
+terminals that can be derived in the first position will be in the first, of X Now
+
+69
+00:05:51,900 --> 00:05:57,150
+For technical reasons that will become clear in a minute we also need to keep
+
+70
+00:05:57,150 --> 00:06:03,419
+track of whether x can produce epsilon. Now so even though epsilon is not a
+
+71
+00:06:03,419 --> 00:06:09,530
+terminal symbol, if x can go to epsilon be a zero or more steps then we'll say that
+
+72
+00:06:09,530 --> 00:06:13,030
+epsilon is in the first of x and this turns out to be needed. We need to keep
+
+73
+00:06:13,030 --> 00:06:19,130
+track of whether x whether things can produce epsilon in order to compute all
+
+74
+00:06:19,130 --> 00:06:25,320
+the terminals that are in the first set of a given grammar symbol. Alright so now
+
+75
+00:06:25,320 --> 00:06:30,270
+here's a sketch of the algorithm. So first of all for any terminal symb ol the only
+
+76
+00:06:30,270 --> 00:06:34,960
+thing the terminals can produce are themselves. So every terminal symbol in
+
+77
+00:06:34,960 --> 00:06:41,960
+here I should just say T is the terminal. So for every terminal symbol, it is in,
+
+78
+00:06:41,970 --> 00:06:48,150
+it's first set just consists of a the site containing only that terminal. All right,
+
+79
+00:06:48,150 --> 00:06:53,729
+so now let's consider a non terminal X, okay so here X is a non terminal, and what
+
+80
+00:06:53,729 --> 00:06:57,740
+it would be in the conditions when epsilon is in the first of X, well, if there's a
+
+81
+00:06:57,740 --> 00:07:04,060
+epsilon production, if X goes immediately to epsilon, then, obviously, X can produce
+
+82
+00:07:04,060 --> 00:07:08,110
+epsilon, epsilon should be in the first of X But also, if X can produce any other
+
+83
+00:07:08,110 --> 00:07:14,669
+right hand side Alright, Where everything on the right hand side can go to epsilon.
+
+84
+00:07:14,669 --> 00:07:17,949
+Well, then the whole right hand side can go to epsilon. So, in that case also
+
+85
+00:07:17,949 --> 00:07:23,300
+epsilon is in the first of X. I noticed that this will only happen if this, it can
+
+86
+00:07:23,300 --> 00:07:29,180
+only, it can only potentially happen if all the EIS here are non-terminal symbols
+
+87
+00:07:29,180 --> 00:07:32,930
+themselves. Obviously if there's any terminal symbols on the right hand side
+
+88
+00:07:32,930 --> 00:07:37,669
+then that production can never go completely to the empty string. Okay. It
+
+89
+00:07:37,669 --> 00:07:41,979
+will always produce at least that, that terminal But if every non-terminal. On the
+
+90
+00:07:41,979 --> 00:07:45,330
+right-hand side can produce epsilon. Meaning epsilon's in the first of all
+
+91
+00:07:45,330 --> 00:07:50,660
+those non-terminals. And there are no terminals on the right hand side. Then,
+
+92
+00:07:50,660 --> 00:07:57,660
+Then, epsilon will be in the first of X. Alright there's one other situation and
+
+93
+00:07:58,139 --> 00:08:02,850
+here's where we make use of the fact that we are keeping track of where epsilon can
+
+94
+00:08:02,850 --> 00:08:09,550
+be produced alright. So let's say that we have a production like this okay and let's
+
+95
+00:08:09,550 --> 00:08:16,009
+say the first N symbols A1 through AN here can all go to epsilon. So this can all
+
+96
+00:08:16,009 --> 00:08:22,569
+disappear and can be replaced by the empty string. What does that mean, so if we have
+
+97
+00:08:22,569 --> 00:08:29,569
+derivation like this? Okay were, to some number of moves it goes to Alpha, well
+
+98
+00:08:30,590 --> 00:08:37,450
+that means that X can through a bunch of moves here to derive Alpha itself, okay.
+
+99
+00:08:37,450 --> 00:08:41,909
+So, X will go to Alpha by wiping out all of the AIs, and I forgot to put the alpha
+
+100
+00:08:41,909 --> 00:08:47,100
+here on the end, there should be an Alpha after As have been there. Okay? And wh at
+
+101
+00:08:47,100 --> 00:08:51,370
+does this mean? Well this means that anything that is in the first of alpha is
+
+102
+00:08:51,370 --> 00:08:56,200
+going to also be in the first of X. All right? So, if any prefix of the right-hand
+
+103
+00:08:56,200 --> 00:08:59,640
+side can disappear then the remaining suffix, the alpha, it doesn't matter what
+
+104
+00:08:59,640 --> 00:09:06,640
+the alpha is, is left. Then the first of alpha will be a subset of the non-terminal
+
+105
+00:09:07,170 --> 00:09:12,690
+on the right, left hand side of X in this case. All right? Okay? Alright. So that is
+
+106
+00:09:12,690 --> 00:09:18,000
+a definition of a first sets and how you compute them. Okay. And we have to, we
+
+107
+00:09:18,000 --> 00:09:22,510
+have to compute them for the terminals and for the non-terminals, alright? That's
+
+108
+00:09:22,510 --> 00:09:27,050
+what these; these second two rolls here cover the non-terminals. I just noticed,
+
+109
+00:09:27,050 --> 00:09:30,920
+as I mentioned here at the beginning that this is well defined for any other
+
+110
+00:09:30,920 --> 00:09:36,200
+Grammar, sequence as well. I mean, excuse me, any other string in the grammar as
+
+111
+00:09:36,200 --> 00:09:38,970
+well. It doesn't, if I, if I know how to compute it for terminals, I know how to
+
+112
+00:09:38,970 --> 00:09:42,670
+compute it for non terminals. Then I can compute it for arbitrary strings in the
+
+113
+00:09:42,670 --> 00:09:49,670
+grammar, as well. Let's analyze, do an example. Let's take a look at this grammar
+
+114
+00:09:51,680 --> 00:09:57,070
+and let's see if we can compute the first sets. Let's start with the easy stuff.
+
+115
+00:09:57,070 --> 00:10:03,970
+Let's do the terminal symbols. Alright So, for the terminals, it's really, you know,
+
+116
+00:10:03,970 --> 00:10:10,970
+extremely straightforward. The first of plus is plus. The first of times Is just
+
+117
+00:10:11,560 --> 00:10:16,240
+times every terminal is in a, has its first set, the first set of every terminal
+
+118
+00:10:16,240 --> 00:10:21,870
+is just the second term in that terminal and so on for the others, and this is not
+
+119
+00:10:21,870 --> 00:10:28,870
+worth writing out. So it'll be the first of open paren will just be open paren, the
+
+120
+00:10:29,450 --> 00:10:35,100
+first of close paren will be just close paren and I think that is all. Now we have
+
+121
+00:10:35,100 --> 00:10:41,170
+to do ants as well, okay? Alright, so these are the first sets for the terminal
+
+122
+00:10:41,170 --> 00:10:44,820
+symbols. And now let's look at something more interesting; let's talk about the
+
+123
+00:10:44,820 --> 00:10:51,820
+first of the non terminal symbols. So What about the first of E? Well, if we look at
+
+124
+00:10:55,070 --> 00:11:00,649
+the production for E, let's remember our rules. So we know that anything that's in
+
+125
+00:11:00,649 --> 00:11:07,649
+the first of T will also be in the first of E. So the first of T Is a subset of th
+
+126
+00:11:09,089 --> 00:11:12,920
+e first of E. Okay so in order to know what the first of E is we have to know
+
+127
+00:11:12,920 --> 00:11:17,440
+what the first of T is. At least to know part of the first of E we have to know the
+
+128
+00:11:17,440 --> 00:11:23,890
+first of T. So let's move on then to first computing. The first of T Let's, let's try
+
+129
+00:11:23,890 --> 00:11:29,140
+to get that set. Now the first of T is actually pretty easy because if we look at
+
+130
+00:11:29,140 --> 00:11:33,580
+the productions for T we can see that they produce terminals in the first position.
+
+131
+00:11:33,580 --> 00:11:39,610
+All right? So the only possibility in the, the only possibilities in the first of T
+
+132
+00:11:39,610 --> 00:11:43,950
+are open per en and int. And since there are only two productions for T and both of
+
+133
+00:11:43,950 --> 00:11:47,940
+them have a terminal in the very first position, there's no other terminal
+
+134
+00:11:47,940 --> 00:11:52,230
+symbols that could be produced in the first position by T. So we can just read
+
+135
+00:11:52,230 --> 00:11:59,230
+off the first of T directly from the grammar. And it's the open paren in int.
+
+136
+00:11:59,420 --> 00:12:06,140
+Okay? Now, let's return to thinking about the first of E. So remember there was
+
+137
+00:12:06,140 --> 00:12:10,540
+another case that we need to keep track of. Or, sorry, that we have to consider.
+
+138
+00:12:10,540 --> 00:12:15,829
+So, it could be, or, clearly everything in the first of T is in the first of E and
+
+139
+00:12:15,829 --> 00:12:20,740
+we've already noted that down. But if T can go to epsilon then things that are in
+
+140
+00:12:20,740 --> 00:12:25,769
+the first of X Could also be in the first of E. And now we've computed the first of
+
+141
+00:12:25,769 --> 00:12:30,370
+T and we see that epsilon is not in there. The first of T always generates at least
+
+142
+00:12:30,370 --> 00:12:36,459
+one terminal symbol, and so there'll never be a situation in which X can contribute
+
+143
+00:12:36,459 --> 00:12:39,850
+to the first of E because T is always guaranteed to generate at least one
+
+144
+00:12:39,850 --> 00:12:44,480
+terminal. So in fact this subset that we wrote up here is not a subset at all, it's
+
+145
+00:12:44,480 --> 00:12:48,360
+an inequality. The first of T and the first of E are equal. So the first of E is
+
+146
+00:12:48,360 --> 00:12:55,339
+also open per rand and Nth. All right? So now let's take a look at the first of X.
+
+147
+00:12:55,339 --> 00:13:01,850
+Okay? So, the first effects well clearly pluses in the first of X because one
+
+148
+00:13:01,850 --> 00:13:06,670
+production per X plus immediately in the first positions, so we must add plus to
+
+149
+00:13:06,670 --> 00:13:11,899
+the first of X. And then X has an epsilon production so it can also go to epsilon so
+
+150
+00:13:11,899 --> 00:13:18,899
+that means epsilon is also in the first of X And what about the first of Y. Well, the
+
+151
+00:13:21,440 --> 00:13:24,890
+fir st of Y, it's a similar structure to the productions request, we see we have
+
+152
+00:13:24,890 --> 00:13:27,450
+one production here in the [inaudible] of the terminal in the first position, and
+
+153
+00:13:27,450 --> 00:13:32,829
+that's times. So the first of y has times in it. And then, y also has an epsilon
+
+154
+00:13:32,829 --> 00:13:37,880
+production. Y can go directly to epsilon, so epsilon is also in the first of y.
+
+155
+00:13:37,880 --> 00:13:43,740
+Alright? And that's actually it for this grammar. These are the complete first sets
+
+156
+00:13:43,740 --> 00:13:47,889
+for all of the symbols of the grammar. The terminals just have themselves in their
+
+157
+00:13:47,889 --> 00:13:53,389
+first sets and then the non-terminals we computed have these sets. So that
+
+158
+00:13:53,389 --> 00:13:57,880
+concludes our discussion of first sets and in the next video, we're going to take a
+
+159
+00:13:57,880 --> 00:14:00,149
+look at computing follow sets.

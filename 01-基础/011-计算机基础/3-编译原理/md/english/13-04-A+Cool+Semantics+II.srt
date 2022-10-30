@@ -1,0 +1,863 @@
+0
+00:00:04,010 --> 00:00:08,069
+In this video we're going to continue and complete our discussion of cool
+
+1
+00:00:08,069 --> 00:00:11,600
+operational semantics. We'll be taking a look with the two most complex operations
+
+2
+00:00:11,600 --> 00:00:18,600
+in cool, the allocation of the new object and dynamic dispatch. We'll begin by
+
+3
+00:00:20,119 --> 00:00:24,320
+giving an informal discussion of what happens when a new object is allocated in
+
+4
+00:00:24,320 --> 00:00:28,529
+Kuhl. So, the first thing that has to happen, if we have to allocate space for
+
+5
+00:00:28,529 --> 00:00:33,330
+the object and essentially, that means having enough space for the object
+
+6
+00:00:33,330 --> 00:00:37,680
+attributes. We're going to have to allocate a location for every attribute of
+
+7
+00:00:37,680 --> 00:00:44,170
+the object of class t if what we're doing is allocating a new t object. Then we're
+
+8
+00:00:44,170 --> 00:00:49,229
+going to set the attributes of, of that object to their default values and well in
+
+9
+00:00:49,229 --> 00:00:54,220
+a few minutes, we'll see what the default values are and why we need to set the, set
+
+10
+00:00:54,220 --> 00:00:58,860
+the attributes to defaults. And then we evaluate the initializers so every
+
+11
+00:00:58,860 --> 00:01:03,519
+attribute in the class declaration can have an initializing expression. We're
+
+12
+00:01:03,519 --> 00:01:08,480
+going to evaluate those and set the resulting attribute values And then we
+
+13
+00:01:08,480 --> 00:01:12,800
+return the newly allocated objects. So these are the steps that are involved in
+
+14
+00:01:12,800 --> 00:01:17,610
+setting a new object and as you can see it's actually more than just allocating a
+
+15
+00:01:17,610 --> 00:01:22,430
+little bit of memory. It's actually quite a bit of computation going on in
+
+16
+00:01:22,430 --> 00:01:29,430
+allocating new objects in cool. Every class has a default value associated with
+
+17
+00:01:29,670 --> 00:01:35,770
+that class. So for integers, the default value is zero. For Boolean, the default
+
+18
+00:01:35,770 --> 00:01:42,700
+value is a Boolean false and for strings, the default value is the empty string And
+
+19
+00:01:42,700 --> 00:01:47,350
+then for any other class, that isn't one of these three basic classes or any other
+
+20
+00:01:47,350 --> 00:01:53,750
+class, the default value is void. In the operational rules, we're going to need a
+
+21
+00:01:53,750 --> 00:01:58,720
+way to repair to the attributes of a class. So we're going to define a function
+
+22
+00:01:58,720 --> 00:02:05,720
+called class that takes a class name and returns the list of attributes of, of that
+
+23
+00:02:06,570 --> 00:02:10,759
+class. So here we have all the attributes of class a, let's say that a1 through and
+
+24
+00:02:10,758 --> 00:02:15,090
+in addition, this functions also going to tell us for each attribute declared type
+
+25
+00:02:15,090 --> 00:02:22,090
+of the attribute and the expression that initiali zes the attribute. And one other
+
+26
+00:02:22,230 --> 00:02:29,030
+important feature of this list, is that it includes all the attributes of class a
+
+27
+00:02:29,030 --> 00:02:35,090
+including the inherited ones. And there's another detail which is in what order
+
+28
+00:02:35,090 --> 00:02:40,029
+these attributes appear and these are actually become important when we define
+
+29
+00:02:40,029 --> 00:02:45,319
+the semantics of how attributes are initialized and the rule is the attributes
+
+30
+00:02:45,319 --> 00:02:52,319
+are listed in greatest ancestor first order And what do I mean by that? Let's
+
+31
+00:02:55,799 --> 00:03:02,799
+say that we have three classes a, b, and c and a, I'm sorry, b inherits from a. And c
+
+32
+00:03:08,409 --> 00:03:15,409
+inherits. From b. Okay, let's say, that a defines two attributes, a1 and a2 and b
+
+33
+00:03:20,659 --> 00:03:27,659
+defines two attributes b1, b2 and c defines two attributes c1 and c2. Then
+
+34
+00:03:29,260 --> 00:03:36,260
+class of c. We'll list the attributes in the following order. First we'll come a1
+
+35
+00:03:38,849 --> 00:03:45,849
+and then a2 Because a is the greatest ancestor, okay, it's the, the closest to
+
+36
+00:03:46,010 --> 00:03:51,959
+the root of the object hierarchy and the attribute was in class a or within any
+
+37
+00:03:51,959 --> 00:03:55,139
+class, it's always listed in the order that it textually appear. So, first comes
+
+38
+00:03:55,139 --> 00:04:00,849
+a1 and a2 and of course the type in the initializer are also, let's see here, most
+
+39
+00:04:00,849 --> 00:04:04,449
+of these attributes but we're just concentrating here in the order in which
+
+40
+00:04:04,449 --> 00:04:11,449
+the information appears. So, the next would come class b. So, the attributes of
+
+41
+00:04:11,829 --> 00:04:17,570
+class b will be next and of course, there'll be the type and initialize for
+
+42
+00:04:17,570 --> 00:04:22,040
+those attributes and then finally the attributes of class c Again, in the order
+
+43
+00:04:22,040 --> 00:04:26,370
+in which they are listed in the class definition, okay? So, that defines the
+
+44
+00:04:26,370 --> 00:04:30,880
+order of the attributes for any class. It's always in the order of the greatest
+
+45
+00:04:30,880 --> 00:04:37,530
+ancestor down the inheritance chain to the class itself which is the argument of the
+
+46
+00:04:37,530 --> 00:04:44,530
+class functions. At this point we're ready to actually define the formal semantics of
+
+47
+00:04:44,980 --> 00:04:51,560
+new t and let switch colors here. So we're going to be allocating a new object of
+
+48
+00:04:51,560 --> 00:04:58,560
+type and is going to be in a context with self object as zero environment e and
+
+49
+00:04:58,750 --> 00:05:04,130
+store s. The first thing we have to do we're going to figure out what kind of
+
+50
+00:05:04,130 --> 00:05:08,170
+object it is that we're actually going to allocate and the only question is whether
+
+51
+00:05:08,170 --> 00:05:13,670
+t is se lf type or not because remember self type is not the name of an actual
+
+52
+00:05:13,670 --> 00:05:19,910
+class. If t is not self type then the class that we're going to allocate is
+
+53
+00:05:19,910 --> 00:05:23,340
+actually a t. T is actually a class name and with that, that's the kind of object
+
+54
+00:05:23,340 --> 00:05:28,010
+that we're going to allocate. If t is self type then the kind of object we're going
+
+55
+00:05:28,010 --> 00:05:32,480
+to be allocating. Is whatever the class is of the self objects? So we're going to
+
+56
+00:05:32,480 --> 00:05:39,410
+look at the dynamic type here of the self object called that x and that will be the
+
+57
+00:05:39,410 --> 00:05:42,990
+class that we create. That will be the kind of objects that we created, all
+
+58
+00:05:42,990 --> 00:05:46,990
+right? So there's two possibilities, Either object, object, allocating an
+
+59
+00:05:46,990 --> 00:05:53,370
+object of type t if t is actually a class name. Otherwise it's an object of the same
+
+60
+00:05:53,370 --> 00:06:00,370
+dynamic type as the self object Alright? So, now we're going to look up t0 is,
+
+61
+00:06:02,520 --> 00:06:09,360
+alright. And we get out the list of the attribute types and initializers for t0.
+
+62
+00:06:09,360 --> 00:06:16,010
+So, this tells that what we have to do to construct an object of this type. Alright
+
+63
+00:06:16,010 --> 00:06:20,200
+and the next thing we do is we allocate locations for each of the attributes. So,
+
+64
+00:06:20,200 --> 00:06:24,480
+because they were in attributes, we're going to allocate n locations. One for
+
+65
+00:06:24,480 --> 00:06:29,780
+each attribute, all right. And then we're going to create an object with the class
+
+66
+00:06:29,780 --> 00:06:36,610
+tag t0 and the attributes are going to be bound to these new locations. So, the i
+
+67
+00:06:36,610 --> 00:06:41,720
+attribute will be abound to the i new location that we just allocated and that
+
+68
+00:06:41,720 --> 00:06:46,620
+were going to update the store. Okay. So, we're going to take our initial store and
+
+69
+00:06:46,620 --> 00:06:50,650
+know this is the same with the store we started with. We take s and we are going
+
+70
+00:06:50,650 --> 00:06:55,310
+to update it so that at these new locations, those new locations hold the
+
+71
+00:06:55,310 --> 00:07:01,090
+default values of, for the type of each of the attribute. Okay, and that gives us the
+
+72
+00:07:01,090 --> 00:07:07,750
+store s1 and now we have to evaluate the initializer. The two actually, initialize
+
+73
+00:07:07,750 --> 00:07:13,280
+the attributes. And we have to think about what the environment is in which those
+
+74
+00:07:13,280 --> 00:07:18,810
+attributes are initialized and remember the rule is that within initializer I
+
+75
+00:07:18,810 --> 00:07:23,590
+mean, attribute, all the attributes of the class are in scope. Alright, so the
+
+76
+00:07:23,590 --> 00:07:29,720
+environment in this case for the initializers will ju st consist of the
+
+77
+00:07:29,720 --> 00:07:33,520
+initializer or the attributes, excuse me, themselves. Okay, so these are the
+
+78
+00:07:33,520 --> 00:07:38,850
+attribute names and the i attributes is bound to the i's new memory location
+
+79
+00:07:38,850 --> 00:07:44,490
+holding the value, the default value initially of that attribute. Alright, and
+
+80
+00:07:44,490 --> 00:07:49,610
+then finally, to evaluate initializers, we just evaluate them as a block in the order
+
+81
+00:07:49,610 --> 00:07:54,110
+which they appear in the class function. This is why it was important to specify
+
+82
+00:07:54,110 --> 00:08:00,290
+the order in the class function. So remember that these attributes include all
+
+83
+00:08:00,290 --> 00:08:04,500
+the inherited attribute so we'll start by evaluating initializing attributes with
+
+84
+00:08:04,500 --> 00:08:09,190
+the greatest ancestor and working our way down to the attributes declared within the
+
+85
+00:08:09,190 --> 00:08:14,389
+class itself. Notice that the environment here. Which has all of the attributes in
+
+86
+00:08:14,389 --> 00:08:19,350
+scope is an interesting point, this environment has nothing to do with the
+
+87
+00:08:19,350 --> 00:08:24,060
+environment in which new t is actually evaluation. You know, these environments e
+
+88
+00:08:24,060 --> 00:08:30,760
+and e prime are completely separate, okay? So new, so e prime has in scope the names
+
+89
+00:08:30,760 --> 00:08:36,550
+of the attributes the class e is a, you know, is, is some other environment.
+
+90
+00:08:36,549 --> 00:08:40,330
+There's some functions somewhere that's calling new t and the variables are in
+
+91
+00:08:40,330 --> 00:08:46,700
+scope there are just completely different, okay? But anyway, evaluating this block Of
+
+92
+00:08:46,700 --> 00:08:52,850
+initializers will yield some value. And the new store the value isn't used for
+
+93
+00:08:52,850 --> 00:08:57,980
+anything, okay? But the new store is the final store. That's the store that we get
+
+94
+00:08:57,980 --> 00:09:03,130
+out as a result of allocating the object and then what is the result of new t, well
+
+95
+00:09:03,130 --> 00:09:10,130
+it is the new object itself, v. To summarize the semantics of New that was
+
+96
+00:09:11,290 --> 00:09:15,320
+the first three steps allocate the object, actually allocate the memory
+
+97
+00:09:15,320 --> 00:09:19,890
+for the object and then the remaining steps initialize the objects by evaluating
+
+98
+00:09:19,890 --> 00:09:23,700
+a sequence of assignments and the most important thing probably to understand
+
+99
+00:09:23,700 --> 00:09:27,830
+about initialization and one of the most important things is the context in which
+
+100
+00:09:27,830 --> 00:09:32,200
+or the stage in which the initializers are evaluated. So know that only the attribute
+
+101
+00:09:32,200 --> 00:09:36,700
+are in scope while we emphasize that and it's the same rule as of typing. So when
+
+102
+00:09:36,700 --> 00:09:41,000
+you 're type checking a class declaration only the attributes are in scope of the
+
+103
+00:09:41,000 --> 00:09:45,460
+you know, for the initializers of the class and then as the same, naturally the
+
+104
+00:09:45,460 --> 00:09:50,560
+same thing that we use when we actually evaluate the initializers at runtime. And
+
+105
+00:09:50,560 --> 00:09:55,040
+the initial values of the attributes are the default values and then, then we need
+
+106
+00:09:55,040 --> 00:09:59,730
+the defaults because, precisely because the attributes are in-sculpt inside their
+
+107
+00:09:59,730 --> 00:10:05,550
+own initializers. So, it could be for example, it's perfectly reasonable like
+
+108
+00:10:05,550 --> 00:10:12,150
+Kuhls to have an initializer, let's say, like this. And I'm just going to, I may
+
+109
+00:10:12,150 --> 00:10:19,040
+leave all the types here just to save time but I can assign and attribute a the value
+
+110
+00:10:19,040 --> 00:10:22,720
+of a and this is perfectly okay because the right hand side of the intializer has
+
+111
+00:10:22,720 --> 00:10:27,290
+all the attributes and scope and for this to make sense a has to have some kind of
+
+112
+00:10:27,290 --> 00:10:33,050
+default value. It has to have some initial value so because I might read it, before I
+
+113
+00:10:33,050 --> 00:10:37,880
+might read an attribute before I have actually finished computing its
+
+114
+00:10:37,880 --> 00:10:43,600
+initializer All right? And the last point here, is that notice that in the
+
+115
+00:10:43,600 --> 00:10:50,589
+initialization or in the yeah, in the initialization of an object self is the
+
+116
+00:10:50,589 --> 00:10:55,040
+object itself is the self object. And what do I mean by that? I forgot to mention
+
+117
+00:10:55,040 --> 00:10:59,730
+this on the previous slide just flipping back to that slide for a moment, notice
+
+118
+00:10:59,730 --> 00:11:06,730
+here. That in the evaluation of the initializers, what is the context the self
+
+119
+00:11:07,370 --> 00:11:12,580
+object is v, the self object is v, this is the new object that we have just
+
+120
+00:11:12,580 --> 00:11:17,770
+constructed. And so, it's perfectly fine for e1 or en, the initialization
+
+121
+00:11:17,770 --> 00:11:21,330
+expressions over here and refers to stealth and what they were referred to if
+
+122
+00:11:21,330 --> 00:11:28,330
+they use self is the object that is being initialized. Alright Returning to this, to
+
+123
+00:11:29,580 --> 00:11:36,580
+our summary you know it might be a little bit of a surprise how complicated the.
+
+124
+00:11:36,790 --> 00:11:43,790
+Semantics of new is, in cool and it's not just cool that has that property. In fact
+
+125
+00:11:44,360 --> 00:11:50,279
+every object oriented language, language has a fairly complex semantics for the
+
+126
+00:11:50,279 --> 00:11:54,980
+initialization of new objects and it's a combination of features like inheritance
+
+127
+00:11:54,980 --> 00:12:00,720
+and the ability of initializers to refer to the attributes that leads to this kind
+
+128
+00:12:00,720 --> 00:12:07,720
+of complexity. Now let's talk about the semantics of dynamic dispatch and we'll
+
+129
+00:12:08,100 --> 00:12:12,880
+follow the same plan that we did the semantics of new for us giving for us have
+
+130
+00:12:12,880 --> 00:12:18,089
+an informal discussion and high level description of how the evaluation of
+
+131
+00:12:18,089 --> 00:12:23,460
+dynamic dispatch works and then we'll look at the formal operational rule. So the
+
+132
+00:12:23,460 --> 00:12:26,370
+first thing it happens in evaluating a dispatch is that we'll evaluate the
+
+133
+00:12:26,370 --> 00:12:33,300
+arguments e1 through en and next we'll evaluate the target object e0 so that
+
+134
+00:12:33,300 --> 00:12:38,149
+expression to get the actual object to which we're dispatching. Next, we're going
+
+135
+00:12:38,149 --> 00:12:42,680
+to look at the dynamic type of the target object. So, after we evaluate the zero,
+
+136
+00:12:42,680 --> 00:12:48,760
+we're going to look at its class peg is And then, we're going to use that type to
+
+137
+00:12:48,760 --> 00:12:53,230
+figure out which function which function f we're supposed to use. So, we're going to
+
+138
+00:12:53,230 --> 00:13:00,230
+go and look in the method table for the class x and see what method it has for f.
+
+139
+00:13:00,770 --> 00:13:07,770
+Then we're going to create new locations and an environment for the call. Alright, and
+
+140
+00:13:08,920 --> 00:13:14,450
+we're going to set up a new locations for the actual parameters. We're going to
+
+141
+00:13:14,450 --> 00:13:21,450
+initialize the, those locations with the actual arguments. Where s itself to be the
+
+142
+00:13:21,589 --> 00:13:28,589
+target object and then we're going to evaluate the body of f. Now in order to do
+
+143
+00:13:29,990 --> 00:13:34,570
+the look up of a method in a class, we're going to need some representation of what
+
+144
+00:13:34,570 --> 00:13:39,160
+methods exist and which class is in our operational rules. So we're going to find
+
+145
+00:13:39,160 --> 00:13:45,940
+a function eval stands for implementation and the implementation in a class a of a
+
+146
+00:13:45,940 --> 00:13:52,260
+method f is, is going to be first of all, the list of formal parameters. So it's
+
+147
+00:13:52,260 --> 00:13:56,540
+going to tell us what the formal parameters are of f and then the body of f
+
+148
+00:13:56,540 --> 00:14:03,390
+Whatever the, the function body of f is. Now we're ready to actually discuss the
+
+149
+00:14:03,390 --> 00:14:08,959
+details of the formal operational semantics of method dispatch in Kuhl. I'm
+
+150
+00:14:08,959 --> 00:14:14,430
+going to switch colors here again just for contrast. So as we said, the first thing
+
+151
+00:14:14,430 --> 00:14:20,410
+we do is we evaluate the n arguments. So this first in lines, take care of that ad
+
+152
+00:14:20,410 --> 00:14:24,500
+notice that each arguments that's evaluated may have side effects. So, it
+
+153
+00:14:24,500 --> 00:14:29,279
+starts in some store but it may produce a different store. So after we've done all
+
+154
+00:14:29,279 --> 00:14:35,920
+of this we'll have the n arguments evaluated and some store s (N). The next
+
+155
+00:14:35,920 --> 00:14:40,420
+thing that happens is we evaluate zero. This is the expression to which we are
+
+156
+00:14:40,420 --> 00:14:47,420
+dispatching and that would give us an object v0 and some updated store s (n) +
+
+157
+00:14:48,290 --> 00:14:54,350
+one. Okay And now we have to inspect v0. We want to know what's inside of v0, what
+
+158
+00:14:54,350 --> 00:15:00,899
+v0 is made of and in particular we're interested in the classed tag of v0 and
+
+159
+00:15:00,899 --> 00:15:05,899
+we'll also be interested in the contents of its attributes. The locations
+
+160
+00:15:05,899 --> 00:15:10,720
+associated with its attributes but first let's focus on the class tag. Alright,
+
+161
+00:15:10,720 --> 00:15:14,420
+because we're going to use that class, remember, this is the dynamic type of the
+
+162
+00:15:14,420 --> 00:15:19,160
+zeros and what kind of objects the zeros actually is when the program is running.
+
+163
+00:15:19,160 --> 00:15:24,899
+And we're going to use that class to look up the definition of f that we should run.
+
+164
+00:15:24,899 --> 00:15:31,899
+So, we look for the method f in class x. We want to know its implementation and in
+
+165
+00:15:32,060 --> 00:15:37,930
+particular we get the names of the former parameters. Okay x1 through xn and we get
+
+166
+00:15:37,930 --> 00:15:44,930
+the body of the function or method. Alright So, the next thing we have to do
+
+167
+00:15:45,110 --> 00:15:52,040
+is we have to allocate space in the memory or in the store for the actual parameters
+
+168
+00:15:52,040 --> 00:15:59,040
+of the method call. So, we allocate new locations. Okay, one for each actual
+
+169
+00:16:00,260 --> 00:16:07,260
+argument and that we're ready to build an environment in which we can evaluate the
+
+170
+00:16:07,420 --> 00:16:10,390
+method, alright? So, what is this environment going to consist of? So, we
+
+171
+00:16:10,390 --> 00:16:15,600
+have to think about what names or in-scoped inside of a method. Well, all
+
+172
+00:16:15,600 --> 00:16:21,040
+the attributes of the class are in-scope. Okay. So, this is a class x with
+
+173
+00:16:21,040 --> 00:16:25,820
+attributes a1 through an so the environment will have those names to find
+
+174
+00:16:25,820 --> 00:16:30,300
+a1 through an. And now what are the attributes or locations of those
+
+175
+00:16:30,300 --> 00:16:34,899
+attributes. Well those are the locations of. The zero, that's the object that we're
+
+176
+00:16:34,899 --> 00:16:39,589
+dispatching to that were going to be the self object and the attribute names will
+
+177
+00:16:39,589 --> 00:16:45,649
+refer to the attributes of, of self, alright. So, those locations here are the
+
+178
+00:16:45,649 --> 00:16:52,649
+locations of, of the attributes in the object v0. Now in addition the formal
+
+179
+00:16:53,800 --> 00:17:00,170
+paramete rs are also in scope inside of the method body. So we add to this
+
+180
+00:17:00,170 --> 00:17:07,170
+environment with just the attributes all of the formal parameters okay and they are
+
+181
+00:17:07,449 --> 00:17:14,449
+at the new locations l(x1) up to l(xn). Okay? And notice one slight subtlety about
+
+182
+00:17:17,859 --> 00:17:22,720
+the way this is defined we're taking an initial environment which I'll show here
+
+183
+00:17:22,720 --> 00:17:26,760
+with, I'll, I'll color these braces in blue. So we're defining and initial
+
+184
+00:17:26,760 --> 00:17:31,780
+environment of the attributes and then we're doing updates to that, okay? So
+
+185
+00:17:31,780 --> 00:17:38,780
+we're, instead of just defining x1 to map two l sub x1, we're saying we're replacing
+
+186
+00:17:39,280 --> 00:17:44,660
+The definition of x1 in this environment in the blue braces with one and maps x1
+
+187
+00:17:44,660 --> 00:17:49,929
+and l(x1). Why do we do it that way? Well, the thing is that a method may have a
+
+188
+00:17:49,929 --> 00:17:55,809
+formal parameter that is the same as an attribute name so for example I could have
+
+189
+00:17:55,809 --> 00:18:02,809
+a class a that has an attribute little a in it And it also has a method f that
+
+190
+00:18:03,790 --> 00:18:10,790
+takes a formal parameter named a. Okay And if I do that, and of course, I'm leaving
+
+191
+00:18:11,910 --> 00:18:15,530
+out types and lots of other things here. So, here I have an attribute named
+
+192
+00:18:15,530 --> 00:18:19,070
+a that's declared. And then I have a method that takes the argument
+
+193
+00:18:19,070 --> 00:18:24,130
+called a. And then the question is when I refer to a. Inside of the body of the
+
+194
+00:18:24,130 --> 00:18:30,880
+method what a do I get? Is this a, is this a bind to the formal parameters, is it
+
+195
+00:18:30,880 --> 00:18:34,170
+bind to the attribute? And the answer, we have to get one answer or the other, the
+
+196
+00:18:34,170 --> 00:18:41,170
+answer in Kuhl, is that it binds to the formal parameter that hides the, the outer
+
+197
+00:18:41,780 --> 00:18:46,429
+name. Okay, and that's, and that's enforced here in the rule by these
+
+198
+00:18:46,429 --> 00:18:51,000
+updates. So, if a formal parameter has the same name as one of the attributes, it
+
+199
+00:18:51,000 --> 00:18:55,820
+will replace the definition of the attribute in the environment. Okay. Once
+
+200
+00:18:55,820 --> 00:19:01,500
+we get the environment set up, we need to set up our store what, what are the
+
+201
+00:19:01,500 --> 00:19:05,540
+changes to the store? What we just have to store the actual value of each argument at
+
+202
+00:19:05,540 --> 00:19:12,130
+the location for that argument. And finally, we are ready to evaluate the
+
+203
+00:19:12,130 --> 00:19:16,090
+functioning body and the interesting part here is the context in which that's done.
+
+204
+00:19:16,090 --> 00:19:23,090
+So, notice here that the that the self object in, in the context of running the
+
+205
+00:19:23,650 --> 00:19:28,850
+method f is the object to which are dispatching. Okay? And then the
+
+206
+00:19:28,850 --> 00:19:32,270
+environment is e prime, the new environment we just set up and once again
+
+207
+00:19:32,270 --> 00:19:36,170
+notice that this is a complete change of context that e prime, the environment e
+
+208
+00:19:36,170 --> 00:19:40,679
+prime has nothing to do with the environment e. E prime is built completely
+
+209
+00:19:40,679 --> 00:19:44,660
+from scratch using only information about the method for calling, it doesn't borrow
+
+210
+00:19:44,660 --> 00:19:49,850
+anything from the, from the environment where the method originated, where the
+
+211
+00:19:49,850 --> 00:19:56,820
+method was called from. And finally all of this is done in the store that has,
+
+212
+00:19:56,820 --> 00:20:01,770
+reflects all the side effects performed by evaluating the arguments, by evaluating e0
+
+213
+00:20:01,770 --> 00:20:08,590
+and by extending the store with the locations for the actual parameters. So to
+
+214
+00:20:08,590 --> 00:20:13,900
+evaluate the body of the method we get back a value and another updated store and
+
+215
+00:20:13,900 --> 00:20:20,900
+that value in store are the results of the entire execution of the dynamic dispatch.

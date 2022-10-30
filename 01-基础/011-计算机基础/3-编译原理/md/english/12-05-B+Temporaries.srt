@@ -1,0 +1,167 @@
+0
+00:00:01,380 --> 00:00:05,310
+Now, that we know how many temporaries or intermediate values we need
+
+1
+00:00:05,310 --> 00:00:09,970
+to evaluate a function and we also know where those intermediate value is going to
+
+2
+00:00:09,970 --> 00:00:15,130
+be stored in activation record. The last thing we need to know in order to code generation
+
+3
+00:00:15,130 --> 00:00:21,499
+is how many temporaries are in use at each point in the program. Change colors
+
+4
+00:00:21,499 --> 00:00:25,050
+here and so the way we're going to do that is we're going to add a new argument
+
+5
+00:00:25,050 --> 00:00:29,949
+to co-generation which is the position of the next available temporary.
+
+6
+00:00:29,949 --> 00:00:34,970
+So as temporaries gets used up, this argument, the co-generation will change while
+
+7
+00:00:34,970 --> 00:00:39,370
+other expressions to save their values and save places without stepping on
+
+8
+00:00:39,370 --> 00:00:44,460
+temporaries that are already having saved by all other expressions. And as you'll see
+
+9
+00:00:44,460 --> 00:00:49,940
+in a, in a moment here when we do an example, the temporary area of the activation
+
+10
+00:00:49,940 --> 00:00:52,870
+r ecord is going to be used like a small fixed size stack. Essentially,
+
+11
+00:00:52,870 --> 00:00:57,030
+we're going to have the same stack discipline that we had before only all
+
+12
+00:00:57,030 --> 00:01:01,239
+the computation on the stack pointer, all the discussion, all the computation of
+
+13
+00:01:01,239 --> 00:01:06,049
+what all sets to use has already been done by the compiler. So, what we used to do by
+
+14
+00:01:06,049 --> 00:01:11,909
+pushing and popping element from the stack in the generated code allow that computation
+
+15
+00:01:11,909 --> 00:01:15,259
+has been moved into the compiler and all that happens now is a bunch
+
+16
+00:01:15,259 --> 00:01:21,649
+of stores and load. To fix off that from the frame pointer So let's take a look
+
+17
+00:01:21,649 --> 00:01:27,359
+at how this works. Here's the code that we had for e1 + e2 under the old scheme
+
+18
+00:01:27,359 --> 00:01:32,060
+where we didn't have a separate area in the activation records for temporaries.
+
+19
+00:01:32,060 --> 00:01:35,479
+So we would generate a code for e1, and then we would save the results
+
+20
+00:01:35,479 --> 00:01:39,600
+of e1 on the stack, and that would be done by saving the value of the accumulator under
+
+21
+00:01:39,600 --> 00:01:44,249
+the stack and then we would have to adjust the stack pointer And then after we
+
+22
+00:01:44,249 --> 00:01:51,139
+had evaluated the two, then we would load the results of e1 back into a temporary register,
+
+23
+00:01:51,139 --> 00:01:55,850
+we could do the add And then we could pop the value off of the stack, the
+
+24
+00:01:55,850 --> 00:02:01,149
+intermediate value off of the stack Down to the new scheme. Co-generations going to
+
+25
+00:02:01,149 --> 00:02:06,039
+take a second argument saying what is the position of the next available temporary so
+
+26
+00:02:06,039 --> 00:02:10,940
+what is the position of the next unused temporary inside of the activation record
+
+27
+00:02:10,940 --> 00:02:17,410
+and so now we generate code for e1 and we pass along the argument okay because e1 may
+
+28
+00:02:17,410 --> 00:02:23,730
+itself have some temporaries that it needs to store And, and then after you [inaudible]
+
+29
+00:02:23,730 --> 00:02:29,440
+to evaluating, now we just do a direct store into, into the activation record
+
+30
+00:02:29,440 --> 00:02:33,660
+at all set empty from the frame pointer And so now as we have to do in store,
+
+31
+00:02:33,660 --> 00:02:38,120
+we have to save e1 in the activation record so we have it for later
+
+32
+00:02:38,120 --> 00:02:42,500
+on but we have to do any manipulation of the stacks. So, we could place two instructions
+
+33
+00:02:42,500 --> 00:02:48,050
+here by one And then we generate code for e2 but now. We just save
+
+34
+00:02:48,050 --> 00:02:54,670
+the temporary value at position at, at all set empty from the frame pointer so the next
+
+35
+00:02:54,670 --> 00:03:01,060
+available temporary would be of address empty o r offset, excuse me, nt+4
+
+36
+00:03:01,060 --> 00:03:07,910
+And then after each was evaluating, now we have to load the value of e1 back into a temporary
+
+37
+00:03:07,910 --> 00:03:12,940
+and again that was all set NT from the frame pointer of the current activation
+
+38
+00:03:12,940 --> 00:03:17,870
+record and then we can do the add and once again we saved the manipulation
+
+39
+00:03:17,870 --> 00:03:21,440
+of the stack pointers. So this code sequence here is two instructions
+
+40
+00:03:21,440 --> 00:03:25,160
+shorter than the one we had before and this actually substantially more
+
+41
+00:03:25,160 --> 00:03:25,410
+efficient.

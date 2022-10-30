@@ -1,0 +1,187 @@
+0
+00:00:04,430 --> 00:00:07,879
+Welcome back. In this video, we're going to give a very brief introduction, an
+
+1
+00:00:07,879 --> 00:00:14,879
+overview, of what we're going to be talking about in semantic analysis. Let's
+
+2
+00:00:15,469 --> 00:00:19,869
+take a moment to review where we are in our discussion with compilers. So we
+
+3
+00:00:19,869 --> 00:00:23,720
+talked about lexical analysis, and from the point of view of enforcing the
+
+4
+00:00:23,720 --> 00:00:28,550
+language definition the main job that lexical analyses does is detect input
+
+5
+00:00:28,550 --> 00:00:35,550
+[inaudible] preemptive symbols that aren't part of our language. The next step is
+
+6
+00:00:36,480 --> 00:00:40,510
+parsing. We finished talking about that too. And, again, from the point of view of
+
+7
+00:00:40,510 --> 00:00:43,649
+trying to determine whether a program is well-formed or not, or whether it's a
+
+8
+00:00:43,649 --> 00:00:48,280
+valid program, the job of parsing is to detect all the sentences in the language
+
+9
+00:00:48,280 --> 00:00:53,920
+that are ill-formed, or that don't have a parse string. And finally What we're going
+
+10
+00:00:53,920 --> 00:00:58,469
+to talk about now, what's going to occupy us for a while is semantic analysis. And
+
+11
+00:00:58,469 --> 00:01:02,780
+this is the last of what are called the front end phases. So if you think of
+
+12
+00:01:02,780 --> 00:01:07,360
+lexical analysis, parsing, and semantic analysis as filters that progressively
+
+13
+00:01:07,360 --> 00:01:13,450
+reject more and more input strings until finally you're left after all three phases
+
+14
+00:01:13,450 --> 00:01:18,460
+have run with only valid programs to compile, well semantic analysis is the
+
+15
+00:01:18,460 --> 00:01:23,650
+last line of defense. It's the last one in that pipeline and its job is to catch all
+
+16
+00:01:23,650 --> 00:01:30,430
+potential remaining errors in a program. Now you might ask yourself, why do we even
+
+17
+00:01:30,430 --> 00:01:34,520
+need a separate semantic analysis phase? And the answer to that's very simple,
+
+18
+00:01:34,520 --> 00:01:37,860
+There are, there are some features of programming languages, some kinds of
+
+19
+00:01:37,860 --> 00:01:42,630
+mistakes you can make that parsings simply can't catch. Parsing we'll use in context
+
+20
+00:01:42,630 --> 00:01:47,070
+free grammars is not expressive enough to describe everything that we're interested
+
+21
+00:01:47,070 --> 00:01:51,310
+in, in a language definition. So, some of these language constructs are not context
+
+22
+00:01:51,310 --> 00:01:54,950
+free. And the situation here is very, very similar to what it was when we switched
+
+23
+00:01:54,950 --> 00:01:58,680
+from lexical analysis to parsing. Just like not everything could be done with a
+
+24
+00:01:58,680 --> 00:02:03,420
+finite [inaudible]. And we wanted to have something more. Our context free grammar
+
+25
+00:02:03,420 --> 00:02:08,299
+to describe additional features of our programming languages [inaudible] Grammars
+
+26
+00:02:08,299 --> 00:02:11,409
+by themselves are also not enough, and there some additional features beyond
+
+27
+00:02:11,409 --> 00:02:18,409
+those that can't be easily expressed using context free constructs. So what does
+
+28
+00:02:18,469 --> 00:02:22,959
+semantic analysis actually do? In a case of cool C, it does checks of many
+
+29
+00:02:22,959 --> 00:02:26,709
+different kinds, and that's pretty typical. So here's a list of six classes
+
+30
+00:02:26,709 --> 00:02:30,559
+of checks that are done by Cool C, and let's just run through them quickly. First
+
+31
+00:02:30,559 --> 00:02:33,489
+we want to check that all identifiers are declared, and we also have to check that
+
+32
+00:02:33,489 --> 00:02:38,290
+any scope restrictions on those identifiers are observed. Cool C compiler
+
+33
+00:02:38,290 --> 00:02:42,760
+has to do type checking, and this is actually a major function of the semantic
+
+34
+00:02:42,760 --> 00:02:47,489
+analyzer in Cool. There are a number of restrictions that come from the object
+
+35
+00:02:47,489 --> 00:02:51,449
+oriented nature of Cool. We have to check that the inheritance relationships between
+
+36
+00:02:51,449 --> 00:02:56,319
+classes make sense. We don't want classes to be redefined; we only want one class
+
+37
+00:02:56,319 --> 00:03:01,109
+definition per class. Similarly methods should only be defined once within a
+
+38
+00:03:01,109 --> 00:03:05,279
+class. Cool has a number of reserved identifiers and we have to be careful that
+
+39
+00:03:05,279 --> 00:03:09,209
+those aren't misused. And this is pretty typical; lots of languages have some
+
+40
+00:03:09,209 --> 00:03:13,120
+reserved identifiers with special rules that have to be followed for those
+
+41
+00:03:13,120 --> 00:03:17,159
+identifiers. And, actually this list is not even complete. There are a number of
+
+42
+00:03:17,159 --> 00:03:22,230
+other restrictions. And we'll be talking about all of those in future videos. The
+
+43
+00:03:22,230 --> 00:03:26,150
+main message here is that its medic analyzer needs to do quite a few different
+
+44
+00:03:26,150 --> 00:03:30,979
+kinds of checks. These checks will vary with the language. The kinds of checks
+
+45
+00:03:30,979 --> 00:03:36,290
+that cool C does are pretty typical of statically typed checked object oriented
+
+46
+00:03:36,290 --> 00:03:40,180
+languages. But other families of languages will have different kinds of checks.

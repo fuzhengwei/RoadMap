@@ -1,0 +1,571 @@
+0
+00:00:04,150 --> 00:00:07,770
+Welcome back. In this video, we're going to talk about converting nondeterministic
+
+1
+00:00:07,770 --> 00:00:14,770
+finite automata into deterministic finite automata. Here again is our little diagram
+
+2
+00:00:17,270 --> 00:00:23,179
+of the pipeline of a lexical analyzer, how one is constructed. So beginning with the
+
+3
+00:00:23,179 --> 00:00:27,109
+lexical specification, we write our regular expressions. Last time we talked
+
+4
+00:00:27,109 --> 00:00:31,820
+about the step, the conversion of regular expressions and the non-deterministic
+
+5
+00:00:31,820 --> 00:00:36,040
+finite automata and this time we're going to talk about this step. And as you might
+
+6
+00:00:36,040 --> 00:00:40,450
+guess in the final video in the series we'll talk about the final step which is
+
+7
+00:00:40,450 --> 00:00:47,450
+the implementation of DFA's. So here's the Nondeterministic Finite Automata and we
+
+8
+00:00:47,870 --> 00:00:52,140
+finished up with last time. And, the first thing we're gonna discuss today is an
+
+9
+00:00:52,140 --> 00:00:57,690
+important idea called the Epsilon Closure of a state. And the basic idea of the
+
+10
+00:00:57,690 --> 00:01:01,300
+epsilon culture is that I pick the states. And it could a set of states but we'll
+
+11
+00:01:01,300 --> 00:01:06,259
+just do it for a single state. And then I look at all the states that I can reach by
+
+12
+00:01:06,259 --> 00:01:11,750
+following only epsilon moves. And so b is the state that we're starting with so b
+
+13
+00:01:11,750 --> 00:01:16,240
+would be included in the set and then there's an epsilon move to c. So c would
+
+14
+00:01:16,240 --> 00:01:20,360
+be included in the set and there's another epsilon move to d so d would be included
+
+15
+00:01:20,360 --> 00:01:27,360
+in the set. So we would say, the epsilon closure of b is = the set b c d. And let's
+
+16
+00:01:29,820 --> 00:01:36,820
+do one more as an example. Want to take the epsilon closure of g. And when we
+
+17
+00:01:38,530 --> 00:01:44,740
+switch colors up to this one, I'll erase that and to this one in pink, Our
+
+18
+00:01:44,740 --> 00:01:49,760
+purple-ish pink. So the epsilon closure of g, we always have to follow all the
+
+19
+00:01:49,760 --> 00:01:56,580
+epsilon transitions out of g. So, h would be in the epsilon closure of g but it's
+
+20
+00:01:56,580 --> 00:02:00,600
+not just single epsilon move. This is recursive. So any number of epsilon moves
+
+21
+00:02:00,600 --> 00:02:05,390
+that I can take, all of those states are included in the epsilon closure of g. So,
+
+22
+00:02:05,390 --> 00:02:12,390
+in fact, i would also be included. A would be included and b and c and d will also be
+
+23
+00:02:13,719 --> 00:02:18,159
+included And now, if I look at all of these states that have been colored in the
+
+24
+00:02:18,159 --> 00:02:23,189
+light purple color. I can see that I can't reach any new states from those states
+
+25
+00:02:23,189 --> 00:02:30,189
+using only epsilon moves and so the epsilon closure of g would be equal to and
+
+26
+00:02:31,459 --> 00:02:38,459
+[inaudible] out here it's a, b, c, d. Ghi. Okay. So that is the epsilon closure of a
+
+27
+00:02:45,819 --> 00:02:51,689
+state. Recall from the last video that an NFA maybe in many states any given point
+
+28
+00:02:51,689 --> 00:02:56,279
+in time that is because of the choices it can make for a given input and NFA may
+
+29
+00:02:56,279 --> 00:03:00,579
+reach multiple different states. And the question we want to address now is how
+
+30
+00:03:00,579 --> 00:03:06,739
+many different states can it be in? Well if a non-deterministic automaton has n
+
+31
+00:03:06,739 --> 00:03:12,739
+states. And it winds up in some subset of those states as how big can that subset b
+
+32
+00:03:12,739 --> 00:03:18,139
+will clearly the cardinality of that said has to be less than or equal to n. So the
+
+33
+00:03:18,139 --> 00:03:24,279
+NFA can get into a most and different states. Now instead, I want to know the
+
+34
+00:03:24,279 --> 00:03:29,189
+number of different subsets, well how many different subsets are there of any things.
+
+35
+00:03:29,189 --> 00:03:36,189
+Well that means there are two to the n - one possible subsets of n states. And
+
+36
+00:03:36,499 --> 00:03:40,059
+there's something very interesting about this number. First of all it's a very big
+
+37
+00:03:40,059 --> 00:03:44,129
+number so clearly the NFA can get into lots of different configurations
+
+38
+00:03:44,129 --> 00:03:49,559
+particularly one it has a lot of different states but the important thing is that
+
+39
+00:03:49,559 --> 00:03:56,559
+this is a finite set of possible configurations. And this is going to give
+
+40
+00:04:02,779 --> 00:04:09,779
+us the seed of the idea. For converting an NFA into a DFA or Deterministic Automata
+
+41
+00:04:11,419 --> 00:04:17,609
+because all we have to be able to do to convert a Nondeterministic Automata into
+
+42
+00:04:17,608 --> 00:04:22,060
+Deterministic Automata is come up with a way for the Deterministic Automata to
+
+43
+00:04:22,060 --> 00:04:24,970
+simulate for the [inaudible] of the Nondeterministic Automata and the fact
+
+44
+00:04:24,970 --> 00:04:30,000
+that the Nondeterministic Automata can only get into a finite set of
+
+45
+00:04:30,000 --> 00:04:34,440
+configurations even that configurations is very large, is exactly what we will
+
+46
+00:04:34,440 --> 00:04:41,440
+exploit in the construction. Now we're ready to give the construction showing how
+
+47
+00:04:41,479 --> 00:04:45,979
+to map an arbitrary nondeterministic finite automaton to an equivalent
+
+48
+00:04:45,979 --> 00:04:51,710
+deterministic finite automaton. So let's begin by saying what's in our NFA. So,
+
+49
+00:04:51,710 --> 00:04:57,210
+we'll have a set of states, Which we'll call s and these are the states of the
+
+50
+00:04:57,210 --> 00:05:02,659
+Nondeterministic machine. There's a star t state, a little s which is one of the
+
+51
+00:05:02,659 --> 00:05:09,150
+states and there is a set of final states F. And then we also have to give the
+
+52
+00:05:09,150 --> 00:05:14,840
+transition function and I want to write out the state transition function. I want
+
+53
+00:05:14,840 --> 00:05:19,400
+to use the state transition function to define a, a operator that we're going to
+
+54
+00:05:19,400 --> 00:05:26,400
+find handy for defining our DFA. So I'd say that a applied to a set of states so x
+
+55
+00:05:27,060 --> 00:05:32,460
+here is a set of states and a is a character in the input language. So, a and
+
+56
+00:05:32,460 --> 00:05:39,460
+x is = those states y such that there is some x little x here, single state in the
+
+57
+00:05:41,349 --> 00:05:48,349
+set of states such that there's a transition from x to y on input a. Okay.
+
+58
+00:05:50,729 --> 00:05:55,520
+So this is just a way of saying I've given the transition function at this set level.
+
+59
+00:05:55,520 --> 00:06:00,960
+It says for a given set of state x, show me all the states that you can reach on
+
+60
+00:06:00,960 --> 00:06:07,960
+input a. Alright. So now we're ready to define our DFA. So what will the DFA be?
+
+61
+00:06:24,180 --> 00:06:27,379
+Well, it's gonna have to have all of these things. It's gonna have to have, perhaps
+
+62
+00:06:27,379 --> 00:06:31,419
+where the states are? What are the start state is? What's the final states are and
+
+63
+00:06:31,419 --> 00:06:35,620
+what's the transition function is? So let's begin with the set of states. The
+
+64
+00:06:35,620 --> 00:06:42,620
+states will be the subsets Of s. So the states of the DFA will be all possible
+
+65
+00:06:46,949 --> 00:06:52,430
+subsets of the states of the NFA so there will be one state of DFA for each subset
+
+66
+00:06:52,430 --> 00:06:57,060
+of possible, each possible subset of states of the NFA. And of course this is
+
+67
+00:06:57,060 --> 00:07:02,289
+potentially a very big number but it's still finite and so we can use that set
+
+68
+00:07:02,289 --> 00:07:09,289
+of, of subsets of states as the states based of the Deterministic machine So, now
+
+69
+00:07:09,550 --> 00:07:16,550
+what's the start state of the DFA. Well that's going 
+
+70
+00:07:23,879 --> 00:07:30,879
+to 
+
+71
+00:07:45,370 --> 00:07:52,370
+be the  epsilon closure. Now one of the set of final states, Well,
+
+72
+00:08:00,259 --> 00:08:05,279
+so the final states will be consist of those state x and every member of the
+
+73
+00:08:05,279 --> 00:08:10,699
+states of the DFA are sets of states of the NFA. So that x is a set and is can be
+
+74
+00:08:10,699 --> 00:08:17,699
+every x such that x intersected with the set of final states of the NFA is not
+
+75
+00:08:18,699 --> 00:08:25,699
+empty. And finally we need to define the transition function. And do we do that?
+
+76
+00:08:59,580 --> 00:09:05,570
+Well, we, we need to say that for a given state x and another state y, when is there
+
+77
+00:09:05,570 --> 00:09:12,570
+a transition between them on some input a. Well that, there will be such a transition
+
+78
+00:09:13,260 --> 00:09:20,260
+under that conditions and well let's write them out. So, remember we're in state x.
+
+79
+00:09:20,960 --> 00:09:25,220
+And what do we need to know? Well we need to know, the set of states that we can
+
+80
+00:09:25,220 --> 00:09:30,830
+reach on input A, and we'll be justifying that that's A of X, and then once we've
+
+81
+00:09:30,830 --> 00:09:35,590
+gotten to where these, once we've seen where we can go from the set of states X
+
+82
+00:09:35,590 --> 00:09:39,870
+of input A. There's also a possibility of making [inaudible] after that so
+
+83
+00:09:39,870 --> 00:09:45,980
+furthermore we have to take the [inaudible] closer of that set of states,
+
+84
+00:09:45,980 --> 00:09:52,980
+okay? And So we'll say that there's a transition from x to y if y is equal to
+
+85
+00:09:57,320 --> 00:10:02,830
+this set of states. Alright, And notice that there's only one such set of states
+
+86
+00:10:02,830 --> 00:10:07,810
+for any x and that guarantees of this is a deterministic machine. Each machine, each
+
+87
+00:10:07,810 --> 00:10:12,890
+state will only have one possible move on each input so. We can just, now it goes to
+
+88
+00:10:12,890 --> 00:10:16,850
+our check list and see if we have a deterministic machine. We have a finite
+
+89
+00:10:16,850 --> 00:10:22,750
+set of states. We have a start state and we have a set of final states and we have
+
+90
+00:10:22,750 --> 00:10:27,680
+a transition function with only one more per input and no epsilon moves. And so
+
+91
+00:10:27,680 --> 00:10:31,680
+that is in fact a deterministic machine and the property that it maintain is that
+
+92
+00:10:31,680 --> 00:10:37,100
+each step of computation. The state of the DFA records the set of possible states
+
+93
+00:10:37,100 --> 00:10:44,100
+that the NFA could have gotten into the same input So let's work to an example of
+
+94
+00:10:45,690 --> 00:10:50,650
+constructing a Deterministic machine from a Nondeterministic machine. Here's the
+
+95
+00:10:50,650 --> 00:10:54,890
+Nondeterministic Finite Automata that we built in the last video and again this is
+
+96
+00:10:54,890 --> 00:10:59,810
+the one that I used at the beginning of the video to define epsilon enclosure. So
+
+97
+00:10:59,810 --> 00:11:03,950
+we're gonna do the example slightly differently than the construction I gave
+
+98
+00:11:03,950 --> 00:11:08,480
+on the previous slide. If we actually have to write out all the subsets of this many
+
+99
+00:11:08,480 --> 00:11:12,450
+states, it will take us a very, very long time. And it turns out that not all of the
+
+100
+00:11:12,450 --> 00:11:16,730
+subsets were actually used by the DFA. So we're just going to enumerate the states
+
+101
+00:11:16,730 --> 00:11:20,670
+that we actually need and we'll do that by beginning with the start sta te of DFA and
+
+102
+00:11:20,670 --> 00:11:25,830
+then working out which additional states are required. So how do we do that? Well,
+
+103
+00:11:25,830 --> 00:11:31,910
+we begin with the start state of the NFA which is just this state a. And then
+
+104
+00:11:31,910 --> 00:11:36,350
+recall at the start of the DFA is the epsilon closure of that state so that
+
+105
+00:11:36,350 --> 00:11:42,230
+corresponds to this purple set here. Alright. So the first state of the DFA,
+
+106
+00:11:42,230 --> 00:11:49,230
+the start state is the subset of states a, b, c, d, h, i. And now we have to work out
+
+107
+00:11:50,770 --> 00:11:53,810
+from this particular state from the start state what happens on each of the
+
+108
+00:11:53,810 --> 00:11:59,030
+impossible input values. So, the alphabet of this machine is one and zero so you
+
+109
+00:11:59,030 --> 00:12:03,200
+would have to have two transitions out of the state, one for an input of one and one
+
+110
+00:12:03,200 --> 00:12:10,200
+for an input of zero. So let's do input zero first. And, we can see looking at the
+
+111
+00:12:10,370 --> 00:12:15,850
+purple set that there's only one possible transition and that's from the state D to
+
+112
+00:12:15,850 --> 00:12:22,850
+the state F. So certainly the state s is included in the set of states if the NFA
+
+113
+00:12:23,300 --> 00:12:27,110
+can reach but then once we get the state f there's a lot of epsilon moves that we can
+
+114
+00:12:27,110 --> 00:12:32,510
+take and so in fact the second state of the DFA corresponds to a much larger set.
+
+115
+00:12:32,510 --> 00:12:38,800
+It's all the, it's the epsilon closure of f and that is, this set of states f, g, h,
+
+116
+00:12:38,800 --> 00:12:44,890
+i, a, b, c, and d, okay. So these are the set of possible states that the NFA could
+
+117
+00:12:44,890 --> 00:12:51,890
+be in after reading a single zero. Next, let's consider what happens from the start
+
+118
+00:12:52,000 --> 00:12:57,350
+state on an input of one. Which possible states can the NFA reach? And, if we look
+
+119
+00:12:57,350 --> 00:13:03,130
+at the transition function, we see there are two possible moves that the NFA could
+
+120
+00:13:03,130 --> 00:13:09,180
+take. It could be in state c. In which case it would move to state e or it could
+
+121
+00:13:09,180 --> 00:13:13,730
+have been state i, that's also part of the purple set in which case it would move to
+
+122
+00:13:13,730 --> 00:13:20,120
+state j. So, there are two possible states that the NFA can get into as a result of
+
+123
+00:13:20,120 --> 00:13:24,170
+reading a one and then after that, there's a bunch of epsilon moves that can take
+
+124
+00:13:24,170 --> 00:13:29,690
+place and in fact, it turns out that after reading a one, the machine could be in any
+
+125
+00:13:29,690 --> 00:13:36,690
+state except for state f. And that's this set of states and you'll notice that this
+
+126
+00:13:37,120 --> 00:13:42,690
+particular set of states, the read set includes the final state of the NFA so
+
+127
+00:13:42,690 --> 00:13:48,660
+this is also a final state indicating that after reading one, the NFA could be in an
+
+128
+00:13:48,660 --> 00:13:53,580
+accepting state. So this would be an accepting state of the DFA Well, we still
+
+129
+00:13:53,580 --> 00:14:00,580
+have to fill in for both of the two states that we've added here. The two states on
+
+130
+00:14:01,030 --> 00:14:05,480
+the right of the machine what they do on input zero, what they do on input one. So
+
+131
+00:14:05,480 --> 00:14:11,060
+let's figure that out. So beginning with the red state on input zero, what can
+
+132
+00:14:11,060 --> 00:14:16,420
+happen? Well, look the red state includes state d and it can move to state f but
+
+133
+00:14:16,420 --> 00:14:21,110
+we've already computed what happens on the epsilon, what the epsilon closure that is
+
+134
+00:14:21,110 --> 00:14:25,740
+just the green state. And so if I'm in the red state and I read zero, I move to the
+
+135
+00:14:25,740 --> 00:14:32,740
+green state. If I'm in the red state and I read a one, you'll see that both states,
+
+136
+00:14:33,470 --> 00:14:40,470
+NFA states c and i are in the red set. And so, it just takes us back to the red set.
+
+137
+00:14:40,830 --> 00:14:46,330
+And similarly for the green state, if I read a one, I move to the red state. And
+
+138
+00:14:46,330 --> 00:14:50,480
+if I read a zero, I stay in the green state. And so, this then is our
+
+139
+00:14:50,480 --> 00:14:55,840
+deterministic machine down here. This is the deterministic machine and again, it
+
+140
+00:14:55,840 --> 00:15:01,430
+simulates the NFA. So every move at the deterministic machine, it records the set
+
+141
+00:15:01,430 --> 00:15:07,490
+of possible states that the NFA could be in and it will accept a string infinitely
+
+142
+00:15:07,490 --> 00:15:09,380
+if the NFA could accept the string.

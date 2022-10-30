@@ -1,0 +1,383 @@
+0
+00:00:04,220 --> 00:00:08,240
+After numerous videos on run time organization and stack machines, we are
+
+1
+00:00:08,240 --> 00:00:15,240
+finally ready to begin our discussion of code generation. So as I mentioned in the
+
+2
+00:00:16,510 --> 00:00:20,279
+previous video we're going to focus on generating code for stack machines. This
+
+3
+00:00:20,279 --> 00:00:24,659
+is probably the simplest code generation strategy. It doesn't generally yield
+
+4
+00:00:24,659 --> 00:00:28,890
+extremely efficient code. It's an interesting strategy and certainly not,
+
+5
+00:00:28,890 --> 00:00:35,030
+totally not an unrealistic one. It's more than complex enough for our purposes. We
+
+6
+00:00:35,030 --> 00:00:39,520
+want to run a real machine and we're going to the mix processor. In particular we're
+
+7
+00:00:39,520 --> 00:00:43,520
+going to use a simulator from it which runs on about any kind of hardware so that
+
+8
+00:00:43,520 --> 00:00:48,370
+will be very convenient for the course project And the basic idea, the basic
+
+9
+00:00:48,370 --> 00:00:52,940
+strategy, is going to be to simulate a stack machine using Mipp's instructions
+
+10
+00:00:52,940 --> 00:00:59,010
+and registers. So the first decision in, designing our simulation, is deciding
+
+11
+00:00:59,010 --> 00:01:03,329
+where to put the accumulator in. We'll keep that, in this register, A0. Any
+
+12
+00:01:03,329 --> 00:01:08,970
+register would have done but we'll just use A0 always for the accumulator And then
+
+13
+00:01:08,970 --> 00:01:13,080
+the stack is going to be kept in memory And I should point out here that when we
+
+14
+00:01:13,080 --> 00:01:20,000
+talk about a one register stack machine nominally that register in this case A0,
+
+15
+00:01:20,000 --> 00:01:25,320
+is the top of the logical stack of the stack machine But just to avoid confusion
+
+16
+00:01:25,320 --> 00:01:30,810
+in the terminology, I'm going to refer to A0 as the accumulator and the stack as all
+
+17
+00:01:30,810 --> 00:01:36,200
+of the other data that's kept in a memory stack on the MISC processor, so we'll just
+
+18
+00:01:36,200 --> 00:01:42,220
+consider A0 the accumulator to be distinct from the stack, which lives in memory And
+
+19
+00:01:42,220 --> 00:01:46,640
+the stack on the MIPS will grow towards the lower addresses which is the standard
+
+20
+00:01:46,640 --> 00:01:53,000
+convention on MIPS. The address of the next location on the stack is going to be
+
+21
+00:01:53,000 --> 00:01:57,960
+kept in the MIPS register $sp and this register actually has a mnemonic name that
+
+22
+00:01:57,960 --> 00:02:04,960
+stand for stack pointer. So, normally on the MIPS machine, compilers use SP to,
+
+23
+00:02:05,510 --> 00:02:11,939
+point to, their stack, and the top of the stack will always be at the address, SP
+
+24
+00:02:11,939 --> 00:02:17,640
+plus four. So, remember the stack is growing towards low addresses, and the
+
+25
+00:02:17,640 --> 00:02:22,170
+address, in the stack pointer is the ne xt unallocated location on the stack. So the
+
+26
+00:02:22,170 --> 00:02:25,760
+stack pointer actually points to unused memory, and the top of the stack,
+
+27
+00:02:25,760 --> 00:02:31,800
+therefore, is at the next higher word address which would be SP plus four, Now
+
+28
+00:02:31,800 --> 00:02:34,840
+the MIPS architecture is quite an old architecture. It was designed in the
+
+29
+00:02:34,840 --> 00:02:40,550
+1980's and it was, or is, the prototypical reduced instruction set computer, or risk
+
+30
+00:02:40,550 --> 00:02:44,760
+machine. And the idea behind RISC machines was to have a relatively simple
+
+31
+00:02:44,760 --> 00:02:49,880
+instruction set. Most of the operations used registers for operands and results.
+
+32
+00:02:49,880 --> 00:02:54,250
+And then load and store instructions are used to move values to and from memory. So
+
+33
+00:02:54,250 --> 00:02:58,560
+primarily all the computation takes place in registers, and the memory operations
+
+34
+00:02:58,560 --> 00:03:05,230
+are primarily are just loading and storing data. There are 32 purp-, there are 32
+
+35
+00:03:05,230 --> 00:03:08,680
+general-purpose registers on the MITS, it's a 32 bit machine. We're only going to
+
+36
+00:03:08,680 --> 00:03:13,500
+use three of those registers. We already talked about SP, the stack pointer. A0 the
+
+37
+00:03:13,500 --> 00:03:18,310
+accumulator, and we'll need one more register for temporary values. So some
+
+38
+00:03:18,310 --> 00:03:22,870
+operations that take two arguments like plus and times will have to have two
+
+39
+00:03:22,870 --> 00:03:25,849
+registers to hold the arguments to the operation. So we'll use the accumulator
+
+40
+00:03:25,849 --> 00:03:29,120
+for one of those and a temporary register for the other. And there is a lot more
+
+41
+00:03:29,120 --> 00:03:34,959
+information on the MIPS architecture in the SPIM documentation. Spim is the
+
+42
+00:03:34,959 --> 00:03:41,959
+simulator that we, we'll use to execute MIPS code. Now of course, to, generate
+
+43
+00:03:44,620 --> 00:03:49,099
+code for the mix. We'll also need some mix instructions. And we'll be able to get
+
+44
+00:03:49,099 --> 00:03:52,489
+away, with just a very small number of instructions. Five in fact, for our first
+
+45
+00:03:52,489 --> 00:03:58,950
+example And here they are. So the first instruction we need, is load, or load word
+
+46
+00:03:58,950 --> 00:04:03,220
+And the way this works is it takes the value of register two, takes the contents
+
+47
+00:04:03,220 --> 00:04:07,920
+that are in register two Adds a fixed offset. So this is a number that's,
+
+48
+00:04:07,920 --> 00:04:12,739
+directly in the code Adds a fixed offset to that to the contents of register two.
+
+49
+00:04:12,739 --> 00:04:17,599
+That's a memory address. It loads the value of that memory address into register
+
+50
+00:04:17,599 --> 00:04:22,600
+one. The add instruction adds the contents of register two and register three
+
+51
+00:04:22,600 --> 00:04:27,910
+together and stores the results in register one again. The store operation,
+
+52
+00:04:27,910 --> 00:04:33,560
+or store word operation takes the value in register one and stores it into memory. So
+
+53
+00:04:33,560 --> 00:04:37,570
+that's stored at a memory address, and with the memory address is the contents of
+
+54
+00:04:37,570 --> 00:04:44,570
+register two, plus a fixed offset that's in the code. And an add immediate
+
+55
+00:04:44,970 --> 00:04:51,970
+unsigned, takes, is an unsigned add, and it takes a value in register two, an
+
+56
+00:04:52,850 --> 00:04:56,810
+immediate value. So, this is just a number, that's a constant that's directly
+
+57
+00:04:56,810 --> 00:05:01,220
+embedded in the code. It adds that to the value register two and stores the result
+
+58
+00:05:01,220 --> 00:05:06,229
+in register one. And the unsigned aspect here just means that the overflow is not
+
+59
+00:05:06,229 --> 00:05:10,380
+checked, we're not, we're not checking whether we generate a number that's
+
+60
+00:05:10,380 --> 00:05:17,380
+beyond, beyond what we could represent if we had sine numbers. Finally, load
+
+61
+00:05:18,160 --> 00:05:23,300
+immediate just takes a constant that's in the code, and puts it into, the register
+
+62
+00:05:23,300 --> 00:05:25,780
+that's named as the first argument Alright? So those are the five
+
+63
+00:05:25,780 --> 00:05:32,400
+instructions that we need, to do a, one very simple example. So now we're ready to
+
+64
+00:05:32,400 --> 00:05:37,660
+do our first program, and not surprisingly it's the same program that we looked at in
+
+65
+00:05:37,660 --> 00:05:41,009
+previous videos when we were talking about stack machine code. So let's look, here's
+
+66
+00:05:41,009 --> 00:05:46,070
+the program for adding seven plus five, written out in our little abstract stack
+
+67
+00:05:46,070 --> 00:05:51,030
+machine language. Now our goal is to implement this program using MIPS
+
+68
+00:05:51,030 --> 00:05:55,470
+instructions. So over here on the right, I'm going to layout the instructions we
+
+69
+00:05:55,470 --> 00:05:59,530
+would use to simulate this program or implement this program on the MIPS machine
+
+70
+00:05:59,530 --> 00:06:05,430
+Alright? So the first instruction is to load seven into the accumulator. And we
+
+71
+00:06:05,430 --> 00:06:08,590
+can do that with a load immediate. We're going to load immediate the value seven.
+
+72
+00:06:08,590 --> 00:06:12,810
+A0 is our accumulator register, and so this instruction puts seven in the
+
+73
+00:06:12,810 --> 00:06:17,680
+accumulator. Next instruction, we want to push the value of the accumulator onto the
+
+74
+00:06:17,680 --> 00:06:22,270
+stack. How do we do that? Well we have to store the value onto the stack, and
+
+75
+00:06:22,270 --> 00:06:26,710
+remember the stack pointer points to the next unused memory location. And so we're
+
+76
+00:06:26,710 --> 00:06:30,160
+just storing directly at what the stack pointer points to, so that's at zero
+
+77
+00:06:30,160 --> 00:06:34,220
+offset from the stack pointer. The value of the accumulator pushes the value onto
+
+78
+00:06:34,220 --> 00:06:38,100
+the stack, and now to restore the invariant. That the stack pointer points
+
+79
+00:06:38,100 --> 00:06:42,070
+to the next unused location, we have to subtract four from the stack pointer.
+
+80
+00:06:42,070 --> 00:06:47,090
+Okay. So, these two instructions together, implement a push, they push the data value
+
+81
+00:06:47,090 --> 00:06:51,259
+onto the stack, and they move the stack pointer to the next unused address.
+
+82
+00:06:51,259 --> 00:06:55,639
+Alright, now I'm ready to do the next instruction, loading five into the
+
+83
+00:06:55,639 --> 00:07:00,150
+accumulator. Well, we already know how to do that. We'll be a load immediate into
+
+84
+00:07:00,150 --> 00:07:06,490
+the accumulator register A0, the immediate value five Are now ready to do the add And
+
+85
+00:07:06,490 --> 00:07:13,210
+how does that work? Well, first, we have to load the value of that's on the top of
+
+86
+00:07:13,210 --> 00:07:16,400
+the stack, alright. Because it's like an argument is taken from the top of the
+
+87
+00:07:16,400 --> 00:07:20,090
+stack. And since MIPS can only do operations out of registers, that value
+
+88
+00:07:20,090 --> 00:07:22,960
+has to go somewhere into a register. And this is where we use our temporary
+
+89
+00:07:22,960 --> 00:07:27,850
+register. So now, this value is now at offset four from the stack pointer,
+
+90
+00:07:27,850 --> 00:07:33,060
+because we subtracted four from the stack pointer And we load it into register T1.
+
+91
+00:07:33,060 --> 00:07:38,539
+Okay, And then we can actually perform the add. And so we add the accumulator to the
+
+92
+00:07:38,539 --> 00:07:43,610
+value of T1 and we store the result back into the accumulator And finally we're
+
+93
+00:07:43,610 --> 00:07:46,560
+going to pop the stack so we're done with the value that's on the stack, And how do
+
+94
+00:07:46,560 --> 00:07:50,460
+we pop? Well, we just add four to the stack pointer, and that moves the stack
+
+95
+00:07:50,460 --> 00:07:54,169
+pointer back popping that value off of the stack.

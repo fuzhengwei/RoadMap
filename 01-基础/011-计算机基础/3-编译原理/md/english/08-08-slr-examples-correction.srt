@@ -1,0 +1,535 @@
+0
+00:00:04,500 --> 00:00:11,500
+In this video, we're gonna to work through a couple of SLR parsing examples. So let's
+
+1
+00:00:12,230 --> 00:00:19,230
+do a very simple example. Let's consider the grammar. S goes to SA, or S goes to B.
+
+2
+00:00:23,380 --> 00:00:28,410
+And what does this grammar do? It produces strings of A's followed by a B. So any
+
+3
+00:00:28,410 --> 00:00:35,410
+number of A's followed by a single B.  And notice that the grammar is left recursive,
+
+4
+00:00:38,719 --> 00:00:43,829
+and recall that that's not a problem for a bottom up parser. Slr parsers, LR parsers,
+
+5
+00:00:43,829 --> 00:00:49,800
+are perfectly happy with left recursive grammars. So let's begin by working out
+
+6
+00:00:49,800 --> 00:00:54,320
+what the automaton for this, grammar should be, what the parsing automaton
+
+7
+00:00:54,320 --> 00:00:58,670
+should be. And recall that the first step is to add a new production to the grammar.
+
+8
+00:00:58,670 --> 00:01:02,640
+We have to add a new start symbol. That all it does, it has one production that
+
+9
+00:01:02,640 --> 00:01:07,390
+goes to the old start symbol. And that's, again, just for technical reasons. Now,
+
+10
+00:01:07,390 --> 00:01:12,640
+the start symbol, or sorry, the start state of the NFA of the parsing automaton
+
+11
+00:01:12,640 --> 00:01:18,189
+is this item. S prime, our new start symbol, goes to dot S, our old start
+
+12
+00:01:18,189 --> 00:01:23,930
+symbol. And rather than build the NFA, and then do the subset of states construction.
+
+13
+00:01:23,930 --> 00:01:28,680
+Let's just go ahead and work out what items must be in the first state of the
+
+14
+00:01:28,680 --> 00:01:35,220
+DFA. So remember that all the epsilon moves in the, in the DF-, in the NFA, are
+
+15
+00:01:35,220 --> 00:01:41,329
+due to moves that happen because we don't see a non terminal on the stack. But
+
+16
+00:01:41,329 --> 00:01:44,759
+instead see something derived from that non terminal. So if we have a dot, Right
+
+17
+00:01:44,759 --> 00:01:50,020
+next to a non terminal. That means that there's an epsilon move in the NFA to all
+
+18
+00:01:50,020 --> 00:01:55,060
+the items that have, for all the productions, all the, all the first items,
+
+19
+00:01:55,060 --> 00:01:59,799
+for the productions of that non terminal. What do I mean by that? I mean that this
+
+20
+00:01:59,799 --> 00:02:04,930
+state, I mean epsilon production to S goes to dot SA. So this is the first item in
+
+21
+00:02:04,930 --> 00:02:09,090
+recognizing, this production. So the dots all the way at the left, And there would
+
+22
+00:02:09,090 --> 00:02:13,700
+also be an item for the other production for S, S goes to dot B. Alright, so that's
+
+23
+00:02:13,700 --> 00:02:18,440
+the epsilon closure in the NFA of this start item. So this'll be the first state.
+
+24
+00:02:18,440 --> 00:02:24,739
+These three things, these three items would be the first state of the DFA. And
+
+25
+00:02:24,739 --> 00:02:28,000
+now we have to consider what would happen on each of the possible transitions for
+
+26
+00:02:28,000 --> 00:02:32,270
+each of the symbols that we might see on the stack. So let's think about what
+
+27
+00:02:32,270 --> 00:02:39,270
+happens if we see a B. So if we see a B on the stack, then the only item that's going
+
+28
+00:02:39,989 --> 00:02:46,989
+to be in that state is S goes to B dot okay? So it'll be fine to see a B and this
+
+29
+00:02:47,400 --> 00:02:52,519
+would be the only item that was valid for the stack contents. Now another
+
+30
+00:02:52,519 --> 00:02:59,519
+possibility is that we'll see an S. So, if we see an S on the stack, what will
+
+31
+00:03:00,140 --> 00:03:07,140
+happen? Well, we're going to go to a state that has two items. S prime goes to S dot,
+
+32
+00:03:10,610 --> 00:03:14,959
+so that we've seen S on the stack, and we're ready to reduce by, by this
+
+33
+00:03:14,959 --> 00:03:21,959
+production, possibly. And also, S goes to S. A. And now, Clearly in this state let's
+
+34
+00:03:24,890 --> 00:03:31,510
+talk about his state down here. There are no more transitions possible. In all there
+
+35
+00:03:31,510 --> 00:03:35,049
+is only one item in the state dots all the way at the right hand side, so that state
+
+36
+00:03:35,049 --> 00:03:39,500
+is completely done. In this state the one over here on the right side. While one of
+
+37
+00:03:39,500 --> 00:03:43,330
+these items is complete, the dot's all the way at the right. But the other item still
+
+38
+00:03:43,330 --> 00:03:50,330
+has an A, so there could be one more transition out of this state. To the item,
+
+39
+00:03:50,489 --> 00:03:57,489
+S goes to SA dot, Alright? And now if we look at this, we see that for the most
+
+40
+00:03:59,989 --> 00:04:03,980
+part these states are in pretty good shape. So these two states this one down
+
+41
+00:04:03,980 --> 00:04:07,459
+here and this one over here, they only have a single item, and so there's no
+
+42
+00:04:07,459 --> 00:04:12,060
+possibility of a shift reduce conflict in those states. There's only one item,
+
+43
+00:04:12,060 --> 00:04:16,080
+there's only one thing to do. The only possibility here in both of these states
+
+44
+00:04:16,079 --> 00:04:22,970
+is to reduce. This state, the initial start state, has no reduce moves. So it's
+
+45
+00:04:22,970 --> 00:04:27,160
+only shift moves here, so there can't be a shift reduce conflict, because there are
+
+46
+00:04:27,160 --> 00:04:31,710
+no reduce items, No possible reduce actions. And there is to reduce, reduce
+
+47
+00:04:31,710 --> 00:04:35,590
+conflicts for the same reason. The only state of interest really for the point of
+
+48
+00:04:35,590 --> 00:04:41,639
+view for what who the grammar is SLR1 is this middle state. And here we can either
+
+49
+00:04:41,639 --> 00:04:48,639
+reduce by s prime goes to s dot, or we could shift and A onto the stack. And the
+
+50
+00:04:51,550 --> 00:04:58,550
+question is, what is in the follow of S prime? So what can follow S prime in the
+
+51
+00:04:58,970 --> 00:05:02,500
+grammar? And if we look back up at our grammar, we'll see that nothing can follow
+
+52
+00:05:02,500 --> 00:05:06,570
+S prime. S prime is the start symbol, and so, in fact, the only thing in the follow
+
+53
+00:05:06,570 --> 00:05:11,120
+of S prime is the, And to the input. And so what that tells us is that we'll reduce
+
+54
+00:05:11,120 --> 00:05:17,750
+by s prime, goes to s, if, if we're out of input. And otherwise if there is an A on
+
+55
+00:05:17,750 --> 00:05:22,310
+the stack, sorry, if there's an a in the input, then we'll shift it onto the stack.
+
+56
+00:05:22,310 --> 00:05:28,979
+And so this grammar is, SLR1. There are no shift reduce, or reduce, reduce conflicts
+
+57
+00:05:28,979 --> 00:05:35,979
+implied by this parsing automaton. Let's do another example, slightly more complex.
+
+58
+00:05:36,759 --> 00:05:41,770
+In fact, let's just extend the previous grammar. We'll have a, a production. S
+
+59
+00:05:41,770 --> 00:05:47,979
+goes to SAS, okay? So now we have the non terminal twice with an A in between, Or S
+
+60
+00:05:47,979 --> 00:05:52,449
+can go to B, just like before. And now let's work out the parsing automaton for
+
+61
+00:05:52,449 --> 00:05:59,449
+this grammar. And, once again, We'll need to add a dummy start symbol To the grammar
+
+62
+00:06:00,110 --> 00:06:05,600
+And it will go. It's only production will be to, generate the old start symbol. And
+
+63
+00:06:05,600 --> 00:06:11,669
+now let's begin working out what's in the, parsing automaton, for this particular
+
+64
+00:06:11,669 --> 00:06:15,270
+grammar. And, and just like before, we're not going to go through the effort of
+
+65
+00:06:15,270 --> 00:06:19,229
+constructing, the NFA. That would be a systematic way to do it. One way to it is,
+
+66
+00:06:19,229 --> 00:06:23,080
+is the way we sketched. Was just to construct the NFA first, and then do the
+
+67
+00:06:23,080 --> 00:06:27,210
+subset of states construction. But, this grammar is small enough. And simple enough
+
+68
+00:06:27,210 --> 00:06:32,759
+that we can work out directly what is in, what are in the states, what items are in
+
+69
+00:06:32,759 --> 00:06:38,319
+the states of DFA. So just like before because the dart here is immediately next
+
+70
+00:06:38,319 --> 00:06:42,580
+to the S, we know that we can without consuming any input at all make an epsilon
+
+71
+00:06:42,580 --> 00:06:48,319
+transition in the interface to the items that start the productions for S. So these
+
+72
+00:06:48,319 --> 00:06:55,319
+will be in the, also in the DFA state. And that's it. We can't add any other,
+
+73
+00:06:55,710 --> 00:07:00,289
+productions here. So S is the only non terminal. And we've added all the, first
+
+74
+00:07:00,289 --> 00:07:07,289
+items, initial items for S. And so that is the complete state. Okay? So just like
+
+75
+00:07:07,580 --> 00:07:14,009
+before, one possibility is that we'll see a B on the stack. And so that would give
+
+76
+00:07:14,009 --> 00:07:19,780
+us the item S goes to B dot. And that's the only item valid for that state.
+
+77
+00:07:19,780 --> 00:07:25,080
+Another possibility is that we'll see an S on the stack. Okay? In which case, we'll
+
+78
+00:07:25,080 --> 00:07:32,080
+make a transition to the state, S prime goes to S dot. And S goes to S dot AS,
+
+79
+00:07:33,889 --> 00:07:40,380
+alright? So we saw that same state before, in the, in the other automaton. Now we
+
+80
+00:07:40,380 --> 00:07:46,110
+could also see an A. Now what state would that take us to? And this is going to be a
+
+81
+00:07:46,110 --> 00:07:52,139
+little different. In this state, we could have the item, or will have the item, SA
+
+82
+00:07:52,139 --> 00:07:57,020
+dot S, and I notice that the dot is right next to S, so instead of seeing an S on
+
+83
+00:07:57,020 --> 00:08:00,819
+the set, we could also see something derived from S in the next position on
+
+84
+00:08:00,819 --> 00:08:05,000
+this stack. And so we have to throw in all the productions for S. There's only two of
+
+85
+00:08:05,000 --> 00:08:11,199
+them. But that means we could have the item S goes to dot SAS, and S goes to dot
+
+86
+00:08:11,199 --> 00:08:16,190
+P. Alright, and then out of this state, now there are a couple of different
+
+87
+00:08:16,190 --> 00:08:20,919
+possible transitions, we could see an S or we could see a B. Well, if we see a B,
+
+88
+00:08:20,919 --> 00:08:27,430
+then we wind up in this state over here. And if we see an S, Well, what's going to
+
+89
+00:08:27,430 --> 00:08:34,430
+happen? If we see an S, then we'll wind up in another new state. Where we have, S
+
+90
+00:08:40,659 --> 00:08:47,659
+goes to SAS dot. We've seen the complete right hand side of that production. Or S
+
+91
+00:08:48,810 --> 00:08:55,810
+goes to SA.S. Actually, that dot's in the wrong place, so let's erase that, and
+
+92
+00:08:58,459 --> 00:09:02,910
+let's put it in the right place. It's right here. Before the A, not after the A.
+
+93
+00:09:02,910 --> 00:09:09,890
+Alright and now we have to think about what happens in this state. So in this
+
+94
+00:09:09,890 --> 00:09:14,120
+state the only possible input is an A and if it isn't A, what's we going to have,
+
+95
+00:09:14,120 --> 00:09:18,450
+we're going to have S goes to SA.S and then we're gonna have to add the initial
+
+96
+00:09:18,450 --> 00:09:24,300
+productions for S again. And so that would just take us back to this state and like
+
+97
+00:09:24,300 --> 00:09:28,720
+other transition labels too we go to this state on an S and we come back to that
+
+98
+00:09:28,720 --> 00:09:35,470
+state, the bottom state here for the top state on an A. And I think if we hadn't
+
+99
+00:09:35,470 --> 00:09:40,630
+made any mistakes that, that is the complete transition system and all the
+
+100
+00:09:40,630 --> 00:09:47,149
+states for this DFA. Now the question is, is this , is this parsing automaton is it,
+
+101
+00:09:47,149 --> 00:09:52,190
+this is, is this the parsing automaton of a, a solar one grammar. And in order to
+
+102
+00:09:52,190 --> 00:09:56,779
+answer that question we have to look for possible reduce, reduce, and shift reduce
+
+103
+00:09:56,779 --> 00:10:00,800
+conflict. Well a quick scan of all the states here will show you or convince you
+
+104
+00:10:00,800 --> 00:10:05,720
+that there are not. Any states, where there are two possible reduce-moves. So
+
+105
+00:10:05,720 --> 00:10:11,750
+there can't be any reduce reuse conflicts in this, in this automaton. We can ignore
+
+106
+00:10:11,750 --> 00:10:16,880
+states that only have a single item or states that have no possible reduce-moves
+
+107
+00:10:16,880 --> 00:10:23,160
+at all. Because, those are states in which there cannot be a shift-reduce conflict
+
+108
+00:10:23,160 --> 00:10:26,940
+and that means we can ignore these two states. The two states over here at the
+
+109
+00:10:26,940 --> 00:10:32,130
+extreme left. So now we're left with these three states to think about. Alright, so
+
+110
+00:10:32,130 --> 00:10:38,760
+we look at this state last time. As before, the follow of S prime Is just
+
+111
+00:10:38,760 --> 00:10:45,760
+equal to the dollar sign. And so there's no shift reduce conflict in this state
+
+112
+00:10:46,550 --> 00:10:53,310
+Because on, on input A we can only shift. We can't reduce by S prime goes to S. All
+
+113
+00:10:53,310 --> 00:10:59,730
+right, and now we're down looking at these two states. And let's just consider this
+
+114
+00:10:59,730 --> 00:11:04,920
+bottom state first. Alright, so what does this state say to do? Well, this state
+
+115
+00:11:04,920 --> 00:11:11,920
+says, that well first of all, observe. That, the only transitions out of this
+
+116
+00:11:11,920 --> 00:11:16,200
+state are on B and S and there are no reduced moves in this state at all, so
+
+117
+00:11:16,200 --> 00:11:19,970
+there's no possibility of a shift reduce conflict in this state either. That leaves
+
+118
+00:11:19,970 --> 00:11:25,100
+us with just this state to think about. Now this state does have a reduced move,
+
+119
+00:11:25,100 --> 00:11:30,899
+the first item here is a, is a reduction, and that says that we should reduce by S
+
+120
+00:11:30,899 --> 00:11:35,990
+goes to S A S if whatever comes next is in the follow of S, so we're gonna need to
+
+121
+00:11:35,990 --> 00:11:42,990
+know what's in the follow of S. Well from S prime goes to S, we know that anything
+
+122
+00:11:43,760 --> 00:11:47,490
+that's in the follow of S prime is in the follow of S. So clearly dollar is in the
+
+123
+00:11:47,490 --> 00:11:53,470
+follow of S. And then from this part of the grammar here, we can see that A is in
+
+124
+00:11:53,470 --> 00:12:00,010
+the follow of S. And then from this occurrence here of S, we know that since
+
+125
+00:12:00,010 --> 00:12:04,110
+it occurs at the, the far right side of the production, that an ything in the
+
+126
+00:12:04,110 --> 00:12:07,300
+follow of the right hand side, the left hand side non terminal, is also gonna be
+
+127
+00:12:07,300 --> 00:12:10,600
+in follow of S. Well, in this case they're the same. It just says that the follow of
+
+128
+00:12:10,600 --> 00:12:15,040
+S is a subset of the follow of S which is trivially always true, and so it doesn't
+
+129
+00:12:15,040 --> 00:12:18,959
+add anything new. And so we wind up with just the follow of S being just two
+
+130
+00:12:18,959 --> 00:12:23,910
+things, dollar sign and A. But that poses a problem, because this says that if we
+
+131
+00:12:23,910 --> 00:12:29,940
+see an A in the input we should reduce. And this move here says that if we see an
+
+132
+00:12:29,940 --> 00:12:35,600
+A in the input, we should shift. And so, this state does have a shift-reduce
+
+133
+00:12:35,600 --> 00:12:42,600
+conflict. Alright, and so this grammar is not SLR what.

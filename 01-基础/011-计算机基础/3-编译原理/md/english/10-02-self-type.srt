@@ -1,0 +1,351 @@
+0
+00:00:03,399 --> 00:00:06,740
+In the last video we talked about the difference between static and dynamic
+
+1
+00:00:06,740 --> 00:00:10,820
+typing, and how one trend in static typing is towards increasingly expressive type
+
+2
+00:00:10,820 --> 00:00:14,309
+systems. In this lecture we're gonna talk about self type, which will give you a
+
+3
+00:00:14,309 --> 00:00:21,309
+taste or what those more expressive type systems can look like. To begin with,
+
+4
+00:00:21,949 --> 00:00:25,400
+let's motivate the problem that self types solves, by looking at a simple class
+
+5
+00:00:25,400 --> 00:00:30,089
+definition, so here we have class counts, and it has a single field I, which is an
+
+6
+00:00:30,089 --> 00:00:34,950
+integer initialized to zero, and it has one method increment. And essentially, the
+
+7
+00:00:34,950 --> 00:00:39,800
+class count just increments a counter. So you, initially when you allocate a new
+
+8
+00:00:39,800 --> 00:00:43,650
+count object, the counter is zero, and then every time you call ink, the
+
+9
+00:00:43,650 --> 00:00:49,370
+counter's value is increased by one. And notice that this can be thought of as a
+
+10
+00:00:49,370 --> 00:00:53,650
+base class that provides counter functionality, so whenever I wanted a
+
+11
+00:00:53,650 --> 00:00:59,170
+counter for some specific purpose, I get to find a new sub-class and that, of
+
+12
+00:00:59,170 --> 00:01:02,540
+count, and that sub-class would automatically inherit the inc-method,
+
+13
+00:01:02,540 --> 00:01:06,619
+thereby allowing me to have counter without having to re-implement the code.
+
+14
+00:01:06,619 --> 00:01:10,750
+In this case the code is very, very small, but in general you can imagine having a
+
+15
+00:01:10,750 --> 00:01:15,420
+class that implements something tricky, or requiring a lot of code, and it's useful
+
+16
+00:01:15,420 --> 00:01:21,520
+to be able to reuse that in sub-classes. Now consider a sub class account that we
+
+17
+00:01:21,520 --> 00:01:27,650
+might want to define called stock. Say we're implementing a warehouse accounting,
+
+18
+00:01:27,650 --> 00:01:30,590
+program and we want to keep track of the number of items that are in stock of
+
+19
+00:01:30,590 --> 00:01:35,590
+certain different kinds. So we define a new class stock that inherits from count,
+
+20
+00:01:35,590 --> 00:01:41,310
+and now we'll have a new field in here to make this, Object that's classed different
+
+21
+00:01:41,310 --> 00:01:45,890
+from its parent will just have a name that, corresponds to the name of the, the
+
+22
+00:01:45,890 --> 00:01:51,240
+item that's in stock. And now, down here, we can actually use this. We can decla-,
+
+23
+00:01:51,240 --> 00:01:57,440
+allocate a new stock object, we create a new object. We increment it To indicate
+
+24
+00:01:57,440 --> 00:02:01,340
+that we have one thing in stock And then we assign it to some variable that we've
+
+25
+00:02:01,340 --> 00:02:07,690
+declared of typed stock And then later on we can use this A object as we like. Now,
+
+26
+00:02:07,690 --> 00:02:13,159
+the problem is that this code actually will not type-check. There is a type error
+
+27
+00:02:13,159 --> 00:02:19,279
+in this code. And why is that? Well, let's think about it for a minute. So, what is
+
+28
+00:02:19,279 --> 00:02:25,549
+the signature of inc? So inc, remember, was declared to return things of type
+
+29
+00:02:25,549 --> 00:02:32,549
+count. Right, and when the inc method is inherited by the stock class this
+
+30
+00:02:33,749 --> 00:02:37,989
+signature doesn't change, it still returns things of type count. So here we have a
+
+31
+00:02:37,989 --> 00:02:43,730
+new stock object we call the increment method But the type of this whole thing is
+
+32
+00:02:43,730 --> 00:02:49,669
+a count and then we try to assign that to a stock, but that doesn't work because
+
+33
+00:02:49,669 --> 00:02:56,669
+count. Is not a subtype of stock, a variable of type stock can't hold a value
+
+34
+00:02:57,669 --> 00:03:03,840
+of type count and so the type system will report an error right here at the
+
+35
+00:03:03,840 --> 00:03:07,739
+assignment statement. And you can see that this is actually a serious problem,
+
+36
+00:03:07,739 --> 00:03:12,629
+because it has made the inheritance of the increment method pretty useless. I can
+
+37
+00:03:12,629 --> 00:03:19,159
+define new sub-classes of stock, but I can never use the increment method on them, at
+
+38
+00:03:19,159 --> 00:03:24,519
+least not without getting back something of the parent type. And so it's not as,
+
+39
+00:03:24,519 --> 00:03:30,900
+the inheritance of the incremental method is not as useful as one might have hoped.
+
+40
+00:03:30,900 --> 00:03:37,609
+So just to review, new stock, the, the incremented new stock, will have dynamic
+
+41
+00:03:37,609 --> 00:03:41,359
+type stock. That'll actually be a stock object that is returned, okay. So don't
+
+42
+00:03:41,359 --> 00:03:46,469
+get confused here. This is the dynamic type I'm talking about. So when we,
+
+43
+00:03:46,469 --> 00:03:50,659
+allocate the new stock object, and then we call the increment method, remember the
+
+44
+00:03:50,659 --> 00:03:54,939
+increment method returns self so the increment method was implemented something
+
+45
+00:03:54,939 --> 00:04:01,939
+like this. Leave out the types but it was I gets I + one and it returned the self
+
+46
+00:04:02,269 --> 00:04:06,129
+object alright, so it's definitely returning whatever object is passed in
+
+47
+00:04:06,129 --> 00:04:10,109
+here at the dispatch point so it's returning something of dynamic type stock.
+
+48
+00:04:10,109 --> 00:04:14,739
+And, so this program will actually run if we didn't have type-checking. If we
+
+49
+00:04:14,739 --> 00:04:18,739
+actually run this and it would work just fine. This would produce a dynamic stock
+
+50
+00:04:18,738 --> 00:04:23,650
+object and would store it into the stock variable. But it's not well typed because
+
+51
+00:04:23,650 --> 00:04:28,960
+the ty pe checker loses track of the fact that this is a stock object. All it knows
+
+52
+00:04:28,960 --> 00:04:34,120
+is that increment is declared to have return type count, and, which is certainly
+
+53
+00:04:34,120 --> 00:04:39,680
+correct because every stock object is also a count object, it's just not useful in
+
+54
+00:04:39,680 --> 00:04:45,419
+the context of this piece of code. And so the type checker loses information. Which
+
+55
+00:04:45,419 --> 00:04:52,419
+make it not very pleasant to try to put the increment method in the count class to
+
+56
+00:04:52,490 --> 00:04:59,490
+begin with. So to solve this problem, we're going to look at extending the type
+
+57
+00:04:59,889 --> 00:05:06,039
+system. The insight is going to be that the increment method returns self. In this
+
+58
+00:05:06,039 --> 00:05:10,150
+case, the increment method actually returns the self object, and therefore the
+
+59
+00:05:10,150 --> 00:05:16,090
+return value is going to have the same type as self. Whatever self happens to be,
+
+60
+00:05:16,090 --> 00:05:19,720
+which could be count or it could be any sub-type of count. So the self object only
+
+61
+00:05:19,720 --> 00:05:25,310
+has to be dynamically something that holds a value that's a sub-type of the declared
+
+62
+00:05:25,310 --> 00:05:30,860
+type of the self parameter, and so it could be any one of the sub-types in this
+
+63
+00:05:30,860 --> 00:05:36,560
+case of the count class. And to do this we're actually gonna have to introduce a
+
+64
+00:05:36,560 --> 00:05:41,860
+new key word called self type, that is gonna be used as the return of the type of
+
+65
+00:05:41,860 --> 00:05:45,770
+the return value of such functions. And we're gonna have to modify our typing
+
+66
+00:05:45,770 --> 00:05:52,750
+rules to handle this new kind of type. So the idea behind self type is it's going to
+
+67
+00:05:52,750 --> 00:05:58,009
+allow the type to change, when inc is inherited, or allow us to reason about how
+
+68
+00:05:58,009 --> 00:06:03,490
+the actual return type dynamically of increment method changes when the
+
+69
+00:06:03,490 --> 00:06:06,789
+increment method is inherited. So we change the declaration of inc to read as
+
+70
+00:06:06,789 --> 00:06:10,960
+follows. We've declared the return type now to be self type, meaning the return
+
+71
+00:06:10,960 --> 00:06:16,699
+value Of the increment method has whatever type. Is the type of the original self
+
+72
+00:06:16,699 --> 00:06:21,659
+parameter? And when we do that now we can see. That it's possible. We don't, we
+
+73
+00:06:21,659 --> 00:06:24,409
+haven't said how we do it, but you should be able to see that it intuitively makes
+
+74
+00:06:24,409 --> 00:06:27,900
+sense that we could prove facts of the following forms. So when the self
+
+75
+00:06:27,900 --> 00:06:32,460
+parameter has the type count, remember that the thing we dispatch to, the thing
+
+76
+00:06:32,460 --> 00:06:37,280
+we call inc on, is the self para meter. So when we dispatch to account object, we get
+
+77
+00:06:37,280 --> 00:06:41,280
+something back of type count. And we call, when we, when we dispatch on a stock
+
+78
+00:06:41,280 --> 00:06:45,590
+object, when we call increment on a stock object, well, what's the type of self? The
+
+79
+00:06:45,590 --> 00:06:50,280
+type is stock, and we get back something of type stock. And now the program that we
+
+80
+00:06:50,280 --> 00:06:55,599
+had before with this one change is well typed and would be accepted by the Cool
+
+81
+00:06:55,599 --> 00:07:02,599
+type system. Now it's very important to remember that self type is not a dynamic
+
+82
+00:07:02,639 --> 00:07:08,189
+type it is very much a static type and part of the static type system. It's also
+
+83
+00:07:08,189 --> 00:07:13,710
+important to realize that self type is not a class name. So unlike all the other
+
+84
+00:07:13,710 --> 00:07:18,379
+static types in cool, it is not a name of a class, it's its own special thing and
+
+85
+00:07:18,379 --> 00:07:23,870
+we'll say more about exactly what it is in future videos, but the purpose of self
+
+86
+00:07:23,870 --> 00:07:27,759
+type as we've seen is to enable to type checker to accept more correct programs
+
+87
+00:07:27,759 --> 00:07:32,150
+and effectively. What self type does is to increase the expressive power of the type system.

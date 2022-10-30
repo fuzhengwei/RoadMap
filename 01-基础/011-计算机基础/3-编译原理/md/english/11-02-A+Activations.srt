@@ -1,0 +1,419 @@
+0
+00:00:03,840 --> 00:00:07,180
+In this video, we're going to being our discussions of run time structures with
+
+1
+00:00:07,180 --> 00:00:14,180
+the notion of procedure activations. Before we begin the discussion of
+
+2
+00:00:15,070 --> 00:00:19,869
+activations, it's worth being explicit that we have two overall goals in code
+
+3
+00:00:19,869 --> 00:00:24,560
+generation. One needs to be correct to generate code that actually faithfully
+
+4
+00:00:24,560 --> 00:00:29,000
+implements the programmer's program And the second is to be efficient that, that
+
+5
+00:00:29,000 --> 00:00:34,750
+code should made good use of resources and in particular we often care that it run
+
+6
+00:00:34,750 --> 00:00:40,530
+quickly And is very easy to solve These problems in isolation. If all we care
+
+7
+00:00:40,530 --> 00:00:45,640
+about is correctness, it's not a hard problem to generate Code that is very
+
+8
+00:00:45,640 --> 00:00:51,329
+simple but also very slow and correctly implements the program. If all we care
+
+9
+00:00:51,329 --> 00:00:54,110
+about is speed, we don't care about getting the right answer, the problem is
+
+10
+00:00:54,110 --> 00:00:59,510
+even easier. I can generate extremely fast programs that generate the wrong answer
+
+11
+00:00:59,510 --> 00:01:05,059
+for any problem that you carry to me And so really all the complications in code
+
+12
+00:01:05,059 --> 00:01:11,229
+generation arise from trying to solve These two problems simultaneously And,
+
+13
+00:01:11,229 --> 00:01:15,499
+what has grown up over time is fairly elaborate framework for how a code
+
+14
+00:01:15,499 --> 00:01:19,060
+generator and the run, and the corresponding run time structures should
+
+15
+00:01:19,060 --> 00:01:24,799
+be done to achieve both of these goals, okay? And the first step in talking about
+
+16
+00:01:24,799 --> 00:01:30,279
+that is to talk about activations. We're going to make two assumptions about the
+
+17
+00:01:30,279 --> 00:01:34,520
+kinds of programming languages for which we're generating code. The first
+
+18
+00:01:34,520 --> 00:01:39,409
+assumption is that execution is sequential. Given that we execute the
+
+19
+00:01:39,409 --> 00:01:43,679
+statement, the next statement that will be executed is easy to predict. In fact, it's
+
+20
+00:01:43,679 --> 00:01:47,520
+just a function of the statement that we just executed. So, controls is going to
+
+21
+00:01:47,520 --> 00:01:52,359
+move from one point in a program to another in some well defined order. The
+
+22
+00:01:52,359 --> 00:01:56,139
+second assumption is the one that procedure is called controllable always
+
+23
+00:01:56,139 --> 00:02:02,009
+return to the point immediately after the call. That is if I execute a procedure f,
+
+24
+00:02:02,009 --> 00:02:06,380
+once f is done executing, control will always return to the statement that
+
+25
+00:02:06,380 --> 00:02:12,099
+followed Point where f was call And there are certainly programming languages and
+
+26
+00:02:12,099 --> 00:02:15,959
+programming lan guage features that violate this assumption. So the most
+
+27
+00:02:15,959 --> 00:02:21,290
+important class of programming language is it violate assumption one are ones that
+
+28
+00:02:21,290 --> 00:02:26,099
+have concurrency. So the concurring program just because I execute one
+
+29
+00:02:26,099 --> 00:02:30,959
+statement there is no easy way to predict what the next statement is to execute it
+
+30
+00:02:30,959 --> 00:02:37,959
+because it might be in a completely different thread. And for assumption too
+
+31
+00:02:38,989 --> 00:02:45,989
+Advanced control constructs things like exceptions And Calls [cough]. If you
+
+32
+00:02:46,849 --> 00:02:51,730
+happen to know what call cc is, it's not important if you don't. These kinds of
+
+33
+00:02:51,730 --> 00:02:57,500
+constructs that affect the flow of control in fairly dramatic ways can violate
+
+34
+00:02:57,500 --> 00:03:01,829
+assumption to. So in particular, if you're familiar with catch and throw style
+
+35
+00:03:01,829 --> 00:03:07,620
+exceptions in Java and C++, when we throw an exception that exception might escape
+
+36
+00:03:07,620 --> 00:03:11,760
+from multiple procedures before it is caught and so there's no guarantee when
+
+37
+00:03:11,760 --> 00:03:16,099
+you call a procedure if that procedure can throw an exception that, that it control
+
+38
+00:03:16,099 --> 00:03:20,650
+whatever return to the point immediately after the procedure call. Now, we're gonna
+
+39
+00:03:20,650 --> 00:03:26,950
+keep these assumptions for the rest of the class. We may later on in future videos
+
+40
+00:03:26,950 --> 00:03:33,659
+briefly discuss how we would accommodate some of these more advanced features if
+
+41
+00:03:33,659 --> 00:03:40,659
+the, the material that we're going to cover. Is basic to all implementation and
+
+42
+00:03:42,319 --> 00:03:47,150
+even languages have concurrency and exception build upon the ideas that we're
+
+43
+00:03:47,150 --> 00:03:54,150
+going to discuss here. So first the definition When we invoke the procedure p.
+
+44
+00:03:54,340 --> 00:04:00,969
+We're going to say that is an activation of the procedure p and the life time of an
+
+45
+00:04:00,969 --> 00:04:06,700
+activation of p is gonna be all the steps are involved executing the procedure p and
+
+46
+00:04:06,700 --> 00:04:12,090
+including all the steps in the procedures that p calls so it's going to be all the
+
+47
+00:04:12,090 --> 00:04:13,469
+steps in the procedures that p calls. So it's going to be all the statements that
+
+48
+00:04:13,469 --> 00:04:18,000
+are executed between the moment that p is called and the moment that p returns
+
+49
+00:04:18,000 --> 00:04:25,000
+including all the functions and procedures that p itself calls. We could define an
+
+50
+00:04:27,250 --> 00:04:32,699
+analogous notion of the lifetime of a variable. So the lifetime of a variable x
+
+51
+00:04:32,699 --> 00:04:37,310
+is gonna be the portion of the execution in which x is defined, That means that
+
+52
+00:04:37,310 --> 00:04:41,979
+it's all the step of execution from the time that x is first created until the
+
+53
+00:04:41,979 --> 00:04:47,650
+time when x is destroyed or deal located and just note here that life time is a
+
+54
+00:04:47,650 --> 00:04:52,750
+dynamic concept so this is that implies to the executing program. We're talking about
+
+55
+00:04:52,750 --> 00:04:56,979
+the time when the variable first comes into existence until the moment in time
+
+56
+00:04:56,979 --> 00:05:02,310
+when it goes out of existence And scope on the other hand is a static concept that go
+
+57
+00:05:02,310 --> 00:05:07,479
+prefers to that portion of the program text in which the variable is visible.
+
+58
+00:05:07,479 --> 00:05:12,720
+Okay, so this is a very different idea from the life time of the variable and
+
+59
+00:05:12,720 --> 00:05:18,150
+again. It's very important to keep these two times, what happens at runtime and
+
+60
+00:05:18,150 --> 00:05:22,199
+what happens in compiler time or what is associated with the static properties of
+
+61
+00:05:22,199 --> 00:05:28,849
+the program distinct in your mind. From the assumptions that we gave a couple of
+
+62
+00:05:28,849 --> 00:05:33,449
+slides ago we can make a simple observation and that is when a procedure P
+
+63
+00:05:33,449 --> 00:05:40,449
+calls the procedure Q. Then Q is going to return before P returns. And what that
+
+64
+00:05:41,580 --> 00:05:46,289
+means is that the lifetime of procedures are going to be properly nested and
+
+65
+00:05:46,289 --> 00:05:50,660
+furthermore, that means that we can illustrate or represent activation
+
+66
+00:05:50,660 --> 00:05:57,660
+lifetimes as a tree. Let's illustrate activation with a simple example. So
+
+67
+00:05:58,530 --> 00:06:03,220
+here's a little cool program and as usual, it will begin running by executing the
+
+68
+00:06:03,220 --> 00:06:07,710
+main method in the main class. So the first activation and the root for our
+
+69
+00:06:07,710 --> 00:06:14,710
+activation tree for this program is the method main. And. Main is going to call
+
+70
+00:06:16,370 --> 00:06:23,039
+the method g and so g's lifetime, the set of instructions were g exist where a
+
+71
+00:06:23,039 --> 00:06:27,259
+period of time of the execution where g existed is gonna be properly contain
+
+72
+00:06:27,259 --> 00:06:31,710
+within the execution of this call to main. And so we can illustrate that by making g
+
+73
+00:06:31,710 --> 00:06:35,949
+a child of main. So this indicates that effect of g is a direct child of main
+
+74
+00:06:35,949 --> 00:06:41,870
+indicates that main calls g and also the g's lifetime is properly contained within
+
+75
+00:06:41,870 --> 00:06:48,870
+the lifetime of main. After g returns main will call f and so f will also. The, a
+
+76
+00:06:51,270 --> 00:06:58,270
+child of, of main And then F as itself is going to call G again And so, it's gonna
+
+77
+00:06:59,000 --> 00:07:06,000
+have another activation of G And so G Will also be a child of f. And this tree that
+
+78
+00:07:06,620 --> 00:07:11,080
+is actually the complete tree for this particular example illustrates the number
+
+79
+00:07:11,080 --> 00:07:15,050
+of things. First of all as we already said it shows the containment of life time. So
+
+80
+00:07:15,050 --> 00:07:19,770
+again for example g's life time is contained with a name but it also shows
+
+81
+00:07:19,770 --> 00:07:24,470
+some other interesting lifetime relationships. For example, the life time
+
+82
+00:07:24,470 --> 00:07:28,970
+of this activation of g and the life time of that activation of f are completely
+
+83
+00:07:28,970 --> 00:07:33,610
+distinct because their siblings in the tree, their lifetimes do no overlap at
+
+84
+00:07:33,610 --> 00:07:38,610
+all. And another thing to notice here is that there can be multiple occurrences of
+
+85
+00:07:38,610 --> 00:07:43,550
+the same method in the activation tree. So every time the method is called that is a
+
+86
+00:07:43,550 --> 00:07:49,280
+separate activation so in this particular activation tree there are two activations
+
+87
+00:07:49,280 --> 00:07:55,389
+of g. So, here's a somewhat more complicated example the involves a
+
+88
+00:07:55,389 --> 00:08:00,590
+recursive function. Let's begin here at the, at the first call. So The call to
+
+89
+00:08:00,590 --> 00:08:07,590
+main And all main does is call F with the argument three. So, there is an activation
+
+90
+00:08:08,919 --> 00:08:15,919
+of F from Main. And then what does f do, well f asks if it's argument is zero, and
+
+91
+00:08:16,319 --> 00:08:20,840
+if it is that calls g, while the initial argument is three so that's not going to
+
+92
+00:08:20,840 --> 00:08:26,430
+be true on the first call to f. In otherwise, it calls f with the argument
+
+93
+00:08:26,430 --> 00:08:32,150
+minus one. So, I was making note over here on the side about what the argument is
+
+94
+00:08:32,150 --> 00:08:37,650
+because we need to keep track of that. So f is called with three clearly that is not
+
+95
+00:08:37,650 --> 00:08:43,830
+zero, and so then f is going to be called again with the argument two, that will
+
+96
+00:08:43,830 --> 00:08:50,820
+results in f being called yet another time with the argument one and finally, f will
+
+97
+00:08:50,820 --> 00:08:57,820
+be called. With the argument zero, Which will then result in a call to G, And so
+
+98
+00:09:02,110 --> 00:09:08,190
+this is the activation tree for this particular program, And again notice that
+
+99
+00:09:08,190 --> 00:09:12,460
+there is gonna be multiple activation of the procedure on the same run of the
+
+100
+00:09:12,460 --> 00:09:17,440
+program. It just indicates that the same procedure can be called multiple times and
+
+101
+00:09:17,440 --> 00:09:22,760
+also note that the recursive procedure will result in nesting of activations of
+
+102
+00:09:22,760 --> 00:09:26,850
+the same function within itself, And so when f calls i tself and so the life time
+
+103
+00:09:26,850 --> 00:09:30,980
+say of the second call to f is properly contained within the life time with the
+
+104
+00:09:30,980 --> 00:09:32,000
+fist call to f.

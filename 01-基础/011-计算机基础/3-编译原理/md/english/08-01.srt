@@ -1,0 +1,211 @@
+0
+00:00:03,850 --> 00:00:07,180
+In this video, we're going to introduce another important concept in bottom-up
+
+1
+00:00:07,180 --> 00:00:14,180
+parsing, the notion of a handle. To review, bottom up parsing is these two
+
+2
+00:00:14,580 --> 00:00:19,590
+kinds of actions: we have shift moves, which just read one token of input and
+
+3
+00:00:19,590 --> 00:00:24,039
+move the vertical bar one to the right, And reduced moves, which replace the right
+
+4
+00:00:24,039 --> 00:00:28,369
+hand side of a production [inaudible] to the left of the vertical bar by a
+
+5
+00:00:28,369 --> 00:00:32,750
+production left hand side. So in this case, the production must have been A goes
+
+6
+00:00:32,750 --> 00:00:39,750
+to XY. And also reviewing what we did in the last video, the left string can be
+
+7
+00:00:39,819 --> 00:00:44,719
+implemented by a stack, where the top of the stack is marked by the vertical bar.
+
+8
+00:00:44,719 --> 00:00:49,749
+So shift pushes the terminal on to the stack and reduce pops zero or more symbols
+
+9
+00:00:49,749 --> 00:00:52,569
+of the stack, and that's gonna be the right hand stack of some production. And
+
+10
+00:00:52,569 --> 00:00:56,989
+then it's going to push one non-terminal on to the stack which is the left hand
+
+11
+00:00:56,989 --> 00:01:03,589
+side of that same production. And the key question in bottom of parsing and the one
+
+12
+00:01:03,589 --> 00:01:08,310
+we haven't addressed at all yet is how do we decide when to shift and when to
+
+13
+00:01:08,310 --> 00:01:14,869
+reduce. So let's take a look at this example grammar. And let's think about a
+
+14
+00:01:14,869 --> 00:01:19,530
+step of a parse where we've shifted one token onto the stack. We have Nth on the
+
+15
+00:01:19,530 --> 00:01:24,119
+stack, and then we have times N plus N still to go that we haven't seen yet. Now
+
+16
+00:01:24,119 --> 00:01:29,520
+at this point we could decide to reduce by T goes to N because we have the production
+
+17
+00:01:29,520 --> 00:01:34,520
+T goes to Nth right here. And so we could then get into this particul-, potential
+
+18
+00:01:34,520 --> 00:01:38,770
+state, or this particular state, where we have T on the stack and then the rest of
+
+19
+00:01:38,770 --> 00:01:42,929
+the input that looks like that. A-, but you can see that this would be a mistake.
+
+20
+00:01:42,929 --> 00:01:48,450
+There is no production in the grammar that begins Hence T times. There's no
+
+21
+00:01:48,450 --> 00:01:55,119
+production up here that looks like T times. And therefore if we were to, to, to
+
+22
+00:01:55,119 --> 00:02:00,090
+make this move, we would get stuck. We could continue to do reductions, to
+
+23
+00:02:00,090 --> 00:02:03,590
+rummage around in the string. But we would never be able to get back to the start
+
+24
+00:02:03,590 --> 00:02:09,100
+symbol. Because there is no way to deal a sub string that has t times something in
+
+25
+00:02:09,100 --> 00:02:16,100
+it. So what that shows us is that we don't always want to reduce just because we have
+
+26
+00:02:17,280 --> 00:02:21,950
+the right-hand side of a production on top of the stack. To repeat that, even if
+
+27
+00:02:21,950 --> 00:02:25,280
+there's the right-hand side of some production sitting right there on top of
+
+28
+00:02:25,280 --> 00:02:29,510
+the stack, it might be a mistake to do a reduction. We might want to wait and do
+
+29
+00:02:29,510 --> 00:02:34,360
+our reduction someplace else. And the idea about how we decide is that we only want
+
+30
+00:02:34,360 --> 00:02:38,720
+to reduce if the result can still be reduced to the start symbol. So let's take
+
+31
+00:02:38,720 --> 00:02:44,680
+a look at a right most innervations. So, beginning with the start symbol, we get to
+
+32
+00:02:44,680 --> 00:02:48,690
+some state after, after some number of steps where that means, just an arbitrary
+
+33
+00:02:48,690 --> 00:02:53,590
+number of steps. We get to some state X is the right most non-terminal and then the
+
+34
+00:02:53,590 --> 00:02:58,010
+next step is to replace X with by the right hand side of some production. And
+
+35
+00:02:58,010 --> 00:03:02,330
+remember, again, with bottom up parsing, the parsers are actually going in this
+
+36
+00:03:02,330 --> 00:03:09,010
+direction, okay. So, this is the reduction direction. The derivation direction, the
+
+37
+00:03:09,010 --> 00:03:14,180
+production direction, Because that's the easiest way to talk about what strings are
+
+38
+00:03:14,180 --> 00:03:17,290
+derived. We wanna begin with a start symbol. But the [inaudible], but the
+
+39
+00:03:17,290 --> 00:03:22,980
+parser's actually going against the flow of these arrows. Anyway if this is a
+
+40
+00:03:22,980 --> 00:03:28,570
+rightmost derivation Then we say that alpha beta is a handle of alpha beta
+
+41
+00:03:28,570 --> 00:03:34,690
+omega. And that just means that, yes, it would be okay in this situation to reduce
+
+42
+00:03:34,690 --> 00:03:40,710
+beta to X. And we could replace beta by X, because it's not a mistake. We can still,
+
+43
+00:03:40,710 --> 00:03:45,960
+by some sequence of moves, get back to the start symbol. You know, by, by doing more
+
+44
+00:03:45,960 --> 00:03:52,730
+reductions. So handles formulize the intuition about where it is okay to do a
+
+45
+00:03:52,730 --> 00:03:57,600
+reduction. A handle is just a reduction that also allows further reduction back to
+
+46
+00:03:57,600 --> 00:04:03,650
+the start symbol And we clearly only want to do reduction at handles. If we do a
+
+47
+00:04:03,650 --> 00:04:08,260
+reduction at a place that is not a handle even though it looks like it's the right
+
+48
+00:04:08,260 --> 00:04:12,370
+hand side or maybe actually be the right hand side of some production, that does
+
+49
+00:04:12,370 --> 00:04:15,980
+not mean. That it's actually a handle, and we might, if we could reduce there, we may
+
+50
+00:04:15,980 --> 00:04:22,980
+get stuck. So all we said so far is what a handle is. We've defined, a handle, We
+
+51
+00:04:23,260 --> 00:04:27,470
+haven't said anything about how to find the handles. And actually, how we find the
+
+52
+00:04:27,470 --> 00:04:31,690
+handles is gonna consume much of the rest of our discussion of parsing.

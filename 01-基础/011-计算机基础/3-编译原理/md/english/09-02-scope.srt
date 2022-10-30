@@ -1,0 +1,391 @@
+0
+00:00:03,590 --> 00:00:07,859
+Welcome back. In this video we're gonna begin our discussion of semantic analysis
+
+1
+00:00:07,859 --> 00:00:14,859
+with the topic of scope. The motivating problem for talking about scope is that we
+
+2
+00:00:16,289 --> 00:00:21,100
+want to be able to match identifier declarations with the uses of those
+
+3
+00:00:21,100 --> 00:00:24,570
+identifiers. We need to know which variable we're talking about when we see
+
+4
+00:00:24,570 --> 00:00:29,640
+variable X if variable X might have more than one definition in the program. And
+
+5
+00:00:29,640 --> 00:00:33,910
+this is an important aesthetic analysis step in most programming languages,
+
+6
+00:00:33,910 --> 00:00:39,600
+including, [inaudible]. So here are a couple of examples taken from cool. This
+
+7
+00:00:39,600 --> 00:00:44,570
+definition Y, this declaration Y that it's a string will be matched with this used
+
+8
+00:00:44,570 --> 00:00:48,899
+and so we'll know at this point here that Y is supposed to be a string and you'll
+
+9
+00:00:48,899 --> 00:00:53,969
+get some kind of an air for a compiler because you're trying to add a string and
+
+10
+00:00:53,969 --> 00:01:00,239
+a number. In the second example Here's a declaration of Y And then in the body of
+
+11
+00:01:00,239 --> 00:01:04,170
+the [inaudible] we, we don't see any use of Y And that, by itself is not an error.
+
+12
+00:01:04,170 --> 00:01:07,280
+It's perfectly fine to declare a variable that you don't use. Although you could
+
+13
+00:01:07,280 --> 00:01:11,499
+imagine generating a warning for that, that doesn't actually cause the program to
+
+14
+00:01:11,499 --> 00:01:16,829
+behave badly, But instead what we see here is a use of X and there's no matching
+
+15
+00:01:16,829 --> 00:01:21,049
+definitions. So the question is where is the definition of X? We can't see it And
+
+16
+00:01:21,049 --> 00:01:25,099
+if there is no outer definition of X then we'll get and undefined or undeclared
+
+17
+00:01:25,099 --> 00:01:32,099
+variable error here at this point. So these two examples illustrate the idea of
+
+18
+00:01:32,740 --> 00:01:36,479
+scope. The scope of an identifier is that portion of a program in which the
+
+19
+00:01:36,479 --> 00:01:41,450
+identifier is accessible. And just know that the same identifier may refer to
+
+20
+00:01:41,450 --> 00:01:45,359
+different things and different parts of the program. And different scopes for the
+
+21
+00:01:45,359 --> 00:01:50,749
+same name can't overlap. So whenever the variable x, for example, means, it can
+
+22
+00:01:50,749 --> 00:01:55,649
+only refer to one thing in an given part of the program. And identifiers can have
+
+23
+00:01:55,649 --> 00:01:58,609
+restricted scope. There are lots of examples, I'm sure you're familiar with
+
+24
+00:01:58,609 --> 00:02:05,380
+them, of identifiers whose scope is less than the entire program. Most programming
+
+25
+00:02:05,380 --> 00:02:09,759
+languages today have what is called static s cope. And cool is an example of a
+
+26
+00:02:09,758 --> 00:02:13,439
+statically scoped language. The characteristic of static scoping is that
+
+27
+00:02:13,439 --> 00:02:17,790
+the scope of the variable depends only on the program text, not on any kind of
+
+28
+00:02:17,790 --> 00:02:22,049
+runtime behavior. So what the program actually does at runtime doesn't matter.
+
+29
+00:02:22,049 --> 00:02:28,510
+The scope is defined purely syntactically from the way you wrote the program. Now it
+
+30
+00:02:28,510 --> 00:02:32,840
+may come as a surprise that there is any alternative to static scoping. In fact,
+
+31
+00:02:32,840 --> 00:02:37,659
+probably every language that you have used up to now has had static scoping But there
+
+32
+00:02:37,659 --> 00:02:42,069
+are a few languages that are, what are called, dynamically scoped. And for a long
+
+33
+00:02:42,069 --> 00:02:45,959
+time actually there was an argument about whether static scoping was better than
+
+34
+00:02:45,959 --> 00:02:50,120
+dynamic scoping. Although today, I think, it is pretty clear that static scoping
+
+35
+00:02:50,120 --> 00:02:56,629
+camp has, has won this discussion But historically, at least, LISP was an
+
+36
+00:02:56,629 --> 00:03:02,370
+example of a dynamically scoped language. And it has switched, in the meantime. This
+
+37
+00:03:02,370 --> 00:03:07,280
+is actually a long time ago now that it changed, to static scoping. Another
+
+38
+00:03:07,280 --> 00:03:11,569
+language which is now mostly of historical interest, it isn't really used anymore,
+
+39
+00:03:11,569 --> 00:03:16,189
+called Snowball, also had, dynamic scoping. And the characteristic of dynamic
+
+40
+00:03:16,189 --> 00:03:20,769
+scoping is that the scope of a variable depends on the execution behavior of the
+
+41
+00:03:20,769 --> 00:03:27,239
+program. So let's take a look at an example of [inaudible]. So, here we have
+
+42
+00:03:27,239 --> 00:03:33,530
+some [inaudible] code, and, a couple of different declarations of X, and also,
+
+43
+00:03:33,530 --> 00:03:38,579
+some different uses of X. Let me erase these. [inaudible] underline so I can use
+
+44
+00:03:38,579 --> 00:03:43,299
+the color to indicate, binding. So, let's take a look at this definition. The
+
+45
+00:03:43,299 --> 00:03:48,090
+question is which of these uses of x, we have three uses of x, actually refer to
+
+46
+00:03:48,090 --> 00:03:52,340
+that definition. So, it is, in fact, these two, the ones that are outside of the
+
+47
+00:03:52,340 --> 00:03:57,609
+inner let. These actually refer to this definition. So, here if you refer to x,
+
+48
+00:03:57,609 --> 00:04:04,609
+you get the value zero But, this other definition here. The inner definition of
+
+49
+00:04:04,900 --> 00:04:11,900
+x, is, is used by this use of x. So this use of x, gets this va-, this meaning of
+
+50
+00:04:12,249 --> 00:04:15,709
+x, which in this case, returns the value one. And what's going on here is that
+
+51
+00:04:15,709 --> 00:04:20,069
+we're using the most closely, what's called the most closely nested rule. So a
+
+52
+00:04:20,069 --> 00:04:25,650
+variable binds to the definition that is most closely enclosing it of the same
+
+53
+00:04:25,650 --> 00:04:30,340
+name. So this x the closest enclosing definition of x is this one, but for these
+
+54
+00:04:30,340 --> 00:04:37,340
+two x's, the closest and only enclosing definition of x is this outer one. So in
+
+55
+00:04:39,380 --> 00:04:44,410
+dynamically scoped language, a variable would refer to the closest binding in the
+
+56
+00:04:44,410 --> 00:04:48,840
+execution of the program, meaning the most recent binding of the variables, so here's
+
+57
+00:04:48,840 --> 00:04:53,310
+an example, let's say we have a function G, and G defines a variable A, and here's
+
+58
+00:04:53,310 --> 00:04:56,830
+it initialized say to four, and then it calls another function Another function
+
+59
+00:04:56,830 --> 00:05:01,090
+that isn't in the same syntactic scope. So here I've written F right next to G but
+
+60
+00:05:01,090 --> 00:05:05,620
+actually F could be in some completely other part of the code and F refers to A.
+
+61
+00:05:05,620 --> 00:05:11,030
+And the question is, what is the value of A here? Well. If it's if we dynamically
+
+62
+00:05:11,030 --> 00:05:15,500
+scoped then it's going to be the value that was defined in G and here F of X will
+
+63
+00:05:15,500 --> 00:05:20,490
+actually return four, that will be the result of this call because this reference
+
+64
+00:05:20,490 --> 00:05:27,039
+to A. We'll refer to this binding or this definition of A and G. And, we can't say
+
+65
+00:05:27,039 --> 00:05:30,360
+much more about how dynamics, how dynamics scope works until we talk in a little more
+
+66
+00:05:30,360 --> 00:05:34,629
+detail about how languages are implemented. So we'll talk about dynamic
+
+67
+00:05:34,629 --> 00:05:41,629
+scope again a little later on in the course. In Cool, identifier bindings are
+
+68
+00:05:42,660 --> 00:05:46,830
+introduced by a variety of mechanisms. Now there are class declarations, which
+
+69
+00:05:46,830 --> 00:05:50,879
+introduce class names. Method definitions, which introduce method names, And then
+
+70
+00:05:50,879 --> 00:05:55,550
+there is several different ways to introduce object, object identifiers. And
+
+71
+00:05:55,550 --> 00:05:59,509
+these are the [inaudible] expressions, [inaudible] parameters of functions,
+
+72
+00:05:59,509 --> 00:06:03,080
+attribute definitions in classes, and finally in the branches of case
+
+73
+00:06:03,080 --> 00:06:10,080
+expressions. It's important to understand that not all identifiers follow the most
+
+74
+00:06:10,110 --> 00:06:15,000
+closely nested rule that we outlined before. So for example a rather, rather
+
+75
+00:06:15,000 --> 00:06:20,520
+large exception to this rule is class definitions in Cool. So class definitions
+
+76
+00:06:20,520 --> 00:06:25,409
+cannot be nested. And in fact they are globally visibl e throughout the program.
+
+77
+00:06:25,409 --> 00:06:28,729
+And what does that mean? That means that a class name is defined everywhere If it's
+
+78
+00:06:28,729 --> 00:06:32,759
+defined anywhere in the program, that class name is available for use anywhere
+
+79
+00:06:32,759 --> 00:06:36,169
+in the program or everywhere in the program. And in particular, a class name
+
+80
+00:06:36,169 --> 00:06:41,139
+can be used before it is defined. So as an example, take a look at this fragment of
+
+81
+00:06:41,139 --> 00:06:47,389
+cool code here. And here we see that in class foo, we declare y to be of type var
+
+82
+00:06:47,389 --> 00:06:52,199
+and then later on we declare class var. This is perfectly fine cool code. The fact
+
+83
+00:06:52,199 --> 00:06:57,689
+that var is used before it is defined has no effect on whether the program is
+
+84
+00:06:57,689 --> 00:07:04,689
+correct. This is a completely legal cool code Similarly with attribute names.
+
+85
+00:07:04,699 --> 00:07:08,720
+Attribute names are global within the class in which they are defined, so, I,
+
+86
+00:07:08,720 --> 00:07:13,300
+that means they can be used again before they are defined. So for example, I can
+
+87
+00:07:13,300 --> 00:07:18,729
+define a class foo, and I can define a method that uses attribute a, and then
+
+88
+00:07:18,729 --> 00:07:24,789
+later on, only later on, do I define what attribute a is, and that is perfectly
+
+89
+00:07:24,789 --> 00:07:30,379
+legal. So normally The list attribute definitions before method definitions, but
+
+90
+00:07:30,379 --> 00:07:34,060
+that's not required. A actually the method and attributory definitions can come in
+
+91
+00:07:34,060 --> 00:07:38,150
+any order we like, within a class, and in-particular an attribute can be used
+
+92
+00:07:38,150 --> 00:07:45,139
+before it is defined. Finally method names have quite complex rules. For example, a
+
+93
+00:07:45,139 --> 00:07:49,250
+method doesn't have to be defined in the class in which it is used. It could just
+
+94
+00:07:49,250 --> 00:07:54,530
+be defined in some pairing class. And also methods can be redefined. So it's possible
+
+95
+00:07:54,530 --> 00:07:59,189
+to what's called overwriting of a method and give a method a new definition Even
+
+96
+00:07:59,189 --> 00:08:03,020
+though it has been defined before. We don't actually have the language yet to
+
+97
+00:08:03,020 --> 00:08:07,389
+talk about these rules with any precision but we'll be going into this in future videos.

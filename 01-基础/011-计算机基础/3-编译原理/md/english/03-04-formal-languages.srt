@@ -1,0 +1,607 @@
+0
+00:00:00,440 --> 00:00:05,020
+Welcome back. In this video, we're going to take a little digression and talk about
+
+1
+00:00:05,020 --> 00:00:09,160
+formal languages. A formal language has played a big role in theoretical computer
+
+2
+00:00:09,160 --> 00:00:14,049
+science but they're also very important in compilers because inside of the compiler,
+
+3
+00:00:14,049 --> 00:00:18,210
+we typically have several different formal languages that we're manipulating. A
+
+4
+00:00:18,210 --> 00:00:22,580
+regular expressions are one example of a formal language but it's actually helpful
+
+5
+00:00:22,580 --> 00:00:26,850
+I think in understanding regular languages and all the formal languages we'll see
+
+6
+00:00:26,850 --> 00:00:33,850
+later on in later videos to talk about what the formal languages in general, So,
+
+7
+00:00:34,999 --> 00:00:41,550
+let's begin with the definition. A formal language has an alphabet, So, some set of
+
+8
+00:00:41,550 --> 00:00:48,550
+letter sigma. And then a language over that alphabet is just a set of strings of
+
+9
+00:00:48,800 --> 00:00:53,260
+the characters drawn from the alphabet. So in the case or regular languages, we had
+
+10
+00:00:53,260 --> 00:00:58,010
+certain ways of building up sets of strings of characters but other kinds of
+
+11
+00:00:58,010 --> 00:01:01,999
+languages would have different sets of strings. And in general, a formal language
+
+12
+00:01:01,999 --> 00:01:08,940
+is just any set of strings over some alphabet. An example of a language that
+
+13
+00:01:08,940 --> 00:01:13,030
+you're familiar with is a form from the alphabet of English characters and it is
+
+14
+00:01:13,030 --> 00:01:19,080
+just the set of English sentences. Now, This is not quite a formal language and
+
+15
+00:01:19,080 --> 00:01:24,110
+that we might disagree in which string of English characters are in fact valid
+
+16
+00:01:24,110 --> 00:01:27,850
+English sentences but one could imagine that we could define some rules that we
+
+17
+00:01:27,850 --> 00:01:32,390
+would say the certain strings are English sentences and others aren't. And if we
+
+18
+00:01:32,390 --> 00:01:35,990
+could come to this on agreement this would be a fully formal language. Now a much
+
+19
+00:01:35,990 --> 00:01:41,360
+more rigorous formal language would be something like the following; we could
+
+20
+00:01:41,360 --> 00:01:44,950
+pick our alphabet to be the asking character set and the language to be the
+
+21
+00:01:44,950 --> 00:01:49,320
+set of all Valid C program. So this is definitely a very well defined language.
+
+22
+00:01:49,320 --> 00:01:55,880
+This is exactly the set of inputs that C compilers will accept. And the, the
+
+23
+00:01:55,880 --> 00:01:59,820
+important contrast I want to draw here is that the alphabet is actually interesting.
+
+24
+00:01:59,820 --> 00:02:05,530
+So, different formal languages, you know? Have a very, very different alphabets and
+
+25
+00:02:05,530 --> 00:02:09,229
+we can't really talk a bout what the formal language is or what sort of strings
+
+26
+00:02:09,229 --> 00:02:14,960
+we're interested in unless to find that alphabet. Another important concept for
+
+27
+00:02:14,960 --> 00:02:21,050
+many formal languages is a meaning function. Typically we have one of the
+
+28
+00:02:21,050 --> 00:02:26,280
+strings in our language and let's call that some expression e and the expression
+
+29
+00:02:26,280 --> 00:02:30,980
+e by itself is just a piece of syntax. It's a program in some sense or it
+
+30
+00:02:30,980 --> 00:02:34,910
+represents something else that we're, Which is the thing we're actually
+
+31
+00:02:34,910 --> 00:02:40,370
+interested in. And so we have a Function L that maps the strings in the language to
+
+32
+00:02:40,370 --> 00:02:45,910
+their meanings. And so for example in the case of the regular expressions, this
+
+33
+00:02:45,910 --> 00:02:52,910
+would be a regular expression. And that would be map to a set of strings. The
+
+34
+00:02:53,610 --> 00:02:59,090
+regular language that, that regular expression to notes and we saw an example
+
+35
+00:02:59,090 --> 00:03:03,830
+where we wrote out the meeting function for regular expression last time so let's
+
+36
+00:03:03,830 --> 00:03:08,620
+use regular expressions as an example and I'm gonna first write down the meaning of
+
+37
+00:03:08,620 --> 00:03:13,740
+the regular expressions. The way I wrote it down in the last video so if you recall
+
+38
+00:03:13,740 --> 00:03:20,740
+we had a regular expression epsilon and that denoted a set, Which contain just one
+
+39
+00:03:21,470 --> 00:03:26,120
+string, namely the empty string. And then we had a regular expression C for every
+
+40
+00:03:26,120 --> 00:03:31,790
+character in the alphabet which also do need a socketing just one string namely
+
+41
+00:03:31,790 --> 00:03:36,459
+the single character C. And then, we had a bunch of compound expressions. So for
+
+42
+00:03:36,459 --> 00:03:43,459
+example, A + B. That was equal to the union of the sets A and B and we had the
+
+43
+00:03:47,500 --> 00:03:54,500
+concatenation so I could, I could [inaudible] A and B and that was equal to
+
+44
+00:03:54,510 --> 00:04:01,150
+a cross product where I selected a string from each set in order and concatenated
+
+45
+00:04:01,150 --> 00:04:08,150
+them together. And finally there was iteration so I could write a star and that
+
+46
+00:04:10,040 --> 00:04:17,040
+was the union over I. Greater than zero of all the sets A to the I, I ends. An
+
+47
+00:04:22,660 --> 00:04:26,010
+interesting thing about this definition is you can see that they were mapping, over
+
+48
+00:04:26,010 --> 00:04:31,510
+we have expressions and let me switch colors here, over here we have expressions
+
+49
+00:04:31,510 --> 00:04:37,280
+and over here we have the sets. But there's something kind of odd about the
+
+50
+00:04:37,280 --> 00:04:41,240
+way this is written and not quite right cuz you can see here we clearly, we have
+
+51
+00:04:41,240 --> 00:04:46,720
+an expression. We have a piece of syntax A + B and then somehow on the other side
+
+52
+00:04:46,720 --> 00:04:50,270
+this, this A, this A and this B have magically turned into sets that we're
+
+53
+00:04:50,270 --> 00:04:53,630
+taking the union of and similarly down here we're choosing an element from this
+
+54
+00:04:53,630 --> 00:04:57,370
+set but this set is also an expression and what does that mean? Somehow we're
+
+55
+00:04:57,370 --> 00:05:02,910
+conflating the sets in the expressions and this is what. The meaning function is
+
+56
+00:05:02,910 --> 00:05:07,900
+intended to fix and this what they, or, or, or intended to make clear. So we, what
+
+57
+00:05:07,900 --> 00:05:14,820
+we really wanted to say is that there's some mapping, That the language L epsilon
+
+58
+00:05:14,820 --> 00:05:21,820
+is the set so the, so L maps from expressions into sets of strings. Okay,
+
+59
+00:05:26,810 --> 00:05:30,790
+It's a function that maps one to the other and it you haven't seen this notation
+
+60
+00:05:30,790 --> 00:05:35,400
+before, this is a standard notation for describing functions. It does says that L
+
+61
+00:05:35,400 --> 00:05:41,290
+is a function from things in the domain, in this domain to this range, okay. And
+
+62
+00:05:41,290 --> 00:05:48,290
+similarly the language of this expression is the set and it becomes really useful
+
+63
+00:05:48,360 --> 00:05:53,370
+for the compound expressions cuz here we say the language of this expression. Is
+
+64
+00:05:53,370 --> 00:05:58,639
+equal to the language of a union with the language of B and now you can see the
+
+65
+00:05:58,639 --> 00:06:04,860
+recursion. First we interpret A and B using L and we take the union of the
+
+66
+00:06:04,860 --> 00:06:09,430
+result. Okay, so now it's clear what's asset and what's an expression and
+
+67
+00:06:09,430 --> 00:06:15,090
+similarly here the language of a concatenated with B, we are going to
+
+68
+00:06:15,090 --> 00:06:21,610
+select elements from the language of these two expressions and then we're going to
+
+69
+00:06:21,610 --> 00:06:28,310
+form another set from those two sets. And finally for iteration, The language of a
+
+70
+00:06:28,310 --> 00:06:32,650
+star is equal to the union over the meaning of a bunch of expressions, A to
+
+71
+00:06:32,650 --> 00:06:36,630
+the I is an expression. This is a, a piece of syntax and we have to convert it to A
+
+72
+00:06:36,630 --> 00:06:43,630
+set N order to take the union. And so about this, is. The proper definition of
+
+73
+00:06:44,110 --> 00:06:48,550
+the meaning of regular expressions where we've made the meaning function L explicit
+
+74
+00:06:48,550 --> 00:06:54,900
+and we've shown exactly how recursively we apply L to decompose the compound
+
+75
+00:06:54,900 --> 00:06:58,220
+expressions into several expressions that we compute the meaning of and then
+
+76
+00:06:58,220 --> 00:07:05,220
+computed the sets from those from those separate smaller s ets. So, there's other
+
+77
+00:07:06,949 --> 00:07:11,479
+reasons for using a meeting function. We just saw one of them which is to make
+
+78
+00:07:11,479 --> 00:07:16,240
+clear. What is syntax and what is semantics in our definitions. Some parts
+
+79
+00:07:16,240 --> 00:07:21,850
+of the definition are expression and some parts are the, the meanings or the sets
+
+80
+00:07:21,850 --> 00:07:27,350
+and the using L makes it clear that the arguments to L are the, the programs or
+
+81
+00:07:27,350 --> 00:07:32,289
+the expressions and the results Are the, the sets. The outputs are the sets, But
+
+82
+00:07:32,289 --> 00:07:37,199
+there are a couple of other reasons for separating syntax and semantics. One, is
+
+83
+00:07:37,199 --> 00:07:41,080
+that it allows us to consider notation as a separate issue. That is if we have
+
+84
+00:07:41,080 --> 00:07:45,789
+syntax and semantics being different, then we can vary the syntax while we keep the
+
+85
+00:07:45,789 --> 00:07:50,639
+semantics the same and we might discover. That there, that some kinds of syntax are
+
+86
+00:07:50,639 --> 00:07:54,300
+better than others for the problems that we're interested in, for the languages
+
+87
+00:07:54,300 --> 00:07:58,259
+that we're interested in. And another reason for separating the two is because
+
+88
+00:07:58,259 --> 00:08:02,169
+of expressions and meanings because syntax and semantics are not in one to one
+
+89
+00:08:02,169 --> 00:08:07,199
+correspondents. And I actually illustrated this with regular expressions in the
+
+90
+00:08:07,199 --> 00:08:13,490
+previous video but I want to iterate here that, that there are generally many more
+
+91
+00:08:13,490 --> 00:08:19,319
+expressions than there are meanings so that means there maybe multiple way. To
+
+92
+00:08:19,319 --> 00:08:24,550
+write an expression that means the same thing. I'd like to take a moment to
+
+93
+00:08:24,550 --> 00:08:30,630
+illustrate why separating syntax from semantics is beneficial for a notation.
+
+94
+00:08:30,630 --> 00:08:35,550
+So, everybody's familiar with the, the r number system so I can write numbers like
+
+95
+00:08:35,549 --> 00:08:42,550
+zero, one. 42 and 107 and there are very nice algorithms for describing how you add
+
+96
+00:08:42,708 --> 00:08:47,850
+and subtract and multiply such numbers but there are older systems of notation for
+
+97
+00:08:47,850 --> 00:08:51,709
+numbers. Things like the Roman numerals. I could have the number one. I could have
+
+98
+00:08:51,709 --> 00:08:58,709
+the number four, the number ten and say the number 40 I think is written like that
+
+99
+00:09:00,570 --> 00:09:07,300
+and. And an issue with this number system, first of all, let me stress that these two
+
+100
+00:09:07,300 --> 00:09:13,300
+have the same meaning. So the, the meanings of expressions in this language
+
+101
+00:09:13,300 --> 00:09:19,360
+are. Are the integers and it's exactly the same in this language. So the idea, the
+
+102
+00:09:19,360 --> 00:09:25,160
+mean ing of these two systems are just the numbers but the notation is extremely
+
+103
+00:09:25,160 --> 00:09:28,560
+different. The number written in Roman numerals was completely different from a
+
+104
+00:09:28,560 --> 00:09:32,830
+number written in Arabic numerals. And the fact is that the Roman numerals are really
+
+105
+00:09:32,830 --> 00:09:38,110
+painfully to do addition and subtraction and multiplication and in fact. Back in
+
+106
+00:09:38,110 --> 00:09:43,570
+ancient times when this was a common system was not very well known how to do
+
+107
+00:09:43,570 --> 00:09:49,450
+it and very few people were actually good at doing arithmetic with, with the system
+
+108
+00:09:49,450 --> 00:09:53,360
+because of, because the algorithms were kind of complicated. And, when we moved to
+
+109
+00:09:53,360 --> 00:10:00,360
+the, the Arabic system, later, That it was a big improvement because people, it was
+
+110
+00:10:00,830 --> 00:10:05,680
+easier for people to learn how to do basic arithmetic with these kinds of numbers.
+
+111
+00:10:05,680 --> 00:10:10,160
+And the only thing that changed between one system and the other was the system of
+
+112
+00:10:10,160 --> 00:10:14,330
+notation. And so, notation is extremely important because it governs how you think
+
+113
+00:10:14,330 --> 00:10:18,190
+and it governs the kinds of things you can say and the sort of procedures that you
+
+114
+00:10:18,190 --> 00:10:22,560
+will use. So don't underestimate the importance of notation and this is one
+
+115
+00:10:22,560 --> 00:10:27,350
+reason for separating syntax from semantics because we can leave the idea of
+
+116
+00:10:27,350 --> 00:10:31,500
+what we're trying to do than numbers alone. And play with, with different ways
+
+117
+00:10:31,500 --> 00:10:38,500
+of representing them and we might discover that some ways are better than others. The
+
+118
+00:10:38,600 --> 00:10:43,180
+third reason I gave for separating syntax and semantics is that in many interesting
+
+119
+00:10:43,180 --> 00:10:47,600
+languages, multiple expressions, multiple pieces of syntax will have the same
+
+120
+00:10:47,600 --> 00:10:52,620
+semantics. Now going back again to regular expressions, let's consider the regular
+
+121
+00:10:52,620 --> 00:10:58,730
+expression zero'lt;i>. Now there are many ways to write the same language which is the'lt;/i>
+
+122
+00:10:58,730 --> 00:11:02,560
+language of all strings of zeroes so string of zeroes of any length. So for
+
+123
+00:11:02,560 --> 00:11:09,399
+example I could also write that as zero + zero'lt;i>. Another way to write it is as'lt;/i>
+
+124
+00:11:09,399 --> 00:11:16,399
+epsilon + zero, zero and here you can see that, that this expression is all the
+
+125
+00:11:17,029 --> 00:11:21,550
+strings of 0s of at least link one and then we get the empty string for epsilon
+
+126
+00:11:21,550 --> 00:11:25,970
+so that is = zero and then just, you know? Any combination of these things
+
+127
+00:11:25,970 --> 00:11:32,649
+would also amount to an eq uivalent language for example that one and so on.
+
+128
+00:11:32,649 --> 00:11:36,640
+So there's actually an unbounded, unlimited number of way I could write this
+
+129
+00:11:36,640 --> 00:11:43,640
+language but all of these mean exactly the same thing and if you think about it. What
+
+130
+00:11:44,100 --> 00:11:49,790
+this means is that in general, if I draw the two domains differently, I think about
+
+131
+00:11:49,790 --> 00:11:56,029
+different expressions over here and different distinct meanings over here and
+
+132
+00:11:56,029 --> 00:12:03,029
+the function L that maps between them. The function L is many to one. So there are.
+
+133
+00:12:03,070 --> 00:12:10,070
+Yeah. There are points in the space that where many different expressions or pieces
+
+134
+00:12:12,160 --> 00:12:19,160
+of syntax map to the same meaning. And this is just a general characteristic of
+
+135
+00:12:19,620 --> 00:12:24,089
+Interesting formal languages and this is actually extremely important in compilers
+
+136
+00:12:24,089 --> 00:12:28,170
+because this is the basis of optimization. The fact that there are many different
+
+137
+00:12:28,170 --> 00:12:32,290
+programs that are actually functionally equivalent, that's what allows us to
+
+138
+00:12:32,290 --> 00:12:37,899
+substitute one program that runs faster than another, that's what allows us to
+
+139
+00:12:37,899 --> 00:12:42,269
+replace one program with another if it runs faster and does exactly the same
+
+140
+00:12:42,269 --> 00:12:46,870
+thing. So we couldn't do optimization and, you know the reason we can do optimization
+
+141
+00:12:46,870 --> 00:12:53,350
+as precisely because the meaning function is many to one. So meaning is many to one
+
+142
+00:12:53,350 --> 00:12:57,430
+and keep in mind, important point here it's never one to many. We don't want the
+
+143
+00:12:57,430 --> 00:13:01,350
+opposite situation. If we have the opposite situation, Where L could map a
+
+144
+00:13:01,350 --> 00:13:07,269
+single point to two different meanings. Well first of all, this would no longer be
+
+145
+00:13:07,269 --> 00:13:11,829
+a function but, but also it would mean that the meaning of certain expressions
+
+146
+00:13:11,829 --> 00:13:16,820
+say in our programming language was not well defined. That's that when you wrote a
+
+147
+00:13:16,820 --> 00:13:20,740
+program was actually ambiguous whether it meant this or it meant that and that's a
+
+148
+00:13:20,740 --> 00:13:26,329
+situation we don't like. So, we expect meaning functions to be many to one for
+
+149
+00:13:26,329 --> 00:13:32,329
+nontrivial languages and we don't want them ever to be one too many. And that
+
+150
+00:13:32,329 --> 00:13:36,310
+concludes today's video. Next time, Going to go back and continue with our
+
+151
+00:13:36,310 --> 00:13:38,019
+discussion of lexical analysis.

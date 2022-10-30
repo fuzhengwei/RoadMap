@@ -1,0 +1,571 @@
+0
+00:00:04,580 --> 00:00:11,580
+Welcome back, in this video we're going to have an introductions to types. So a very
+
+1
+00:00:13,080 --> 00:00:18,430
+basic question to ask is what is a type anyway. And this question is worth asking
+
+2
+00:00:18,430 --> 00:00:22,619
+because the notion of type, what a type is, does vary from programming language to
+
+3
+00:00:22,619 --> 00:00:27,869
+programming language. Now roughly speaking the consensus is that a type is a set of
+
+4
+00:00:27,869 --> 00:00:32,640
+values, and also, perhaps more importantly, a set of operations that are
+
+5
+00:00:32,640 --> 00:00:35,720
+unique to those values, a set of operations that are defined on those
+
+6
+00:00:35,720 --> 00:00:42,019
+values. So, for example, if I looked at the type of integers, there are some
+
+7
+00:00:42,019 --> 00:00:45,000
+operations that you can do on integers. You can do things like, you can add. And
+
+8
+00:00:45,000 --> 00:00:48,750
+you can subtract integers and you can compare integers whether they are greater
+
+9
+00:00:48,750 --> 00:00:54,229
+than or equal or less than these operations are you know about numbers and
+
+10
+00:00:54,229 --> 00:01:00,640
+then there are operations on strings And strings are a different type. They have.
+
+11
+00:01:00,640 --> 00:01:05,610
+Operations like incantation and testing whether a string is, is an empty string or
+
+12
+00:01:05,610 --> 00:01:11,870
+not And the other various variety of functions that are defined on strings. And
+
+13
+00:01:11,870 --> 00:01:15,080
+the important thing that these operations are different from the operations defined
+
+14
+00:01:15,080 --> 00:01:19,710
+on integers and we don't want to mix them up. It would be bad if we started doing
+
+15
+00:01:19,710 --> 00:01:24,500
+string operations on integers for example. We would just get nonsense. So, in modern
+
+16
+00:01:24,500 --> 00:01:29,360
+programming languages types are expressed in a number of different ways. In object
+
+17
+00:01:29,360 --> 00:01:35,400
+orient languages. Often we see classes being the notion of type. So, [inaudible]
+
+18
+00:01:35,400 --> 00:01:41,130
+in cool, the class names are the types, they're all, the, with one exception,
+
+19
+00:01:41,130 --> 00:01:45,590
+called self type. The class names are exactly the types. And I just wanted to
+
+20
+00:01:45,590 --> 00:01:49,680
+point out that this need not be the case. It happens that it's often convenient in
+
+21
+00:01:49,680 --> 00:01:53,420
+[inaudible] Victorian languages to equate classes and types. But there are other
+
+22
+00:01:53,420 --> 00:01:57,780
+designs that, where the classes are not the only kinds of types, or whether
+
+23
+00:01:57,780 --> 00:02:00,570
+they're. And in some languages, [inaudible] where there's no notion of
+
+24
+00:02:00,570 --> 00:02:03,979
+class, the types are completely different things. So, classes and types are really
+
+25
+00:02:03,979 --> 00:02:09,039
+two different things that happen, to be identif ied in a lot of object oriented
+
+26
+00:02:09,038 --> 00:02:13,080
+designs. And I just want you to be aware that that's not necessarily the only way
+
+27
+00:02:13,080 --> 00:02:20,080
+to do it. So consider the assembly language fragment add R1 R2 R3 and what
+
+28
+00:02:22,030 --> 00:02:27,030
+does this actually do. Well it takes the contents of register R2 and the contents
+
+29
+00:02:27,030 --> 00:02:32,670
+of register R3 it adds them together, and it puts the results in register R1. And
+
+30
+00:02:32,670 --> 00:02:38,280
+the question is, what are the types of R1 R2 and R3 And you might hope that they're
+
+31
+00:02:38,280 --> 00:02:42,620
+integers but in fact this is a, this is a trick question Because at the assembly
+
+32
+00:02:42,620 --> 00:02:47,980
+language level I can't tell. There's nothing that prevents R1, R2, and R3 from
+
+33
+00:02:47,980 --> 00:02:52,280
+having arbitrary types. They could be, they could be representatives of any kind
+
+34
+00:02:52,280 --> 00:02:57,310
+of type and because they're just a bunch of registers with zero and 1's in them the
+
+35
+00:02:57,310 --> 00:03:00,790
+add operation will be happy to take them and add them up even if it doesn't make
+
+36
+00:03:00,790 --> 00:03:06,540
+sense And produce a bit pattern that then stores into R1. So, to make this a little
+
+37
+00:03:06,540 --> 00:03:11,770
+clear perhaps it's useful to think about a, a certain operations that are legal for
+
+38
+00:03:11,770 --> 00:03:15,860
+values of each type. So for example, it make perfect example to add two integers,
+
+39
+00:03:15,860 --> 00:03:19,950
+if I have two bit patterns that represent integers, then when I sum them up I would
+
+40
+00:03:19,950 --> 00:03:24,470
+get a bit pattern that represents the sum of those two integers. But on the other
+
+41
+00:03:24,470 --> 00:03:28,410
+hand, if I take a function pointer and integer and I add them together, I really
+
+42
+00:03:28,410 --> 00:03:32,690
+don't get anything. Okay this is another the function pointer is a bit pattern. The
+
+43
+00:03:32,690 --> 00:03:36,700
+imaginer s a bit pattern I can take those two bit patterns. I could run them through
+
+44
+00:03:36,700 --> 00:03:41,349
+and I do get out a new set of bits. But there's no useful interpretation of that
+
+45
+00:03:41,349 --> 00:03:45,280
+results. The resulting things I get doesn't mean anything, but the problem is
+
+46
+00:03:45,280 --> 00:03:50,660
+that these both have the same assembly language implementation. Okay, nothing at
+
+47
+00:03:50,660 --> 00:03:54,950
+the assembly language level, these two operations look exactly the same. So I
+
+48
+00:03:54,950 --> 00:04:00,200
+can't tell at the assembly language level, which one of these I'm doing. If I want
+
+49
+00:04:00,200 --> 00:04:07,200
+there to be types, if I want to make sure that I only do operations on the correct,
+
+50
+00:04:07,360 --> 00:04:11,190
+that I only do certain operations on, on their correc t types, then I need some
+
+51
+00:04:11,190 --> 00:04:17,900
+sort of type description, some sort of type system to enforce those distinctions.
+
+52
+00:04:17,899 --> 00:04:21,769
+Perhaps I'm belaboring this point, but I think it's important, so one more time. A
+
+53
+00:04:21,769 --> 00:04:25,909
+languages type system specifies which operations are valid for which types. Then
+
+54
+00:04:25,909 --> 00:04:31,669
+the goal for type checking is to ensure that operations are used only, only with
+
+55
+00:04:31,669 --> 00:04:37,370
+the correct types. And by doing this, type checking enforces the intended
+
+56
+00:04:37,370 --> 00:04:41,059
+interpretation of values because nothing else is going to check. Once we get to the
+
+57
+00:04:41,059 --> 00:04:46,319
+machine code level, it's all just a lot of 0's and 1's, and the machine will be happy
+
+58
+00:04:46,319 --> 00:04:50,330
+to do whatever operations we tell it to on those 0's and 1's, whether or not those
+
+59
+00:04:50,330 --> 00:04:56,210
+operations make sense. So the purpose of type systems is to enforce the intended
+
+60
+00:04:56,210 --> 00:05:00,539
+interpretations of those bit patterns and make sure that if I have a bit pattern for
+
+61
+00:05:00,539 --> 00:05:05,449
+integers that I don't do any non-integer operations on that and get something that
+
+62
+00:05:05,449 --> 00:05:11,330
+is meaningless. Today, programming languages fall into three different
+
+63
+00:05:11,330 --> 00:05:15,650
+categories with respect to how they treat types. There are the statically types
+
+64
+00:05:15,650 --> 00:05:19,039
+languages, where all, or almost all, of the checking of types is done as part of
+
+65
+00:05:19,039 --> 00:05:24,360
+compilation, and Cool is one of these And other languages that you've probably seen,
+
+66
+00:05:24,360 --> 00:05:28,599
+like C and Java, are also statically typed. Then there are the dynamically
+
+67
+00:05:28,599 --> 00:05:32,419
+typed languages, where almost all of the checking of types is done as part of
+
+68
+00:05:32,419 --> 00:05:37,869
+program execution. And the Lisp family of languages, like Scheme and Lisp itself,
+
+69
+00:05:37,869 --> 00:05:44,710
+are in this category, as are languages like Python And pearl So you've probably
+
+70
+00:05:44,710 --> 00:05:49,460
+used, or heard of, at least, some of those languages And finally there are the
+
+71
+00:05:49,460 --> 00:05:54,509
+un-typed languages where no type checking is done at all, either at compile time or
+
+72
+00:05:54,509 --> 00:05:59,619
+at run time. And this is basically what machine code does. So machine code has no
+
+73
+00:05:59,619 --> 00:06:06,029
+notion of types and it forces no extraction boundaries, when it executes.
+
+74
+00:06:06,029 --> 00:06:09,449
+For decades there has been debate about the relative merits of static versus
+
+75
+00:06:09,449 --> 00:06:14,710
+dynamic typing and without taking sides let me lay out for you what the various
+
+76
+00:06:14,710 --> 00:06:19,259
+proponents on each side say. So, the people who believe in static typing say,
+
+77
+00:06:19,259 --> 00:06:23,080
+that static checking catches many programming errors in compile time and it
+
+78
+00:06:23,080 --> 00:06:26,479
+also avoids the overhead of runtime type checks. If I hooked on all the type
+
+79
+00:06:26,479 --> 00:06:30,039
+checking and compiled time well I don't have to check the types at runtime. I
+
+80
+00:06:30,039 --> 00:06:34,169
+don't have to check when I go do an operation that the arguments are of the
+
+81
+00:06:34,169 --> 00:06:38,349
+correct type because I already that check once and for all in compile time. And
+
+82
+00:06:38,349 --> 00:06:42,740
+these things are both definitely true. These are the two big advantages of static
+
+83
+00:06:42,740 --> 00:06:46,669
+checking. First of all Proves that some errors can never happen those are caught
+
+84
+00:06:46,669 --> 00:06:51,169
+at compile time so I never have to worry about those errors at run time, and its
+
+85
+00:06:51,169 --> 00:06:57,919
+faster Dynamic typing proponents counter that aesthetic type systems are
+
+86
+00:06:57,919 --> 00:07:02,159
+restrictive. So essentially, aesthetic type system has to prove that the program
+
+87
+00:07:02,159 --> 00:07:06,020
+is well typed, that all the types makes sense And it does this by restricting what
+
+88
+00:07:06,020 --> 00:07:10,009
+kinds of programs you can write. There are some programs that are more difficult to
+
+89
+00:07:10,009 --> 00:07:14,869
+write in an aesthetic type language because the compiler has a hard time
+
+90
+00:07:14,869 --> 00:07:21,509
+proving them correct. And there's also a belief that I, I see commonly stated that
+
+91
+00:07:21,509 --> 00:07:25,469
+rapid prototyping is more difficult with ecstatic type system. I think the idea
+
+92
+00:07:25,469 --> 00:07:29,979
+here is that if you're prototyping something, if you're exploring some idea
+
+93
+00:07:29,979 --> 00:07:34,559
+you may not actually know exactly what all the types are at that point in time And
+
+94
+00:07:34,559 --> 00:07:39,309
+having to commit to something that is going to work in all cases. You know, to
+
+95
+00:07:39,309 --> 00:07:43,020
+having a type correct program when you're just trying to fiddle around and figure
+
+96
+00:07:43,020 --> 00:07:48,089
+out what it is you're trying to do. That's very constraining and makes the work go
+
+97
+00:07:48,089 --> 00:07:54,830
+quite a bit slower. So what's the actual situation and practice today? Well, an
+
+98
+00:07:54,830 --> 00:07:57,929
+awful lot of code is written in [inaudible] type languages. And the
+
+99
+00:07:57,929 --> 00:08:01,959
+practical [inaudible] type languages that people use a lot have always have some
+
+100
+00:08:01,959 --> 00:08:07,360
+kind of escape mechanism. So, in C, in Java, in C++, you have some notion of
+
+101
+00:08:07,360 --> 00:08:13,529
+unsafe cast. In C an unsafe cast can just results in a runtime crash. In Java it r
+
+102
+00:08:13,529 --> 00:08:19,509
+esults in an [inaudible] runtime, when you have an unsafe or failed downcast. But
+
+103
+00:08:19,509 --> 00:08:25,249
+the, the effect is that you can get run time errors for type reasons. [sound] Now
+
+104
+00:08:25,249 --> 00:08:30,469
+on the dynamic typing site, the people who programming dynamic languages, they always
+
+105
+00:08:30,469 --> 00:08:34,950
+end up or seemed end up record fitting static typing to these dynamically typed
+
+106
+00:08:34,950 --> 00:08:39,030
+languages. So typically if a dynamically typed language because popular enough than
+
+107
+00:08:39,030 --> 00:08:42,570
+people trying to write optimizing compilers for them and the first thing
+
+108
+00:08:42,570 --> 00:08:47,510
+that people want to have on an optimizing compiler. Is some insta, type information
+
+109
+00:08:47,510 --> 00:08:52,030
+because it helps to generate much better code? And so people wind up going back and
+
+110
+00:08:52,030 --> 00:08:56,790
+trying to figure out how to get as many types as they can from these dynamically
+
+111
+00:08:56,790 --> 00:09:02,060
+types languages as soon as they start trying to build serious tools to improve
+
+112
+00:09:02,060 --> 00:09:06,940
+the programs written in these languages. And in my opinion it's really debatable
+
+113
+00:09:06,940 --> 00:09:12,370
+whether either compromise because, both of these are compromises on the either strict
+
+114
+00:09:12,370 --> 00:09:16,580
+static or strict dynamic point of view. But if either one of these represents the
+
+115
+00:09:16,580 --> 00:09:21,440
+best or the worst of both worlds. But this is certainly where we are today in
+
+116
+00:09:21,440 --> 00:09:28,400
+practice. Now Cool is a statically typed language and the types that are available
+
+117
+00:09:28,400 --> 00:09:33,330
+in Cool are the class names, so every time you define a class you define a new type,
+
+118
+00:09:33,330 --> 00:09:38,050
+and the special reserve symbol SELF'lt;u>TYPE which we'll be talking about in a separate'lt;/u>
+
+119
+00:09:38,050 --> 00:09:42,940
+video all of its own. And the way cool works is that the user declares the types
+
+120
+00:09:42,940 --> 00:09:48,000
+for identifiers. For every identifier you have to say what its type is But then the
+
+121
+00:09:48,000 --> 00:09:52,190
+compiler does the rest of the work. The compiler refers the type for expressions.
+
+122
+00:09:52,190 --> 00:09:58,040
+And in particular the compiler assigns a type to every single expression in, in the
+
+123
+00:09:58,040 --> 00:10:01,510
+program. So it will go through the entire abstract syntax string and using the
+
+124
+00:10:01,510 --> 00:10:06,610
+declared types for identifiers it will calculate a type for every expression and
+
+125
+00:10:06,610 --> 00:10:11,880
+sub-expression. To wrap up, it's worth mentioning that there's a couple of
+
+126
+00:10:11,880 --> 00:10:16,200
+different terms people use for the process of computer types, and that they mean
+
+127
+00:10:16,200 --> 00:10:20,900
+slight ly different things. So the simpler problem is what is known as type checking.
+
+128
+00:10:20,900 --> 00:10:25,070
+Here, we have a fully typed program, meaning we have an abstract syntax, free
+
+129
+00:10:25,070 --> 00:10:29,520
+with all the types filled in on every node, and our only job is to check. That
+
+130
+00:10:29,520 --> 00:10:33,780
+the types are correct, so we can just look at each note and its neighbors and confirm
+
+131
+00:10:33,780 --> 00:10:37,870
+that the types are correct in that part of the tree. And we can do this for every
+
+132
+00:10:37,870 --> 00:10:43,820
+part of the tree and check that the Program is type correct. Type inference,
+
+133
+00:10:43,820 --> 00:10:47,740
+on the other hand, is the process of filling in missing type information. So
+
+134
+00:10:47,740 --> 00:10:52,190
+here the view is that we have an abstract syntax tree with no types on it, or
+
+135
+00:10:52,190 --> 00:10:56,750
+perhaps just a few types in key locations, on say, on the declared variables, and
+
+136
+00:10:56,750 --> 00:10:59,900
+then we want to fill in missing types. We have some nodes in there, there with
+
+137
+00:10:59,900 --> 00:11:03,750
+absolutely no type information at all, and it's not just a question of confirming or
+
+138
+00:11:03,750 --> 00:11:07,230
+checking that the types are correct, we actually have to fill in the missing type
+
+139
+00:11:07,230 --> 00:11:11,740
+information. And these two things are different. Actually there are many
+
+140
+00:11:11,740 --> 00:11:15,840
+languages that are actually very, very different, but people often use the terms
+
+141
+00:11:15,840 --> 00:11:19,540
+interchangeably, and will not be particularly careful in my videos about
+
+142
+00:11:19,540 --> 00:11:20,920
+which term I am using either.

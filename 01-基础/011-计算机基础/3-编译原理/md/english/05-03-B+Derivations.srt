@@ -1,0 +1,23 @@
+0
+00:00:00,880 --> 00:00:04,400
+So to summarize, we're not just interested in whether a string is in
+
+1
+00:00:04,400 --> 00:00:09,110
+the language of a particular context-free grammar, we need to have a Parse Tree for
+
+2
+00:00:09,110 --> 00:00:15,290
+that string. And, a derivation defines a Parse Tree but it turns out that one Parse
+
+3
+00:00:15,290 --> 00:00:20,509
+Tree in general has many derivations and in particular, we're interested in the
+
+4
+00:00:20,509 --> 00:00:24,919
+leftmost and rightmost derivations. These are the two kinds of derivations that are
+
+5
+00:00:24,919 --> 00:00:27,259
+important in parser implementations.

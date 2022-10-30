@@ -1,0 +1,495 @@
+0
+00:00:03,629 --> 00:00:07,609
+In the last few videos, we've talked about managing registers. In this video, we're
+
+1
+00:00:07,609 --> 00:00:12,050
+going take a few moments to talk about another very important resource, the cache
+
+2
+00:00:12,050 --> 00:00:19,050
+and what compilers can and can't do to manage them. Modern computer systems have
+
+3
+00:00:20,269 --> 00:00:25,300
+quite elaborate memory hierarchies. And so, if we were to start at the closest
+
+4
+00:00:25,300 --> 00:00:30,269
+level to the processor itself, we would find that on the chip there are some
+
+5
+00:00:30,269 --> 00:00:35,860
+number of registers. And these are very fast access. So, typically that can be
+
+6
+00:00:35,860 --> 00:00:40,830
+accessed in a single cycle so at the same rate as the clock frequency. And the
+
+7
+00:00:40,830 --> 00:00:45,360
+problem is that it's very expensive to build such high performance memory. And
+
+8
+00:00:45,360 --> 00:00:50,470
+so, we don't get to have very much of it, typically. You know, you might have 256,
+
+9
+00:00:50,470 --> 00:00:57,470
+say, to 8K bytes of registers total available to you on a given processor.
+
+10
+00:00:57,780 --> 00:01:02,250
+Now, a very significant portion of the die area and the modern processor would be
+
+11
+00:01:02,250 --> 00:01:07,329
+devoted to the cache. And the cache is also quite high performance but not quite
+
+12
+00:01:07,329 --> 00:01:11,749
+as high performance as registers. Maybe on average, it would take three cycles just
+
+13
+00:01:11,749 --> 00:01:15,399
+service something from the cache but you get a lot more of it. And modern
+
+14
+00:01:15,399 --> 00:01:21,670
+processors would have up to a megabyte of cache. Then, much further away from the
+
+15
+00:01:21,670 --> 00:01:26,920
+processor is the main memory, the DRAM, and this is much more expensive to
+
+16
+00:01:26,920 --> 00:01:32,439
+allocate to access in time you know, typical values would be twenty to 100
+
+17
+00:01:32,439 --> 00:01:38,280
+cycles and I think, you know, it's more on 100 toward the 120 these days in most
+
+18
+00:01:38,280 --> 00:01:43,829
+processors but you get quite a lot of it. You get between 32 megabytes. That would
+
+19
+00:01:43,829 --> 00:01:49,539
+be fairly small machine up to four gigabytes for maximally provisions
+
+20
+00:01:49,539 --> 00:01:56,539
+processor. And finally, farthest away is typically disk. And this takes a very,
+
+21
+00:01:56,969 --> 00:02:00,789
+very long time to get to hundreds of thousands or millions of cycles but you
+
+22
+00:02:00,789 --> 00:02:07,069
+can have enormous amounts of storage out there, gigabytes to terabytes of storage.
+
+23
+00:02:07,069 --> 00:02:11,260
+As I said, there are limitations on the size and speed of registers and caches.
+
+24
+00:02:11,260 --> 00:02:16,330
+And these are limited as much by power actually as, as anything e lse these days.
+
+25
+00:02:16,330 --> 00:02:20,000
+And I, and so it's, you know, very important people would like to have as
+
+26
+00:02:20,000 --> 00:02:24,360
+much register and cache as possible but there are real constraints on how big and
+
+27
+00:02:24,360 --> 00:02:29,250
+how fast we can make these relative to the speeds of the processors. Now
+
+28
+00:02:29,250 --> 00:02:33,280
+unfortunately, the cost of a cache miss is very high as we saw in the previous slide.
+
+29
+00:02:33,280 --> 00:02:35,810
+If you, you could get something in a couple of cycles from the cache. But if
+
+30
+00:02:35,810 --> 00:02:41,450
+it's not in the cache, then it could take you a couple of orders of magnitude longer
+
+31
+00:02:41,450 --> 00:02:46,590
+to get it out of the main memory. And so for this reason people, you know, try to
+
+32
+00:02:46,590 --> 00:02:53,370
+build caches in between the processor and the main memory to hide that latency of
+
+33
+00:02:53,370 --> 00:02:56,540
+the main memory so that most of the data is in the cache. And typically, it
+
+34
+00:02:56,540 --> 00:03:03,500
+requires more than one level of cache these days to match a fast processor well
+
+35
+00:03:03,500 --> 00:03:07,560
+with the speed of a very large main memory. So, you know, very common now to
+
+36
+00:03:07,560 --> 00:03:11,320
+have two levels of cache and processors and some processors even have three levels
+
+37
+00:03:11,320 --> 00:03:18,320
+of cache. So the bottom line is that it's very important to for high performance to
+
+38
+00:03:19,450 --> 00:03:24,710
+manage these resources properly. Particular to manage the registers and the
+
+39
+00:03:24,710 --> 00:03:31,490
+cache as well if you want your program to perform well. Compilers have become very
+
+40
+00:03:31,490 --> 00:03:36,370
+good in managing registers and in fact, I think today, most people would agree that
+
+41
+00:03:36,370 --> 00:03:40,910
+for almost all programs, compilers do a better job at managing registers than
+
+42
+00:03:40,910 --> 00:03:45,590
+programmers can. And so, it's very worthwhile to leave the job of allocating
+
+43
+00:03:45,590 --> 00:03:50,560
+registers or assigning registers to the compiler. However, compilers are not good
+
+44
+00:03:50,560 --> 00:03:56,100
+at managing caches. And while there's a little bit that compilers can do and
+
+45
+00:03:56,100 --> 00:04:01,450
+that's what we're going to talk about in this rest of this video for the most part,
+
+46
+00:04:01,450 --> 00:04:05,670
+if programmers want to get good cache performance, they have to understand the
+
+47
+00:04:05,670 --> 00:04:08,580
+behavior of the cache is on the machine and have to understand what their program
+
+48
+00:04:08,580 --> 00:04:12,930
+is doing, you have to understand a little bit about what the compiler is capable of
+
+49
+00:04:12,930 --> 00:04:18,870
+doing and then they still have to , write the program in such a way that is going
+
+50
+00:04:18,870 --> 00:04:23,060
+to, to be cache friendly. So, it's still very much an open question. How much a
+
+51
+00:04:23,060 --> 00:04:26,330
+compiler can do to improve cache performance? Although, there are a few
+
+52
+00:04:26,330 --> 00:04:32,530
+things that we've found compilers can do reliably. So, to see one of those things
+
+53
+00:04:32,530 --> 00:04:39,530
+that compilers can actually do let's take a look at this example loop. So, what we
+
+54
+00:04:39,590 --> 00:04:45,220
+have here, we have an outer loop on j and inner loop on i and then in each iteration
+
+55
+00:04:45,220 --> 00:04:52,220
+of the inner loop we're reading from , some vector you know, performing some
+
+56
+00:04:53,440 --> 00:04:58,270
+computational net value and storing the results into the ith element of the A
+
+57
+00:04:58,270 --> 00:05:03,130
+vector. Now, as it turns out, this particular program has really, really
+
+58
+00:05:03,130 --> 00:05:07,600
+terrible cache performance. This is going to behave very badly. And so, let's think
+
+59
+00:05:07,600 --> 00:05:14,470
+about what's going to happen. So, let's imagine our cache, you know, as some block
+
+60
+00:05:14,470 --> 00:05:19,240
+of memory, okay. And so, what's going to happen here. I mean, what's, what's the
+
+61
+00:05:19,240 --> 00:05:26,240
+first iteration going to be? Well, we're going to, you know load and, store some
+
+62
+00:05:26,870 --> 00:05:32,669
+function of that into . And so, what's going to get loaded into the cache is and
+
+63
+00:05:32,669 --> 00:05:36,919
+. All right, let's assume they just go into different elements in this just for
+
+64
+00:05:36,919 --> 00:05:40,720
+the sake of argument, let's say they land in the first two elements in the cache.
+
+65
+00:05:40,720 --> 00:05:47,720
+And then we're going to do the second iteration of this and, we'll, we'll load
+
+66
+00:05:49,410 --> 00:05:56,410
+and write it into and so and will be loaded into the cache, all right and so
+
+67
+00:05:59,230 --> 00:06:04,169
+on. And this will repeat over and over and over again, loading one element of a and
+
+68
+00:06:04,169 --> 00:06:08,750
+one element of b the important thing to notice is that all of these references to
+
+69
+00:06:08,750 --> 00:06:15,750
+a and to b are misses, okay. Every single one of these is a cache miss because on
+
+70
+00:06:16,160 --> 00:06:20,949
+each iteration of the loop we refer to new elements, okay. So, we're not referring to
+
+71
+00:06:20,949 --> 00:06:26,690
+the same elements as we were on the previous ones. So, now let's ignore for
+
+72
+00:06:26,690 --> 00:06:31,510
+the moment the fact that there may be multiple elements in the same cache line,
+
+73
+00:06:31,510 --> 00:06:38,510
+okay. So, some of you probably are aware already. That when we fetch data from
+
+74
+00:06:38,620 --> 00:06:43,790
+memory we don't just fetch the one word, okay. So, typically when we refer to for
+
+75
+00:06:43,790 --> 00:06:49,260
+example you know, is stored here will fetch an entire cache line which will be
+
+76
+00:06:49,260 --> 00:06:54,620
+some block of memory and that may well have, you know, other elements of b in it.
+
+77
+00:06:54,620 --> 00:06:58,169
+So, we might get a couple other elements of b into the cache at the same time but
+
+78
+00:06:58,169 --> 00:07:01,650
+the important thing here is that on every iteration of the loop, we're referring to
+
+79
+00:07:01,650 --> 00:07:07,250
+fresh data, okay. And, and if these data values are large enough, if they take up
+
+80
+00:07:07,250 --> 00:07:13,490
+an entire cache line, then each iteration of the loop is going to be a cache miss
+
+81
+00:07:13,490 --> 00:07:17,680
+for both elements, and we won't get any benefit of the cache. And this loop will
+
+82
+00:07:17,680 --> 00:07:24,630
+run at the rate of at the rate of the main memory and not at the rate of the cache.
+
+83
+00:07:24,630 --> 00:07:28,949
+Now, the other thing that's important here is that this loop bound here is very large
+
+84
+00:07:28,949 --> 00:07:32,410
+and I picked it to be very large to suggest that it's much larger than the
+
+85
+00:07:32,410 --> 00:07:36,010
+size of the cache. So, as we get towards the end of the loop what's going to happen
+
+86
+00:07:36,010 --> 00:07:38,770
+is we will have filled up the whole cache, so this whole cache will be filled with
+
+87
+00:07:38,770 --> 00:07:43,889
+values from a and b, and then it's going to start clobbering values that are
+
+88
+00:07:43,889 --> 00:07:46,900
+already in the cache. And if this loop, you know, if the size of these vectors,
+
+89
+00:07:46,900 --> 00:07:53,710
+let's say twice the size of the cache by the time we come around and complete the
+
+90
+00:07:53,710 --> 00:07:58,400
+entire execution of the. Inner loop. What's in the cache is the second half of
+
+91
+00:07:58,400 --> 00:08:01,979
+the a and b arrays, it's not the first half of the a and b arrays. And so, then
+
+92
+00:08:01,979 --> 00:08:05,560
+when we go back around and execute another iteration of the outer loop, now what's in
+
+93
+00:08:05,560 --> 00:08:11,910
+the cache is also, going to be not the data that we're referencing. And so when
+
+94
+00:08:11,910 --> 00:08:16,009
+we come back around and begin the execution of the inner loop the second
+
+95
+00:08:16,009 --> 00:08:23,009
+time. And we refer to and, and, and . What's in the cache is the values from the
+
+96
+00:08:23,080 --> 00:08:26,190
+high numbered elements of the a and b vector and not the low numbered elements.
+
+97
+00:08:26,190 --> 00:08:30,690
+And so, these references are all misses again. And so, the, the basic problem with
+
+98
+00:08:30,690 --> 00:08:33,820
+this loop is, a loop that's structured like this, is that almost every memory
+
+99
+00:08:33,820 --> 00:08:40,099
+reference and if, and if the data values are big enough again that they fill an
+
+100
+00:08:40,099 --> 00:08:45,300
+entire cache line then it will be every single memory reference is a cache miss.
+
+101
+00:08:45,300 --> 00:08:50,810
+Now, instead, let's consider an alternative structure for the same
+
+102
+00:08:50,810 --> 00:08:56,170
+program. Here, I've put the i loop at as the outer loop and the j loop as the inner
+
+103
+00:08:56,170 --> 00:09:03,170
+loop. And here what we do is we load . And we write and then we repeat that
+
+104
+00:09:05,230 --> 00:09:10,130
+computation ten times on the same data values. And so here we'll get excellent
+
+105
+00:09:10,130 --> 00:09:14,050
+cash performance. We'll, we'll have a miss on the first reference, but then on the
+
+106
+00:09:14,050 --> 00:09:18,920
+subsequent nine references the data will be in the cache or will completely exhaust
+
+107
+00:09:18,920 --> 00:09:25,920
+our computation on those particular a and b values. And then we'll go on to the next
+
+108
+00:09:28,580 --> 00:09:32,050
+a and b values. We'll finish the inner loop and go on to the other and do one
+
+109
+00:09:32,050 --> 00:09:35,570
+more iteration of the outer loop. And so, the advantage of this structure is that it
+
+110
+00:09:35,570 --> 00:09:40,010
+brings the data into the cache and then it uses that data as much as possible, before
+
+111
+00:09:40,010 --> 00:09:45,660
+going on to the next data. Rather than doing a little bit on every data item and
+
+112
+00:09:45,660 --> 00:09:49,130
+then going back, you know, doing one pass and then going back and sweeping over all
+
+113
+00:09:49,130 --> 00:09:52,930
+items, items again and doing another little bit. Alright, so this particular
+
+114
+00:09:52,930 --> 00:09:55,950
+structure, where we've exchanged the order of the outer loops sorry, exchanged the
+
+115
+00:09:55,950 --> 00:09:59,880
+order of the inner and outer loops, it computes exactly the same thing but it has
+
+116
+00:09:59,880 --> 00:10:05,120
+much better cache behavior. And it probably run more than ten times faster.
+
+117
+00:10:05,120 --> 00:10:11,000
+Now compilers can preform this simple loop interchange optimization. This particular
+
+118
+00:10:11,000 --> 00:10:13,820
+kind of optimization is called loop interchange, where you just switch in the
+
+119
+00:10:13,820 --> 00:10:17,390
+order of loops. In this particular case, it's very easy to see that that's legal
+
+120
+00:10:17,390 --> 00:10:22,120
+and the compiler could actually figure it out. Not many compilers actually implement
+
+121
+00:10:22,120 --> 00:10:26,370
+this optimization because in general, it's not easy to decide whe ther you can
+
+122
+00:10:26,370 --> 00:10:30,620
+reverse the orders of, of the loops. And so usually, a programmer would have to
+
+123
+00:10:30,620 --> 00:10:34,360
+figure out that they wanted to do this, in order to improve the performance in the

@@ -1,0 +1,315 @@
+0
+00:00:03,439 --> 00:00:10,370
+Welcome back, In this video, we're going to do an extended example of SLR parsing.
+
+1
+00:00:10,370 --> 00:00:14,759
+To review, here is the parsing automaton for the grammar that we've been looking at
+
+2
+00:00:14,759 --> 00:00:19,950
+in the last couple of videos. And this is just the deterministic version of the, non
+
+3
+00:00:19,950 --> 00:00:23,290
+deterministic automaton we built last time. And I've just gone through and
+
+4
+00:00:23,290 --> 00:00:28,290
+numbered all of the states. So let's take a look at what happens when we parse the
+
+5
+00:00:28,290 --> 00:00:32,930
+input [inaudible] times [inaudible]. And just to review, we've appended dollar sign
+
+6
+00:00:32,930 --> 00:00:36,989
+here to the end, to indicate where the end of the input occurs. That's just an end of
+
+7
+00:00:36,989 --> 00:00:41,760
+input marker. And because this is the beginning of the parse we haven't seen any
+
+8
+00:00:41,760 --> 00:00:46,249
+input yet. And so the vertical bar is all the way at the left hand side of the
+
+9
+00:00:46,249 --> 00:00:53,249
+input. So the machine begins in state one, and there's nothing on the stack. The
+
+10
+00:00:53,899 --> 00:00:56,719
+vertical bar is all the way to the left again, so the stack is empty. So it just
+
+11
+00:00:56,719 --> 00:01:02,819
+terminates in state one. And these are the possible items, that are valid for the
+
+12
+00:01:02,819 --> 00:01:08,960
+initial state of the parser. So among those items, we see that there are two
+
+13
+00:01:08,960 --> 00:01:13,180
+that tell us that it's okay to shift an integer in this state. And, of course, the
+
+14
+00:01:13,180 --> 00:01:18,210
+first input is an integer, and so there are no reduced moves. All the other items
+
+15
+00:01:18,210 --> 00:01:22,120
+in here also have their jobs all the way at the left side of the item, so there's
+
+16
+00:01:22,120 --> 00:01:25,450
+no possible reduced move in this state. The only thing we could possibly do is
+
+17
+00:01:25,450 --> 00:01:32,450
+shift, and it's okay to shift an integer. So to summarize, on the initial
+
+18
+00:01:32,990 --> 00:01:37,060
+configuration of the parser, the DFA halts in state one, it never even gets out of
+
+19
+00:01:37,060 --> 00:01:40,030
+state one, so it starts there and ends there without even reading any input
+
+20
+00:01:40,030 --> 00:01:44,980
+because the stack is empty and the action that, that state tells us to do is to
+
+21
+00:01:44,980 --> 00:01:49,780
+shift. So that leads us in the following state, there's an int on the stack and we
+
+22
+00:01:49,780 --> 00:01:56,780
+have a times coming up on the input. So, what happens in that situation? Well, we
+
+23
+00:01:57,900 --> 00:02:01,120
+begin. The automaton is going to read the stack. So, starting from the bottom of the
+
+24
+00:02:01,120 --> 00:02:06,210
+stack, we're in the start state. And then we read an int, there's an int on the
+
+25
+00:02:06,210 --> 00:02:10,599
+stack, and we win d up in this state. And what does this state tell us we can do?
+
+26
+00:02:10,598 --> 00:02:16,069
+Well, it tells us one possibility is to reduce by T goes to int. But again, we
+
+27
+00:02:16,069 --> 00:02:22,730
+will only do that, if the following input is in the follow of T, And times, which is
+
+28
+00:02:22,730 --> 00:02:29,730
+the next input item, is not in the follow of T. So times is not in the follow. Of T
+
+29
+00:02:30,060 --> 00:02:35,620
+and so reducing here is not a possibility. That leaves only the other item to
+
+30
+00:02:35,620 --> 00:02:40,000
+consider and here we see that this item says we can the time. So if the times the
+
+31
+00:02:40,000 --> 00:02:45,700
+next thing in input, which it is, it's okay to shift. So the DFA halts in state
+
+32
+00:02:45,700 --> 00:02:51,450
+three and because there's a times in the input the move is to shift. And that puts
+
+33
+00:02:51,450 --> 00:02:55,400
+us into this configuration where we have int and times on the stack. Times is at
+
+34
+00:02:55,400 --> 00:03:01,599
+the top of the stack, int is below it and we have an int coming up in the input. So
+
+35
+00:03:01,599 --> 00:03:06,590
+what happens now, again, the DFA is going to read the entire stack. So beginning at
+
+36
+00:03:06,590 --> 00:03:09,770
+the bottom of the stack, the first thing it sees is an int, and it moves to that
+
+37
+00:03:09,770 --> 00:03:15,720
+state. And then it sees a times, and so it moves to this state. And now, in this
+
+38
+00:03:15,720 --> 00:03:20,440
+particular state, what are the possibilities? Well, we can see, first of
+
+39
+00:03:20,440 --> 00:03:25,770
+all, that there are no reduced moves. There are no items with the dot all the
+
+40
+00:03:25,770 --> 00:03:30,280
+way at the right end. So the only possibility is a, is a shift. And we could
+
+41
+00:03:30,280 --> 00:03:35,069
+shift if the upcoming input's a open paren, which it's not. More usefully, we
+
+42
+00:03:35,069 --> 00:03:40,130
+could shift if the upcoming input is an [inaudible], which is exactly what we see.
+
+43
+00:03:40,130 --> 00:03:46,010
+So, the DFA terminates in state eleven, and the move in that state is to shift.
+
+44
+00:03:46,010 --> 00:03:50,459
+And that puts us into this state, where we have int times int on the stack, and we
+
+45
+00:03:50,459 --> 00:03:57,020
+are out of input. We are at the end of the input. So let's see what happens on the
+
+46
+00:03:57,020 --> 00:04:03,959
+stack int times int. The automaton reads it int times int and it winds up back in
+
+47
+00:04:03,959 --> 00:04:10,450
+state three. Sa3 tells us that we can shift if the, next input item is a times
+
+48
+00:04:10,450 --> 00:04:16,879
+and which it is not. Or we can reduce, if whatever the next. Is in the next input is
+
+49
+00:04:16,879 --> 00:04:22,690
+in the follow of T. And in fact dollar is in, the follow of T. So, in, the end of
+
+50
+00:04:22,690 --> 00:04:27,940
+the input come after a T on the stack. And that means it's fine to reduce by T goes
+
+51
+00:04:27,940 --> 00:04:34,940
+to int. So, once we do that, once we do the reduction T goes to int, we wind up in
+
+52
+00:04:36,060 --> 00:04:40,880
+the state times T. That's our stack contents and of course we're still at the
+
+53
+00:04:40,880 --> 00:04:45,790
+end of the input. So once again the DFA is going to read the entire stack contents
+
+54
+00:04:45,790 --> 00:04:49,860
+from the bottom to the top. First it reads the int at the bottom of the stack, then
+
+55
+00:04:49,860 --> 00:04:54,080
+it sees the times. And then it finally reads the t at the top of the stack. And
+
+56
+00:04:54,080 --> 00:04:58,669
+it winds up in a new state, state four. And the interesting thing about this
+
+57
+00:04:58,669 --> 00:05:03,750
+particular step is that the DFA took a different path through the state graph
+
+58
+00:05:03,750 --> 00:05:07,830
+than it did the previous time. And that's because the stack contents changed. We
+
+59
+00:05:07,830 --> 00:05:11,650
+didn't just add stuff to the stack, and so we didn't extend the previous path. We
+
+60
+00:05:11,650 --> 00:05:15,760
+actually replaced some symbols or a symbol on the stack with a new symbol, in this
+
+61
+00:05:15,760 --> 00:05:20,520
+case, the non-terminal T and that caused the DFA to take a different path. Now what
+
+62
+00:05:20,520 --> 00:05:26,030
+does this item in state four tell us to do? Well it says that we can reduce by T
+
+63
+00:05:26,030 --> 00:05:31,889
+goes to N times T if whatever. Follows in the input is in the follow of T. And, once
+
+64
+00:05:31,889 --> 00:05:37,000
+again, dollar is in the follow of T. And so we'll do that reduction, and now we're
+
+65
+00:05:37,000 --> 00:05:41,020
+left with the static contents just consisting of T. And, of course we're
+
+66
+00:05:41,020 --> 00:05:45,210
+still at the end of the input. And let's see what happens now. So now of course the
+
+67
+00:05:45,210 --> 00:05:49,370
+contents of the stack have changed even more radically and so the DFA just goes
+
+68
+00:05:49,370 --> 00:05:53,370
+off in a completely different direction. It reads T winds up in this state and this
+
+69
+00:05:53,370 --> 00:05:57,590
+state says we can either shift a plus if there's a plus in the input. And again,
+
+70
+00:05:57,590 --> 00:06:03,699
+there's no more input. Or we can reduce by E goes to T if dollar, if the end of the
+
+71
+00:06:03,699 --> 00:06:07,979
+input is in the follow of E, Which it is. And so the reduction will be the one that
+
+72
+00:06:07,979 --> 00:06:14,110
+we do. And now we have, this stack contents, consisting only of E. Let's see
+
+73
+00:06:14,110 --> 00:06:17,990
+what happens in that situation. Now we make a transition to this state, state
+
+74
+00:06:17,990 --> 00:06:24,120
+two. And we only have one item, S prime goes to E dot. And so this is a reduced
+
+75
+00:06:24,120 --> 00:06:28,530
+move. And again, dollar is in the follow of S prime, ' cause that is the start
+
+76
+00:06:28,530 --> 00:06:32,570
+symbol. And since that is the start symbol, we accept at this point. So once
+
+77
+00:06:32,570 --> 00:06:37,720
+we get to that item as our, reduce move, we know that the input has been
+
+78
+00:06:37,720 --> 00:06:38,970
+successfully parsed.

@@ -1,0 +1,15 @@
+0
+00:00:00,989 --> 00:00:03,389
+So, to summarize, a bottom up parser traces out a
+
+1
+00:00:03,389 --> 00:00:08,420
+rightmost derivation in reverse. And it builds a parse tree by combining small parse
+
+2
+00:00:08,420 --> 00:00:12,990
+trees into larger ones. It precedes bottom up. Instead of expanding out from the
+
+3
+00:00:12,990 --> 00:00:17,300
+start symbol top down, it builds from the leaves of the tree up towards the root.

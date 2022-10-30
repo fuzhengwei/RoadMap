@@ -1,0 +1,119 @@
+0
+00:00:00,760 --> 00:00:03,840
+So to summarize the main points one very important thing is
+
+1
+00:00:03,840 --> 00:00:08,420
+that the activation record has to be designed together with the code generation.
+
+2
+00:00:08,420 --> 00:00:12,300
+So you have to do these things at the same time. You can't just design the
+
+3
+00:00:12,300 --> 00:00:15,400
+activation record without thinking about what code you're going to generate And
+
+4
+00:00:15,400 --> 00:00:19,270
+you can't just think about generating code without making some decisions about where
+
+5
+00:00:19,270 --> 00:00:23,300
+the data is going to be lived. So the code and the data it manipulates, have
+
+6
+00:00:23,300 --> 00:00:29,460
+to be designed simultaneously. Code generation can be done by a recursive traversal
+
+7
+00:00:29,460 --> 00:00:34,289
+of the abstract syntax street, so just like type checking. Cogeneration can
+
+8
+00:00:34,289 --> 00:00:39,440
+be expressed as a r ecursive tree-walk And that's a very handy way to think about
+
+9
+00:00:39,440 --> 00:00:43,829
+cogeneration because it allows you to think about one case at a time without having
+
+10
+00:00:43,829 --> 00:00:48,979
+to get mixed up thinking about all the different constructs at one time. >> And
+
+11
+00:00:48,979 --> 00:00:55,440
+finally I recommend that you use a stack machine for your compiler. So if you're
+
+12
+00:00:55,440 --> 00:00:59,679
+implementing a course project, the stack machine is the simplest discipline and
+
+13
+00:00:59,679 --> 00:01:03,959
+it gives you a nice framework for think, for breaking up the project into manageable
+
+14
+00:01:03,959 --> 00:01:07,850
+pieces. And because of that simplicity, I think it's a really good way
+
+15
+00:01:07,850 --> 00:01:14,850
+to learn about writing compilers. Now, it is important to realize that production compilers
+
+16
+00:01:15,120 --> 00:01:20,230
+do, do some different things. They're not quite as simple as, the stack
+
+17
+00:01:20,230 --> 00:01:26,320
+machine cogeneration that we have outlined in the last few videos. So, the main differences,
+
+18
+00:01:26,320 --> 00:01:30,900
+or, or, the main difference, is that the big emphasis in a production compiler
+
+19
+00:01:30,900 --> 00:01:35,900
+is on keeping values and registers. It's much more efficient to do
+
+20
+00:01:35,900 --> 00:01:41,370
+operations out of registers than to be saving and loading values from the stack And
+
+21
+00:01:41,370 --> 00:01:45,210
+so, especially the values in the current activation record or current stack
+
+22
+00:01:45,210 --> 00:01:50,820
+frame. It, in production compiler we try to keep those in registers instead of on the
+
+23
+00:01:50,820 --> 00:01:57,460
+stack And also, typically a pressure compiler, to the extent that it has to use
+
+24
+00:01:57,460 --> 00:02:01,390
+temporaries, in the activation record. These would be resolved, laid out directly
+
+25
+00:02:01,390 --> 00:02:04,590
+in the activation record, not pushed and popped from the stack. That means they'd be
+
+26
+00:02:04,590 --> 00:02:09,869
+assigned, pre-assigned locations in the activation record, just like, the function
+
+27
+00:02:09,869 --> 00:02:13,920
+arguments in the simple language we looked at are assigned fixed positions in the activation
+
+28
+00:02:13,920 --> 00:02:17,290
+record. So those temporary values would also be assigned fixed positions,
+
+29
+00:02:17,290 --> 00:02:20,709
+so you could save the trouble of manipulating the stack pointer.

@@ -1,0 +1,323 @@
+0
+00:00:00,900 --> 00:00:04,400
+We're now ready to wrap up our discussion of automatic memory management.
+
+1
+00:00:04,400 --> 00:00:07,840
+And so I just want to make a few, high level points here. First of all,
+
+2
+00:00:07,840 --> 00:00:13,480
+there's no question that automatic memory management is a great thing. It prevents very
+
+3
+00:00:13,480 --> 00:00:19,189
+serious storage bugs, some of the most difficult bugs in programming, and when
+
+4
+00:00:19,189 --> 00:00:24,349
+you're writing in the garbage collected language you really have just a
+
+5
+00:00:24,349 --> 00:00:28,390
+whole class of things you don't have to worry about and so it is certainly a more
+
+6
+00:00:28,390 --> 00:00:35,390
+productive way to program. So if, if your problem, your program is really a good fit
+
+7
+00:00:36,000 --> 00:00:40,750
+for automatic memory management then you'd be crazy not to use a system that provided
+
+8
+00:00:40,750 --> 00:00:44,480
+that kind of support. Now, the disadvantage of automatic memory management
+
+9
+00:00:44,480 --> 00:00:48,530
+is that it reduces programmer control. So you don't have control anymore
+
+10
+00:00:48,530 --> 00:00:53,760
+over the layout of data and memory, and you don't have control over when the memory
+
+11
+00:00:53,760 --> 00:00:57,700
+is reallocated. So, you neither have control over where the data is in memory
+
+12
+00:00:57,700 --> 00:01:02,500
+and you have only a very limited amount of control over how much memory your
+
+13
+00:01:02,500 --> 00:01:08,520
+program is using, okay? And so if these two things don't matter, if your, if
+
+14
+00:01:08,520 --> 00:01:13,430
+your application is not extremely data intensive where the precisely out of data
+
+15
+00:01:13,430 --> 00:01:18,280
+memory and how much data is residing in memory is important then garbage collection
+
+16
+00:01:18,280 --> 00:01:22,960
+will likely work very well. But there are applications particularly high end
+
+17
+00:01:22,960 --> 00:01:28,000
+data processing and scientific applications which use a lot of data and need
+
+18
+00:01:28,000 --> 00:01:32,420
+to make very, very efficient use of the memory where garbage collection actually
+
+19
+00:01:32,420 --> 00:01:38,030
+becomes too inefficient to do a good job and people in those domains still
+
+20
+00:01:38,030 --> 00:01:44,710
+use manual memory management. But there are some other issues. So, in real time applications
+
+21
+00:01:44,710 --> 00:01:48,299
+the pauses can be problematic. So, if you have a program that
+
+22
+00:01:48,299 --> 00:01:52,810
+needs to meet guaranteed deadlines, many embedded systems that are interacting
+
+23
+00:01:52,810 --> 00:01:57,970
+with the outside world say controlling dangerous machinery and things like that they
+
+24
+00:01:57,970 --> 00:02:03,210
+have to have response times that are guaranteed to make sure that nothing terrible
+
+25
+00:02:03,210 --> 00:02:08,170
+happens. And, and you know, introducing a automatic memory management
+
+26
+00:02:08,169 --> 00:02:12,170
+system that might pause for arbitrary amounts of time you know, makes that a very
+
+27
+00:02:12,170 --> 00:02:17,519
+problematic things guaranty. So, you don't always see garbage selection used in
+
+28
+00:02:17,519 --> 00:02:22,680
+real time applications. Although there has been a lot a progress in the last several
+
+29
+00:02:22,680 --> 00:02:28,359
+years on real time garbage collectors. Another issue for every programmer who uses
+
+30
+00:02:28,359 --> 00:02:33,120
+automatic memory management probably will have to face is the problem of memory
+
+31
+00:02:33,120 --> 00:02:38,180
+leaks. So, while automatic memory management prevents you from corrupting your
+
+32
+00:02:38,180 --> 00:02:44,840
+memory, it really doesn't prevent you from hanging on to too much data and possibly
+
+33
+00:02:44,840 --> 00:02:48,999
+affecting the performance of your program dramatically. So, memory leaks are
+
+34
+00:02:48,999 --> 00:02:52,799
+possible in garbage collected languages and I would say they are even likely. Said,
+
+35
+00:02:52,799 --> 00:02:57,469
+you know, the fact that you're not as aware or not as forced to be aware of how
+
+36
+00:02:57,469 --> 00:03:02,120
+the memory is being used makes it easier to have memory leaks. And the kind
+
+37
+00:03:02,120 --> 00:03:08,230
+of memory leak that you will have in say, a Java program is that you'll have some you
+
+38
+00:03:08,230 --> 00:03:14,180
+know, some variable say x that points to some data structure and this data structure
+
+39
+00:03:14,180 --> 00:03:19,150
+is gigantic, okay? So lets say that this is the abstract syntax tree, in
+
+40
+00:03:19,150 --> 00:03:25,699
+a compiler, alright? Now there may come a point in the computation where you don't need
+
+41
+00:03:25,699 --> 00:03:30,430
+the abstract syntax tree anymore. So let's say that we have converted to an intermediate
+
+42
+00:03:30,430 --> 00:03:35,309
+language and from the abstract syntax tree and now all our processing
+
+43
+00:03:35,309 --> 00:03:38,480
+for the rest of the compilation is going t be on the intermediate language
+
+44
+00:03:38,480 --> 00:03:41,999
+representation and generating code from that, we never go back and look at the abstract
+
+45
+00:03:41,999 --> 00:03:47,099
+syntax tree again. Well, the compiler I mean, excuse me, the, the garbage
+
+46
+00:03:47,099 --> 00:03:50,129
+collector doesn't know that you are not going to use the abstract syntax tree
+
+47
+00:03:50,129 --> 00:03:54,109
+again in the future. And if you have a variable that's pointing to this gigantic
+
+48
+00:03:54,109 --> 00:03:58,049
+data structure even if you are not using it, it's gong to hang around and
+
+49
+00:03:58,049 --> 00:04:02,870
+is going to be using up memory. And so the right thing to do is when you reach a point
+
+50
+00:04:02,870 --> 00:04:06,699
+in program where you are not going to use this data structure anymore is to assign
+
+51
+00:04:06,699 --> 00:04:11,809
+x the null value. You want to assign x to null at that point and essentially
+
+52
+00:04:11,809 --> 00:04:15,599
+dropping this pointer to the data structure. And now the garbage collector,
+
+53
+00:04:15,599 --> 00:04:18,810
+whatever form it is, mark and sweeps, Stop and copy or reference counting
+
+54
+00:04:18,810 --> 00:04:22,129
+will be able to see that this is no longer reachable and will collect that
+
+55
+00:04:22,129 --> 00:04:27,080
+big structure. And this is very, very common in, in production Java programs to
+
+56
+00:04:27,080 --> 00:04:32,840
+have these kinds of memory leaks where you just have pointers that you forgot about to
+
+57
+00:04:32,840 --> 00:04:39,550
+data that you're no longer going to use. So as a whole, I have conveyed in the
+
+58
+00:04:39,550 --> 00:04:44,289
+last few lectures, garbage collection is a very important technique. Every programmer
+
+59
+00:04:44,289 --> 00:04:50,150
+should be aware of its benefits and costs and it's also very interesting aspect of programming
+
+60
+00:04:50,150 --> 00:04:53,479
+language implementation. There are much more advanced garbage collecting
+
+61
+00:04:53,479 --> 00:04:57,889
+algorithms than we have discussed in these lectures and the primary dimensions along
+
+62
+00:04:57,889 --> 00:05:01,169
+which people have thought about improving garbage collection, that is making garbage
+
+63
+00:05:01,169 --> 00:05:06,449
+collection concurrent. That means allowing the program to continue to run while other
+
+64
+00:05:06,449 --> 00:05:10,740
+collection is happening. So the collector is working in the background actively while
+
+65
+00:05:10,740 --> 00:05:16,599
+the program is running. Another thing that's very common actually in, in production
+
+66
+00:05:16,599 --> 00:05:21,099
+collectors is to what's called a generational collector. And the basic idea
+
+67
+00:05:21,099 --> 00:05:28,090
+here is that we don't want to keep going over lo oking at objects that are very
+
+68
+00:05:28,090 --> 00:05:32,500
+long lived on every collection. So, collections happen very frequently and there
+
+69
+00:05:32,500 --> 00:05:36,189
+will be some objects that just live for very long time, the big data structures
+
+70
+00:05:36,189 --> 00:05:40,979
+that hang around for most of the program. And once we have seen them, in
+
+71
+00:05:40,979 --> 00:05:44,479
+a couple of collections we probably can assume that they're going to be around for
+
+72
+00:05:44,479 --> 00:05:49,099
+a few more collections. And so in a generational collection sorry in a generational
+
+73
+00:05:49,099 --> 00:05:52,539
+collector older objects, objects that have been around for a while
+
+74
+00:05:52,539 --> 00:05:56,889
+are put in a seperate area and they're collected less frequently. And this just allows
+
+75
+00:05:56,889 --> 00:06:01,379
+the collector to focus on the objects that are most likely to be garbage
+
+76
+00:06:01,379 --> 00:06:06,659
+which are the recently allocated objects. We already talked a little bit about Realtime.
+
+77
+00:06:06,659 --> 00:06:10,259
+So there are collectors that try to bound the length or the, bound the length
+
+78
+00:06:10,259 --> 00:06:15,759
+of the maximum pause, the maximum interruption to the program. And finally parallel
+
+79
+00:06:15,759 --> 00:06:19,580
+collectors. So collector systems where the garbage, there's actually several
+
+80
+00:06:19,580 --> 00:06:24,199
+garbage collectors running at the same time and somehow coordinating their actions.

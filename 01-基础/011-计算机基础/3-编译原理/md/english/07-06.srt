@@ -1,0 +1,263 @@
+0
+00:00:03,740 --> 00:00:07,090
+In this video, we're gonna continue our discussion of bottom-up parsing with the
+
+1
+00:00:07,090 --> 00:00:14,090
+main strategy used by all bottom-up parsers, so-called shift-reduce parsing.
+
+2
+00:00:15,549 --> 00:00:19,300
+Here is a quick review of the most important thing that we learned last time,
+
+3
+00:00:19,300 --> 00:00:24,380
+that a bottom up parser traces a right most innervations in reverse. Now this
+
+4
+00:00:24,380 --> 00:00:29,849
+particular fact has an important consequence. So let's think about a state
+
+5
+00:00:29,849 --> 00:00:35,460
+of a shift reduced parse where we have string alpha, beta and omega, and let's
+
+6
+00:00:35,460 --> 00:00:40,750
+assume the next reduction is going to be the replaced beta by X. Okay, so remember
+
+7
+00:00:40,750 --> 00:00:47,320
+we're running productions backwards. Then I claim that Omega has to be a string of
+
+8
+00:00:47,320 --> 00:00:51,410
+terminals. And why is that? Well if you think about it, if this is a rightmost
+
+9
+00:00:51,410 --> 00:00:56,120
+innervations in reverse, then when X is replaced when we take this if we look at
+
+10
+00:00:56,120 --> 00:00:59,670
+the forward step is the, the backward step. So remember the parser is running
+
+11
+00:00:59,670 --> 00:01:04,280
+this way replacing data by X. But if we think about the rightmost innervations in
+
+12
+00:01:04,280 --> 00:01:08,729
+the other direction then X has to be the rightmost non-terminal, which means there
+
+13
+00:01:08,729 --> 00:01:15,729
+are no non-terminals to the right of X and so all the Character, all the tokens,
+
+14
+00:01:15,859 --> 00:01:21,700
+whatever it is in this string have to be terminal symbols. Now it turns out that
+
+15
+00:01:21,700 --> 00:01:26,999
+those terminal symbols to the right of the right most non-terminal are exactly the
+
+16
+00:01:26,999 --> 00:01:32,689
+unexamined input in bottom of parsley implementations. That is if I have alpha
+
+17
+00:01:32,689 --> 00:01:39,689
+X, omega and I'm, and X is my right most to non-terminal then this is the input
+
+18
+00:01:40,359 --> 00:01:45,409
+that we haven't read yet. This is unexamined Input And it's gonna be useful
+
+19
+00:01:45,409 --> 00:01:50,810
+to mark, where we are, in the parse, where our, where our input focus is. And we're
+
+20
+00:01:50,810 --> 00:01:54,270
+gonna do that by using a vertical bar. So we're gonna just place, drop a vertical
+
+21
+00:01:54,270 --> 00:01:59,649
+bar. Between the place where we read everything to the left, and we've actually
+
+22
+00:01:59,649 --> 00:02:03,130
+been working on this. So this stuff to the left here can be terminals and
+
+23
+00:02:03,130 --> 00:02:06,670
+non-terminals and we, the parts that we've seen all of that stuff. And the stuff to
+
+24
+00:02:06,670 --> 00:02:10,550
+the right is after the parts hasn't seen. Now we don't know what's out there,
+
+25
+00:02:10,550 --> 00:02:14,080
+although we do know its all terminal symbols. An d the vertical bar is just
+
+26
+00:02:14,080 --> 00:02:21,080
+gonna mark the dividing line between the two sub-strings. To implement bottom up
+
+27
+00:02:21,110 --> 00:02:26,110
+parsing, it turns out we only needs two kinds of actions. Shift moves and reduce
+
+28
+00:02:26,110 --> 00:02:29,860
+moves. And we've already talked somewhat about reduce moves, and so we have to
+
+29
+00:02:29,860 --> 00:02:36,310
+introduce shift moves. So let's do that now. So a shift move, reads one token of
+
+30
+00:02:36,310 --> 00:02:40,280
+input. And we can explain that or represent that by moving the vertical bar
+
+31
+00:02:40,280 --> 00:02:44,790
+one token to the right. So if our input focus is here, and we want to read one
+
+32
+00:02:44,790 --> 00:02:48,730
+more token of input, then we just move the vertical bar over. And this signifies that
+
+33
+00:02:48,730 --> 00:02:54,010
+now the parser knows about that next, terminal symbol. And now we can start
+
+34
+00:02:54,010 --> 00:02:57,340
+working on it. It can do things. We can match against it for the purposes of
+
+35
+00:02:57,340 --> 00:03:01,900
+performing reductions. Again the stuff out here to the right of the vertical bar the
+
+36
+00:03:01,900 --> 00:03:08,900
+parser hasn't seen yet. And then a reduce move is to apply an inverse production at
+
+37
+00:03:08,970 --> 00:03:15,970
+the right end of the left string. So if in production a goes to xy and we have x and
+
+38
+00:03:16,110 --> 00:03:20,840
+y here immediately to the left of the vertical bar. So this is our focus point,
+
+39
+00:03:20,840 --> 00:03:25,250
+okay, and x and y the right hand side of the reduction is right there. Then we can
+
+40
+00:03:25,250 --> 00:03:29,710
+do a reduction, we can replace that right hand side by the left hand side, and this
+
+41
+00:03:29,710 --> 00:03:36,710
+is a reduce move. Here is the example from the last video, and this is exactly the
+
+42
+00:03:37,470 --> 00:03:42,730
+example just showing the reduced moves, now with the vertical bar also shown. So
+
+43
+00:03:42,730 --> 00:03:48,120
+this shows where the input focus was, at the point where each of the reductions was
+
+44
+00:03:48,120 --> 00:03:51,980
+performed. And what's missing, of course, now we know, is the sequence of shift
+
+45
+00:03:51,980 --> 00:03:57,010
+moves. So here is the sequence of shift moves and reduce moves that, take the
+
+46
+00:03:57,010 --> 00:04:04,000
+initial input string, to the start symbol. So let's walk through this in more detail.
+
+47
+00:04:04,000 --> 00:04:08,470
+So we're going to go step by step. And we're going to show each shift and each
+
+48
+00:04:08,470 --> 00:04:14,740
+reduce move. And now in addition to our input string down here we also have a
+
+49
+00:04:14,740 --> 00:04:19,289
+pointer showing where the where in the input we are. So initially we haven't seen
+
+50
+00:04:19,289 --> 00:04:24,139
+any of the input, and our input pointer is to the left of the entire str ing. So the
+
+51
+00:04:24,139 --> 00:04:29,969
+first move is to do a shift. And then we do another shift, and then we do another
+
+52
+00:04:29,969 --> 00:04:35,569
+shift. And now just look at the example from before if you look back at that, at
+
+53
+00:04:35,569 --> 00:04:38,979
+that example, you know, the next thing we need to do is to reduce. So remember we're
+
+54
+00:04:38,979 --> 00:04:43,759
+only allowed to reduce to the left of the arrows. So, we can only reduce over on
+
+55
+00:04:43,759 --> 00:04:48,370
+this side of the arrow. So, we always have to read enough of the input before we can
+
+56
+00:04:48,370 --> 00:04:55,370
+perform a reduced move. And then we perform another reduce move, okay? And
+
+57
+00:04:55,770 --> 00:04:59,599
+then it turns out the next thing to do is two shift moves and we haven't explained
+
+58
+00:04:59,599 --> 00:05:02,979
+yet how we know whether to shift or reduce we're going to get there. I'm just showing
+
+59
+00:05:02,979 --> 00:05:07,999
+that there exists a sequence of shift and reduce moves that succeed in parsing this
+
+60
+00:05:07,999 --> 00:05:14,430
+example. Now we've shifted the entire input onto this sorry we've, we've. We
+
+61
+00:05:14,430 --> 00:05:18,830
+shifted over the entire input, so there's no more input to read. And now all we can
+
+62
+00:05:18,830 --> 00:05:23,110
+do is reduce moves. But fortunately, there is a sequence of reduce moves from this
+
+63
+00:05:23,110 --> 00:05:29,599
+point, that we can we can perform. So, here we reduce int, and then we reduce T
+
+64
+00:05:29,599 --> 00:05:36,599
+plus T. Oh, forgot, we first reduce T to E, and then we reduce T plus E back to the
+
+65
+00:05:36,710 --> 00:05:37,569
+start symbol.

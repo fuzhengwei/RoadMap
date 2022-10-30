@@ -1,0 +1,183 @@
+0
+00:00:00,760 --> 00:00:04,800
+To sum up our discussion of activations it's obvious I think that
+
+1
+00:00:04,800 --> 00:00:09,140
+the activation tree depends on the runtime behavior of the program. So it depends on
+
+2
+00:00:09,140 --> 00:00:12,700
+the runtime value who's exactly which procedures are called and what the
+
+3
+00:00:12,700 --> 00:00:17,530
+activation tree turns out to be. Now, this was not illustrated in our examples but it
+
+4
+00:00:17,530 --> 00:00:22,890
+should be obvious that the activation tree can be different for different inputs. And
+
+5
+00:00:22,890 --> 00:00:27,720
+so the programs I showed you didn't take input and so we didn't have, every time
+
+6
+00:00:27,720 --> 00:00:31,830
+you run those programs we'll get the same activation tree, playing general if
+
+7
+00:00:31,830 --> 00:00:35,010
+program takes input, it will execute differently and may call different
+
+8
+00:00:35,010 --> 00:00:41,399
+procedures and different orders. And finally here's perhaps the most important
+
+9
+00:00:41,399 --> 00:00:46,049
+point for an implementation point of view. Since activations are properly nested, we
+
+10
+00:00:46,049 --> 00:00:53,049
+can use a stack to implement of detract the currently active activations. So,
+
+11
+00:00:53,769 --> 00:00:59,219
+let's see how we can use a stack to track activations. We'll use these examples that
+
+12
+00:00:59,219 --> 00:01:04,659
+we looked at before. And what I'm going to do is I'm going to show the activation
+
+13
+00:01:04,659 --> 00:01:10,780
+tree over here on the left and I'm going to show the stack of currently executing
+
+14
+00:01:10,780 --> 00:01:14,820
+activations on the right. So the stack is not gonna keep track of the entire
+
+15
+00:01:14,820 --> 00:01:19,350
+activation tree. It's only going to keep track of the activations that are
+
+16
+00:01:19,350 --> 00:01:24,810
+currently running so at each step of the program, the stack should contain all of
+
+17
+00:01:24,810 --> 00:01:31,390
+the currently active or currently running activations. So, the tree we already saw
+
+18
+00:01:31,390 --> 00:01:36,980
+have the build and we begin by executing main so that will be the root of the tree
+
+19
+00:01:36,980 --> 00:01:42,170
+And since the stack is supposed to have all of the currently running activations,
+
+20
+00:01:42,170 --> 00:01:49,170
+the stack will have to have main on it. So it will begin with just the procedure main
+
+21
+00:01:49,500 --> 00:01:56,500
+And now main calls g And so g becomes a child of main And over here on the stack,
+
+22
+00:01:57,250 --> 00:02:04,250
+we would push g on to the stack And then G returns and what that means is that, that
+
+23
+00:02:07,050 --> 00:02:14,050
+G is no longer running and so G will get popped off the stack and then, the, the
+
+24
+00:02:14,889 --> 00:02:20,319
+main procedure calls F and so F will get pushed on to the stack And you can see
+
+25
+00:02:20,319 --> 00:02:24,989
+here that after G finishes we can pop it off and we can push on that and we
+
+26
+00:02:24,989 --> 00:02:29,879
+maintain the environment that we have a stack of the currently running
+
+27
+00:02:29,879 --> 00:02:35,849
+activations. All right, then F is going to call G. I forgot to complete my tree here,
+
+28
+00:02:35,849 --> 00:02:42,849
+So main calls f and then f calls g. All right, So now the stack at this point is
+
+29
+00:02:43,670 --> 00:02:50,670
+main f and g. And once g finishes running, it will be Popped off of the stack because
+
+30
+00:02:52,730 --> 00:02:58,859
+it is no longer executing. And then f will finish, and f will also get popped off the
+
+31
+00:02:58,859 --> 00:03:04,019
+stack and finally main will finish and main will also be popped off the stack.
+
+32
+00:03:04,019 --> 00:03:07,709
+And so that's the idea. So that is how we can use the stack. So essentially when a
+
+33
+00:03:07,709 --> 00:03:11,870
+procedure is called we'll push an activation for that procedure on to the
+
+34
+00:03:11,870 --> 00:03:16,840
+stack. And when the procedure returns, we will pop that activation off the stack.
+
+35
+00:03:16,840 --> 00:03:23,840
+And because activation lifetimes are properly nested this will work out. So, to
+
+36
+00:03:23,939 --> 00:03:29,599
+conclude our discussion of activations, let's return to the runtime organization
+
+37
+00:03:29,599 --> 00:03:34,430
+As you may recall. We have a block of memory that is allocated to the program
+
+38
+00:03:34,430 --> 00:03:39,569
+and the first portion of that block is occupied by the code for the program
+
+39
+00:03:39,569 --> 00:03:44,919
+itself. And now in the rest of that memory that is allocated to the program, we are
+
+40
+00:03:44,919 --> 00:03:48,180
+going to have to restore the data that the program needs to execute and one of the
+
+41
+00:03:48,180 --> 00:03:52,799
+important structures that goes there is the stack of activations. So typically,
+
+42
+00:03:52,799 --> 00:03:59,620
+this will start after the code area. And the stack would grow towards the other end
+
+43
+00:03:59,620 --> 00:04:05,079
+of the memory space of the program and the stack will grow when procedures are called
+
+44
+00:04:05,079 --> 00:04:09,879
+and it will shrink when procedures return. And as we'll see, there are other things
+
+45
+00:04:09,879 --> 00:04:15,239
+that go in this data area that we are going to be discussing in the upcoming videos.

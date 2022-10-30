@@ -1,0 +1,307 @@
+0
+00:00:03,949 --> 00:00:07,839
+In this video, we're going to talk about our first parsing algorithm, recursive
+
+1
+00:00:07,839 --> 00:00:14,839
+descent parsing. So Recursive Descent is what is called a top-down parsing
+
+2
+00:00:16,090 --> 00:00:21,220
+algorithm and you might suspect that there are also bottom-up algorithms and they are
+
+3
+00:00:21,220 --> 00:00:25,540
+indeed such things but we will be talking about them later but in a top-down parsing
+
+4
+00:00:25,540 --> 00:00:29,500
+algorithm, the parse tree is constructed from the top so starting with the root
+
+5
+00:00:29,500 --> 00:00:35,879
+node and from left to right. And so the terminals then will be seen in the order
+
+6
+00:00:35,879 --> 00:00:40,520
+that they appear in the token string. So for example, if I have this token string
+
+7
+00:00:40,520 --> 00:00:45,410
+here, this is a hypothetical parse tree that I could construct and the numbers
+
+8
+00:00:45,410 --> 00:00:50,530
+here correspond to the order in which the nodes of this parse tree are constructed.
+
+9
+00:00:50,530 --> 00:00:54,760
+So we have to begin at the roots, that's the first thing that happens and then if
+
+10
+00:00:54,760 --> 00:00:59,489
+T2 is a. Belongs here in the parse tree. That would be next thing that happened but
+
+11
+00:00:59,489 --> 00:01:04,720
+then if we have a nonterminal of the next position, that will be number three and
+
+12
+00:01:04,720 --> 00:01:08,619
+then if it has children, well the left most one should be going left to right
+
+13
+00:01:08,619 --> 00:01:12,780
+will be the fourth thing to be generated. And then let's say the two children of
+
+14
+00:01:12,780 --> 00:01:16,920
+number four are both terminals that would be the next two terminals in the input and
+
+15
+00:01:16,920 --> 00:01:21,030
+so on. The next thing that'll happen is the second child of number three and then
+
+16
+00:01:21,030 --> 00:01:27,630
+the last two terminals appearing in left to right order. So let's consider this
+
+17
+00:01:27,630 --> 00:01:34,039
+grammar for integer expressions and let's look at a particular input, a very simple
+
+18
+00:01:34,039 --> 00:01:39,700
+one, just open paren five, close paren. And now, what we're going to do is we're
+
+19
+00:01:39,700 --> 00:01:42,999
+going to parse this using a recursive descent strategy. I'm not gonna actually
+
+20
+00:01:42,999 --> 00:01:47,340
+show you any pseudocode or anything like that. I'm just going to walk through how
+
+21
+00:01:47,340 --> 00:01:52,189
+this, how this input string would be parsed. But using this grammar and the
+
+22
+00:01:52,189 --> 00:01:57,749
+Recursive Descent Algorithm and the basic idea is that we begin with a nonterminal,
+
+23
+00:01:57,749 --> 00:02:02,999
+we begin with the root node and we always try the rules for nonterminal in order. So
+
+24
+00:02:02,999 --> 00:02:08,110
+we will begin by starting with e goes to t and if that doesn't work, we'll try e goes
+
+25
+00:02:08,110 --> 00:02:12,560
+to t + e. So, this is gonna be a top down algorithm beginning at the root. We're
+
+26
+00:02:12,560 --> 00:02:17,569
+gonna work from left to right, we try the productions in order and when the
+
+27
+00:02:17,569 --> 00:02:22,860
+productions fail, we may have to do some back tracking in order to try alternative
+
+28
+00:02:22,860 --> 00:02:26,730
+productions. There are three parts. There's the grammar that we're using.
+
+29
+00:02:26,730 --> 00:02:30,970
+There is the parse tree that we're building and initially that's just the
+
+30
+00:02:30,970 --> 00:02:35,430
+root of the parse tree 3e and finally there's the input that we're processing
+
+31
+00:02:35,430 --> 00:02:38,790
+and we'll indicate our position in the input, how much of the input we have read
+
+32
+00:02:38,790 --> 00:02:44,290
+by this big fat red arrow and it always points to the next terminal symbol to be
+
+33
+00:02:44,290 --> 00:02:48,409
+read, The next token to be read. So in this case, we're starting with an open
+
+34
+00:02:48,409 --> 00:02:54,019
+paren. Okay? And also in the grammar, you can see the highlighting here the brighter
+
+35
+00:02:54,019 --> 00:02:58,569
+red color indicates which production we're going to try. So, we're going to begin to
+
+36
+00:02:58,569 --> 00:03:03,489
+build our Parse Tree by trying production e goes to t, and what does that mean?
+
+37
+00:03:03,489 --> 00:03:08,420
+Well, that means we make t the child of e and then we continue trying to build the
+
+38
+00:03:08,420 --> 00:03:13,560
+Parse Tree. Well, so remember we're going left to right and top-down so now, t is an
+
+39
+00:03:13,560 --> 00:03:18,129
+unexpanded nonterminal, is the only unexpanded nonterminal so we have to work
+
+40
+00:03:18,129 --> 00:03:22,239
+on it. And what are we going to do, well we're going to try a production for t and
+
+41
+00:03:22,239 --> 00:03:26,859
+since we haven't tried any yet, we'll just try the first one, t goes to it. So the
+
+42
+00:03:26,859 --> 00:03:32,040
+next step is to make nth a child with t and that's what our parse tree looks like.
+
+43
+00:03:32,040 --> 00:03:36,269
+And now, we actually have something that we can check. We can check whether we're
+
+44
+00:03:36,269 --> 00:03:42,329
+making progress. So observe that as long as we're generating nonterminals, we don't
+
+45
+00:03:42,329 --> 00:03:47,890
+really know whether we're on the right track or not. We have no way to check
+
+46
+00:03:47,890 --> 00:03:51,810
+whether the nonterminals that we're generating are gonna produce the, the
+
+47
+00:03:51,810 --> 00:03:56,549
+input string. But once we generate a terminal symbol, then we can compare that
+
+48
+00:03:56,549 --> 00:04:01,549
+with the next input token to see if they're the same and in this case,
+
+49
+00:04:01,549 --> 00:04:05,849
+unfortunately they're not. So, the nth that we generated here doesn't match the
+
+50
+00:04:05,849 --> 00:04:11,209
+open paren in the input and so clearly this parse, th is parsing strategy or
+
+51
+00:04:11,209 --> 00:04:15,139
+this. Parse Tree that we're building isn't going to work out. So, what we're going to
+
+52
+00:04:15,139 --> 00:04:19,709
+have to do is we're gonna have to back track. That means, we're gonna undo one or
+
+53
+00:04:19,709 --> 00:04:23,700
+more of our decisions. We're gonna go back to our last decision point and see if
+
+54
+00:04:23,700 --> 00:04:27,470
+there's another alternative to try. So what's the last decision we made, well we
+
+55
+00:04:27,470 --> 00:04:32,580
+decide to use t goes to nth, so we can undo that and then we could try the next
+
+56
+00:04:32,580 --> 00:04:39,580
+production for t. And that happens to be t goes to n t so expand t using that
+
+57
+00:04:39,820 --> 00:04:44,450
+production and now once again, we generated a terminal in the left most
+
+58
+00:04:44,450 --> 00:04:49,250
+position and so now we're able to compare that with the input and once again
+
+59
+00:04:49,250 --> 00:04:54,880
+unfortunately, the nth token does not match the open paren so we have to back
+
+60
+00:04:54,880 --> 00:05:01,530
+track again. So we undo that decision. And this takes us back to trying alternatives
+
+61
+00:05:01,530 --> 00:05:08,440
+for t. There's one more possibility, and that's the t goes to (e). So we expand t
+
+62
+00:05:08,440 --> 00:05:15,440
+using that production. And now, we can compare the token open paren. With, is
+
+63
+00:05:17,070 --> 00:05:21,650
+this open paren? With the open paren in the input and they match. And so, that's
+
+64
+00:05:21,650 --> 00:05:27,620
+good. That means that we're, we might be on the right track. And since they match,
+
+65
+00:05:27,620 --> 00:05:32,810
+anything that we do in the future is going to have to match the different input and
+
+66
+00:05:32,810 --> 00:05:38,400
+so we'll advance the input pointer. So now, where we're gonna work on next? Well,
+
+67
+00:05:38,400 --> 00:05:42,910
+we have to expand this non-terminal e and we're gonna do the same thing we did
+
+68
+00:05:42,910 --> 00:05:49,910
+before. We're just gonna start with the first production. So we have e goes to t
+
+69
+00:05:49,910 --> 00:05:53,620
+and then we have to work on t, so we're gonna pick the first production for t and
+
+70
+00:05:53,620 --> 00:05:59,560
+we have t goes to int. So now, we can compare. Is int matching int in the input?
+
+71
+00:05:59,560 --> 00:06:04,840
+And if it does and so we advance the input pointer again, And now we're here and
+
+72
+00:06:04,840 --> 00:06:09,620
+what's left, well we progressed to this point. We're looking at that open paren
+
+73
+00:06:09,620 --> 00:06:15,270
+and that also matches. So that matches the input and now we've matched everything in
+
+74
+00:06:15,270 --> 00:06:20,440
+the parse tree and our input pointer is at the end of the string and so this is
+
+75
+00:06:20,440 --> 00:06:27,440
+actually a successful parse of the input, of the input string. And so that means th
+
+76
+00:06:28,320 --> 00:06:32,020
+at we accept and the parser terminates successfully.

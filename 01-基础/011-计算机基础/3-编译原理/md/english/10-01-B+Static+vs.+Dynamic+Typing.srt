@@ -1,0 +1,91 @@
+0
+00:00:02,139 --> 00:00:04,269
+What this means is that the soundness theorem for the Cool type
+
+1
+00:00:04,269 --> 00:00:09,160
+system is a bit more complicated than the one for simple type systems. So in the
+
+2
+00:00:09,160 --> 00:00:14,869
+presence of sub-typing, the, the property that we want is that the static type, computed
+
+3
+00:00:14,869 --> 00:00:20,999
+by the compiler for a given expression E, is going to be a correct predictor of all
+
+4
+00:00:20,999 --> 00:00:25,230
+the possible dynamic types that he could have, and we do that by using the sub typing
+
+5
+00:00:25,230 --> 00:00:29,480
+relationship right here. So we say that with every dynamic type E could have
+
+6
+00:00:29,480 --> 00:00:34,980
+whatever types E can take on at run time, they have to be a sub type of the single static
+
+7
+00:00:34,980 --> 00:00:41,730
+type that is predicted for E. What this means is that all the operations that
+
+8
+00:00:41,730 --> 00:00:46,370
+can be used on an object of type C have to also be able to be used on any object of type
+
+9
+00:00:46,370 --> 00:00:52,320
+C prime that's a subtype of C. So if C defines certain attributes and methods,
+
+10
+00:00:52,320 --> 00:00:59,320
+then all of those attributes and methods have to be available in C prime. And therefore
+
+11
+00:00:59,500 --> 00:01:05,379
+sub classes can only add attributes or methods. So whatever attributes
+
+12
+00:01:05,379 --> 00:01:10,579
+and methods a sub class will have, what c, c prime in this case, those
+
+13
+00:01:10,579 --> 00:01:16,850
+are all in addition to what c has. So c prime, a sub class, will never remove an attribute
+
+14
+00:01:16,850 --> 00:01:21,600
+or remove a method. It will only extend or add methods and attributes to the
+
+15
+00:01:21,600 --> 00:01:25,880
+class it is inheriting fro M. And note that you're allowed to redefine methods in
+
+16
+00:01:25,880 --> 00:01:30,530
+cool, and in most object oriented languages, but you cannot change the type.
+
+17
+00:01:30,530 --> 00:01:34,890
+So even though you can redefine the code that goes with that method, it still has to
+
+18
+00:01:34,890 --> 00:01:39,219
+type check according to the original type that you declared. And so whatever type
+
+19
+00:01:39,219 --> 00:01:43,259
+the method has in the first class in which it's defined, it's going to have that
+
+20
+00:01:43,259 --> 00:01:47,289
+same type, that same argument and result, the same types for the method arguments,
+
+21
+00:01:47,289 --> 00:01:51,009
+and the same types for the method result in all of the sub classes. And
+
+22
+00:01:51,009 --> 00:01:56,010
+that's a pretty standard, design point for a lot of object oriented languages.

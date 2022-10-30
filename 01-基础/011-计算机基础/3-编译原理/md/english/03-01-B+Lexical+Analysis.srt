@@ -1,0 +1,27 @@
+0
+00:00:00,900 --> 00:00:06,420
+To summarize, lexical analysis implementation has to do two things. The first
+
+1
+00:00:06,420 --> 00:00:11,089
+job is to recognize the substrings in the input that correspond to tokens. And
+
+2
+00:00:11,089 --> 00:00:16,690
+here's a little bit of compiler lingo these substrings are called the lexemes. So
+
+3
+00:00:16,690 --> 00:00:21,920
+the words of the program are called the lexemes. And then the second job is at for
+
+4
+00:00:21,920 --> 00:00:28,369
+each lexeme we have to identify its token class. And then the output of the lexical
+
+5
+00:00:28,369 --> 00:00:35,369
+analyzer is a series of pairs which are the token class. And lexing, Okay, And this
+
+6
+00:00:35,610 --> 00:00:39,750
+whole thing, one of these pairsis called A token.

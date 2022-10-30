@@ -1,0 +1,729 @@
+0
+00:00:01,719 --> 00:00:04,899
+欢迎回来, 在这个视频中, 我们将继续我们关于词汇的讲座
+Welcome back, In this video, we're going to continue our lecture on lexical
+
+1
+00:00:04,899 --> 00:00:08,800
+通过一些过去编程语言的例子进行分析
+analysis with some examples from past programming languages where interesting
+
+2
+00:00:08,800 --> 00:00:15,800
+词汇问题出现了, 我们已经讲了一些关于Fortran的内容
+lexical problems arose. So we've already talked a little bit about Fortran and what
+
+3
+00:00:17,600 --> 00:00:21,669
+在Fortran中有趣的词汇规则是白色空间
+are the interesting lexical rules in Fortran is the white space is
+
+4
+00:00:21,669 --> 00:00:27,970
+无关紧要的白色空间并不重要, 像VAR1这样的东西
+insignificant so white space doesn't matter and something like VAR1 to which
+
+5
+00:00:27,970 --> 00:00:34,610
+可以是变量名VAR1和VA R1是一样的所以这两个程序
+could be a variable name VAR1 is exactly the same as VA R1 so these two program
+
+6
+00:00:34,610 --> 00:00:39,130
+片段的意思是完全一样的东西用Fortran的思想就是你
+fragments have to mean exactly the same thing sand the idea in Fortran is that you
+
+7
+00:00:39,130 --> 00:00:42,410
+可以使用你的程序你可以删掉它的所有空格, 这是不应该的
+can take your program and you could delete all the blanks from it and that shouldn't
+
+8
+00:00:42,410 --> 00:00:48,920
+改变程序的意义, 让我们看一个例子
+change what the program means at all. Let's take a look at an example of how
+
+9
+00:00:48,920 --> 00:00:52,920
+Fortran的白色空间规则影响词法分析, 这里有几个Fortran语言。
+Fortran's white space rule affects lexical analysis. Here are a couple of Fortran
+
+10
+00:00:52,920 --> 00:00:57,910
+代码片段, 我应该说这个例子是从龙书中提取的
+code fragments and I should say that this example is taken from the dragon book and
+
+11
+00:00:57,910 --> 00:01:01,590
+实际上, 后面的几个例子也来自于旧版本的
+actually couple of the later examples were also taken from an older edition of the
+
+12
+00:01:01,590 --> 00:01:07,810
+龙书, 但不管怎样, 我们这里有, 这实际上是一个Fortran的头
+dragon book. But anyway what we have here, this is actually the header of a Fortran
+
+13
+00:01:07,810 --> 00:01:14,810
+循环, 你知道它是一个循环因为它有一个关键字, 就像四个
+loop. And you know it's a loop because it has the key word do, which is like four in
+
+14
+00:01:16,760 --> 00:01:23,760
+现代的C或C++所以我说循环关键字然后我们有了迭代变量I
+modern C or C++ so I'd say loop key word And then we have out iteration variable I
+
+15
+00:01:23,860 --> 00:01:29,280
+我们有一个范围, 我将会改变, 在这个例子中, 我将从
+and we have a range that I will vary between. So, in this case I will go from
+
+16
+00:01:29,280 --> 00:01:34,520
+1到25, 然后这个数字5, 这有点奇怪, 有点奇怪
+one up to 25. And then this number five here, this is a little bit odd, something
+
+17
+00:01:34,520 --> 00:01:39,870
+你在现代语言中看不到, 在过去的Fortran语言中你会有你的
+you don't see in modern languages. In the old days in Fortran you would have your do
+
+18
+00:01:39,870 --> 00:01:44,299
+在循环顶部的语句然后是循环的大小或者所有的语句
+statement at the top of the loop and then the size of the loop or all the statements
+
+19
+00:01:44,299 --> 00:01:49,770
+在循环中包含了一个标签, 它们在做了之后就出现了
+included in the loop Were named by a label, they came right after the do
+
+20
+00:01:49,770 --> 00:01:56,770
+语句, 所以, 循环会从, 标题, do语句延伸到
+statement. So, the loop will extend from the, the header, the do statement down to
+
+21
+00:01:56,840 --> 00:02:00,049
+标签5, 所以无论什么语句都可以用5, 所有的语句
+the label five. So whatever statement was able with five, all of the statements in
+
+22
+00:02:00,049 --> 00:02:05,310
+中间是循环的一部分, 所以循环会执行这些语句
+between would be part of the loop. And so, the loop would execute those statements
+
+23
+00:02:05,310 --> 00:02:08,890
+然后我们回到标题, 然后继续执行, 直到它
+then we'll go back around to the header and then we keep executing those until it
+
+24
+00:02:08,889 --> 00:02:14,550
+对于迭代变量的每一个值都这样做了, 在本例中, 是1
+had done so for every one of the values of the iteration variable, in this case, one
+
+25
+00:02:14,550 --> 00:02:19,400
+到25, 这是另一个代码片段你们可以看到这个几乎是
+to 25. Now, here's a nother code fragment and as you can see this one is almost
+
+26
+00:02:19,400 --> 00:02:25,580
+和上面的一样, 唯一的区别是, 我换一下
+exactly the same as the one above. The only difference is, let me just switch
+
+27
+00:02:25,580 --> 00:02:31,420
+颜色, 在这里这个特殊的片段在那个位置有一个逗号
+colors, is here that this particular fragment has a comma in that position and
+
+28
+00:02:31,420 --> 00:02:37,000
+这个片段有一个周期, 结果是这个差使所有的
+this fragment has a period. And it turns out that this difference makes all the
+
+29
+00:02:37,000 --> 00:02:44,000
+不同的是这两个代码片段意味着完全不同的东西, 所以, 这个
+difference that these two fragment of code mean completely different things. So, this
+
+30
+00:02:44,209 --> 00:02:50,500
+片段, 第一个, 实际上是一个循环, 就像我之前说的那样它有
+fragment, the first one, is in fact a do loop as I said before so it has the
+
+31
+00:02:50,500 --> 00:02:57,060
+关键字do, 标签5, 变量I和范围1到25, 现在这个片段
+keyword do, the label five, the variable I and the range one to 25. Now this fragment
+
+32
+00:02:57,060 --> 00:03:03,800
+在这里, 这实际上是一个变量名, 做5I, 到目前为止没有
+down here, this is actually a variable name, do 5I, So far as writing without the
+
+33
+00:03:03,800 --> 00:03:08,250
+空格, 记住空格不重要, 这是5I, 这是an
+blanks. Remember the blanks don't matter, This would be do 5I and this is an
+
+34
+00:03:08,250 --> 00:03:15,250
+赋值等于数字1.25, 好了, 你们可以看到这些符号, 
+assignment equals the number 1.25. Okay, And so you can see here these symbols, the
+
+35
+00:03:17,209 --> 00:03:22,840
+序列, 第一个符号序列的解释完全不同
+sequence, the first sequence of symbols is interpreted completely differently
+
+36
+00:03:22,840 --> 00:03:28,769
+取决于是否有一个句号或者一个逗号, 所以我们就做一个
+depending on whether there's a period or a comma further on. And so let's just be a
+
+37
+00:03:28,769 --> 00:03:33,470
+更准确的说, 我们怎么知道是什么呢？让我们把注意力集中在
+little more precise about that. How do we know what do is? So let's just focus on
+
+38
+00:03:33,470 --> 00:03:39,060
+这里的关键字是这样的当我们在这一点的时候, 当我们的焦点在这里
+the keyword here do and when we're at this point, when our focus is here right after
+
+39
+00:03:39,060 --> 00:03:45,430
+0, 记住, 这个要实现的方法是
+the zero. And keep in mind that, that the way this is going to be implemented is by
+
+40
+00:03:45,430 --> 00:03:50,269
+从左到右的扫描所以我们要沿着这个方向走
+a left to right scan so we're going to be walking in this direction over the, over
+
+41
+00:03:50,269 --> 00:03:53,980
+当我们的焦点到达时, 输入将会成功地观察每个字符
+the input looking at each character successfully and when our focus reaches
+
+42
+00:03:53,980 --> 00:03:58,790
+这一点, 我们可以做一个决定, 这是a, 这是关键字, 因为我们
+this point, we can make a decision. Is this a, is this a keyword 'cause we've
+
+43
+00:03:58,790 --> 00:04:04,379
+也看到了整个关键字, 问题是我们没有信息
+seen the entire keyword too. And the problem is that we don't have information
+
+44
+00:04:04,379 --> 00:04:07,840
+来做这个决定, 我们不知道这是做还是不做
+to make that decision. We don't know whether this is do or whether it's going
+
+45
+00:04:07,840 --> 00:04:13,190
+最终成为一个变量名的一部分, 比如5I, 唯一的方法是
+to be eventually be part of a variable name like do 5I. And the only way to know
+
+46
+00:04:13,190 --> 00:04:18,109
+在这个位置的输入中看看是否有逗号或者
+is to look ahead in the input to this position to see whether there's a comma or
+
+47
+00:04:18,108 --> 00:04:25,109
+这是一个需要向前看的词汇分析的例子。
+a period there. So this is an example of lexical analysis that requires look ahead.
+
+48
+00:04:25,350 --> 00:04:31,280
+为了理解应得的角色, 我们要从左到右, 我们必须选择
+In order to understand the role of due, as we're going left to right. We have to pick
+
+49
+00:04:31,280 --> 00:04:36,030
+在输入之前看到一些符号稍后会出现, 我们不可能
+ahead of the input to see some symbols that come later on. And we can't possibly
+
+50
+00:04:36,030 --> 00:04:42,430
+消除歧义的作用直到那个poin t因为到这个点, 序列和
+disambiguate role of do until that poin t because up to this point, the sequence and
+
+51
+00:04:42,430 --> 00:04:45,160
+符号是完全一样的所以唯一能区分它们的是
+the symbols are exactly the same and so the only thing that distinguishes them is
+
+52
+00:04:45,160 --> 00:04:48,870
+这是一种更深入的东西, 你可以想象, 有很多
+something that's much, much further on. And as you can imagine, having lots of
+
+53
+00:04:48,870 --> 00:04:53,310
+展望未来使词汇分析的实现变得更加复杂, 因此
+look ahead complicates the implementation of lexical analysis and so one of the
+
+54
+00:04:53,310 --> 00:04:59,020
+在词汇系统的设计中, 目标是尽量减少未来的阅读量。
+goals in the design of lexical systems is to minimize the amount of the look ahead
+
+55
+00:04:59,020 --> 00:05:04,270
+或者限制未来的阅读量, 所以你可能想知道为什么是Fortran
+or bound the amount of look ahead that is required. So you might wonder why Fortran
+
+56
+00:05:04,270 --> 00:05:08,870
+关于白色空间有一个有趣的规则, 结果是在打孔机上
+has this funny rule about white space. It turns out that on punch card machines it
+
+57
+00:05:08,870 --> 00:05:14,030
+很容易在事故中添加额外的空格因此他们将这条规则添加到
+was easy to add extra blanks by accidents and as a result they added this rule to
+
+58
+00:05:14,030 --> 00:05:18,130
+这种语言, 穿孔卡片操作符不需要重做所有的工作
+the language so the punch card operator wouldn't have to redo their work all the
+
+59
+00:05:18,130 --> 00:05:25,130
+幸运的是, 今天我们不再在打孔卡上输入我们的程序了。
+time. Fortunately today we don't enter our programs anymore on punch cards. But this
+
+60
+00:05:25,530 --> 00:05:29,370
+例子可以帮助我们更好地理解我们在词汇中要做的事情
+example does help us understand better what we're trying to do in lexical
+
+61
+00:05:29,370 --> 00:05:33,490
+分析, 正如我所说的, 目标是分割字符串, 我们试着买
+analysis so as I said the goal is to partition the string. We're trying to buy
+
+62
+00:05:33,490 --> 00:05:38,830
+将字符串连接到语言的逻辑单元中, 这是由
+the string up into the logically units of the language. And this is implemented by
+
+63
+00:05:38,830 --> 00:05:43,180
+从左向右看, 所以我们在做左向右扫描输入, 
+reading left to right. So we're doing a left to right scan over the input,
+
+64
+00:05:43,180 --> 00:05:48,340
+在一段时间内识别一个令牌。正因为如此, 展望未来可能是
+recognizing one token at a time. And because of that, look ahead may be
+
+65
+00:05:48,340 --> 00:05:52,340
+需要决定一个令牌的结束和下一个令牌的开始, 再一次, 我
+required to decide where one token ends and the next token begins. And again, I
+
+66
+00:05:52,340 --> 00:05:56,300
+想要强调的是, 向前看总是需要的但是我们想要最小化
+want to stress that look ahead is always needed but we would like to minimize the
+
+67
+00:05:56,300 --> 00:06:00,949
+看前面的量, 事实上, 我们喜欢把它和这个常数联系起来, 
+amount of look ahead. And in fact, we like to bound it to some constant to this,
+
+68
+00:06:00,949 --> 00:06:04,380
+因为它将简化词汇分析器的实现
+because it will simplify the implementation of lexical analyzer quite a
+
+69
+00:06:04,380 --> 00:06:10,240
+现在来说明一下我们一直都要担心的问题
+bit. Now just to illustrate to look ahead is something that we always have to worry
+
+70
+00:06:10,240 --> 00:06:15,440
+让我们考虑一下这个例子我们之前已经看过了, 注意一下
+about. Let's consider this example which we've looked at before and just notice
+
+71
+00:06:15,440 --> 00:06:19,800
+当我们从左向右看时, 让我们看一下这个关键字, 什么时候
+that when we're reading left to right, let's look at this keyword else here, when
+
+72
+00:06:19,800 --> 00:06:26,669
+我们读了E, 我们要决定它是一个变量名还是某个符号, 但它本身
+we read the E. We have to decide is that a variable name or some symbol but itself or
+
+73
+00:06:26,669 --> 00:06:32,039
+我们想要把它和跟随它们的符号一起考虑, 所以
+do we want to consider it together with the symbols that follow them. And so
+
+74
+00:06:32,039 --> 00:06:36,020
+这里有一个展望, 在我们对E进行扫描之后, 我们必须决定它是坐着的
+there's a look ahead issue here. After we scanned E, we have to decide does that sit
+
+75
+00:06:36,020 --> 00:06:40,770
+或者它是一个更大的词汇单位的一部分？而且, 你知道有一个
+by itself or is it part of a larger lexical unit? And, you know there a re
+
+76
+00:06:40,770 --> 00:06:45,830
+在这个例子中, 单字符变量名, 如I, J和Z, 所以它不是
+single character variable names in this example like I, J, and Z and so it's not
+
+77
+00:06:45,830 --> 00:06:52,009
+不合理的E也可以是另一个例子是这个双等号。
+unreasonable that E could also be one and another example is this double-equals.
+
+78
+00:06:52,009 --> 00:06:56,889
+当我们读到一个等号时, 我们如何判断它是否等于一个等号
+When we read a single equal sign, how do we decide whether that's a single equals
+
+79
+00:06:56,889 --> 00:07:01,009
+就像其他的作业一样或者它是一个双等号, 为了
+like these other assignments or that it's really a double-equals. Well, in order to
+
+80
+00:07:01,009 --> 00:07:05,380
+这样做, 如果我们的焦点在这里, 我们必须向前看, 看到。
+do that, if our focus point is right here, we have to look ahead and see. There's
+
+81
+00:07:05,380 --> 00:07:10,050
+另一个=上来这就是我们如何知道或如何知道的, 我们想要
+another = coming up and that's how we know or how we will know. That we wanted to
+
+82
+00:07:10,050 --> 00:07:17,050
+把它合并成一个单独的符号, 而不是单独考虑这个等号。
+combine it into a single symbol instead of considering this equals by itself. Another
+
+83
+00:07:19,060 --> 00:07:26,060
+例如, 很久以前的一种语言, 听不清是一种有趣的语言。
+example from a, a language from long ago PL [inaudible] is a interesting language.
+
+84
+00:07:26,110 --> 00:07:33,110
+它是由IBM设计的它代表的是编程语言1, 好的, 它是
+It was designed by IBM and it stands for Programming Language One. Alright, It was
+
+85
+00:07:37,979 --> 00:07:43,259
+它被设计成编程语言, 至少在IBM可以使用的情况下
+designed to be the programming language. At least with an IBM that would be used by
+
+86
+00:07:43,259 --> 00:07:47,310
+每个人都应该包含所有程序员的所有特性
+everybody and is supposed to encompass all the features that every programmer would
+
+87
+00:07:47,310 --> 00:07:52,099
+曾经需要, 因此, 它应该是非常非常普遍的并且很少有
+ever need. And as such, it was supposed to be very, very general and have very few
+
+88
+00:07:52,099 --> 00:07:57,940
+限制, 所以, PL的一个特点是关键字不是
+restrictions. And so, one of the features of PL [inaudible] is that Keywords are not
+
+89
+00:07:57,940 --> 00:08:04,110
+保留, 所以, 在PL, 你可以使用关键字作为关键字
+reserved. So, in PL [inaudible] you can use a keyword both as a keyword and also
+
+90
+00:08:04,110 --> 00:08:07,620
+作为一个变量, 你可以使用关键字和其他角色而不是关键字
+as a variable. So you can use keywords and other roles other than keywords and that
+
+91
+00:08:07,620 --> 00:08:11,860
+意思是你可以写有趣的, 有趣的句子或者有趣的句子
+means you can write interesting, interesting sentences or interesting
+
+92
+00:08:11,860 --> 00:08:15,550
+像这样的程序, 让我把它大声读出来因为它听起来很像
+programs like this. And let me just read this out loud because it sounds
+
+93
+00:08:15,550 --> 00:08:21,639
+很有趣, 如果是这样的话, 那么, 其他的, 其他的, 还有正确的组织
+interesting, if else then, then = else, else = then. And the correct organization
+
+94
+00:08:21,639 --> 00:08:28,639
+当然, 这是一个关键字, 这是一个关键字, 这是一个关键字。
+here of course is that this is a keyword, this is a keyword and this is a keyword.
+
+95
+00:08:29,870 --> 00:08:35,219
+另一件事, 换个颜色, 都是变量, 这些都是变量
+And the other things, switch colors here, are all variables. These are all variable
+
+96
+00:08:35,219 --> 00:08:40,899
+名字, 你可以想象这混合了词法分析有些困难
+names. And as you can imagine this mix a lexical analysis somewhat difficult
+
+97
+00:08:40,899 --> 00:08:45,649
+因为当我们从左向右进行扫描时就像我们从这里穿过的时候
+because when we're just scanning left to right like when we're coming through here
+
+98
+00:08:45,649 --> 00:08:49,399
+当我们说到这一点的时候, 你知道我们如何决定这些东西
+when we say we're at to this point, you know how do we decide whether these things
+
+99
+00:08:49,399 --> 00:08:54,160
+将会是变量名或关键字而不需要看到其他的情况
+are going to be variable names or keywords without seeing what's going on in the rest
+
+100
+00:08:54,160 --> 00:09:00,970
+在这个表达中, 在PL的词法分析是相当具有挑战性的
+of the expression so lexical analysis in PL [inaudible] was quite challenging. So
+
+101
+00:09:00,970 --> 00:09:05,410
+这是另一个来自PL的例子, 我们有一个程序
+here's another example from PL [inaudible]. Here we have a program
+
+102
+00:09:05,410 --> 00:09:11,480
+片段, 我们有单词声明, 然后是一个开放的paren和一个亲密的paren
+fragment, we have the word declare and then an open paren and a close paren
+
+103
+00:09:11,480 --> 00:09:15,029
+包含了一堆参数所以我们要指出这里的平衡
+encompassing a bunch of arguments so we'll point out the balance parens here and then
+
+104
+00:09:15,029 --> 00:09:21,929
+只是在括号内的n个东西的列表, 结果是
+just a list of n things inside the parens. And it turns out that the pending on the
+
+105
+00:09:21,929 --> 00:09:27,509
+更大的上下文, 整个表达式都在这里, 这可以是a
+larger context in which this whole expressions sits, this could be either a
+
+106
+00:09:27,509 --> 00:09:32,970
+关键字, 也可以是数组引用这意味着什么时候, 这意味着声明
+keyword. Or it could be in array reference that mean when, yeah, that mean declare
+
+107
+00:09:32,970 --> 00:09:36,850
+这里可以是一个关键字也可以是一个数组的名字这可以是
+here could either be a keyword or it could be a name of an array and this could be
+
+108
+00:09:36,850 --> 00:09:42,239
+这是数组的结尾, 当它发生的时候, 没有办法看
+the end [inaudible] to the array. And as it happens, there is no way looking at
+
+109
+00:09:42,239 --> 00:09:48,679
+这是我们可以决定的, 这个片段是有效的, 是一个有效的声明
+just this much that we can decide. This fragment is valid, is a valid declaration
+
+110
+00:09:48,679 --> 00:09:52,160
+它也是一个有效的数组引用, 所以, 它取决于接下来会发生什么。
+and it's also a valid array reference. So, it would depend on what came next. It
+
+111
+00:09:52,160 --> 00:09:56,259
+例如, 是否有一个等号, 在这里是否有一个等号
+might depend on for example whether there was an equal sign here in which cases
+
+112
+00:09:56,259 --> 00:10:01,230
+将被解释为一个赋值, 并且声明将是一个数组的名称。
+would be interpreted as an assignment and, and declare would be the name of an array.
+
+113
+00:10:01,230 --> 00:10:05,399
+这个例子的有趣之处在于, 因为
+And, the interesting thing about this example is that because the number of
+
+114
+00:10:05,399 --> 00:10:11,569
+这里的参数是无界的, 对于任何n, 都可以有n个。
+arguments in here is unbounded. There could be n of them for any n. This
+
+115
+00:10:11,569 --> 00:10:18,569
+需要无限的向前看, 好的, 为了在你扫描的过程中正确地实现这个
+requires unbounded look ahead. Okay, So to implement this properly as you're scanning
+
+116
+00:10:20,579 --> 00:10:25,299
+从左到右决定是否再次声明是一个关键字或重新引用, 我们
+left to right to decide whether declare again is a keyword or re-reference, we
+
+117
+00:10:25,299 --> 00:10:31,259
+需要扫描整个参数列表, 看看接下来会发生什么。
+would have to scan beyond this entire argument list to see what came next.
+
+118
+00:10:31,259 --> 00:10:37,779
+Fortren和PL是在20世纪50年代和60年代分别设计的
+Fortren and PL [inaudible] were designed in the 1950s and 1960s respectively and
+
+119
+00:10:37,779 --> 00:10:42,199
+这些经历教会了我们很多关于在词汇设计中不应该做什么
+those experiences taught us a lot about what not to do in the lexical design of
+
+120
+00:10:42,199 --> 00:10:45,910
+编程语言, 所以今天的情况好多了但是问题还没有
+programming languages. So things are a lot better today but the problems have not
+
+121
+00:10:45,910 --> 00:10:51,179
+完全消失了, 我将用一个C++的例子来说明这一点
+gone away completely and I'll use an example from C++ that illustrate this. So
+
+122
+00:10:51,179 --> 00:10:55,779
+这里有一个C++模板语法的例子你们可能很熟悉, 也可能是
+here's an example of C++ template syntax which you may be familiar with or you may
+
+123
+00:10:55,779 --> 00:11:02,779
+在Java中也见过类似的语法, 而C++有另一个名为Stream的操作符
+have seen the similar syntax in Java. And C++ has another operator called Stream
+
+124
+00:11:04,049 --> 00:11:10,129
+输入, 所以这里的操作符从输入流中读取并将结果存储在a中
+Input. So this operator here reads from an input stream and stores the results in a
+
+125
+00:11:10,129 --> 00:11:15,529
+变量, 问题是, 这里有一个嵌套模板的冲突, 
+variable. And the problem is, here that there's a conflict with nested templates,
+
+126
+00:11:15,529 --> 00:11:22,529
+举个例子, 如果我有一个像这样的模板, 好的。
+So for example, if I have a template o peration that looks like this. Okay.
+
+127
+00:11:27,199 --> 00:11:31,709
+注意这里发生了什么, 我的目的是要有一个嵌套的应用程序
+Notice what happens here. So my intention here is to have a nested application of
+
+128
+00:11:31,709 --> 00:11:36,739
+模板, 但最后我得到了两个伟大的符号
+templates but I wind up with two great than signs together at the end and this
+
+129
+00:11:36,739 --> 00:11:40,279
+看起来就像流操作符一样问题是, 词汇应该是什么
+looks just like the stream operator and the question is what should the lexical
+
+130
+00:11:40,279 --> 00:11:47,279
+分析者做了吗？应该把它解释为模板的两个括号或者应该
+analyzer do? Should it interpret this as two close brackets for template or should
+
+131
+00:11:47,350 --> 00:11:52,559
+它将其解释为两个大于作为一个流操作符的符号。
+it interpret it as a two greater than signs stuck together as a stream operator.
+
+132
+00:11:52,559 --> 00:11:56,850
+事实证明, 在很长一段时间里, 我认为大多数C++编译器都有
+And it turns out that for a very long time, I think most C++ compilers have now
+
+133
+00:11:56,850 --> 00:12:02,559
+修正了这个, 在这种情况下, C++编译器会把它看成一条流
+fixed this. The C++ compiler in this situation would regard this as a stream
+
+134
+00:12:02,559 --> 00:12:06,249
+操作符, 你会得到一个语法, 你认为解决方案是什么
+operator and you would get a syntax there. And what do you think the solution was, it
+
+135
+00:12:06,249 --> 00:12:11,249
+结果是, 你能做的唯一的解决方法就是对这个问题进行分析
+turns out that the only fix that you could really do to make this lexically analyzed
+
+136
+00:12:11,249 --> 00:12:16,329
+正确的方法是插入一个空白, 这样你就必须写这个, 你会
+the correct way was to insert a blank so you would have to write this and you would
+
+137
+00:12:16,329 --> 00:12:20,220
+一定要记得把空白放进去这样两个大于符号的
+have to remember to put the blank in there so that the two greater than signs were
+
+138
+00:12:20,220 --> 00:12:26,179
+不是在一起, 你知道这是一种丑陋的东西我们必须把它放在空白的地方
+not together. And you know that's kind of ugly that we have to put in white space to
+
+139
+00:12:26,179 --> 00:12:33,179
+修正了程序的词汇分析, 总结了词汇的目标
+fix the lexical analysis of the program. So to summarize the goal of lexical
+
+140
+00:12:36,319 --> 00:12:40,759
+分析是将输入流划分为lexemes, 好的, 我们已经下降了
+analysis is to partition the input streams into lexemes, okay. So we have drop down
+
+141
+00:12:40,759 --> 00:12:45,579
+在字符串中划分线来决定lexemes在哪里, 我们想要
+dividing lines in the string to decide where the lexemes lie and we want to
+
+142
+00:12:45,579 --> 00:12:49,949
+识别每个词素的标记, 因为, 正是因为我们在做一个
+identify the token of each lexeme, And because, exactly because we're doing a
+
+143
+00:12:49,949 --> 00:12:53,779
+从左到右扫描, 有时我们必须向前看, 有时我们需要偷看
+left to right scan, sometimes we have to have look ahead. Sometimes we have to peek
+
+144
+00:12:53,779 --> 00:12:57,519
+在输入字符串中, 找出我们正在看的当前字符串, 
+ahead in the input string to figure out what the current string we're looking at,
+
+145
+00:12:57,519 --> 00:13:00,740
+我们现在看到的子串是什么, 它在语言中扮演什么角色？
+what the current substring we're looking at, what role it plays in the language?

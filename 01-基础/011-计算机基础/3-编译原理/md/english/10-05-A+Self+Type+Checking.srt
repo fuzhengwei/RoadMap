@@ -1,0 +1,347 @@
+0
+00:00:03,919 --> 00:00:07,259
+In this video we are going to use what we have learned so far about self-type to
+
+1
+00:00:07,259 --> 00:00:13,970
+incorporate the self-type into the type checking rules for Cool. First let's
+
+2
+00:00:13,970 --> 00:00:18,429
+remind ourselves what the type checking rules for Cool actually prove. So the
+
+3
+00:00:18,429 --> 00:00:23,570
+sentences in the type logic look like this, and they prove things are the form
+
+4
+00:00:23,570 --> 00:00:28,410
+that some expression has some type, and they do that under the assumption that
+
+5
+00:00:28,410 --> 00:00:34,120
+object identifiers have some types given by O, methods have signatures given by M,
+
+6
+00:00:34,120 --> 00:00:37,989
+and the enclosing class, the current class in which E sits, in, in which we are doing
+
+7
+00:00:37,989 --> 00:00:43,889
+our type checking, is class C. And the whole reason for this additional piece
+
+8
+00:00:43,889 --> 00:00:48,620
+here we haven't actually discussed this before why we needed this C. It is because
+
+9
+00:00:48,620 --> 00:00:54,510
+self-types meaning depends on the enclosing class. So if you recall we.
+
+10
+00:00:54,510 --> 00:01:01,510
+Introduce this notation, self type sub C to record and what class a particular
+
+11
+00:01:01,709 --> 00:01:06,490
+occurrence of self-type sits. And this C in the environment is exactly that
+
+12
+00:01:06,490 --> 00:01:09,909
+subscript, it is tracking what class we are in. So when we see occurrences, an
+
+13
+00:01:09,909 --> 00:01:16,909
+occurrence of self-type we know what kind of self-type. We're talking about so now
+
+14
+00:01:16,909 --> 00:01:21,640
+I'm ready to actually give the type rules that use self-type. And for the most part,
+
+15
+00:01:21,640 --> 00:01:26,859
+this is really easy, because the rules just remain the same. That is, they look
+
+16
+00:01:26,859 --> 00:01:30,679
+the same, but they're actually a little bit different, because they use the new
+
+17
+00:01:30,679 --> 00:01:34,869
+sub typing and least upper bound operations that we defined before. So for
+
+18
+00:01:34,869 --> 00:01:40,710
+example, here is the rule for assignment, and this looks identical to the rule for
+
+19
+00:01:40,710 --> 00:01:46,979
+assignment that we discussed several videos ago. But notice that this use of
+
+20
+00:01:46,979 --> 00:01:51,670
+sub-typing here is now the extended definition of sub-typing to incorporate
+
+21
+00:01:51,670 --> 00:01:56,020
+self-type. So now this rule works with self-type as well as with the normal class
+
+22
+00:01:56,020 --> 00:02:02,319
+names. Now there are some rules that have change in the presents of self-type. And
+
+23
+00:02:02,319 --> 00:02:07,630
+in particular the dispatch rules need to be updated. So here is the old rule for
+
+24
+00:02:07,630 --> 00:02:13,340
+dynamic dispatch. And this rule, this part of the rule, actually doesn't change. It
+
+25
+00:02:13,340 --> 00:02:17,010
+stays the same. But, I just wanna point out the essential restriction in this
+
+26
+00:02:17,010 --> 00:02:21,610
+rule, is that the return type of the method could not be self-type. And that's
+
+27
+00:02:21,610 --> 00:02:25,180
+actually the place where self-type buys us something. So the whole purpose of having
+
+28
+00:02:25,180 --> 00:02:29,480
+self-type is to have methods who's return type is self-type. Because that's were we
+
+29
+00:02:29,480 --> 00:02:35,780
+actually get the extra expressive power. And know we have to consider the case, now
+
+30
+00:02:35,780 --> 00:02:39,629
+that we have self typing we done all this work, what if the methods return type is
+
+31
+00:02:39,629 --> 00:02:44,909
+self type. How are we going to type check that? Well here's the rule. So as usual,
+
+32
+00:02:44,909 --> 00:02:50,140
+we type check the. The expression that we're dispatching to that's E zero and all
+
+33
+00:02:50,140 --> 00:02:53,420
+of the argument and we just get their type. And their just type checked in the
+
+34
+00:02:53,420 --> 00:02:59,349
+same environmental as the entire expression. And now just like before we
+
+35
+00:02:59,349 --> 00:03:06,349
+look up in class T0 the type of E0, the method F and we get its signature. Okay.
+
+36
+00:03:07,010 --> 00:03:10,610
+And then we have to check that the arguments conform. That every actual
+
+37
+00:03:10,610 --> 00:03:15,060
+argument, E1 through En, has a type that's compatible with the corresponding formal
+
+38
+00:03:15,060 --> 00:03:20,430
+parameter in the method signature. And if all of that works out, then we can say
+
+39
+00:03:20,430 --> 00:03:26,409
+that this dispatch is going to have type, oh look, T0. So where did that come from?
+
+40
+00:03:26,409 --> 00:03:32,689
+Well, the return type is self-type. And so the result of this entire dispatch is
+
+41
+00:03:32,689 --> 00:03:36,930
+going to be the type of whatever e zero was. E zero is the self-parameter.
+
+42
+00:03:36,930 --> 00:03:43,689
+Whatever type we got for e zero, that is a sound static type for the result of the
+
+43
+00:03:43,689 --> 00:03:50,689
+entire expression. So we simply use the type of e zero as the type of the entire,
+
+44
+00:03:51,060 --> 00:03:58,060
+static, the entire dynamic dispatch. Now recall the full parameters of a function
+
+45
+00:03:59,200 --> 00:04:04,319
+cannot have type self type, but the actual arguments can have type self type, and the
+
+46
+00:04:04,319 --> 00:04:08,930
+extended sub typing relationship will handle that case just fine. One
+
+47
+00:04:08,930 --> 00:04:13,260
+interesting detail is that the dispatch expression itself could have a type,
+
+48
+00:04:13,260 --> 00:04:20,260
+self-type. And, so what do I mean by that, well, let's think about E zero.
+
+49
+00:04:22,450 --> 00:04:26,880
+Dispatching to method F, and then what happens if E zero has type self type? What
+
+50
+00:04:26,880 --> 00:04:33,190
+if we can prove that E zero has type self type. And the problem here is that we need
+
+51
+00:04:33,190 --> 00:04:39,150
+to lo okay up, in the, in the M environment, in the method environment, in
+
+52
+00:04:39,150 --> 00:04:44,640
+some class. The definition of or the signature of method F/, we have to get
+
+53
+00:04:44,640 --> 00:04:49,650
+back that type signature so we can do the rest of that type checking. And if E0 has
+
+54
+00:04:49,650 --> 00:04:53,630
+type soft type normally we use the type of E0 to do that, to do that look up. What
+
+55
+00:04:53,630 --> 00:04:59,470
+type do we use here? Well, if this whole thing is occurring in class C. If we have,
+
+56
+00:04:59,470 --> 00:05:05,510
+if we're type checking in class C. >> You just put the line there. >> And it's safe
+
+57
+00:05:05,510 --> 00:05:11,190
+and this is a soft type sub c and as always it's safe to replace soft type sub
+
+58
+00:05:11,190 --> 00:05:17,700
+c by c. So, we'll just use the class c there. The correct class that we are type
+
+59
+00:05:17,700 --> 00:05:24,700
+checking in to look up the method name test. We have to make similar changes to
+
+60
+00:05:25,760 --> 00:05:30,130
+the rules for static dispatch. So, here is the original rule for the static dispatch
+
+61
+00:05:30,130 --> 00:05:34,050
+and... And again, this part of the rule will not change. Uh... This... This
+
+62
+00:05:34,050 --> 00:05:41,050
+handles the case, where the return type of the method is not the self-type. But if
+
+63
+00:05:41,710 --> 00:05:44,850
+the return type of the method is self-typed, then the rule looks a little
+
+64
+00:05:44,850 --> 00:05:50,300
+bit different. So, we, once again we type check, the, expression that we're
+
+65
+00:05:50,300 --> 00:05:54,650
+dispatching to and all the arguments in the same environment as that of the entire
+
+66
+00:05:54,650 --> 00:06:00,240
+expression. We have to check that the class we're dispatching to, the type t
+
+67
+00:06:00,240 --> 00:06:06,770
+zero, is a sub type of the class, named in the static dispatch. We have to look up
+
+68
+00:06:06,770 --> 00:06:11,050
+the method. It has to exist in that class that we're statically dispatching to. So
+
+69
+00:06:11,050 --> 00:06:15,560
+we have to look up in class T, the method F and get its signature. And then we have
+
+70
+00:06:15,560 --> 00:06:20,180
+to check that the actual arguments conform to the formal parameters of their types.
+
+71
+00:06:20,180 --> 00:06:24,000
+If the types of the arguments match the types, the declared types of the formal
+
+72
+00:06:24,000 --> 00:06:28,800
+parameters. And then, the only thing that's kind of curious about this rule, is
+
+73
+00:06:28,800 --> 00:06:35,800
+that the result type here is, again, T zero. And, why is that right? It could
+
+74
+00:06:36,270 --> 00:06:41,460
+have been a, a T. It could have been the type to which we statically dispatched.
+
+75
+00:06:41,460 --> 00:06:46,340
+And it's not because self-type is the type of the self-parameter. And even though
+
+76
+00:06:46,340 --> 00:06:51,960
+we're dispatching to a method in class T , the self-parameter still has type T0. And
+
+77
+00:06:51,960 --> 00:06:56,970
+recall that T0 is a subtype of T. So we use the static dispatch to reach a method
+
+78
+00:06:56,970 --> 00:07:01,740
+definition that's hidden potentially by overwrite, overwritten methods, in the
+
+79
+00:07:01,740 --> 00:07:04,810
+subclasses. But that doesn't change the type of the self-parameter. The
+
+80
+00:07:04,810 --> 00:07:09,310
+self-parameter still has type T0 even though we're running a method. Of the, in
+
+81
+00:07:09,310 --> 00:07:16,310
+a superclass of G,0. There two new rules for self- type. One involves the
+
+82
+00:07:16,680 --> 00:07:21,640
+self-object. So, the self-object has type self-type sub-C. And notice this is one of
+
+83
+00:07:21,640 --> 00:07:25,370
+those places where we need to know the enclosing class. So, we know what kind of
+
+84
+00:07:25,370 --> 00:07:30,220
+self-type we're referring to. And similarly there's a rule for allocating
+
+85
+00:07:30,220 --> 00:07:34,780
+something of type self-type. So, a, the expression new self-type also produces
+
+86
+00:07:34,780 --> 00:07:36,900
+something of type self-type sub-C.

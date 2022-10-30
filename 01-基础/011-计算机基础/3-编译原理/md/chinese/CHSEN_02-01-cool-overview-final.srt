@@ -1,0 +1,1069 @@
+0
+00:00:04,630 --> 00:00:09,630
+大家好, 在接下来的几个视频中, 我将给大家一个关于COOL语言的概述
+Hello, in this and the next few videos I'm going to be giving a overview of COOL the
+
+1
+00:00:09,630 --> 00:00:16,630
+这是一个将要求你编写编译器的语言
+programming language in which you'll be writing a compiler. Cool is the Classroom
+
+2
+00:00:18,349 --> 00:00:25,040
+COOL是教室面向对象语言的缩写, 他的一个独特设计就是
+Object Oriented Language and the acronym of course, is COOL. And the unique design
+
+3
+00:00:25,040 --> 00:00:29,860
+COOL语言的编译器可以在相对较短的时间里编写完成
+requirement for COOL is that the compiler has to be able to be written in a
+
+4
+00:00:29,860 --> 00:00:33,480
+我们只有一个季度, 或可能是一个学期
+relatively short period of time. We only have one quarter, or in some cases, a
+
+5
+00:00:33,480 --> 00:00:40,480
+来让学生编写COOL语言编译器. 因此COOL语言必须
+semester for students to write the compilers. And so COOL has to be
+
+6
+00:00:40,850 --> 00:00:46,800
+可以被很快的实现, 所以他只主要被用于进行一个编译器的教
+implementable quickly. And actually since it's used primarily for teaching
+
+7
+00:00:46,800 --> 00:00:52,700
+世界上的COOL语言编译器的数量已经远超过COOL语言程序的数量
+compilers, the number of COOL compilers in the world vastly exceeds, the number of
+
+8
+00:00:52,700 --> 00:00:57,340
+许多的COOL语言编译器被编写
+COOL programs. So, there many, many more compilers have been written, thousands of
+
+9
+00:00:57,340 --> 00:01:01,450
+ 可能是成千上万
+compilers, maybe tens of thousands of compilers have been written for COOL, but
+
+10
+00:01:01,450 --> 00:01:05,970
+但是只有几十个COOL语言程序被编写(译: Hello World专用语言?)
+probably only some dozens, or hundreds COOL programs. And so, it's probably the
+
+11
+00:01:05,970 --> 00:01:10,229
+所以这可能是唯一的存在的编译器超过程序的语言
+only language, in existence for which this is true, That, that, the number of
+
+12
+00:01:10,229 --> 00:01:15,200
+但是它确实告诉了你
+compilers actually exceeds the number of programs, but it does Tell you about the
+
+13
+00:01:15,200 --> 00:01:19,439
+主要的设计要求. COOL语言的重点
+main design requirement. It's much more important in COOL that the compiler be
+
+14
+00:01:19,439 --> 00:01:24,139
+是一个容易被编写的编译器. 所以这里有一些
+easy to write then that it be easy to write programs in. And so there are some
+
+15
+00:01:24,139 --> 00:01:29,340
+语言上的怪癖, 这些都是为了让实现变得更简单而做的
+quirks in the language, Things that have been done specifically to make it easier
+
+16
+00:01:29,340 --> 00:01:35,450
+这个语言的教学价值, 
+to implement where that wouldn't take away from the, the teaching value of the, of
+
+17
+00:01:35,450 --> 00:01:39,030
+将会使作为作为一名工作程序员的日常工作语言上
+the language. But that would make it inconvenient to use the language on a
+
+18
+00:01:39,030 --> 00:01:45,630
+使用变得不方便, 那么, 语言中有什么呢？
+day-to-day basis as a working programmer. So, what is in the language? Well it's,
+
+19
+00:01:45,630 --> 00:01:49,159
+我们试着设计它继承、自动内存管理提取静态类型重用
+we've tried to design it so that it will give you a taste of modern notions of
+
+20
+00:01:49,159 --> 00:01:53,759
+这样它就能让你体验到现代的概念
+extraction static typing reuse through inheritance, automatic memory management.
+
+21
+00:01:53,759 --> 00:01:57,679
+实际上, 当我们讲到这里的时候我们还会讲到更多的内容
+And there's actually a few more things that we'll talk about when we come to
+
+22
+00:01:57,679 --> 00:02:02,420
+但是很多东西都被忽略了, 我们不能把所有的东西都放进去
+them. But many things are left out. We're not gonna be able to put everything in the
+
+23
+00:02:02,420 --> 00:02:05,849
+语言和它的可实现性很快, 我们将能够覆盖一些
+language and have it be implementable quickly. We'll be able to cover some
+
+24
+00:02:05,849 --> 00:02:09,789
+在教学中, 但不幸的是, 甚至会有一些有趣的语言想法
+things in lectures, but unfortunately, there'll even be some interesting language
+
+25
+00:02:09,788 --> 00:02:16,789
+我们在这门课上不能讲的内容, 课程项目是
+ideas that we won't be able to get to in this class. So the course project is to
+
+26
+00:02:17,280 --> 00:02:22,160
+构建一个完整的编译器, 特别是你要编译COOL到
+build a complete compiler. And specifically you're going to compile COOL
+
+27
+00:02:22,160 --> 00:02:27,810
+MIPS指令集语言, 它是一种真正的指令集, 它被在20世纪80年代
+into MIPS assembly language. So MIPS is a real instruction set, It was for a machine
+
+28
+00:02:27,810 --> 00:02:33,200
+为机器设计的, 有一个用于在任何一种硬件运行
+that was designed in the 1980's. And there is a simulator for MIPS that runs on just
+
+29
+00:02:33,200 --> 00:02:36,860
+MIPS的模拟器, 这就使得整个项目
+about any kind of hardware. And so this makes the, the whole project very
+
+30
+00:02:36,860 --> 00:02:42,300
+可移植, 我们可以运行你的编译器, 或者你可以生成MIPS汇编语言
+portable, We can run your compiler, or you can generate MIPS assembly language and
+
+31
+00:02:42,300 --> 00:02:45,650
+然后MIPS汇编语言可以在任何类型的情况下进行模拟
+then that MIPS assembly language can be simulated on just about whatever kind of
+
+32
+00:02:45,650 --> 00:02:50,740
+你可以访问的机器。这个项目被分成了五个阶段。
+machine you have access to. The project is broken up into five assignments. First
+
+33
+00:02:50,740 --> 00:02:54,840
+你要写一个COOL语言的程序, 这个程序本身就是一个解释器
+you're gonna write a COOL program. And that program itself will be an interpreter
+
+34
+00:02:54,840 --> 00:02:58,080
+来给你一点经验, 写一个简单的翻译。
+to give you a little bit of experience with writing a simple interpreter. And
+
+35
+00:02:58,080 --> 00:03:03,040
+因此编译器本身就包含了我们讨论过的四个阶段
+then the compiler itself will consist of the four the phases that we discussed
+
+36
+00:03:03,040 --> 00:03:07,610
+词法分析、解析、语义分析和代码生成。
+lexical analysis, parsing, semantic analysis and code generation. And all of
+
+37
+00:03:07,610 --> 00:03:12,620
+这些阶段, 我要强调的是, *听不清*, 意思是我们
+these phases, I should emphasize are [inaudible] compatible. Meaning that we
+
+38
+00:03:12,620 --> 00:03:16,320
+有单独的实现, 每个都有单独的参考实现
+have separate implementations, separate reference implementations of each of
+
+39
+00:03:16,320 --> 00:03:20,620
+例如, 当你在做语义分析时, 你会
+these. And so for example, when you are working on semantic analysis, you will be
+
+40
+00:03:20,620 --> 00:03:25,500
+能够获得词法分析、解析和代码生成组件
+able to take the lexical analysis, parsing, and code generation components
+
+41
+00:03:25,500 --> 00:03:31,790
+从引用编译器中插入你的语义分析到那个框架
+from the reference compiler and plug your semantic analysis into that. Framework
+
+42
+00:03:31,790 --> 00:03:36,510
+然后对参考组件进行测试,. 
+and, and test it against the reference components. And so this way if you have
+
+43
+00:03:36,510 --> 00:03:40,560
+这样即便你的单个组件有问题或者运行的不是很好
+trouble with one component or aren't sure that your components is working very well
+
+44
+00:03:40,560 --> 00:03:44,080
+你在进行其他组件的编辑时也没有问题, 因为你进行的是
+you won't have a problem in working on a different component because you'll be able
+
+45
+00:03:44,080 --> 00:03:50,090
+独立测试. 最后没有必要的优化作业
+to test that independently. And finally there's no required optimization
+
+46
+00:03:50,090 --> 00:03:54,730
+但是我们确实有一些关于优化的建议你可以尝试实现
+assignment, But we do have some suggestions for optimizations that you can
+
+47
+00:03:54,730 --> 00:04:00,100
+很多人都写过关于COOL语言的优化, 所以这是一个
+do. And many people have written optimizations for COOL. And so this is an
+
+48
+00:04:00,100 --> 00:04:05,819
+如果你有兴趣学习一些关于程序的东西, 可选的程序优化
+optional assignment if you're interested in learning something about program
+
+49
+00:04:05,819 --> 00:04:12,819
+让我们写出最简单的COOL语言程序
+optimization. So, let's write the simplest possible COOL program. And the first thing
+
+50
+00:04:17,029 --> 00:04:22,440
+第一件事要知道的就是COOL语言的源文件, 在.CL是COOL语言的扩展, 你可以
+to know is that COOL source files, and in the extension dot CL for COOL, and you can
+
+51
+00:04:22,440 --> 00:04:28,670
+使用任何你喜欢的编辑器来编写你的程序。我碰巧使用了Emacs,
+use whatever editor you like to write your programs. I happen to use Emacs, you can
+
+52
+00:04:28,670 --> 00:04:34,600
+如果你喜欢的话, 可以使用其他的编辑器。每一个COOL语言的程序都必须有一个类(译: 入口类)
+use some other editor if you like. And every COOL program has to have a class
+
+53
+00:04:34,600 --> 00:04:40,750
+叫做main, 我们先将这件事放到一边. 
+called main. And let's talk about that business in a second. So a class
+
+54
+00:04:40,750 --> 00:04:44,790
+ class 关键字在COOL语言里是类声明的起始, 接在 class 关键字之后的就是类
+declaration in COOL begins with the key word, class, Followed by the name of the
+
+55
+00:04:44,790 --> 00:04:50,930
+所以, 在本例中, main, 后面是一对花括号, 在里面
+class, So in this case, main, Followed by a pair of curly braces And inside the
+
+56
+00:04:50,930 --> 00:04:56,180
+花括号里是所有属于这个类的东西, 以及每一个类
+curly braces is where all the stuff that belongs to the class goes, And every class
+
+57
+00:04:56,180 --> 00:05:00,970
+声明必须由分号终止, 因此程序由一个
+declaration must be terminated by a semi-colon. So a program consists of a
+
+58
+00:05:00,970 --> 00:05:06,460
+类声明的列表。每一个类声明都被分号终止。
+list of class declarations. Each class declaration terminated by a semi-colon. So
+
+59
+00:05:06,460 --> 00:05:11,000
+这就是类的结构, 现在我们需要做一些事
+that's the structure of a class. And now we need this class to actually do
+
+60
+00:05:11,000 --> 00:05:16,680
+来让我们的类里有一个方法(译: 接受self的类的成员函数就是方法), 并且让我们调用这个方法 main 
+something so we're going to have a method in this class, and let's call the method
+
+61
+00:05:16,680 --> 00:05:23,200
+事实上,  main 类的 main 方法必须始终存在, 这是
+main. In fact the main method of the main class must always exist. This is the
+
+62
+00:05:23,200 --> 00:05:27,660
+运行启动程序的方法, 而且这个方法必须不接受参数
+method that's run to start the program and furthermore this method must take no
+
+63
+00:05:27,660 --> 00:05:32,980
+所以主方法的参数列表总是空的
+arguments. So the empty argument list for the main method is always empty. And let's
+
+64
+00:05:32,980 --> 00:05:39,900
+main方法它的主体总是在一对花括号中, 所以main
+say the main method its body always goes in a pair of curly braces. So the main
+
+65
+00:05:39,900 --> 00:05:45,750
+方法总是在花括号内, 而一个类包含这样一个列表
+method always goes inside curly braces. And a class consists of a list of such
+
+66
+00:05:45,750 --> 00:05:49,370
+声明, 这些声明必须全部由
+declarations. And again, those declarations must all be separated by
+
+67
+00:05:49,370 --> 00:05:53,740
+分号来表示, 在这个例子中, 我们
+semicolons. So in, or terminated, excuse me, by semicolons. So in this case, we
+
+68
+00:05:53,740 --> 00:05:59,010
+在这个类中只有一个方法, 但是仍然要有它的分号, 现在
+only have one method in the class. But still has to have its semi-colon and now
+
+69
+00:05:59,010 --> 00:06:02,030
+我们想要这里运行点什么, 这里就是方法和代码运行的地方
+we can say what we want the method actually do so this is the place for the
+
+70
+00:06:02,030 --> 00:06:05,889
+让我们写一个最简单的可行方法
+code for the method goes and let's just have the simplest possible method the one
+
+71
+00:06:05,889 --> 00:06:12,889
+也就是一个值, COOL的一个表达式
+that just event evaluates to the number one. Okay, so [inaudible] an expression
+
+72
+00:06:12,919 --> 00:06:18,060
+也就是说, 只包含一个值的代码是可以运行的
+language, which means that wherever a piece of code can go, you can put an
+
+73
+00:06:18,060 --> 00:06:22,400
+你可以把任意表达式放在那里, 表达式可以没有显式的返回方法声明地运行
+arbitrary expression, any expression can go there there's no explicit return
+
+74
+00:06:22,400 --> 00:06:27,470
+它只是一个函数体里的值
+statement for a method. It's just a value of the method body is the value of the
+
+75
+00:06:27,470 --> 00:06:30,810
+在这种情况下, 我们把数字1放在这里, 这就是
+methods. So in this case we just put the number one in there, and that will be the
+
+76
+00:06:30,810 --> 00:06:37,000
+当我们运行它时, 这个方法的值, 我们保存一下, 现在我们可以试一下
+value of this method when we run it. So let's save that. And now we can try
+
+77
+00:06:37,000 --> 00:06:43,250
+编译这个简单的程序, 我们如何编译编译器被称为coolc
+compiling this simple program, so how do we compile the compiler is called a COOL c
+
+78
+00:06:43,250 --> 00:06:50,040
+对于COOL语言的编译器你只需要给COOL语言的编译器一个COOL语言的源码
+for the COOL compiler and you just give the COOL compiler a list of COOL source
+
+79
+00:06:50,040 --> 00:06:55,880
+文件, 在这个例子中只有一个文件1.cl, 回车, 哦, 我们得到了一个
+files. So in this case there's just one file 1.CL hit enter and ooh we got a
+
+80
+00:06:55,880 --> 00:07:02,680
+语法错误所以我们必须回过头来修正这个在第3行开放花括号的错误
+syntax error so we have to come back and fix that and the error said at or near the
+
+81
+00:07:02,680 --> 00:07:09,130
+这是一个错误, 我知道错误是什么,
+open curly brace on line three there's a mistake. And I know what the mistake is,
+
+82
+00:07:09,130 --> 00:07:12,570
+因为我是一个至少在在COOL语言上很有能力的程序员
+because I'm a competent COOL programmer, at least somewhat competent COOL
+
+83
+00:07:12,570 --> 00:07:17,460
+COOL语言的方法必须声明它们的返回类型, 所以我们需要在这里写点什么
+programmer. Cool methods must declare their return type. So we need to put a
+
+84
+00:07:17,460 --> 00:07:21,560
+声明类型的语法是在方法的名称和参数列表后面加一个冒号
+type here. And the syntax for the declaration is to put a colon after the
+
+85
+00:07:21,560 --> 00:07:24,889
+然后是类型的名称。
+name of the method and the argument list, and then the name of a type. And since
+
+86
+00:07:24,889 --> 00:07:30,340
+我们为这个程序, 不对, 方法返回的是一个数字
+we're returning the number one for this program for sorry, for this method we
+
+87
+00:07:30,340 --> 00:07:37,340
+也就是说main方法返回的是一个整数, 保存一下
+might as well say that the main method is going to return an integer, So save that,
+
+88
+00:07:37,860 --> 00:07:43,740
+回到我们的编译窗口, 让我们再次编译这个程序.
+Go back to our compilation window and let's compile the program again. And this
+
+89
+00:07:43,740 --> 00:07:48,680
+它成功编译了, 现在如果我们看一下我们的目录, 就会看到
+time it compiles successfully. And now if we look in our directory we see that there
+
+90
+00:07:48,680 --> 00:07:55,680
+是一个叫做1.s的新文件这是程序1的汇编代码, 现在
+is a new file called 1.s. That's the assembly code for the program one. And now
+
+91
+00:07:56,360 --> 00:08:03,360
+我们可以试着运行这段代码, 而汇编模拟器被称为spim, 
+we could try to run this code. And the, The, the Mitch simulator is called spin,
+
+92
+00:08:04,919 --> 00:08:11,240
+它只需要一个, 汇编文件, 来模拟, 所以我们只给它一个
+and it just takes a, assembly file to, to simulate, And so we just give it one
+
+93
+00:08:11,240 --> 00:08:15,889
+1.s, 回车, 运行, 一大堆东西就打印出来了。
+[inaudible] hit enter and it will run. A whole bunch of stuff is printed out. But
+
+94
+00:08:15,889 --> 00:08:21,290
+正如你所看到的, 它说的是COOL程序成功执行的部分原因
+as you can see, it says part way down that the COOL program successfully executed, so
+
+95
+00:08:21,290 --> 00:08:24,660
+这很好, 然后还有一些统计数据, 比如
+that's good, and then afterwards there are some statistics and things like number of
+
+96
+00:08:24,660 --> 00:08:29,419
+执行的指令, 大量的加载和存储, 一些分支, 这些
+instructions executed, a number of loads and stores, a number of branches, those
+
+97
+00:08:29,419 --> 00:08:32,519
+如果我们担心性能问题, 他们就会很有用
+things would be interesting if we're worried about performance if we were to
+
+98
+00:08:32,519 --> 00:08:37,399
+比如说, 对编译后的代码进行优化, 但是我们没有这样做
+say working on the optimization of the compiled code, but we're not doing that
+
+99
+00:08:37,399 --> 00:08:43,120
+现在, 我们只是运行程序, 我们可以看看这个程序是否有效。
+right now. We're just running programs. And we can see if this program works. So
+
+100
+00:08:43,120 --> 00:08:45,520
+程序运行, 成功终止了, 但实际上并没有产生任何输出
+the program ran. It terminated successfully. But it didn't actually
+
+101
+00:08:45,520 --> 00:08:52,480
+这是因为我们没有要求它产生任何输出, 如果我们
+produce any output. And that's because we didn't ask it to produce any output, If we
+
+102
+00:08:52,480 --> 00:08:59,230
+想要有输出, 我们必须回去修改程序, 所以
+want to have output. We have to go back and modify the program again. So, so what
+
+103
+00:08:59,230 --> 00:09:02,170
+这个程序现在做的是, 它只是返回它的值, 但是
+this program does currently, is that it just returns its value but that, but
+
+104
+00:09:02,170 --> 00:09:05,740
+这个值没有任何作用, 它没有打印出来, 或者类似的东西
+nothing is done with that value. It's not printed out or anything like that. If you
+
+105
+00:09:05,740 --> 00:09:10,270
+如果你想要在一个COOL语言的程序中打印出一些东西, 你必须这样做
+wanted to have something printed out in a COOL program, you have to do that
+
+106
+00:09:10,270 --> 00:09:16,230
+显然, 这里有一个特殊的类, 一个叫做IO的原始类
+explicitly. So there's a special class built in, a primitive class called IO. And
+
+107
+00:09:16,230 --> 00:09:23,230
+我们可以为这个类声明一个属性(译: 允许方法调用的成员变量), 它将是一个IO类型的属性
+we can declare, what's called a attribute of this class, it will be a IO attribute
+
+108
+00:09:23,640 --> 00:09:30,640
+它会被命名为i, 好的, 我将会是我们用来做IO的对象, 所以现在
+and it will be called I, okay and I will be a object that we use to do IO. So now
+
+109
+00:09:30,760 --> 00:09:37,760
+在我们的main方法中, 我们可以给外字符串添加一个名为out-string的调用, #TODO我点外串
+in our, main method, Here we could add a call to out-string, I dot out-string is
+
+110
+00:09:41,260 --> 00:09:47,020
+我们如何调用一个方法, 好的, 外串是IO类的一种方法所以我们用I来表示
+how we invoke a method. Okay so out-string is a method of the IO class so we use I to
+
+111
+00:09:47,020 --> 00:09:51,380
+调用那个方法然后我们可以把它传递给我们想要打印出来的字符串
+invoke that method and then we can pass it a string that we want printed out on the
+
+112
+00:09:51,380 --> 00:09:58,380
+例如, 我们可以说hello world, 好了, 现在, 我们必须决定
+screen. So for example we could say hello world. Okay, And now, we have to decide
+
+113
+00:10:05,500 --> 00:10:10,020
+怎么做呢, 用我们的数字1, 让我再给你们看一个
+what to do, with our, with our number one there. And let me show you one more
+
+114
+00:10:10,020 --> 00:10:13,730
+COOL语言的特性, 让我们把它放在这里, 让它成为a的一部分
+feature of COOL. Let's leave the one there, and let's make it part of a
+
+115
+00:10:13,730 --> 00:10:17,790
+语句块, 所以语句块由一系列表达式组成
+statement block. So a statement block consists of a sequence of expressions
+
+116
+00:10:17,790 --> 00:10:21,930
+用分号隔开, 你可以有任意数量的表达式, 
+separated by semicolons. And you can have any number of expressions, and the
+
+117
+00:10:21,930 --> 00:10:26,709
+语句块或表达式块的语义是求值
+semantics of a statement block or an expression block is to just evaluate the
+
+118
+00:10:26,709 --> 00:10:30,640
+表达式的顺序, 以及块的值是最后一个表达式的值。
+expressions in order. And the value of the block is the value of the last expression.
+
+119
+00:10:30,640 --> 00:10:35,750
+但是现在, 一个语句或一个表达式块必须包含在它自己的一组
+But now, a statement or an expression block has to be included in its own set of
+
+120
+00:10:35,750 --> 00:10:41,740
+花括号, 好了, 现在这是一个COOL语言的程序我来读一下
+curly braces. Okay, so that now is a valid COOL program so let me just read this for
+
+121
+00:10:41,740 --> 00:10:48,740
+你所以程序的主体是一个表达式块, 第一个, 执行。
+you so the body of the program is a block of expressions. The first one, executes. A
+
+122
+00:10:51,300 --> 00:10:55,440
+对对象I的字符串调用, 它将为我们打印hello world。
+out string call to the object I, which is going to print hello world for us. And
+
+123
+00:10:55,440 --> 00:11:00,680
+然后第二项等于1, 也就是整个的值
+then the second one evaluates to one, which is the value of the entire of the
+
+124
+00:11:00,680 --> 00:11:05,940
+整个方法, 好的, 实际上我应该说它是block的值, 好的, 
+entire method. Okay, actually I should say it's the value of the block, okay, and
+
+125
+00:11:05,940 --> 00:11:11,310
+然后因为block是这个方法的主体块的值变成了
+then because the block is the body of the method the value of the block becomes the
+
+126
+00:11:11,310 --> 00:11:15,870
+整个方法的值, 因此将从这个方法调用返回。
+value of the entire method, So one will be returned from this method call. So let's
+
+127
+00:11:15,870 --> 00:11:22,870
+保存一下, 回到这里, 让我们再编译一次, 看起来像我
+save this. Go back over here and let's compile this again. So, Looks like I
+
+128
+00:11:25,610 --> 00:11:32,610
+没能保存它, 让我们编译这个, 我们看到我们有一个语法错误, 所以它
+failed to save it. Let's compile this and we see we have a syntax error. And so it
+
+129
+00:11:37,890 --> 00:11:44,890
+在第4行, 我们有一个语法错误, 在我们的右花括号附近。
+says on line four, we have a syntax error at or near our closing curly brace. And
+
+130
+00:11:46,080 --> 00:11:53,080
+这里的问题是, 一个语句块, 或者表达式块由一个
+the problem here is that a statement block, or expression block consists of a
+
+131
+00:11:54,370 --> 00:11:57,800
+序列或一系列由分号终止的表达式, 我们忘记了
+series or a sequence of expressions terminated by semi-colons, and we forgot
+
+132
+00:11:57,800 --> 00:12:04,170
+要用分号来终止序列中的最后一个表达式, 所以我们必须
+to terminate the last expression in the sequence by its semi-colon, So we have to
+
+133
+00:12:04,170 --> 00:12:10,470
+加上这个, 现在我们应该能够编译这个, 然后看它
+add that. And now we should be able to compile this, and lo and behold it
+
+134
+00:12:10,470 --> 00:12:17,470
+编译正确, 然后我们可以运行它, 现在我们看到, 哦, 我们得到了另一个
+compiles correctly, and then we can run it. And now we see, oh we got another
+
+135
+00:12:18,920 --> 00:12:24,990
+错误, 我们有一个, 当程序运行时它抱怨我们有一个
+mistake. So we have an, when the program ran it complained that we have a
+
+136
+00:12:24,990 --> 00:12:31,350
+被调度的void, 所以在第4行, 我们的分派对象是一个没有的对象
+dispatched void. So that on line four, our dispatch was to an object that didn't
+
+137
+00:12:31,350 --> 00:12:37,120
+存在, 你可以看到这里的调度调用, 它不存在, 
+exist. And, you can see the dispatch call right here to I, and it doesn't exist,
+
+138
+00:12:37,120 --> 00:12:43,149
+因为, 事实上, 我们忘记为I分配一个对象了, 所以这里我们声明I为
+because, in fact, we forgot to allocate an object for I. So here we declare I to be
+
+139
+00:12:43,149 --> 00:12:48,399
+输入IO, 但它实际上并没有创建任何对象, 这只是说
+of type IO, but that doesn't actually create any objects. That just says that it
+
+140
+00:12:48,399 --> 00:12:53,670
+创建一个变量名, 但实际上我没有一个值, 如果你想让我
+creates a variable name I but I doesn't actually have a value. So if you want I to
+
+141
+00:12:53,670 --> 00:12:57,450
+实际上有一个值, 我们要把它初始化到某个东西上, 这样我们就可以
+actually have a value, we have to initialize it to something. So we can
+
+142
+00:12:57,450 --> 00:13:03,529
+将其初始化到一个新的IO对象, 而这里的新对象是您分配新对象的方式
+initialize it to a new IO object. And new here, is the way you allocate new objects
+
+143
+00:13:03,529 --> 00:13:07,269
+在COOL语言和新中总是使用类型参数所以在这个例子中创建了一个
+in COOL and new always take a type argument so in this case were creating a
+
+144
+00:13:07,269 --> 00:13:13,610
+IO中的新对象, 并将其分配给这个对象i, 注意这里
+new object in type IO and were assigning it To this object i. And notice here that
+
+145
+00:13:13,610 --> 00:13:18,330
+我是a, is a, 在Java中被称为字段名, 这就是我们所说的
+I is a, is a, is what would be called a field name in Java. It's what we call an
+
+146
+00:13:18,330 --> 00:13:25,000
+属性是COOL语言的, 所以, 这些是数据el, 数据元素, 
+attribute in COOL. So, so these are the data el, the data elements of the, of the
+
+147
+00:13:25,000 --> 00:13:30,339
+类, 所以类可以有两个事物的名称, 属性, 或者
+class. And so the class can have both of names of things that are so, attributes or
+
+148
+00:13:30,339 --> 00:13:37,339
+包含值的字段以及可以执行计算的方法。
+fields that hold values as well as methods that can perform computation. [sound]
+
+149
+00:13:38,110 --> 00:13:45,110
+保存一下, 然后切换回来, 现在我们再编译一次, 它仍然是
+Let's save this and switch back. And now we'll compile this again. So and it still
+
+150
+00:13:48,300 --> 00:13:54,200
+编译, 现在我们可以运行它了, 现在它运行, 低看, 你可以
+compiles. And now we can run it. And now it runs, and low and behold, as you can
+
+151
+00:13:54,200 --> 00:13:59,760
+看下面的第三行, 顶部, 它打印出hello world, 然后
+see down there third line from the, the top, it prints out hello world. And that
+
+152
+00:13:59,760 --> 00:14:05,980
+看起来有点丑, 因为成功的执行消息是在
+looks a little bit ugly because the, the successful execution message is on the
+
+153
+00:14:05,980 --> 00:14:12,980
+和我们的hello world消息一样, 我们来解决这个问题, 我们回到这里。
+same line as our hello world message. So let's fix that. Let's come back over here.
+
+154
+00:14:13,410 --> 00:14:17,510
+在我们的字符串中, 我们可以添加一条新线, 在字符串的末尾, 所以
+And in our string here we can add a new line. Okay at the end of the string, so
+
+155
+00:14:17,510 --> 00:14:23,399
+反斜杠N是如何在字符串中写入新的行字符。
+backslash N is how you write a new line character in the string. Save that, come
+
+156
+00:14:23,399 --> 00:14:30,079
+回到这里, 让我们编译, 如果你不知道Unix bang会重复这个
+back over here let's compile. So if you don't know Unix bang will repeat the
+
+157
+00:14:30,079 --> 00:14:34,550
+前面的表达式, 前面的命令以与您相同的前缀开始
+previous expression the previous command that began with the same prefix that you
+
+158
+00:14:34,550 --> 00:14:38,630
+在爆炸之后键入, 所以我要运行最后一个命令, 从C开始, 也就是
+type after the bang. So I want to run the last command that began with C which is to
+
+159
+00:14:38,630 --> 00:14:43,220
+编译, 然后我想运行从S开始的最后一个命令
+compile and then I want to run the last command that began with S which is to run
+
+160
+00:14:43,220 --> 00:14:50,220
+自旋, 现在我们可以看到, 所有的hello world都是单独在一行上的。
+spin. And now we can see there it is all nice hello world is on a line by itself.
+
+161
+00:14:51,870 --> 00:14:57,600
+让我们继续, 让我们把所有这些声音都清除掉, 让我来展示一下
+Let's continue now, let's [sound] clear all this out [sound]. So let me just show
+
+162
+00:14:57,600 --> 00:15:02,610
+你在同一个程序上有一些变化, 我要做的是重写
+you a few variations on the same program. What I'm going to do here is just rewrite
+
+163
+00:15:02,610 --> 00:15:06,110
+它有两种不同的方式, 我只是举例说明了
+it in a couple of different ways. So I just illustrate a couple of features of
+
+164
+00:15:06,110 --> 00:15:10,420
+COOL语言, 让你更熟悉语法, 也可以展示一些
+COOL and get you more familiar with the syntax, and also just show some
+
+165
+00:15:10,420 --> 00:15:17,420
+做同样的事情的另一种方法, 你知道, 这个, 这个, 
+alternative ways to do the same thing. So you know this, this. A block here of, of
+
+166
+00:15:18,140 --> 00:15:24,110
+表达式是一种笨拙的方式来实现Hello World程序, 所以
+expressions is kind of a clumsy way to, to implement the Hello World program. So
+
+167
+00:15:24,110 --> 00:15:29,149
+我们把它去掉, 我们把这个去掉, 把这个去掉
+let's get rid of that. Let's get rid of the, the block. Let's get rid of the one
+
+168
+00:15:29,149 --> 00:15:36,110
+在这里, 好了, 让我们把表述体再一次变成一个表达式, 
+here at the end. Okay, let's just make the statement body a single expression again,
+
+169
+00:15:36,110 --> 00:15:41,839
+现在我们要解决的问题是这些类型是不匹配的, 但是
+and, and now the problem we're going to have is that the types won't match. But
+
+170
+00:15:41,839 --> 00:15:47,450
+为了说明这一点, 让我给你们展示一下让我们用一个点CL, 
+just to illustrate that, let me show it to you so let's do COOL C of one dot CL, and
+
+171
+00:15:47,450 --> 00:15:51,120
+你会看到, 在这里, 抱怨的是, 推断出的返回类型
+you'll see here that in complains that the inferred return type of the IO of the
+
+172
+00:15:51,120 --> 00:15:55,769
+方法main不符合声明的返回类型INT, 所以返回
+method main does not conform to the declared return type INT. So coming back
+
+173
+00:15:55,769 --> 00:16:02,769
+在这里, 对于程序, 编译器算出了这个表达式, 
+over here, the, to the program, The, the compiler figured out that this expression,
+
+174
+00:16:03,839 --> 00:16:09,570
+我点出了字符串, 产生了一个输入IO的对象, 所以它返回I对象
+I dot out string, yields an object of type IO. So it returns the i object as the
+
+175
+00:16:09,570 --> 00:16:13,970
+结果对这个表达式求值, 这与它的类型不匹配。
+results evaluating this expression. And that does not match the type it. And so
+
+176
+00:16:13,970 --> 00:16:17,240
+当然, 编译器会说, 嘿, 这些类型有问题, 
+naturally, the compiler says, hey, something's wrong with the types. Well,
+
+177
+00:16:17,240 --> 00:16:21,200
+这很容易修复, 我们可以改变返回类型或者主要方法
+that's easily repaired. We can just change the return type or the main method to say
+
+178
+00:16:21,200 --> 00:16:27,680
+它返回的是IO的类型, 我们回到这里, 看看现在是否
+it returns something of type IO. So let's go back over here and see if that now
+
+179
+00:16:27,680 --> 00:16:34,680
+所以, 我们编译程序, 然后我们在输出上运行旋转, 是的, 
+works. So, we compile the program. And then we run spin on the output, and yes,
+
+180
+00:16:36,800 --> 00:16:41,610
+所有的东西都像预期的那样工作, 现在, 我们不需要对
+everything still works as expected. Now, We don't have to be so specific about the
+
+181
+00:16:41,610 --> 00:16:46,480
+在这里输入, 因为我们实际上并没有使用方法主体的结果
+type over here, since we're not actually using the result of the method body for
+
+182
+00:16:46,480 --> 00:16:51,550
+任何东西, 我的意思是, 程序在打印字符串时就会退出, 我们可以
+anything. I mean, the program just exits once it prints the string. We could have
+
+183
+00:16:51,550 --> 00:16:55,670
+允许我们在这里有更多的灵活性, 我们可以直接声明结果类型
+allowed ourselves more flexibility here. We could've just declared the result type
+
+184
+00:16:55,670 --> 00:17:01,579
+对象是类型对象的main。所以Object是类层次结构的根。
+of main to be of type Object. So Object is the root of the class hierarchy in COOL.
+
+185
+00:17:01,579 --> 00:17:07,120
+每一个类都是对象的子类, 让我们回到h, 保存一下
+Every other class is a subclass of Object. So let's come back over h, let's save this
+
+186
+00:17:07,119 --> 00:17:14,120
+首先, 然后我们可以回到编译窗口, 我们可以编译它。
+first. And then we can come back over to our compilation window. We can compile it.
+
+187
+00:17:14,390 --> 00:17:21,390
+我们可以运行它, 它仍然有效, 所以现在我们可以做的另一件事是
+And we can run it and it still works. So now another thing we can do if we want, is
+
+188
+00:17:22,540 --> 00:17:29,530
+我们可以观察到, 在这里, 我们声明的这个属性, 这个字段我不是真的
+we could observe. Here that this attribute that we declare, this field I isn't really
+
+189
+00:17:29,530 --> 00:17:36,500
+必要的, 在这里, 我们分配, 你知道我们有一个特殊的名字, 当main
+necessary. Here we, we allocate, you know we have a special name I when the main
+
+190
+00:17:36,500 --> 00:17:42,460
+对象被构造来运行这个程序, 一个新的, 听不清的对象被分配给我
+object is constructed to run the program, a new [inaudible] object is allocated to I
+
+191
+00:17:42,460 --> 00:17:46,410
+然后在主方法中使用, 我们可以做所有的
+and then that gets used in the main method. We can actually just do all of
+
+192
+00:17:46,410 --> 00:17:51,660
+在主方法内部通过分配一个新的, 听不清的对象
+that inside the main method itself by just allocating a new [inaudible] object right
+
+193
+00:17:51,660 --> 00:17:58,660
+这里, 然后在那个对象上调用字符串, 好了, 这也可以。
+here and then calling out string on that object. Alright, So this should also work.
+
+194
+00:18:01,230 --> 00:18:08,230
+让我们来检查一下, 它会编译, 然后看, 它会腐烂, 好的, 那么
+And let's check it out. So it compiles. And lo and behold, it rots. Alright, So
+
+195
+00:18:12,290 --> 00:18:15,520
+回到这里我们再来解释一遍, 或者更多的东西
+coming back over here let's illustrate one more, or a couple more things that we
+
+196
+00:18:15,520 --> 00:18:22,520
+可以这样做, 我们也可以说, 听不清从IO继承, 所以我们有
+could do. So, we could also say that [inaudible] inherits From IO. So we have
+
+197
+00:18:23,620 --> 00:18:28,620
+为了调用out字符串方法, 在某处有IO功能, 所以我们
+to have the IO functionality somewhere in order to call the out string method. So we
+
+198
+00:18:28,620 --> 00:18:31,799
+我们通过创建一个单独的IO对象来实现这一点, 但是现在我们可以
+have been doing that by creating a separate object of type IO. But now we can
+
+199
+00:18:31,799 --> 00:18:36,030
+说, 好吧, 主要的物体本身就是它本身, 它具有所有的
+say well just the main object is itself. And something that has all the
+
+200
+00:18:36,030 --> 00:18:41,470
+IO的能力, 从IO继承而来, 如果你见过, 听不清
+capabilities of IO by inheriting from IO. And if you've seen any [inaudible]
+
+201
+00:18:41,470 --> 00:18:45,900
+在此之前的语言是一个熟悉的概念, 这里的主要内容是
+language before this will be a familiar concept. So main here gets all the
+
+202
+00:18:45,900 --> 00:18:50,230
+除了它的属性和方法之外, IO的属性和方法
+attributes and methods of IO, in addition to whatever attributes and methods of its
+
+203
+00:18:50,230 --> 00:18:57,230
+拥有它将拥有的, 而不是, 必须要分配一个新的IO对象
+own that it will have. And now Instead of, of having to allocate a new IO object in
+
+204
+00:18:57,330 --> 00:19:02,419
+调用字符串的顺序, 我们可以在self上调用它, 它的名字是
+order to call out string, we can just invoke it on self, Which is the name of
+
+205
+00:19:02,419 --> 00:19:07,390
+当主方法在其他语言中运行时, 当前对象被调用
+the current object when the main method runs In other languages self is called
+
+206
+00:19:07,390 --> 00:19:14,390
+这个, 好的, 我们保存它, 让我们重新编译这个, 它
+this. Okay, and so let's we saved it, so let's go over and compile this. So it
+
+207
+00:19:14,929 --> 00:19:21,929
+编译, 编译, 然后运行, 对吧？最后一个例子, 我们没有
+compiles, it compiles and, and it runs, right? So last example here, we don't have
+
+208
+00:19:24,690 --> 00:19:31,280
+在这个调度中命名self。有一个特性允许我们调用a
+to name self actually in this dispatch. There's a feature that allows us to call a
+
+209
+00:19:31,280 --> 00:19:35,260
+方法没有显式地命名它所发送的对象
+method without explicitly naming the object on which it's dispatched and
+
+210
+00:19:35,260 --> 00:19:40,440
+默认为self, 所以如果在分派中没有指定对象那么它就是一个分派
+defaults to self, so if no object is named in a dispatch then it's just a dispatched
+
+211
+00:19:40,440 --> 00:19:47,440
+所以这也应该起作用, 声音, 确实是这样的, 这就结束了
+self. So this should also work. [sound], And indeed it does. So that concludes our
+
+212
+00:19:50,290 --> 00:19:54,100
+第一个例子, 在接下来的几个视频中我们会看到一些更复杂的
+first example. In the next couple of videos we'll look at some more complex
+
+213
+00:19:54,100 --> 00:19:55,580
+COOL语言编程的例子。
+examples of COOL programming.

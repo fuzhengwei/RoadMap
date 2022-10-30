@@ -1,0 +1,83 @@
+0
+00:00:01,189 --> 00:00:07,340
+To summarize this video, register allocation is one of the most important jobs that a compiler
+
+1
+00:00:07,340 --> 00:00:11,740
+performs. And it's really, these days they must have an any kind of reasonable
+
+2
+00:00:11,740 --> 00:00:15,499
+production compiler. And, the reason you need it is because the inter-media
+
+3
+00:00:15,499 --> 00:00:19,320
+code just generally uses too many temporaries. We're allowed to be a little
+
+4
+00:00:19,320 --> 00:00:24,240
+bit sloppy with intermediate code precisely because we have good register allocation
+
+5
+00:00:24,240 --> 00:00:27,640
+algorithms. And the other reason, registers are just a very important
+
+6
+00:00:27,640 --> 00:00:32,750
+resource in making good user registers. Having some procedure for making
+
+7
+00:00:32,750 --> 00:00:36,879
+efficient use of the registers. Leads to much, much better code in the end,
+
+8
+00:00:36,879 --> 00:00:41,659
+much more efficient code. Now. The register allocation algorithm I described
+
+9
+00:00:41,659 --> 00:00:47,960
+here is really targeted at risk machine. So, for risk machine reduce instruction set
+
+10
+00:00:47,960 --> 00:00:53,089
+computer what kind of machine. You can pretty much take the register allocation algorithm
+
+11
+00:00:53,089 --> 00:00:57,319
+that I described and if any for those machines it would work out of the box.
+
+12
+00:00:57,319 --> 00:01:02,339
+CISC machines - which stands for complex instructions for computers - often
+
+13
+00:01:02,339 --> 00:01:07,840
+have restrictions on how the register can be used. Certain operation can only work with
+
+14
+00:01:07,840 --> 00:01:11,250
+certain registers. You may have register to different sizes that can only
+
+15
+00:01:11,250 --> 00:01:16,420
+hold certain values. And so it becomes more complicated to register allocation for
+
+16
+00:01:16,420 --> 00:01:21,140
+such machines. What people have done is to adapt the graph coloring procedure that
+
+17
+00:01:21,140 --> 00:01:27,420
+I described here. So, the basic idea is exactly the same and you would recognize
+
+18
+00:01:27,420 --> 00:01:30,650
+those algorithms is being primarily the graph color algorithms that
+
+19
+00:01:30,650 --> 00:01:36,750
+we discussed. There are just additional. Steps in those algorithms and places where
+
+20
+00:01:36,750 --> 00:01:40,340
+the particular constraints are what registers can be used have to be observed.

@@ -1,0 +1,655 @@
+0
+00:00:04,140 --> 00:00:08,250
+In this video, we're finally going to give an actual bottom up parsing algorithm. In
+
+1
+00:00:08,250 --> 00:00:12,920
+particular, we'll talk about SLR, or simple LR parsing, which will build on the
+
+2
+00:00:12,920 --> 00:00:18,080
+ideas of valid items, and viable prefixes that we've been discussing in our recent
+
+3
+00:00:18,080 --> 00:00:25,080
+videos. The first thing we're going to do is to define a very weak bottom up parsing
+
+4
+00:00:26,589 --> 00:00:31,839
+algorithm called LR0 parsing. And the basic idea here is that we're going to
+
+5
+00:00:31,839 --> 00:00:38,230
+assume a stack contains a contents alpha, and that the next input is token T And
+
+6
+00:00:38,230 --> 00:00:44,000
+that the DFA, this is the DFA that recognizes, the viable prefixes. On input
+
+7
+00:00:44,000 --> 00:00:48,269
+alpha, that is, when it reads the stack contents, it terminates in some state S.
+
+8
+00:00:48,269 --> 00:00:53,859
+[sound] And There's only gonna be two things that this that this parsing
+
+9
+00:00:53,859 --> 00:00:59,629
+algorithm needs to do. So if S, if the final state of the DFA contains the item X
+
+10
+00:00:59,629 --> 00:01:03,969
+goes to beta dot. Well, what does that say? That says we've seen the complete
+
+11
+00:01:03,969 --> 00:01:10,280
+right hand side, of X goes to beta on the top of the stack, and that furthermore,
+
+12
+00:01:10,280 --> 00:01:15,549
+everything that's below the stack still says that x goes to beta dot is a valid,
+
+13
+00:01:15,549 --> 00:01:20,780
+or a viable, sorry, is a valid item for this state. Meaning its okay to reduce by
+
+14
+00:01:20,780 --> 00:01:25,560
+X goes to beta. So if we see a complete production dot all the way in the right
+
+15
+00:01:25,560 --> 00:01:30,590
+hand side in the final state of the DFA, then we're just going to reduce by that
+
+16
+00:01:30,590 --> 00:01:37,590
+production. The other possible move is a shift. If we wind up in a state, where, X
+
+17
+00:01:37,600 --> 00:01:42,750
+goes to beta .t, and then some other stuff is a valid item, what does that say? That
+
+18
+00:01:42,750 --> 00:01:47,590
+says that it would be okay at this point to add a T to the stack. And if T is our
+
+19
+00:01:47,590 --> 00:01:54,590
+input, well, then we should do a shift move [sound]. Now, when does LR0 parsing
+
+20
+00:01:55,289 --> 00:01:59,399
+get into trouble? Well, there are two possible problems it could have. It might
+
+21
+00:01:59,399 --> 00:02:04,210
+not be able to decide. Between two possible reduced moves. So, if any state
+
+22
+00:02:04,210 --> 00:02:09,130
+of DFA has two possible reductions, meaning it seem two complete productions
+
+23
+00:02:09,130 --> 00:02:13,550
+and it could reduce by either one then there's not enough information to decide
+
+24
+00:02:13,550 --> 00:02:17,790
+which reduction to perform and the parts won't be completely deterministic, and
+
+25
+00:02:17,790 --> 00:02:21,860
+this is called a reduced, reduced co nflict. So again, this happens if a
+
+26
+00:02:21,860 --> 00:02:27,709
+particular state has two separate items indicating two separate reductions. The
+
+27
+00:02:27,709 --> 00:02:31,940
+other possibility is that the final state of the DFA, after reading the stack
+
+28
+00:02:31,940 --> 00:02:37,900
+contents, might have An item that says to reduce and another item that says to
+
+29
+00:02:37,900 --> 00:02:43,720
+shift. And this is called a shift-reduce conflict. So in this case, there would
+
+30
+00:02:43,720 --> 00:02:48,370
+only be a conflict in a state where T was the next item in the input. But in that
+
+31
+00:02:48,370 --> 00:02:52,510
+situation, we wouldn't know whether to shift T onto the stack, or to reduce by X
+
+32
+00:02:52,510 --> 00:02:59,510
+goes to beta [sound]. Let's take a look at the DFA for recognizing viable prefixes
+
+33
+00:03:00,239 --> 00:03:05,290
+that we've been using for the last couple of ideas, and in fact this particular DFA
+
+34
+00:03:05,290 --> 00:03:09,340
+does have some conflicts. So, let's take a look at this state right here, here we
+
+35
+00:03:09,340 --> 00:03:15,280
+could either reduced by E goes to T you are in this state or if the next input is
+
+36
+00:03:15,280 --> 00:03:20,970
+a plus we could do a shift and. In, so in this particular situation, if the next
+
+37
+00:03:20,970 --> 00:03:25,670
+input is plus, we could either shift and use this item or we can reduce and use
+
+38
+00:03:25,670 --> 00:03:32,670
+that item. So this particular state has a shift reduced conflict. Now, that's not
+
+39
+00:03:36,180 --> 00:03:41,450
+the only conflict in this in this grammar, though. In this state here, we have a very
+
+40
+00:03:41,450 --> 00:03:46,560
+similar problem. Here we could shift if the next input is a times. Or we could
+
+41
+00:03:46,560 --> 00:03:51,420
+reduce by T goes to [inaudible]. And so this state also has a shift reduce
+
+42
+00:03:51,420 --> 00:03:58,420
+conflict. It turns out that it's not difficult to improve on LR0 parsing, and,
+
+43
+00:04:00,620 --> 00:04:06,500
+we'll present one such improvement in this video called SLR or simple LR parsing. And
+
+44
+00:04:06,500 --> 00:04:11,900
+this is going to improve on LR0 by adding some heuristics that will refine when we
+
+45
+00:04:11,900 --> 00:04:18,900
+shift and when we reduce, so that fewer states have conflicts. The modification to
+
+46
+00:04:20,279 --> 00:04:25,110
+LR0 parsing that gives us SLR parsing is really quite small. We just add one new
+
+47
+00:04:25,110 --> 00:04:32,110
+condition to the reduction case. So before, if we saw it, X goes to beta dot,
+
+48
+00:04:32,310 --> 00:04:36,660
+in the final state of our DFA, recall what that means. That means beta is on the top
+
+49
+00:04:36,660 --> 00:04:43,190
+of the stack, and it is viable And so it's fine to reduce. Now, We do have a little
+
+50
+00:04:43,190 --> 00:04:48,000
+bit more information. So, so notice that the automaton her e doesn't take any
+
+51
+00:04:48,000 --> 00:04:51,570
+advantage of what's coming up in the input. This is based entirely, this
+
+52
+00:04:51,570 --> 00:04:56,730
+decision here is based entirely on the stack contents. But it might be that it
+
+53
+00:04:56,730 --> 00:05:01,830
+doesn't make sense to reduce based on what the next input symbol is. And how can we
+
+54
+00:05:01,830 --> 00:05:05,250
+take advantage of that? Well, if you think about it, what's going to happen? We have
+
+55
+00:05:05,250 --> 00:05:11,460
+our stack contents. And, it ends in a beta, and now we're going to make a move
+
+56
+00:05:11,460 --> 00:05:17,780
+where we're going to replace that by X. Okay. And if the next input symbol is t,
+
+57
+00:05:17,780 --> 00:05:21,650
+so remember we have a vertical bar here and a t following, what does that mean?
+
+58
+00:05:21,650 --> 00:05:27,000
+Well, that means that x has to come before t in the derivation. Or in another words,
+
+59
+00:05:27,000 --> 00:05:32,520
+t is gonna follow x. And if t can't follow x, if t is a terminal symbol that can't
+
+60
+00:05:32,520 --> 00:05:37,220
+come after the non-terminal x than it makes no sense to do this reduction. So we
+
+61
+00:05:37,220 --> 00:05:42,230
+only do the reduction if t is in the follow of x. We just add that restriction
+
+62
+00:05:42,230 --> 00:05:48,780
+and that is the only change to the parsing algorithm. So if there are any conflicts
+
+63
+00:05:48,780 --> 00:05:53,620
+under these rules either shift reduce or reduce, reduce, then the grammar is not an
+
+64
+00:05:53,620 --> 00:05:58,290
+slr grammar. Just notice that these rules amount to a heuristic, for detecting the
+
+65
+00:05:58,290 --> 00:06:02,550
+handles. So, we take into account two pieces of information. The contents of the
+
+66
+00:06:02,550 --> 00:06:07,710
+stack, that's that the DFA, does for us, and it tells us what items are possible
+
+67
+00:06:07,710 --> 00:06:12,130
+when we get to the top of the stack, and also what's coming up in input, and we can
+
+68
+00:06:12,130 --> 00:06:16,620
+use that to define our reduction decisions. And for those grammars where
+
+69
+00:06:16,620 --> 00:06:20,630
+there are no conflicts, meaning there is a, there is a unique move, in every
+
+70
+00:06:20,630 --> 00:06:25,500
+possible state, under those rules. Then this heuristic is exact, you know, for,
+
+71
+00:06:25,500 --> 00:06:32,000
+for those grammars. And we just define those grammars to be the SLR grammars.
+
+72
+00:06:32,000 --> 00:06:35,680
+Let's consider how things have changed for our running example. The deterministic
+
+73
+00:06:35,680 --> 00:06:39,350
+automaton for recognizing the viable prefixes of the grammar we've been looking
+
+74
+00:06:39,350 --> 00:06:43,820
+at for several videos now. Recall that we had shift reduced conflicts under LR zero
+
+75
+00:06:43,820 --> 00:06:49,440
+rules in two states. So now let's look at this state first, the upper state. So
+
+76
+00:06:49,440 --> 00:06:52,410
+here, we 're going to shift if there's a plus in the input. That's what this item
+
+77
+00:06:52,410 --> 00:06:56,150
+tells us to do. It tells us there's if there's a plus, then the right move is to
+
+78
+00:06:56,150 --> 00:07:00,180
+shift. And so Now the question is, when are we going to reduce? Well we're only
+
+79
+00:07:00,180 --> 00:07:05,280
+going to reduce if the input is in the follow of E. And what is the follow of E?
+
+80
+00:07:05,280 --> 00:07:11,080
+We computed that a long time ago, but just to remind you remember that E here is the
+
+81
+00:07:11,080 --> 00:07:15,970
+original start symbol of the grammar so certainly dollar sign will wind up in the
+
+82
+00:07:15,970 --> 00:07:20,770
+follow of E. And the other possibility for the follow of E is close paren, because
+
+83
+00:07:20,770 --> 00:07:26,030
+here at this point in the grammar close paren comes after E. And that's the only
+
+84
+00:07:26,030 --> 00:07:31,110
+two possibilities. So what that says now, what that means is that, in this
+
+85
+00:07:31,110 --> 00:07:37,540
+particular state, we are going to reduce, if either we're out of input. Or if the
+
+86
+00:07:37,540 --> 00:07:42,460
+next I, the next, token in the input is a closed paren, and will shift if the next
+
+87
+00:07:42,460 --> 00:07:47,460
+token in the input is a plus. And in any other situation, we will report a parsing
+
+88
+00:07:47,460 --> 00:07:51,570
+error. And so there's no longer any shift reduced conflict in this state, and
+
+89
+00:07:51,570 --> 00:07:56,260
+there's always a unique move for every possible input. The situation is
+
+90
+00:07:56,260 --> 00:08:00,830
+similarly, similarly improved, for the other state. So here, we're going to shift
+
+91
+00:08:00,830 --> 00:08:04,930
+in there's a times in the input, and we're going to reduce if the input is in the
+
+92
+00:08:04,930 --> 00:08:11,930
+follow of T. And what is the follow of T? [sound]. Recall, We computed this again a
+
+93
+00:08:12,970 --> 00:08:17,160
+long time ago and I just happen to know what it is. And so I'll just tell you.
+
+94
+00:08:17,160 --> 00:08:22,780
+Well it included everything in the follow of e. So a dollar sign in close paren are
+
+95
+00:08:22,780 --> 00:08:28,970
+in the follow of T. But also, a plus is in the follow of T because of this usage over
+
+96
+00:08:28,970 --> 00:08:32,820
+here in the grammar where plus appears really after T. But those are the only
+
+97
+00:08:32,820 --> 00:08:37,659
+things in the follow of T. And so now we're going to reduce, only if we're out
+
+98
+00:08:37,659 --> 00:08:42,590
+of input or if the next input item is a close paren or a plus and there's also a
+
+99
+00:08:42,590 --> 00:08:47,520
+no shift reduce, no longer any shift reduce conflict in this state. And so this
+
+100
+00:08:47,520 --> 00:08:54,520
+grammar, is an SLR1 grammar. Now many grammars are not SLR. To emphasize that
+
+101
+00:08:56,650 --> 00:09:02,950
+SLR is an improvement on LR0 but it 's still, not a really very general class of
+
+102
+00:09:02,950 --> 00:09:08,570
+grammars. So All ambiguous grammars for example are not SLR. We can improve a
+
+103
+00:09:08,570 --> 00:09:12,780
+little bit on the SLR situation. We can make SLR parsers even more grammarous, by
+
+104
+00:09:12,780 --> 00:09:19,270
+using precedence declarations to tell it how to resolve conflicts. So let's revert
+
+105
+00:09:19,270 --> 00:09:23,170
+to the most natural and also most ambiguous grammar for plus and times over
+
+106
+00:09:23,170 --> 00:09:27,860
+the integers, and we've looked at this grammar before. If you build the DFA for
+
+107
+00:09:27,860 --> 00:09:31,050
+this grammar, if you go through and build the DFA for the viable prefix of this
+
+108
+00:09:31,050 --> 00:09:36,050
+grammar, you will discover that there is a state. That has the following two items in
+
+109
+00:09:36,050 --> 00:09:43,050
+it, one says that if we see E times E that we have seen E times E on a stack, and
+
+110
+00:09:43,170 --> 00:09:48,740
+that we can now reduce by ecos E times E. The other one will say that if there's a
+
+111
+00:09:48,740 --> 00:09:54,080
+plus coming up in the input we should shift. And notice that this is exactly the
+
+112
+00:09:54,080 --> 00:09:58,760
+question. Of whether, times has higher precedence than plus. When you're in this
+
+113
+00:09:58,760 --> 00:10:05,550
+situation, should you. Reduce, thereby grouping the two E's together here,
+
+114
+00:10:05,550 --> 00:10:12,170
+Grouping the multiplication operation first. Or should you shift the plus, in
+
+115
+00:10:12,170 --> 00:10:18,190
+which case you'll be working on that for a sentence at the top of the stack. So, in
+
+116
+00:10:18,190 --> 00:10:22,020
+this situation, the declaration times has higher precedence than plus resolves the
+
+117
+00:10:22,020 --> 00:10:27,370
+conflict in favor of the reduction. So we would not do the shift, and we would wind
+
+118
+00:10:27,370 --> 00:10:34,310
+up with no shift-reduce conflict. Note that the term precedence declaration is
+
+119
+00:10:34,310 --> 00:10:38,990
+actually quite misleading. These declarations don't define precedence. They
+
+120
+00:10:38,990 --> 00:10:42,380
+don't. Do that directly at all. What they really define are conflict resolution.
+
+121
+00:10:42,380 --> 00:10:47,480
+They say, make this move instead of that move. It happens that in this particular
+
+122
+00:10:47,480 --> 00:10:52,290
+case. Because we're dealing with a national grammar, simple grammar for plus
+
+123
+00:10:52,290 --> 00:10:58,270
+and times that the conflict resolution has exactly the effect of enforcing the
+
+124
+00:10:58,270 --> 00:11:02,860
+precedence declaration that we want. But in more complicated grammars where there
+
+125
+00:11:02,860 --> 00:11:07,820
+are more interactions between various pieces of the grammar, these declarations
+
+126
+00:11:07,820 --> 00:11:12,090
+might not do what you expect in terms of enforcing precedence, fortuna tely, you
+
+127
+00:11:12,090 --> 00:11:16,540
+can always print out the automaton. The tools provide, Usually a way for you to
+
+128
+00:11:16,540 --> 00:11:22,710
+inspect the parsing automaton. And then you can see exactly how, the conflicts are
+
+129
+00:11:22,710 --> 00:11:27,580
+being resolved, and whether those are the resolutions that you had intended. And I
+
+130
+00:11:27,580 --> 00:11:31,220
+recommend when you're building parsers, especially if it's a, a fairly complex
+
+131
+00:11:31,220 --> 00:11:35,400
+parser, that you do examine the parsing automaton to make sure that it's doing
+
+132
+00:11:35,400 --> 00:11:42,400
+what you expect. So now we're ready to give the algorithm for SLR parsing. So
+
+133
+00:11:42,400 --> 00:11:47,820
+[inaudible] automaton, our parsing automaton that recognizes viable prefixes.
+
+134
+00:11:47,820 --> 00:11:51,390
+The initial configuration is going to be with the vertical bar all the way to the
+
+135
+00:11:51,390 --> 00:11:55,290
+left so the stack is empty. This is our full input and we [inaudible] dollar to
+
+136
+00:11:55,290 --> 00:11:58,930
+indicate the end of the input. And now we're going to repeat until the
+
+137
+00:11:58,930 --> 00:12:04,590
+configuration has just the start symbol on the stack, and dollar in the input.
+
+138
+00:12:04,590 --> 00:12:08,240
+Meaning all the input is gone and we've reduced the entire input to the start
+
+139
+00:12:08,240 --> 00:12:14,720
+symbol. So. An [inaudible] configuration will be written as alpha-omega; where
+
+140
+00:12:14,720 --> 00:12:19,080
+alpha is the contents of the stack and omega is the remaining input, and what
+
+141
+00:12:19,080 --> 00:12:24,029
+we're going to do is we're going to run M, run the machine on the current stack alpha
+
+142
+00:12:24,029 --> 00:12:29,380
+and if M rejects alpha, if M says that alpha is not a viable prefix, then we're
+
+143
+00:12:29,380 --> 00:12:34,300
+going to report a parsing error. We're gonna stop right there. Now, if M accepts
+
+144
+00:12:34,300 --> 00:12:39,360
+alpha, and it accepts it in a state, if it ends in a state with items I, then we're
+
+145
+00:12:39,360 --> 00:12:43,100
+gonna look at the next input, call that A, and what are we going to do? Well, we're
+
+146
+00:12:43,100 --> 00:12:50,100
+going to shift. Yes, there's an item. In I that says, it would be okay to see the
+
+147
+00:12:50,570 --> 00:12:55,610
+terminal A. Next. Okay? So that's just our shift move. And then we're going to reduce
+
+148
+00:12:55,610 --> 00:13:02,610
+if there's a reduction item, in the in the set of valid items. And the next input can
+
+149
+00:13:02,790 --> 00:13:06,300
+follow the non-terminal on the left hand side. So these are just the two rules that
+
+150
+00:13:06,300 --> 00:13:10,310
+we discussed before. And then we'll report a parsing error if neither of these
+
+151
+00:13:10,310 --> 00:13:15,650
+applies. Okay, now one interesting thing about this algorithm, if you read it
+
+152
+00:13:15,650 --> 00:13:19,630
+carefully and you th ink about it for awhile. You'll realize that this step is
+
+153
+00:13:19,630 --> 00:13:26,630
+actually not needed, that we don't need to check here For whether M accepts the
+
+154
+00:13:26,930 --> 00:13:32,750
+stack, or not. Because this staff down here, where we report a parsing error, if
+
+155
+00:13:32,750 --> 00:13:37,160
+neither of these steps applies, this already implies that we will never form an
+
+156
+00:13:37,160 --> 00:13:41,970
+invalid stack, That our, their stacks will always be viable. The parsing errors will
+
+157
+00:13:41,970 --> 00:13:47,130
+be caught at this line, and we won't pollute the stack with symbols that can't
+
+158
+00:13:47,130 --> 00:13:52,440
+possibly result in viable prefixes. So in fact, this error check here, is not
+
+159
+00:13:52,440 --> 00:13:58,820
+needed, M is always going to accept the stack. If there are any conflicts in the
+
+160
+00:13:58,820 --> 00:14:03,870
+last step, meaning, it's not clear whether to shift or reduce in some state for some,
+
+161
+00:14:03,870 --> 00:14:09,380
+input symbol, then the grammar is not, SLRK. And K, again, is the amount of look
+
+162
+00:14:09,380 --> 00:14:13,360
+ahead. In practice, we just use one token of look ahead, So typically, just looking
+
+163
+00:14:13,360 --> 00:14:15,380
+at the next token in the input stream.

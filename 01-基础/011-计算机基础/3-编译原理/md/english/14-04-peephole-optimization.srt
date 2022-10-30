@@ -1,0 +1,211 @@
+0
+00:00:03,929 --> 00:00:07,240
+In this short video, I'm going to say a few words about a variation on local
+
+1
+00:00:07,240 --> 00:00:10,690
+optimization that applies directly to assembly code called Peephole
+
+2
+00:00:10,690 --> 00:00:17,690
+Optimization. The basic idea here is that instead of optimizing on intermediate code
+
+3
+00:00:19,019 --> 00:00:24,039
+we could do our optimizations directly on assembly code And people optimization is
+
+4
+00:00:24,039 --> 00:00:29,320
+one such technique. The peephole is, stands for a short sequence of usually
+
+5
+00:00:29,320 --> 00:00:33,570
+continuous instructions. So, the idea is that we have our program. We can see, we
+
+6
+00:00:33,570 --> 00:00:38,570
+can think of it as a long sequence of instructions and our peephole is some
+
+7
+00:00:38,570 --> 00:00:43,050
+window onto this program. So, if we have a peephole of size four, we can think of
+
+8
+00:00:43,050 --> 00:00:47,760
+ourselves as staring through a small hole at the program and all we can see is a
+
+9
+00:00:47,760 --> 00:00:51,390
+short sequence of four instructions and then we can optimize that sequence. So,
+
+10
+00:00:51,390 --> 00:00:56,370
+then we can slide the peephole around and optimize different parts of the program
+
+11
+00:00:56,370 --> 00:01:00,309
+And the, what the, what the optimizer will do is it will, you know, stare at this
+
+12
+00:01:00,309 --> 00:01:04,399
+short sequence of instructions and if it knows a better sequence it will replace
+
+13
+00:01:04,399 --> 00:01:08,720
+that sequence by the other one and then it will repeat this as I said. You know,
+
+14
+00:01:08,720 --> 00:01:13,619
+applying other transformations to, to possibly the same or other parts of the
+
+15
+00:01:13,619 --> 00:01:19,080
+assembly program. So, people optimizations are generally written as replacement
+
+16
+00:01:19,080 --> 00:01:22,630
+rules. So, the we'll have the window of instructions on the left. So, it'll be
+
+17
+00:01:22,630 --> 00:01:25,920
+some sequence of instructions and we'll know some other sequence of instructions
+
+18
+00:01:25,920 --> 00:01:29,799
+that we would prefer on the right. So, if we see this instruction sequence on the
+
+19
+00:01:29,799 --> 00:01:35,049
+left, then we'll replace by the one on the right-hand side. So, for example, if I
+
+20
+00:01:35,049 --> 00:01:41,880
+have a move from register b to register a and then I move back from register a to
+
+21
+00:01:41,880 --> 00:01:47,000
+register b well, that's the second move is useless, can, can just be deleted as a way
+
+22
+00:01:47,000 --> 00:01:52,159
+to replace this two instruction sequence by a one instruction, instruction
+
+23
+00:01:52,159 --> 00:01:57,930
+sequence. And this will work provided that there's no possible jump target here. So
+
+24
+00:01:57,930 --> 00:02:01,979
+if, if there's no possibility that the code would ever jump to this instruction
+
+25
+00:02:01,979 --> 00:02:08,450
+then that instruction can be removed. Another example, If I add i to the
+
+26
+00:02:08,449 --> 00:02:13,370
+register a, and then I subsequently add j to the register a, I can do a constant
+
+27
+00:02:13,370 --> 00:02:17,689
+folding optimization here, and combine those two add two additions into one
+
+28
+00:02:17,689 --> 00:02:24,689
+addition where I add the sum of i = j to the register A. So, many but not quite all
+
+29
+00:02:25,370 --> 00:02:29,439
+of the basic block optimizations that we've discussed in the last video, can be
+
+30
+00:02:29,439 --> 00:02:36,439
+cast also as peephole optimizations. So, for example if we are adding zero to a
+
+31
+00:02:37,579 --> 00:02:41,099
+register and we're storing it in another register, well, that can be replaced by a
+
+32
+00:02:41,099 --> 00:02:46,879
+register move. If we're moving a value from the same register to itself so this
+
+33
+00:02:46,879 --> 00:02:50,230
+is like a self-assignment, well, that instruction can just be deleted, replaced
+
+34
+00:02:50,230 --> 00:02:55,019
+by the empty sequence of instructions. And together for those two instructions would
+
+35
+00:02:55,019 --> 00:03:00,639
+be those two optimizations, excuse me, would be able to eliminate adding zero to
+
+36
+00:03:00,639 --> 00:03:07,569
+a register. So, first this would get translated into a move from a to a. And
+
+37
+00:03:07,569 --> 00:03:11,650
+then the move from a to a would get deleted. And as this little example
+
+38
+00:03:11,650 --> 00:03:15,309
+illustrates just like with local optimizations, people optimizations have
+
+39
+00:03:15,309 --> 00:03:22,309
+to be applied repeatedly to get the maximum effect. I hope this simple
+
+40
+00:03:22,620 --> 00:03:27,689
+discussion has illustrated for you that many optimizations can be applied directly
+
+41
+00:03:27,689 --> 00:03:32,219
+to assembly code and that there's really nothing magic about optimizing
+
+42
+00:03:32,219 --> 00:03:36,189
+intermediate code. So, if you have a program written in any language, source
+
+43
+00:03:36,189 --> 00:03:40,430
+language, intermediate language, assembly language. It makes sense to talk about
+
+44
+00:03:40,430 --> 00:03:45,269
+doing transformations of programs written in that language to improve the behavior
+
+45
+00:03:45,269 --> 00:03:50,359
+of the program. And it's also a good time here to mention that program optimization
+
+46
+00:03:50,359 --> 00:03:56,719
+is really a terrible term. The compilers do not produce optimal code and it's
+
+47
+00:03:56,719 --> 00:04:03,719
+purely an accident if a compiler were to somehow generate the best possible code
+
+48
+00:04:03,939 --> 00:04:08,680
+for a given program. Really, what compilers do is they have a bunch of
+
+49
+00:04:08,680 --> 00:04:11,939
+transformations that they know will improve the behavior of the program. And
+
+50
+00:04:11,939 --> 00:04:16,269
+they'll just improve it as much as they ca N. So, really what program optimization is
+
+51
+00:04:16,269 --> 00:04:20,780
+all about is program improvement. We're trying to make the program better but
+
+52
+00:04:20,779 --> 00:04:26,360
+there's no guarantee that we will reach the best possible code for a given program.

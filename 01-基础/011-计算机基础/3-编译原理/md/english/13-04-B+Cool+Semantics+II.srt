@@ -1,0 +1,267 @@
+0
+00:00:00,890 --> 00:00:04,509
+To summarize our discussion of dynamic dispatch, the body of the method is
+
+1
+00:00:04,509 --> 00:00:11,050
+invoked with, within environment e. That has definitions for the formal arguments
+
+2
+00:00:11,050 --> 00:00:17,730
+and the attributes of the self object and a store that's just like color store
+
+3
+00:00:17,730 --> 00:00:22,210
+except that it also has the actual arguments bound to the locations allocated
+
+4
+00:00:22,210 --> 00:00:27,429
+for the formal parameters. Notice in the rules that the notion of a frame or
+
+5
+00:00:27,429 --> 00:00:33,160
+activation records is implicit. We don't actually build a data structure. That
+
+6
+00:00:33,160 --> 00:00:38,140
+contains you know, all of the values all of the arguments and the, the return
+
+7
+00:00:38,140 --> 00:00:42,809
+address and all that stuff together. That information is not gathered together in
+
+8
+00:00:42,809 --> 00:00:47,120
+one place, it's a little more abstract. We don't actually have to say you know,
+
+9
+00:00:47,120 --> 00:00:50,550
+whether things are allocated on the stack or on the heat and that's a good feature.
+
+10
+00:00:50,550 --> 00:00:54,260
+That allows us to have, potentially have a range of implementations like all
+
+11
+00:00:54,260 --> 00:00:59,789
+implement the semantics correctly. Now, we didn't do the semantics on the semantics
+
+12
+00:00:59,789 --> 00:01:06,290
+dispatch but it's extremely similar. The only difference is in how the class that
+
+13
+00:01:06,290 --> 00:01:10,140
+we are going to be dispatching to is looked up so in the stack dispatch you
+
+14
+00:01:10,140 --> 00:01:13,770
+might be able to you know, you can nam e the class that you want to dispatch to
+
+15
+00:01:13,770 --> 00:01:18,280
+this one extra line to the side where the class is being dispatched to in the formal
+
+16
+00:01:18,280 --> 00:01:24,509
+rule and you can look in the manual to see how that works. So it's worth pointing out
+
+17
+00:01:24,509 --> 00:01:29,790
+that while the operation of rules are very detailed, they intentionally omit some
+
+18
+00:01:29,790 --> 00:01:34,049
+cases that you might think they should cover so let's take a look at our dispatch
+
+19
+00:01:34,049 --> 00:01:41,049
+example again. So here notice that we look up the class of v0. So v0 is an object and
+
+20
+00:01:44,469 --> 00:01:51,469
+we checked what is class tag is and then we look up in that class, the name of the
+
+21
+00:01:51,869 --> 00:01:57,619
+method that we're dispatching to and we get out a definition of the method or not
+
+22
+00:01:57,619 --> 00:02:02,829
+the definition of the method that we can write the rest of the rule. Now what would
+
+23
+00:02:02,829 --> 00:02:09,729
+happen If there was no such method f in the class x, I mean this, this rule just
+
+24
+00:02:09,729 --> 00:02:15,750
+assumes that method is in fact to define the class x, And the rule doesn't say
+
+25
+00:02:15,750 --> 00:02:22,010
+anything about what to do if it turns out that this class x doesn't have any method
+
+26
+00:02:22,010 --> 00:02:29,010
+f? Well, that actually can't happen. So, type-checking has already guaranteed That
+
+27
+00:02:29,019 --> 00:02:33,430
+when we go to look up method as in class x it will exist. That was one of the points
+
+28
+00:02:33,430 --> 00:02:39,040
+with the type checking rules was that no dynamic dispatch could ever dispatch to a
+
+29
+00:02:39,040 --> 00:02:44,349
+method that wasn't defined. And so the fact that the time checking is already
+
+30
+00:02:44,349 --> 00:02:49,500
+been done, it will allows us to meet some cases. So there's some checks that we
+
+31
+00:02:49,500 --> 00:02:54,269
+don't have to do because we know that, that system has already effectively done
+
+32
+00:02:54,269 --> 00:02:58,190
+that And the rules would only be more complicated if we didn't have type
+
+33
+00:02:58,190 --> 00:03:02,129
+checking and we needed to actually say what would happen you know, all of the
+
+34
+00:03:02,129 --> 00:03:09,129
+cases where type checking will work where things were not typed correct. Now there
+
+35
+00:03:09,590 --> 00:03:13,860
+are some run time errors that the type checker doesn't prevent however and in
+
+36
+00:03:13,860 --> 00:03:20,860
+cool there are four. One is to dispatch the void. Divisions by zero you can have a
+
+37
+00:03:21,299 --> 00:03:24,890
+sub-screen in that excess out of range or you could run out of memory. You could try
+
+38
+00:03:24,890 --> 00:03:29,379
+allocating new objects that do not have enough space for that. And in such cases,
+
+39
+00:03:29,379 --> 00:03:33,629
+the execution has to aboard gracefully an d that means with an error message and not
+
+40
+00:03:33,629 --> 00:03:39,400
+just with a segmentation fault or some other kind of hard crash and in the manual
+
+41
+00:03:39,400 --> 00:03:45,239
+there some guidelines as to what a correct co-implementation should do in this four
+
+42
+00:03:45,239 --> 00:03:52,239
+situations. To summarize the material in the last couple of videos the operational
+
+43
+00:03:52,280 --> 00:03:58,049
+semantic rules are really very precised and detail. If you understand them then
+
+44
+00:03:58,049 --> 00:04:03,989
+you really understand how to implement a correct cool compiler. So the rules are
+
+45
+00:04:03,989 --> 00:04:09,700
+complete enough and give you enough detail that it really can't go wrong if you just
+
+46
+00:04:09,700 --> 00:04:14,019
+implement what the rules tell you to do. So you need to read the rules very
+
+47
+00:04:14,019 --> 00:04:18,630
+carefully And I'll emphasize that because there's actually quite a lot going on in
+
+48
+00:04:18,630 --> 00:04:22,630
+the rules. They're written in a certain way and you know, to, to achieve a certain
+
+49
+00:04:22,630 --> 00:04:27,070
+effect and I pointed out a couple of subtle things in the rules and so you
+
+50
+00:04:27,070 --> 00:04:31,080
+know, you really have to actually study the rules in order to internalize what
+
+51
+00:04:31,080 --> 00:04:37,000
+they mean and be able to. Implement them correctly. It's also a great way
+
+52
+00:04:37,000 --> 00:04:40,440
+understanding these rules and details was actually a great way to learn quite a bit
+
+53
+00:04:40,440 --> 00:04:45,010
+of the, the kind of formal thinking that goes in to the design of programming
+
+54
+00:04:45,010 --> 00:04:49,670
+languages and what it means for a programming language to have a semantics
+
+55
+00:04:49,670 --> 00:04:55,250
+and for implementation of something to be correct. Now having settled that, I should
+
+56
+00:04:55,250 --> 00:04:59,480
+say that most languages do not have a well specified operational semantics. There are
+
+57
+00:04:59,480 --> 00:05:03,970
+some there are some substantial languages and fairly realistic languages that do
+
+58
+00:05:03,970 --> 00:05:08,780
+have a formal semantics but most of the language is that you're familiar with do
+
+59
+00:05:08,780 --> 00:05:13,510
+not. Finally just a comment you know when portability is important, when you really
+
+60
+00:05:13,510 --> 00:05:18,890
+want software that you write behave the exactly the same in different environments
+
+61
+00:05:18,890 --> 00:05:24,740
+so you know if I take the same program and I move it to a different machine or a
+
+62
+00:05:24,740 --> 00:05:29,590
+different operating system and I still want to kind of guarantee that this offer
+
+63
+00:05:29,590 --> 00:05:35,970
+will behave as it as it you know the same on both machine or the old environment and
+
+64
+00:05:35,970 --> 00:05:40,370
+the new environment then I really need some independent defin ition of what it
+
+65
+00:05:40,370 --> 00:05:44,550
+means what the behavior of these programs should be. And that's where a formal
+
+66
+00:05:44,550 --> 00:05:47,180
+semantics becomes a really critical.

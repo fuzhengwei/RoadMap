@@ -1,0 +1,35 @@
+0
+00:00:00,940 --> 00:00:05,480
+Well, we've come to the end of this video. And to summarize, we looked at regular
+
+1
+00:00:05,480 --> 00:00:11,400
+expressions, which are used to define regular languages. And the regular
+
+2
+00:00:11,400 --> 00:00:16,910
+expressions are syntax (that's the expression that we write down), and it
+
+3
+00:00:16,910 --> 00:00:21,660
+denotes a set of strings which is the regular language and that's the meaning of
+
+4
+00:00:21,660 --> 00:00:26,870
+the regular expression. And there are five kinds of regular expressions in the
+
+5
+00:00:26,870 --> 00:00:32,439
+standard definition. There's an expression for the empty string and that's denoted by
+
+6
+00:00:32,439 --> 00:00:36,289
+epsilon and then we have all the one character strings and then there are three
+
+7
+00:00:36,289 --> 00:00:41,890
+compound expressions - ways of building new regular expressions from other regular
+
+8
+00:00:41,890 --> 00:00:46,460
+expressions - and these are union, concatenation, and iteration.

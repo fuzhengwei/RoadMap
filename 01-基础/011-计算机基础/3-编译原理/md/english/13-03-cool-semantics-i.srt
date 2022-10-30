@@ -1,0 +1,915 @@
+0
+00:00:04,400 --> 00:00:07,520
+In the next couple of videos, we're going to be looking at the details of the Cool
+
+1
+00:00:07,520 --> 00:00:11,330
+operational semantics going over the semantics of each individual kind of
+
+2
+00:00:11,330 --> 00:00:14,830
+expression. We'll start with easy ones and work our way up to the more complicated
+
+3
+00:00:14,830 --> 00:00:21,830
+ones. So the easiest rules are the rules for the constants in Cool. So the value
+
+4
+00:00:24,929 --> 00:00:30,089
+true, the expression true I should say, evaluates to a Boolean with the value true
+
+5
+00:00:30,089 --> 00:00:34,690
+And it doesn't modify the store so the store is unchanged because it doesn't do
+
+6
+00:00:34,690 --> 00:00:40,550
+any updates obviously And there's a corresponding rule for false And integers
+
+7
+00:00:40,550 --> 00:00:47,550
+are very, very similar so if a integer expression, integer literal i will
+
+8
+00:00:48,420 --> 00:00:54,780
+evaluate to, and integer object with the value i and again the store is not
+
+9
+00:00:54,780 --> 00:01:01,780
+modified by such evaluation. And finally, strings if a, if s is a string literal of
+
+10
+00:01:03,180 --> 00:01:08,790
+length n, then it will be evaluated by the string object of which the properties n
+
+11
+00:01:08,790 --> 00:01:15,790
+and the string constant s. The evaluation of identifiers is very straightforward,
+
+12
+00:01:17,110 --> 00:01:21,820
+given that we have both in environment in the store. So to evaluate an identifier
+
+13
+00:01:21,820 --> 00:01:28,290
+and this would be a variable lane y x or y or for What do we do? Well first we look
+
+14
+00:01:28,290 --> 00:01:34,120
+up in the environment where that identifier is stored so now we give us
+
+15
+00:01:34,120 --> 00:01:40,890
+back a memory location l. So by in this case And then we look up in the store what
+
+16
+00:01:40,890 --> 00:01:45,600
+the value is at that memory locations, So, we use the same memory location here as an
+
+17
+00:01:45,600 --> 00:01:50,740
+argument to the store to get back the value that, that, that variable currently
+
+18
+00:01:50,740 --> 00:01:54,540
+has And notice I just have a reference, this is a read of memories so this is
+
+19
+00:01:54,540 --> 00:01:59,100
+loading, I think it was loading the value of the variable. This does not affect the
+
+20
+00:01:59,100 --> 00:02:02,880
+store so the store is the same before and after. This is just looking at the value
+
+21
+00:02:02,880 --> 00:02:09,880
+of the variable not updating the variable. The expression self just evaluates to the
+
+22
+00:02:10,000 --> 00:02:14,370
+self object. So, this is a place where we just make use of the fact that the self
+
+23
+00:02:14,370 --> 00:02:18,900
+object is part of the environment so let's just copy them over here as the result of
+
+24
+00:02:18,900 --> 00:02:25,900
+expression and that was again that the store is unaffected by evaluation of self.
+
+25
+00:02:27,719 --> 00:02:31,379
+Now let's see of a more slightly more complicated evaluation is evaluated, in
+
+26
+00:02:31,379 --> 00:02:35,799
+particular the assignment expression. So an assignment consists of two parts, an
+
+27
+00:02:35,799 --> 00:02:41,810
+identifier that is being updated and an expression that is going to give us the
+
+28
+00:02:41,810 --> 00:02:46,939
+new value. So for example, just to remind you we might have something like x gets
+
+29
+00:02:46,939 --> 00:02:52,730
+one + one so one + one here would be the expression e and x would be the identifier
+
+30
+00:02:52,730 --> 00:02:58,079
+All right? And so in order to evaluate the assignment, the first thing we have to do
+
+31
+00:02:58,079 --> 00:03:02,279
+is we have to know what value we're going to be writing into the identifier. So what
+
+32
+00:03:02,279 --> 00:03:06,120
+is the, what is the update we're going to perform? So the first thing to do is to
+
+33
+00:03:06,120 --> 00:03:12,159
+evaluate e, okay? And notice here that e is evaluated in the same environment so it
+
+34
+00:03:12,159 --> 00:03:17,189
+has the same three components here, and here, all right? So it just says the first
+
+35
+00:03:17,189 --> 00:03:22,450
+thing we do is we run e. Okay. That will give us back a new value. We're going to
+
+36
+00:03:22,450 --> 00:03:28,469
+get back on value b excuse and possibly an updated score so you can arbitrate a piece
+
+37
+00:03:28,469 --> 00:03:32,489
+of code. You could yourself have assignment statements in it so the story
+
+38
+00:03:32,489 --> 00:03:36,349
+that we get out might be different. Alright, so e produces the value of e and
+
+39
+00:03:36,349 --> 00:03:42,379
+an update store s1 And now it's actually due to assignment, what do we do? Well we
+
+40
+00:03:42,379 --> 00:03:46,499
+have to know what memory location was supposed to update so we look up the
+
+41
+00:03:46,499 --> 00:03:52,569
+memory location for id and that would give us some location else of id. And then we
+
+42
+00:03:52,569 --> 00:03:57,859
+modify the store with the new, we modify the store at that point with the new value
+
+43
+00:03:57,859 --> 00:04:04,309
+so we replace the location l, i, d or we update the value of l, i, d to be the
+
+44
+00:04:04,309 --> 00:04:10,409
+value of e, the value b and we do that in store s1 which gives us a new store s2.
+
+45
+00:04:10,409 --> 00:04:15,839
+And I've noticed. That s2 is the store that results from the evaluation of e,
+
+46
+00:04:15,839 --> 00:04:20,419
+okay? So after we do the assignment, the assignment returns the value b which is of
+
+47
+00:04:20,418 --> 00:04:27,419
+course the value of a, of running e. And, it returns the updated store s2. Next,
+
+48
+00:04:28,289 --> 00:04:33,889
+let's talk about the operational rule for addition. So, to evaluate e1+e2, what we
+
+49
+00:04:33,889 --> 00:04:39,680
+are going to do? So, first we evaluate e1 And notice that is done in the same
+
+50
+00:04:39,680 --> 00:04:45,819
+context as the context of the entire e xpression, okay? So the components the
+
+51
+00:04:45,819 --> 00:04:51,970
+context here for evaluating one are exactly the same as the components for the
+
+52
+00:04:51,970 --> 00:04:56,400
+overall expression e1 + e2. So when we evaluate e1 it's going to give us a value
+
+53
+00:04:56,400 --> 00:05:01,169
+of e1 and it's also going to give us an updated store s1 And then we're going to
+
+54
+00:05:01,169 --> 00:05:07,479
+evaluate e2 and notice here And I think context is different. The soft objects in
+
+55
+00:05:07,479 --> 00:05:14,479
+the environment are the same; same but now we're running e2 in the new store s1. And
+
+56
+00:05:14,699 --> 00:05:20,300
+what does its saying is that if e2 has, has assignments or variable references in
+
+57
+00:05:20,300 --> 00:05:25,030
+it those assignments and variable references have to be done on the store
+
+58
+00:05:25,030 --> 00:05:30,449
+that resulted from running e1, okay? So, it's very important that we get that any
+
+59
+00:05:30,449 --> 00:05:35,830
+side effects would happen in running e1 are visible or that are seen by the
+
+60
+00:05:35,830 --> 00:05:39,960
+expression e2. So we run e2 in this environment, we're going to get the value
+
+61
+00:05:39,960 --> 00:05:44,759
+of e2 and the updated store s2 And then the result of the entire expression is
+
+62
+00:05:44,759 --> 00:05:50,960
+going to be b1 + b2 and the results it store will be the store s2. And notice
+
+63
+00:05:50,960 --> 00:05:56,550
+here how the stores tell you the order in which you have to evaluate the
+
+64
+00:05:56,550 --> 00:06:03,099
+expressions. So because e1 is evaluated in the same store as the overall expression
+
+65
+00:06:03,099 --> 00:06:09,689
+that tells you that e1 has to be evaluated first. And then because e2 is evaluated in
+
+66
+00:06:09,689 --> 00:06:15,919
+the store that's produced by e1, that tells you that e1, e2 excuse me, has to be
+
+67
+00:06:15,919 --> 00:06:22,919
+evaluated after you've evaluated e1 and then the fact that. S2 is the result of
+
+68
+00:06:23,129 --> 00:06:26,889
+the whole thing. It tells you that E2 is also the last thing that you evaluate
+
+69
+00:06:26,889 --> 00:06:33,889
+during the execution of this particular expression. Okay, let's take a look at the
+
+70
+00:06:34,419 --> 00:06:39,879
+statement block and just a variety here on the change my colors. How are we going to
+
+71
+00:06:39,879 --> 00:06:46,409
+evaluate the, a statement block of statements e1 through en, okay, so, while
+
+72
+00:06:46,409 --> 00:06:50,909
+this is semantics, this is that we should run, I mean order beginning of e1 and the
+
+73
+00:06:50,909 --> 00:06:54,979
+results of the entire execution will be the, let's say the value of the entire
+
+74
+00:06:54,979 --> 00:06:59,919
+block with the value of the last expression. And this, this rule just says
+
+75
+00:06:59,919 --> 00:07:05,229
+that. So, first, we evaluate e1 and also it's done on the same store as the overall
+
+76
+00:07:05,229 --> 00:07:09,639
+expressio n as it tells you it has to come first and that produces a new store s1 and
+
+77
+00:07:09,639 --> 00:07:15,819
+the value b1. Okay And then e2 is evaluated in the store s1 and it produces
+
+78
+00:07:15,819 --> 00:07:21,939
+the store s2 and so on And then expression en is evaluated in the store sn - one and
+
+79
+00:07:21,939 --> 00:07:28,800
+it produces a value of bn and an updated store s (N). Okay? And then the result of
+
+80
+00:07:28,800 --> 00:07:35,800
+the whole thing is the value of vn and also the updated store s (N) and this
+
+81
+00:07:36,719 --> 00:07:40,569
+tells you, this would really tell you the order which had to evaluate the sub
+
+82
+00:07:40,569 --> 00:07:44,949
+expressions. The dependencies here on the store of course you do evaluate e1 and
+
+83
+00:07:44,949 --> 00:07:48,530
+then e2 and then e3 and so on so you have to do them to net order to get the side
+
+84
+00:07:48,530 --> 00:07:52,590
+effects to get. You know the side effects in the correct order for all of these
+
+85
+00:07:52,590 --> 00:07:56,060
+expressions And furthermore, it also tells you the only value that you're going to
+
+86
+00:07:56,060 --> 00:08:00,669
+keep is the value vn. Notice that none of the other values that are produced here
+
+87
+00:08:00,669 --> 00:08:07,490
+are used for anything. They don't appear anywhere else in the rules. Let's think
+
+88
+00:08:07,490 --> 00:08:13,710
+what we've learned so far and do a small example. So we want to know what happens
+
+89
+00:08:13,710 --> 00:08:20,620
+when we evaluate the block. X gets assigns seven + five, that's the first statement
+
+90
+00:08:20,620 --> 00:08:24,370
+and the second and the last statement in the block, is just the expression four.
+
+91
+00:08:24,370 --> 00:08:28,340
+And the first thing we have to do is to say what the context did and which we are
+
+92
+00:08:28,340 --> 00:08:32,250
+going to evaluate this and the context consists of three parts. There'll be a
+
+93
+00:08:32,250 --> 00:08:36,720
+self object and in this case it doesn't really matter what's in the self object
+
+94
+00:08:36,720 --> 00:08:41,510
+because self is not referred to in the program and so it won't play any role in
+
+95
+00:08:41,510 --> 00:08:44,940
+the evaluation. But we, we still need it so there still be, there'll be some self
+
+96
+00:08:44,940 --> 00:08:50,450
+object out there just won't get used and Now, in the new environment which tells us
+
+97
+00:08:50,450 --> 00:08:55,260
+the locations where all the free variables in the programs. So, we'll just need a
+
+98
+00:08:55,260 --> 00:09:01,540
+place for x is going to be stored and so s will be stored in some location l And then
+
+99
+00:09:01,540 --> 00:09:07,390
+we know our memory content is, where our store is and let's just say that at l we
+
+100
+00:09:07,390 --> 00:09:13,960
+have initially the value zero, okay? So now we can use our rules to run this
+
+101
+00:09:13,960 --> 00:09:19,600
+program or to evaluate thi s program. I'm going to make this line here much longer
+
+102
+00:09:19,600 --> 00:09:25,660
+And recall that, that evaluation of block consist of the evaluation of the, all the
+
+103
+00:09:25,660 --> 00:09:32,660
+statements within the block. Okay, so the first one is going to be s gets seven+5
+
+104
+00:09:33,230 --> 00:09:37,950
+and that will be evaluated in the same environment as the overall expression. So,
+
+105
+00:09:37,950 --> 00:09:44,950
+we have up here. So the same context excuse me and I should say I often slip
+
+106
+00:09:45,770 --> 00:09:50,600
+and I realize and say environment for the entire left hand side of one of these
+
+107
+00:09:50,600 --> 00:09:57,600
+judgments. I'll try to be consistent. And just use environment for the, for the
+
+108
+00:09:59,090 --> 00:10:03,370
+second components of the context often in the literature people call the entire
+
+109
+00:10:03,370 --> 00:10:05,620
+thing on the left hand side of the environment that's why they make this
+
+110
+00:10:05,620 --> 00:10:10,380
+mistake but you know for this instead of notes I'm trying to be consistent the
+
+111
+00:10:10,380 --> 00:10:14,430
+entire, all the components on left hand side together are called the context and
+
+112
+00:10:14,430 --> 00:10:18,030
+the environment is just the second component. The mapping from variables to
+
+113
+00:10:18,030 --> 00:10:25,030
+their locations Anyway coming back to the example, The first statement in the block
+
+114
+00:10:25,950 --> 00:10:31,710
+is s gets seven+5 alright. And then we're going to have the second statement as
+
+115
+00:10:31,710 --> 00:10:38,710
+well. And we know that the self object and the environment won't change but we don't
+
+116
+00:10:39,830 --> 00:10:43,910
+know what the store will be. The store might be different so I'll leave the store
+
+117
+00:10:43,910 --> 00:10:49,320
+empty for now and we'll figure that out later and we're going to be evaluating the
+
+118
+00:10:49,320 --> 00:10:55,750
+expression four. Okay, so this is the structure of the evaluation now in
+
+119
+00:10:55,750 --> 00:11:01,690
+progress. We should look at, at this first statement trying to make some forward
+
+120
+00:11:01,690 --> 00:11:07,120
+progress on that one. So, to evaluate the assignment, what do we have to do? Well,
+
+121
+00:11:07,120 --> 00:11:11,370
+the very first thing we have to do is we have to evaluate the right hand side so
+
+122
+00:11:11,370 --> 00:11:18,140
+we're going to have the context for that is going to be the same And the context
+
+123
+00:11:18,140 --> 00:11:22,900
+we've been looking at all on because it's the first thing that's actually going to
+
+124
+00:11:22,900 --> 00:11:29,900
+happen is to evaluate Seven + five, okay? And now, I'm leaving a little space down
+
+125
+00:11:31,480 --> 00:11:35,120
+here for the rest of the assignment role which we're not going to fill in just yet.
+
+126
+00:11:35,120 --> 00:11:39,480
+Now to evaluate the plus expression we have to evaluate the first express ion and
+
+127
+00:11:39,480 --> 00:11:46,220
+the second expression, okay? And so, how do we do that? Well, we know, finally, I
+
+128
+00:11:46,220 --> 00:11:49,620
+think how to do that because we're finally down and we're going to have a single
+
+129
+00:11:49,620 --> 00:11:56,620
+integer there and that we already have a rule for, okay and so an integer 
+
+130
+00:11:59,610 --> 00:12:06,610
+literal evaluates to institute your object, okay And inside that object is
+
+131
+00:12:07,680 --> 00:12:14,680
+just about the value, okay. And the store is unmodified All right? And then
+
+132
+00:12:16,280 --> 00:12:23,280
+similarly for the other argument here, Okay. So the five will also evaluate to an
+
+133
+00:12:31,850 --> 00:12:36,980
+integer object with the value of five and the store will be unmodified okay so
+
+134
+00:12:36,980 --> 00:12:43,980
+that's the two sum expressions of this edition and so now we can fill in the
+
+135
+00:12:45,430 --> 00:12:49,050
+results here so to take the contents of the two integers we'll add them. That will
+
+136
+00:12:49,050 --> 00:12:56,050
+also be integer object so we're going to have the integer object twelve. And the
+
+137
+00:12:56,110 --> 00:13:00,570
+store has not been changed, okay? So the, the store that we get out of here happens
+
+138
+00:13:00,570 --> 00:13:04,690
+to be the same as the store that went in just because this expression had no
+
+139
+00:13:04,690 --> 00:13:10,270
+assignments in it, okay? And now we're ready to do the assignment. Okay. So how
+
+140
+00:13:10,270 --> 00:13:14,510
+do we do that? Well, we have to form a new store. Alright, so we're going to have a
+
+141
+00:13:14,510 --> 00:13:21,510
+new store which will the L gets zero with the value of l. Number which way, my
+
+142
+00:13:27,930 --> 00:13:32,210
+notation went here, I think it's the number comes first and we're going to put
+
+143
+00:13:32,210 --> 00:13:38,060
+twelve in the location l and of course, that's store was just equal to the store
+
+144
+00:13:38,060 --> 00:13:45,060
+where l has the value twelve, okay And so now, what happens down here and we do the
+
+145
+00:13:45,150 --> 00:13:52,150
+assignment and we get out The new value. Okay so, the value of the right hand side
+
+146
+00:13:52,260 --> 00:13:58,920
+is twelve and we have a new store where the location l has twelve, all right? So
+
+147
+00:13:58,920 --> 00:14:02,600
+now we're going to evaluate the second statement in the block and that will be
+
+148
+00:14:02,600 --> 00:14:09,600
+done in the store where l has the location twelve and of course this is just an
+
+149
+00:14:09,640 --> 00:14:15,490
+integer And so that will evaluate to the integer constant of four, the integer
+
+150
+00:14:15,490 --> 00:14:19,930
+value excuse me, 4or integer object containing, the integer object with the
+
+151
+00:14:19,930 --> 00:14:26,930
+value four and our store. And it's just going to fit not quite, all right? And
+
+152
+00:14:28,440 --> 00:14:33,890
+that's then the result of the entire evaluation . So, this block will produce
+
+153
+00:14:33,890 --> 00:14:38,940
+the value four, an integer object with the value four and an updated store where
+
+154
+00:14:38,940 --> 00:14:45,450
+location l has the value twelve. So, the next expression I would like to take a
+
+155
+00:14:45,450 --> 00:14:52,130
+look at is the if, then, else expression and to evaluate if, then, else what do we
+
+156
+00:14:52,130 --> 00:14:58,630
+do? Actually there should be if, then, else. See of course, so evaluating if,
+
+157
+00:14:58,630 --> 00:15:02,340
+then, else as well. First we have to evaluate the, the predicate and it's done
+
+158
+00:15:02,340 --> 00:15:07,450
+in the same store, the same context as the overall expression and if the result is
+
+159
+00:15:07,450 --> 00:15:12,610
+true If the, if the Boolean predicate returns the value true. Then we want to
+
+160
+00:15:12,610 --> 00:15:16,820
+evaluate just the true branch and not the false branch so that's why you only see
+
+161
+00:15:16,820 --> 00:15:22,170
+here, evaluation of e2 and e3 isn't mentioned anywhere and just know here that
+
+162
+00:15:22,170 --> 00:15:28,070
+the predicate may have side effects and so e2 is evaluated in whatever store that e1
+
+163
+00:15:28,070 --> 00:15:32,120
+produces And then the results of the entire expression is the value of e2.
+
+164
+00:15:32,120 --> 00:15:37,060
+Okay, that's v and also just the final store is produced by running the then
+
+165
+00:15:37,060 --> 00:15:43,780
+branch. And there is a symmetric rule for what happens if the predicate evaluates
+
+166
+00:15:43,780 --> 00:15:50,620
+the false. In that case, you would evaluate e3 and not e2. Next we'll take a
+
+167
+00:15:50,620 --> 00:15:55,160
+look with what happens with while loops and cool. So there are two cases. First if
+
+168
+00:15:55,160 --> 00:16:01,260
+the predicate of the while loop evaluates the false, okay. Well, in this case the
+
+169
+00:16:01,260 --> 00:16:05,090
+loop body is not going to execute, alright so the first thing we do is we evaluate
+
+170
+00:16:05,090 --> 00:16:11,070
+the predicate and that's done in the same context as the evaluation of the overall
+
+171
+00:16:11,070 --> 00:16:14,510
+expression and if the predicate is false then we exit the loop and so the results
+
+172
+00:16:14,510 --> 00:16:19,570
+of the loop is void. The value void and just whatever store resulting from
+
+173
+00:16:19,570 --> 00:16:25,190
+evaluating the predicate. The other possibility is that the predicate
+
+174
+00:16:25,190 --> 00:16:30,710
+evaluates the true. So here we evaluate the predicate again in the same context as
+
+175
+00:16:30,710 --> 00:16:35,390
+the overall loop. And if the predicate evaluates the true then we're going to run
+
+176
+00:16:35,390 --> 00:16:39,620
+the loop audio once. Okay. So we'll evaluate the loop audio and also that's
+
+177
+00:16:39,620 --> 00:16:45,070
+done in this, in whatever store results from evaluating the predicate. Evaluating
+
+178
+00:16:45,070 --> 00:16:49,670
+the loop audio is g onna give us a value of v and a new store s2 and then what we
+
+179
+00:16:49,670 --> 00:16:54,580
+need to do is we need to go back around and execute the loop again and how can we
+
+180
+00:16:54,580 --> 00:17:00,430
+do that? Well, we're really just running the whole loop in the new context. So, the
+
+181
+00:17:00,430 --> 00:17:07,430
+next thing we do is we evaluate the entire loop. Right in the new store So, after I
+
+182
+00:17:07,730 --> 00:17:13,020
+execute the loop by, loop body one time, then we go around and just evaluate the
+
+183
+00:17:13,020 --> 00:17:18,150
+loop again And when this may run for zero or more iterations, alright. And when I
+
+184
+00:17:18,150 --> 00:17:23,810
+finally terminate, if it terminates, it will produce it will produce a new store
+
+185
+00:17:23,810 --> 00:17:28,670
+s3 evaluated while because always produced the value of a void. And then what we'll
+
+186
+00:17:28,670 --> 00:17:33,310
+produce for the entire loops, for the entire expression is the value void and
+
+187
+00:17:33,310 --> 00:17:40,170
+the update and store s3. The next interesting expression to take a look at
+
+188
+00:17:40,170 --> 00:17:46,470
+is the let expression. So recall how, what this looks like so let and cool has a
+
+189
+00:17:46,470 --> 00:17:51,430
+variable thing declared and it's type and an initializer which is optional so this
+
+190
+00:17:51,430 --> 00:17:56,270
+is the value that the identifier will be initialized to and then the expression in
+
+191
+00:17:56,270 --> 00:18:00,490
+which that new variable is available. And so how do we evaluate this? Well first,
+
+192
+00:18:00,490 --> 00:18:04,590
+we're going to evaluate the initial value of the, of the new variables. So we
+
+193
+00:18:04,590 --> 00:18:10,590
+evaluate e1 and as usual that's done in the initial store it produces possibly
+
+194
+00:18:10,590 --> 00:18:16,430
+modified store. And now the question is, what are going to, what's going to be the
+
+195
+00:18:16,430 --> 00:18:21,910
+context here for the evaluation of e2 for the body of the latter? And so it seems
+
+196
+00:18:21,910 --> 00:18:26,380
+clear that it's going to involve s1 because it has all the updates from e2 but
+
+197
+00:18:26,380 --> 00:18:31,170
+it also has to have this new identifier in it. And so how are we going to do that?
+
+198
+00:18:31,170 --> 00:18:38,170
+So, what we want is to have a new environment e but with new binding of ID
+
+199
+00:18:38,830 --> 00:18:43,240
+to refresh location. So, we're introducing a new variable. Remember that the
+
+200
+00:18:43,240 --> 00:18:47,150
+environment has tracked all the free variables so this is one situation where
+
+201
+00:18:47,150 --> 00:18:51,240
+you should going to extend the environment e with the new binding, alright. And that
+
+202
+00:18:51,240 --> 00:18:54,810
+location, the location for the new variable has to be a fresh location. We
+
+203
+00:18:54,810 --> 00:18:59,410
+don't want to conflict with any other memory locations we are already using.
+
+204
+00:18:59,410 --> 00:19:04,570
+Okay And so, we're going to allocate a new memory location for the variable And then
+
+205
+00:19:04,570 --> 00:19:09,600
+the store, the new store will also will be like as one as we said we have to include
+
+206
+00:19:09,600 --> 00:19:14,150
+all the, the values for s1 But also, we can have these new location for the
+
+207
+00:19:14,150 --> 00:19:20,620
+variable and that's going to have the initial value of the variable e1. To
+
+208
+00:19:20,620 --> 00:19:24,780
+express that we need a new location, we're going to introduce a new operation on the
+
+209
+00:19:24,780 --> 00:19:30,470
+store which gives us a new fresh location. So new lo applied to a store it's just
+
+210
+00:19:30,470 --> 00:19:36,250
+going to give us some location that isn't being used by the store. So, the store has
+
+211
+00:19:36,250 --> 00:19:41,190
+a domain where it's a mapping from locations to values and we'll just pick
+
+212
+00:19:41,190 --> 00:19:47,690
+some new location that isn't in the current list of locations within the store
+
+213
+00:19:47,690 --> 00:19:51,390
+and that will be the one returned or that will be one, that will be the one returned
+
+214
+00:19:51,390 --> 00:19:55,660
+by new lo. Okay, so new lo if you can think of As modeling the memory allocation
+
+215
+00:19:55,660 --> 00:20:02,660
+function in the runtime system. So, then, here we can write out the rule. So, this
+
+216
+00:20:02,900 --> 00:20:06,610
+is the most complicated rule we seen so far. So, I'll just take a moment to walk
+
+217
+00:20:06,610 --> 00:20:13,610
+through it All right? So, the first thing we do is we evaluate e1, the initializer
+
+218
+00:20:13,770 --> 00:20:18,460
+for the new variable, okay? So just like before, this is done in the same context
+
+219
+00:20:18,460 --> 00:20:22,240
+as the overall expression and this is going to give us a value for e1 and an
+
+220
+00:20:22,240 --> 00:20:25,620
+updated store, all right? Then in the updated store, using the updated store
+
+221
+00:20:25,620 --> 00:20:32,059
+here we find an unused location, l new. Okay And then we're going to create a
+
+222
+00:20:32,059 --> 00:20:39,059
+store where that new location has, has the value of e1. So we're going to store the
+
+223
+00:20:39,850 --> 00:20:44,620
+value of e1 at that new location. We're going to update the store s1 to reflect
+
+224
+00:20:44,620 --> 00:20:49,420
+that and further more we're going to extend our environment with the new
+
+225
+00:20:49,420 --> 00:20:54,820
+identifier which will be stored at this new location and this is the context then.
+
+226
+00:20:54,820 --> 00:20:59,240
+Okay, with this updated environment in store in which we evaluate the body of the
+
+227
+00:20:59,240 --> 00:21:04,850
+lab which will produce the value b2 and possible update in store s2 and those are
+
+228
+00:21:04,850 --> 00:21:07,360
+the results of the overall expression.

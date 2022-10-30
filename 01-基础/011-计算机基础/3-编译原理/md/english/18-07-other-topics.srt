@@ -1,0 +1,695 @@
+0
+00:00:03,460 --> 00:00:07,210
+In this video, we're going to wrap up our discussion of Java by taking a look at a
+
+1
+00:00:07,210 --> 00:00:12,800
+couple of additional topics and how they are integrated into the language design.
+
+2
+00:00:12,800 --> 00:00:19,800
+Consistent with Java's dynamic nature Java allows classes to be loaded at runtime.
+
+3
+00:00:20,340 --> 00:00:24,220
+But this means that you can actually add functionality to an executing Java program
+
+4
+00:00:24,220 --> 00:00:29,430
+so, while it's running, by loading a new class. And this creates potential issues
+
+5
+00:00:29,430 --> 00:00:35,649
+with type safety and security because now there is a distinction between compiled
+
+6
+00:00:35,649 --> 00:00:41,489
+time and load time. So, type checking of the source takes place at compile time and
+
+7
+00:00:41,489 --> 00:00:47,309
+this is the kind of type checking we discussed in earlier in earlier videos.
+
+8
+00:00:47,309 --> 00:00:50,749
+But the, the loader, when you actually go to load a class, you're loading bytecode,
+
+9
+00:00:50,749 --> 00:00:56,449
+you're not loading source and it's not being type checked again. And it could be,
+
+10
+00:00:56,449 --> 00:01:00,909
+that this bytecode didn't come, you know, from a trusted source. This bytecode might
+
+11
+00:01:00,909 --> 00:01:05,880
+not be the output of a compiler that did type checking, before it produced the
+
+12
+00:01:05,880 --> 00:01:09,950
+bytecode. So, the bytecode might not actually satisfy the type assumptions of
+
+13
+00:01:09,950 --> 00:01:13,590
+the Java implementation. So essentially, we have to check the bytecode again. And
+
+14
+00:01:13,590 --> 00:01:19,299
+a, and a procedure called bytecode verification takes place when the class is
+
+15
+00:01:19,299 --> 00:01:25,200
+loaded, alright. And, and byte code verification is really a type checking of
+
+16
+00:01:25,200 --> 00:01:29,329
+bytecode. That's, that's essentially what it does. The procedure is a little bit
+
+17
+00:01:29,329 --> 00:01:35,740
+different because we don't have you know, the code here is much lower level and so
+
+18
+00:01:35,740 --> 00:01:38,950
+the algorithms look a little bit different. But what they're really doing
+
+19
+00:01:38,950 --> 00:01:44,600
+is type checking the, thebytecode. So, now the loading policies are handled by
+
+20
+00:01:44,600 --> 00:01:48,719
+something called the class loader. And the class loader is a special class in Java
+
+21
+00:01:48,719 --> 00:01:54,549
+and it decides what classes can be loaded and actually early on in Java, a bunch of
+
+22
+00:01:54,549 --> 00:01:58,640
+security problems were discovered. Aware an attacker could get control of the class
+
+23
+00:01:58,640 --> 00:02:04,329
+loader install it's own class loader that would be much more permissive than the
+
+24
+00:02:04,329 --> 00:02:09,420
+Java standard class loader and subve rt the system. But those issues were fixed
+
+25
+00:02:09,419 --> 00:02:14,010
+quite awhile ago, alright. And another interesting thing about Java is that the
+
+26
+00:02:14,010 --> 00:02:18,420
+classes may also be unloaded. So, you don't, you can not, not only load classes,
+
+27
+00:02:18,420 --> 00:02:23,220
+you can also unload classes. And the last time I checked this was not particularly
+
+28
+00:02:23,220 --> 00:02:28,060
+well specified in the definition and so it's a little bit unclear exactly what it
+
+29
+00:02:28,060 --> 00:02:31,950
+meant when you unloaded the class and what happened to all the existing objects, for
+
+30
+00:02:31,950 --> 00:02:38,110
+example, of that class. Now, I'd like to spend a few minutes talking about
+
+31
+00:02:38,110 --> 00:02:42,990
+initialization in Java, which is quite complex, and this shouldn't be too much of
+
+32
+00:02:42,990 --> 00:02:48,010
+a surprise because if you remember initialization in COOL was also pretty
+
+33
+00:02:48,010 --> 00:02:52,190
+complex and Java is just a superset of COOL so it has all the initialization
+
+34
+00:02:52,190 --> 00:02:58,920
+issues that COOL has plus much more. And now the main source of complication is
+
+35
+00:02:58,920 --> 00:03:04,450
+concurrency but other language features also add to the complexity of
+
+36
+00:03:04,450 --> 00:03:11,450
+initialization in Java. And, in fact you could do worse. If you want to understand
+
+37
+00:03:14,690 --> 00:03:21,020
+a new object oriented language, then study how it does object initialization and
+
+38
+00:03:21,020 --> 00:03:26,890
+class initialization. Because essentially what happens in initialization is that all
+
+39
+00:03:26,890 --> 00:03:32,040
+the features of the language are going to be interacting and you have to explain
+
+40
+00:03:32,040 --> 00:03:35,950
+what all those interactions are and how they are sorted out in order to have a
+
+41
+00:03:35,950 --> 00:03:41,070
+well-defined initialization procedure, alright. So, now let's talk about class
+
+42
+00:03:41,070 --> 00:03:44,160
+initialization. We won't talk about object initialization, we'll just talk about
+
+43
+00:03:44,160 --> 00:03:51,040
+initializing classes. So, this is how the, the object that represents a class
+
+44
+00:03:51,040 --> 00:03:57,260
+actually gets initialized when that class is first brought into the program. And so,
+
+45
+00:03:57,260 --> 00:04:02,530
+the first thing to know is that a class is initialized when a symbol in a class is
+
+46
+00:04:02,530 --> 00:04:09,530
+first used, okay, not when the class is loaded, alright? So, if you reference any
+
+47
+00:04:09,780 --> 00:04:15,200
+symbol in the class at the first time that happens that will cause the class to be
+
+48
+00:04:15,200 --> 00:04:19,989
+initialized. And the reason for doing this is if you are going to have an error in
+
+49
+00:04:19,988 --> 00:04:24,469
+class initialization, th is will cause that error to happen in a predictable
+
+50
+00:04:24,469 --> 00:04:27,979
+place. So, if you have an error and you run the, you, you have an error in class
+
+51
+00:04:27,979 --> 00:04:32,389
+initialization if you run the program five times you know, that error will probably
+
+52
+00:04:32,389 --> 00:04:36,169
+happen in the same place every time. So, it'll be repeatable and predictable where
+
+53
+00:04:36,169 --> 00:04:42,550
+the error occurs. If instead we had, the error happened where you loaded the class
+
+54
+00:04:42,550 --> 00:04:46,430
+at the time that you loaded the class, well, the class might be loaded at lots of
+
+55
+00:04:46,430 --> 00:04:52,800
+different times. And, and, and so this, this, this error here the error in the
+
+56
+00:04:52,800 --> 00:04:58,650
+initialization of the class would become non-deterministic if we didn't if we
+
+57
+00:04:58,650 --> 00:05:05,650
+didn't delay the initialization until some deterministic point in the execution. So,
+
+58
+00:05:06,259 --> 00:05:10,319
+now I'll discuss the procedure for initializing class objects in Java. And
+
+59
+00:05:10,319 --> 00:05:14,919
+the first thing I should stress is that this idea of a class object is something
+
+60
+00:05:14,919 --> 00:05:19,650
+that Java has that COOL does not have, I mentioned this on the previous slide. But
+
+61
+00:05:19,650 --> 00:05:25,749
+just to be completely clear, what is a class object? A class object is just what
+
+62
+00:05:25,749 --> 00:05:32,749
+it sounds like, it is the object for a class. It represents a class. Okay, this
+
+63
+00:05:33,530 --> 00:05:40,300
+is not an instance of the class. This is an object which is the class, okay. So,
+
+64
+00:05:40,300 --> 00:05:44,689
+this is an object which is the class, it has all the information about the class
+
+65
+00:05:44,689 --> 00:05:48,530
+so, you know, it tells you what the type of the class is, what the fields of the
+
+66
+00:05:48,530 --> 00:05:54,110
+class are, and everything else. So, this is used for introspection or reflection.
+
+67
+00:05:54,110 --> 00:05:59,139
+And it's necessary in Java because of features like dynamic loading. So, if, you
+
+68
+00:05:59,139 --> 00:06:03,210
+know, if you want, if you dynamically load a class though you want to be able to use
+
+69
+00:06:03,210 --> 00:06:07,360
+that class, you have to have some way of querying what the, what kinds of methods
+
+70
+00:06:07,360 --> 00:06:11,759
+and things the class has and that is what the class object is for. So, there is one
+
+71
+00:06:11,759 --> 00:06:16,719
+object, there is one class object for each class in Java, alright. So, when you load
+
+72
+00:06:16,719 --> 00:06:20,719
+a class, the first thing you have do is to initialize the class object. And how is
+
+73
+00:06:20,719 --> 00:06:27,719
+that done? Well, we lock the class object for the class, alright. And if th at, if
+
+74
+00:06:27,740 --> 00:06:32,650
+that object is already locked by another thread, then we'll simply wait on the
+
+75
+00:06:32,650 --> 00:06:37,990
+lock, okay. So, we will wait until somebody tells us that it's okay to
+
+76
+00:06:37,990 --> 00:06:44,990
+proceed. Now once we obtain the lock on the class, we have to do a check to see if
+
+77
+00:06:45,499 --> 00:06:52,499
+the class is already being initialized, alright. So, and it could turn out that it
+
+78
+00:06:53,219 --> 00:06:57,099
+is our thread, it is the same thread is already initializing the class. And how
+
+79
+00:06:57,099 --> 00:07:04,099
+could that happen? Well, remember that a class can have fields of the same type.
+
+80
+00:07:04,919 --> 00:07:10,999
+So, I could have a class of class called X and then it could have a field of type X
+
+81
+00:07:10,999 --> 00:07:16,809
+in it. And the way classes are going to be initialize if we're going to have to
+
+82
+00:07:16,809 --> 00:07:21,309
+initialize the class itself and then, and we're going to do that by recursively
+
+83
+00:07:21,309 --> 00:07:24,509
+initializing the classes for all the fields or at least making sure of the
+
+84
+00:07:24,509 --> 00:07:29,279
+classes for all the fields are initialize. And if we have a recursive structure here
+
+85
+00:07:29,279 --> 00:07:33,990
+with the same class mention in a field as in a name, as the name of the enclosing
+
+86
+00:07:33,990 --> 00:07:37,449
+class, then we will get the situation where the thread initializing the class
+
+87
+00:07:37,449 --> 00:07:40,990
+may attempt to initialize the same class again. So, if we discover that we're
+
+88
+00:07:40,990 --> 00:07:45,370
+already initializing this class, we simply release the lock and we turn. Now, another
+
+89
+00:07:45,370 --> 00:07:49,529
+possibility is that the class is already initialized. So, if when we finally get
+
+90
+00:07:49,529 --> 00:07:53,680
+the lock we discover that some other thread got in there and initialized the
+
+91
+00:07:53,680 --> 00:07:57,110
+class before we have a chance to., well, then there's nothing to do and we just
+
+92
+00:07:57,110 --> 00:08:02,300
+return normally, alright? Now, if neither one of these things is true, okay, if we
+
+93
+00:08:02,300 --> 00:08:08,279
+get the lock and we discover that the class is not already initialized and that
+
+94
+00:08:08,279 --> 00:08:13,469
+we're not already in the process of initializing the class, then we will mark
+
+95
+00:08:13,469 --> 00:08:18,800
+the class to, to note the initialization is in progress by this thread, okay. So,
+
+96
+00:08:18,800 --> 00:08:21,620
+we'll indicate, you know, this class is being initialized and that we are
+
+97
+00:08:21,620 --> 00:08:27,219
+initializing it and then we'll unlock the class. Alright, the next thing that
+
+98
+00:08:27,219 --> 00:08:31,169
+happens is we'll have to initialize the superclass and that will m ean initial,
+
+99
+00:08:31,169 --> 00:08:36,180
+and then we'll initialize all the fields in textual order. But because Java has
+
+100
+00:08:36,179 --> 00:08:40,940
+what are called static and final fields we will initialize those first, okay. So,
+
+101
+00:08:40,940 --> 00:08:45,530
+static final fields will get initialized before any other fields in textual order.
+
+102
+00:08:45,530 --> 00:08:48,930
+And, of course, we have to give every field of default value before
+
+103
+00:08:48,930 --> 00:08:53,730
+initialization just as in COOL. So, this step, step five is very similar to what
+
+104
+00:08:53,730 --> 00:09:00,730
+goes on in COOL. Now if there's an error during the initialization, so some part of
+
+105
+00:09:03,770 --> 00:09:08,410
+the initialization throws an exception, then we're going to mark the class as
+
+106
+00:09:08,410 --> 00:09:12,840
+erroneous, okay, we're going to mark this class as no good and can't be used and,
+
+107
+00:09:12,840 --> 00:09:16,470
+and that's the best we can do. So, if there's an exception during
+
+108
+00:09:16,470 --> 00:09:20,320
+initialization, we just have to give up on that class. And so it gets a special mark
+
+109
+00:09:20,320 --> 00:09:25,960
+on it saying that it's erroneous. And, if there are no errors if we succeed in
+
+110
+00:09:25,960 --> 00:09:30,430
+initializing the class and with and without any errors, then we're going to
+
+111
+00:09:30,430 --> 00:09:34,500
+lock the class again. We will label the class as initialized, alright? And then
+
+112
+00:09:34,500 --> 00:09:38,880
+we'll notify the threads that are waiting on the class object. So. Anybody who was
+
+113
+00:09:38,880 --> 00:09:44,500
+locked waiting on the class object will now be alerted that the object is, is
+
+114
+00:09:44,500 --> 00:09:49,400
+ready and then we'll unlock the class. Okay, and so that's a rough outline of how
+
+115
+00:09:49,400 --> 00:09:52,520
+class initialization in Java works. I skipped over a few things and
+
+116
+00:09:52,520 --> 00:09:57,230
+oversimplified it a bit. So, this isn't the complete description but these are the
+
+117
+00:09:57,230 --> 00:10:03,070
+main points and they, and they illustrate how the various features of the language
+
+118
+00:10:03,070 --> 00:10:06,100
+have to interact. So, you have to worry about concurrency, you have to worry about
+
+119
+00:10:06,100 --> 00:10:09,090
+exceptions, you have to worry about static and final fields, you have to worry about
+
+120
+00:10:09,090 --> 00:10:13,680
+inheritance. I mean, all these things have to be dealt with together in the design of
+
+121
+00:10:13,680 --> 00:10:20,130
+a single algorithm to do class initialization. Stepping back for a moment
+
+122
+00:10:20,130 --> 00:10:25,510
+this discussion of class initialization in Java illustrates a general point about
+
+123
+00:10:25,510 --> 00:10:30,710
+designing complex systems. So, in any system with a certain number of featu res
+
+124
+00:10:30,710 --> 00:10:34,490
+and every system is going to have some number of features, let's call it N,
+
+125
+00:10:34,490 --> 00:10:36,790
+because you want to provide some functionality, obviously the thing the
+
+126
+00:10:36,790 --> 00:10:40,160
+system's suppose to d so its going to have features to do those things. But as you
+
+127
+00:10:40,160 --> 00:10:43,690
+add features, you get lots of interactions, potential interactions
+
+128
+00:10:43,690 --> 00:10:46,940
+between the features and if we think about, even just the pairwise
+
+129
+00:10:46,940 --> 00:10:53,710
+interactions. If I have N features, then I'll have, I don't know, about N^2
+
+130
+00:10:53,710 --> 00:10:58,230
+pairwise feature interactions. And the point there, of course, is that as I add
+
+131
+00:10:58,230 --> 00:11:03,450
+features the number of possible interactions grows super linearly in the
+
+132
+00:11:03,450 --> 00:11:06,320
+number of features, I mean, it grows much more quickly than the number of features.
+
+133
+00:11:06,320 --> 00:11:09,160
+And so, adding the next feature, you're going to have to consider all of the
+
+134
+00:11:09,160 --> 00:11:13,190
+previous features that you already have in the system and how this new feature
+
+135
+00:11:13,190 --> 00:11:19,550
+affects them, and this is why it becomes very difficult to extend or build systems
+
+136
+00:11:19,550 --> 00:11:24,370
+that have a lot of features, alright. And this is just the pairwise features. These
+
+137
+00:11:24,370 --> 00:11:27,900
+are just, this is just considering pairwise interactions between one feature
+
+138
+00:11:27,900 --> 00:11:31,280
+and another. If I have to start worrying about subsets of features, I'm thinking
+
+139
+00:11:31,280 --> 00:11:35,040
+about how all possible subsets of features might interact with each other, well then,
+
+140
+00:11:35,040 --> 00:11:39,920
+this step, this number of, of potential interactions will grow not just it will
+
+141
+00:11:39,920 --> 00:11:45,700
+grow, in fact, exponentially. So, it'd be, you know, way more than quadratic. And the
+
+142
+00:11:45,700 --> 00:11:50,970
+bottom line here is that big, feature-full systems are hard to understand. You know,
+
+143
+00:11:50,970 --> 00:11:56,530
+this is you know, a general lesson in Computer Science and any kind of
+
+144
+00:11:56,530 --> 00:12:01,600
+discipline that wants to design complex systems and, and this lesson applies to
+
+145
+00:12:01,600 --> 00:12:05,470
+programming languages. It applies to every other kind of software system that you
+
+146
+00:12:05,470 --> 00:12:09,100
+might want to build. But, and somehow it has a particular force in programming
+
+147
+00:12:09,100 --> 00:12:14,040
+languages because these interactions between the features, you know, these are
+
+148
+00:12:14,040 --> 00:12:17,720
+the features of the programming language, they happen at a very fine grain. And
+
+149
+00:12:17,720 --> 00:12:21,970
+these things can be, really can b e composed arbitrarily and so you really do
+
+150
+00:12:21,970 --> 00:12:27,670
+have to work out in language design, you know, what all the interactions are in
+
+151
+00:12:27,670 --> 00:12:33,100
+order to have a language that people, that programmers can actually understand and
+
+152
+00:12:33,100 --> 00:12:40,100
+use productively. Alright? And that really I think is the big, big idea that, one of
+
+153
+00:12:41,390 --> 00:12:46,310
+the big ideas that we've talked about throughout the course. And, and I hope one
+
+154
+00:12:46,310 --> 00:12:51,520
+of the things that you would take away from this lecture at least in particular.
+
+155
+00:12:51,520 --> 00:12:56,320
+So, to summarize and to conclude our discussion of Java, I think Java is a, is
+
+156
+00:12:56,320 --> 00:13:00,810
+a well-done language. By production standards, it is extremely well-done. So,
+
+157
+00:13:00,810 --> 00:13:05,470
+it's one of the best designed and best specified languages that's in, in use
+
+158
+00:13:05,470 --> 00:13:11,780
+today. It brought several important ideas into the main stream. So, when it was new
+
+159
+00:13:11,780 --> 00:13:18,780
+it brought ideas that had been around for a long time but had not found their way
+
+160
+00:13:18,920 --> 00:13:23,690
+into a production language that was very, very widely used and in particular, Java
+
+161
+00:13:23,690 --> 00:13:29,050
+was the first language to be very widely used in, in commercial settings. They had
+
+162
+00:13:29,050 --> 00:13:33,750
+strong sets of typing there that had real guarantees they were, you know, provided
+
+163
+00:13:33,750 --> 00:13:37,750
+by the type-system and also there was a manage language and had a garbage
+
+164
+00:13:37,750 --> 00:13:41,870
+collected memory. But that doesn't mean it's perfect. And it, and Java also
+
+165
+00:13:41,870 --> 00:13:47,070
+includes some features that, at the time that it was designed, that we didn't fully
+
+166
+00:13:47,070 --> 00:13:50,480
+understand and I would say, you know, that this are probably the rough areas where
+
+167
+00:13:50,480 --> 00:13:55,230
+there's still some roughness in the, in, in the Java design. So, things like the
+
+168
+00:13:55,230 --> 00:13:59,260
+way the memory semantics work in the presence of concurrency, you know,
+
+169
+00:13:59,260 --> 00:14:04,780
+probably still has most people would agree I think, you now, has some problems and
+
+170
+00:14:04,780 --> 00:14:10,020
+some, some little gray areas that as a program, you probably want to stay out of.
+
+171
+00:14:10,020 --> 00:14:15,750
+And the other thing is that Java has a lot of features. And as I said before when you
+
+172
+00:14:15,750 --> 00:14:19,830
+have a lot of features, you're going to have even more feature interactions and
+
+173
+00:14:19,830 --> 00:14:23,850
+that leads to complexity that becomes difficult to manage.

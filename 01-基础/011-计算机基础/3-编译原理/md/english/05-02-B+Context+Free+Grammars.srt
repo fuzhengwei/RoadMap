@@ -1,0 +1,75 @@
+0
+00:00:01,490 --> 00:00:04,870
+Context-free grammars are a big step towards being able to say what we want in
+
+1
+00:00:04,870 --> 00:00:09,389
+a parser but, we still need some other things. First of all, a context-free
+
+2
+00:00:09,389 --> 00:00:15,410
+grammar at least as we define it so far, just gives us a yes or no answer. Yes
+
+3
+00:00:15,410 --> 00:00:18,650
+something, yes a string is in the language of the Context-free grammar or no it is
+
+4
+00:00:18,650 --> 00:00:24,130
+not. We also need a method for building a Parse Tree at the input. So in those cases
+
+5
+00:00:24,130 --> 00:00:27,269
+where it is on the language, we need to know how it's in the language. We need the
+
+6
+00:00:27,269 --> 00:00:32,930
+actual Parse Tree not just yes or no. In the cases where the string is not in the
+
+7
+00:00:32,930 --> 00:00:35,860
+language, we have to be able to handle errors gracefully and give some kind of
+
+8
+00:00:35,860 --> 00:00:40,400
+feedback to the programmer so we need a method for doing that. And finally if we
+
+9
+00:00:40,400 --> 00:00:44,050
+have these two things we need an actual implementation of them in order to
+
+10
+00:00:44,050 --> 00:00:50,340
+actually implement context-free grammars. One last comment before we wrap up this
+
+11
+00:00:50,340 --> 00:00:54,750
+video. The form of the context-free grammar can be important. Tools are often
+
+12
+00:00:54,750 --> 00:01:00,010
+sensitive to the particular you write the grammar and while there are many ways to
+
+13
+00:01:00,010 --> 00:01:04,439
+write a grammar for the same language, only some of them may be accepted by the
+
+14
+00:01:04,438 --> 00:01:08,770
+tools. And as we'll see there are cases where it's necessary to modify the grammar
+
+15
+00:01:08,770 --> 00:01:13,000
+in order to get the tools to accept it. This happens actually sometimes as well
+
+16
+00:01:13,000 --> 00:01:17,329
+with regular expressions but it's much less common. So normally for most regular
+
+17
+00:01:17,329 --> 00:01:21,890
+expressions you would want to write the tools would be able to digest them. That's
+
+18
+00:01:21,890 --> 00:01:26,770
+fine. That's not also true. That's not true of an arbitrary context-free grammar.

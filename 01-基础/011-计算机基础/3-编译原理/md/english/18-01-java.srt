@@ -1,0 +1,323 @@
+0
+00:00:04,089 --> 00:00:07,629
+In the next several videos we're going to apply what we've learned in the class to
+
+1
+00:00:07,629 --> 00:00:12,090
+analysis of various features of Java. This will give us a chance to both look at a
+
+2
+00:00:12,090 --> 00:00:16,760
+real programming language and how it's designed and been done. And also to talk
+
+3
+00:00:16,760 --> 00:00:22,190
+about some features that art in Cool that we haven't been able to cover thus far in
+
+4
+00:00:22,190 --> 00:00:29,190
+the course. For the perspective of this class, Java is a kind of Cool on steroids.
+
+5
+00:00:29,270 --> 00:00:35,539
+It's Cool plus more features, many more features. At, at their core Java and Cool
+
+6
+00:00:35,539 --> 00:00:41,370
+are very similar. Java and Cool are both typed object oriented garbage collected
+
+7
+00:00:41,370 --> 00:00:47,770
+languages. They were both designed in the early 1990s and so they share a common
+
+8
+00:00:47,770 --> 00:00:52,350
+culture there with the ideas that were current at that time. So in this video,
+
+9
+00:00:52,350 --> 00:00:56,079
+I'm just going to give a little bit of history of Java so that will be the focus
+
+10
+00:00:56,079 --> 00:00:59,969
+really of this rather short video. And then in the subsequent videos, we'll talk
+
+11
+00:00:59,969 --> 00:01:05,149
+about all the features or some of the features of Java that are not in Cool. And
+
+12
+00:01:05,149 --> 00:01:08,420
+we'll use the ideas of course that we've been discussing all along through the
+
+13
+00:01:08,420 --> 00:01:12,479
+class, to explain a little bit about those ideas. But I think these are all important
+
+14
+00:01:12,479 --> 00:01:18,869
+language constructs that are unfortunately were too time consuming or too complicated
+
+15
+00:01:18,869 --> 00:01:24,259
+to add to the course project. So I think it's useful to use a language like
+
+16
+00:01:24,259 --> 00:01:31,259
+[inaudible] to illustrate how these ideas work and what some of the issues are. So
+
+17
+00:01:32,799 --> 00:01:37,939
+Java began as a project called Oak at SUN Microsystems and it was originally
+
+18
+00:01:37,939 --> 00:01:42,380
+targeted at set top devices. And so what was a set top device? This was a little
+
+19
+00:01:42,380 --> 00:01:47,719
+box that was gonna sit on top of your TV So you had your TV screen, and then there
+
+20
+00:01:47,719 --> 00:01:51,539
+was going to be this little thing up here that was going to sit on top of the TV
+
+21
+00:01:51,539 --> 00:01:54,859
+that was going to control all your cable programming. So this would essentially
+
+22
+00:01:54,859 --> 00:01:59,189
+would connect to some kind of network and it would help you to do, you know to make
+
+23
+00:01:59,189 --> 00:02:03,729
+your TV more interactive. Okay, so this was back in the days before every TV was
+
+24
+00:02:03,729 --> 00:02:08,950
+really a computer by itself. The initial develo pment of, of Oak took several
+
+25
+00:02:08,949 --> 00:02:15,659
+years. I believe the project ran from about 91 to 94 and what happened, at least
+
+26
+00:02:15,659 --> 00:02:22,450
+as I understand it, is that this set top device market just never took off. So this
+
+27
+00:02:22,450 --> 00:02:28,610
+never became a popular never, never became a popular idea with consumers and, and so
+
+28
+00:02:28,610 --> 00:02:34,730
+there really was a kind of limited up side or a limited potential for, for Oak at the
+
+29
+00:02:34,730 --> 00:02:39,870
+time. And then something happened, the Internet happened. So also in the early
+
+30
+00:02:39,870 --> 00:02:44,819
+90s the Internet revolution was really gathering steam. Everybody was getting on
+
+31
+00:02:44,819 --> 00:02:51,700
+the Internet and it became obvious sometime 93, 94 that there was going to be
+
+32
+00:02:51,700 --> 00:02:57,010
+a need for programming languages that really addressed these specific issues on
+
+33
+00:02:57,010 --> 00:03:03,769
+the Internet. And in particular people were very concerned about security. And,
+
+34
+00:03:03,769 --> 00:03:10,170
+they didn't want to be downloading lots of binaries that were programs written in C
+
+35
+00:03:10,170 --> 00:03:14,249
+and passing those around on the Internet because it was just really no guarantee
+
+36
+00:03:14,249 --> 00:03:19,599
+that those programs would work as intended and not crash your machine. So you know,
+
+37
+00:03:19,599 --> 00:03:24,680
+they needed to be able to share code over the Internet from other people that you
+
+38
+00:03:24,680 --> 00:03:30,579
+didn't necessarily trust completely meant that we needed safer languages than
+
+39
+00:03:30,579 --> 00:03:35,840
+languages like C and C++ and so there was an opportunity there for a, a new language
+
+40
+00:03:35,840 --> 00:03:42,840
+and there were several candidates actually. Besides Java, Tickle and Python
+
+41
+00:03:42,980 --> 00:03:49,650
+were very serious candidates to become the Internet programming language eventually
+
+42
+00:03:49,650 --> 00:03:56,650
+the backing of SUN Microsystems, the backing of SUN gave to Java helped it to
+
+43
+00:03:56,659 --> 00:04:01,859
+really gain a very, very strong presence on the Internet. But you know, the point
+
+44
+00:04:01,859 --> 00:04:07,819
+of this story is that every new language needs a killer app. Every programming
+
+45
+00:04:07,819 --> 00:04:12,349
+language rides into the world on the back of some application. So there has to be
+
+46
+00:04:12,349 --> 00:04:17,840
+some kind of new application that people want to write that the existing languages
+
+47
+00:04:17,839 --> 00:04:23,099
+don't serve very well and that provides the opportunity and therefore makes it
+
+48
+00:04:23,099 --> 00:04:27,319
+worthwhile for people to learn a new programming language. And so the fact that
+
+49
+00:04:27,319 --> 00:04:31,130
+Ja va was a very safe language, it had the garbage collection. It had the type system
+
+50
+00:04:31,130 --> 00:04:38,030
+that made it well suited at the time to the, the needs of the emerging needs of
+
+51
+00:04:38,030 --> 00:04:42,789
+internet programming. And it became very popular I think primarily because of that
+
+52
+00:04:42,789 --> 00:04:48,220
+reason. And if you if you recall there was a lecture or a video early on, on the
+
+53
+00:04:48,220 --> 00:04:54,160
+economy of programming languages. And I would recommend actually that if you
+
+54
+00:04:54,160 --> 00:04:58,120
+haven't watched that one, then you go back and take a look because there I discuss
+
+55
+00:04:58,120 --> 00:05:04,650
+some of these ideas about how languages are adopted in more detail. So Java also
+
+56
+00:05:04,650 --> 00:05:09,000
+came into existence in a particular technical environment and it's very
+
+57
+00:05:09,000 --> 00:05:13,389
+common. In fact, it's normal for new programming languages to borrow heavily
+
+58
+00:05:13,389 --> 00:05:19,639
+from their predecessors and new languages are often mostly recombinations of ideas
+
+59
+00:05:19,639 --> 00:05:25,060
+from previous languages in a new design perhaps with some innovations thrown in.
+
+60
+00:05:25,060 --> 00:05:30,500
+And the particular influences on Java. Again this is at least so far as I
+
+61
+00:05:30,500 --> 00:05:37,500
+understand it so the type system in Java, or its, its commitment to types probably
+
+62
+00:05:37,900 --> 00:05:44,900
+is traceable to Modula-3 and the ideas there where people try to build a sort of
+
+63
+00:05:46,460 --> 00:05:51,190
+programming language that would scale in a realistic way to large systems but also be
+
+64
+00:05:51,190 --> 00:05:58,190
+strongly typed. The object orientation of Java is traceable to languages like
+
+65
+00:05:58,500 --> 00:06:05,349
+Objective C and C++ and, and also Eiffel which also had the idea of interfaces
+
+66
+00:06:05,349 --> 00:06:10,060
+which is a prominent feature in Java. And finally Java is quite a dynamic language
+
+67
+00:06:10,060 --> 00:06:14,889
+meaning that there many things that are not done staticly. They're done
+
+68
+00:06:14,889 --> 00:06:19,520
+dynamically so features like reflection would be one example of that. And there
+
+69
+00:06:19,520 --> 00:06:23,080
+are actually quite a few other features and there is some history there. There's
+
+70
+00:06:23,080 --> 00:06:28,780
+some shared culture there with Lisp. This was a or is a functional family language
+
+71
+00:06:28,780 --> 00:06:35,150
+but is also a very, very dynamic language. As I said at the beginning this video is
+
+72
+00:06:35,150 --> 00:06:39,740
+just an introduction and overview and in the next few videos, we'll be looking at
+
+73
+00:06:39,740 --> 00:06:43,220
+specific features of Java and how they work. And that will includes things like
+
+74
+00:06:43,220 --> 00:06:48,669
+exceptions, interfaces, and threads. As well as a bunch of other features that
+
+75
+00:06:48,669 --> 00:06:53,689
+we'll discuss at least, briefly. One thing to realize is that Java is a big language.
+
+76
+00:06:53,689 --> 00:06:59,560
+It is not simple. The language manual for Java runs to hundreds and hundreds of
+
+77
+00:06:59,560 --> 00:07:05,680
+pages. It has lots of features. And perhaps more importantly, lots of feature
+
+78
+00:07:05,680 --> 00:07:10,379
+interactions. So. The hard part of designing a language of course is getting
+
+79
+00:07:10,379 --> 00:07:15,159
+all the feature interactions right. All the combinations of the features and, you
+
+80
+00:07:15,159 --> 00:07:18,189
+know making sure there are no surprising interactions between them.

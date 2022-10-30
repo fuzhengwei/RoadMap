@@ -1,0 +1,423 @@
+0
+00:00:04,210 --> 00:00:07,480
+In this video I'm going to give a very brief introduction to Intermediate Code
+
+1
+00:00:07,480 --> 00:00:14,480
+and its use in compilers. So the first question to address is, what is
+
+2
+00:00:15,730 --> 00:00:20,210
+Intermediate Code or an Intermediate Language? And as the name suggests, an
+
+3
+00:00:20,210 --> 00:00:24,430
+Intermediate Language is just that, it's a language that's intermediate between the
+
+4
+00:00:24,430 --> 00:00:29,860
+source language and the target language. So, keep in mind what a compiler does. So
+
+5
+00:00:29,860 --> 00:00:36,350
+a compiler takes a program written in some source language. And, it provides a
+
+6
+00:00:36,350 --> 00:00:43,350
+translation of that program into some target language And so in this class, for
+
+7
+00:00:43,739 --> 00:00:48,379
+example, where often our source language is cool and our target language is mixed
+
+8
+00:00:48,379 --> 00:00:54,109
+assembly code. Now, an Intermediate Language actually lives in between these
+
+9
+00:00:54,109 --> 00:00:58,600
+two and a compiler that uses an Intermediate Language will first translate
+
+10
+00:00:58,600 --> 00:01:02,969
+its source language into the Intermediate Language and then later translate the
+
+11
+00:01:02,969 --> 00:01:08,299
+intermediate the code in the Intermediate Language into the target language. And you
+
+12
+00:01:08,299 --> 00:01:14,030
+might wonder, well why make life so difficult? Why when, why do something in
+
+13
+00:01:14,030 --> 00:01:20,060
+two steps if you can do in one step? And it turns out that for many purposes this
+
+14
+00:01:20,060 --> 00:01:25,829
+intermediate level here is actually quite useful precisely because it provides an
+
+15
+00:01:25,829 --> 00:01:30,790
+intermediate level of abstraction. So, in particular, the intermediate level may
+
+16
+00:01:30,790 --> 00:01:37,689
+have more details in it than the source language. So for example, if we want to
+
+17
+00:01:37,689 --> 00:01:43,170
+optimize register usage you know, a source language like Cool has no notion of
+
+18
+00:01:43,170 --> 00:01:47,799
+registers at the source level, and so there's no way to even express the kinds
+
+19
+00:01:47,799 --> 00:01:51,420
+of optimizations you might want to do with registers. So an Intermediate Language
+
+20
+00:01:51,420 --> 00:01:55,869
+that exposes that at that amount of detail, at least have registers in it will
+
+21
+00:01:55,869 --> 00:02:01,820
+allow you to talk about and, and write algorithms that could try to improve the
+
+22
+00:02:01,820 --> 00:02:06,009
+use of registers in the program. On the other hand, the Intermediate Language
+
+23
+00:02:06,009 --> 00:02:10,979
+which will also have fewer details than the target. And so it might be for
+
+24
+00:02:10,979 --> 00:02:14,890
+example, if the Intermediate Language is a little bit above the level of the parti
+
+25
+00:02:14,890 --> 00:02:18,940
+cular instruction set of a particular machine, and therefore it's easier to
+
+26
+00:02:18,940 --> 00:02:23,330
+retarget that, that intermediate level of code to lots of different kinds of
+
+27
+00:02:23,330 --> 00:02:27,920
+machines. Precisely because doesn't have all the grubby details in a, of a
+
+28
+00:02:27,920 --> 00:02:32,650
+particular machine. And, experience has shown, that this is actually a pretty good
+
+29
+00:02:32,650 --> 00:02:37,300
+idea to have Intermediate Language. And, almost all compilers have an Intermediate
+
+30
+00:02:37,300 --> 00:02:40,610
+Language. I, In fact, in their implementation and some compilers have
+
+31
+00:02:40,610 --> 00:02:45,420
+more than one. Some compilers actually translate through an entire the series of
+
+32
+00:02:45,420 --> 00:02:49,590
+Intermediate Languages between the source and target language. Now we're only going
+
+33
+00:02:49,590 --> 00:02:56,010
+to consider one Intermediate Language for the rest of this course. The kind of
+
+34
+00:02:56,010 --> 00:02:59,600
+Intermediate Language which we're going to look at is going to be a high level
+
+35
+00:02:59,600 --> 00:03:04,100
+assembly. And so, as I suggested on the previous slide, this language is going to
+
+36
+00:03:04,100 --> 00:03:07,980
+use register names but it will have an unlimited number, so we can use any number
+
+37
+00:03:07,980 --> 00:03:13,950
+of registers that we like. We're not bound to 32 or 64 registers. The control
+
+38
+00:03:13,950 --> 00:03:17,450
+structures will look a lot like assembly language. In particular, there will be
+
+39
+00:03:17,450 --> 00:03:24,130
+explicit jumps and labels on instructions. And the language will also have op codes
+
+40
+00:03:24,130 --> 00:03:27,630
+in it so it'll look like assembly language level op codes. But some of these op codes
+
+41
+00:03:27,630 --> 00:03:32,510
+will be higher level. So for example, we might have an op code called Push. And
+
+42
+00:03:32,510 --> 00:03:37,260
+Push would end up translating into several concrete assembly language instructions
+
+43
+00:03:37,260 --> 00:03:43,510
+for a particular target machine. In the intermediate code that we'll be looking
+
+44
+00:03:43,510 --> 00:03:48,180
+at, every instruction will have one of two forms. It will either be a binary
+
+45
+00:03:48,180 --> 00:03:53,930
+operation, or it will be a unary operation. And always the arguments on the
+
+46
+00:03:53,930 --> 00:03:58,700
+right hand side, in this case the y and the z, will be either registers or
+
+47
+00:03:58,700 --> 00:04:04,200
+constants. They could also be immediate values. And this is a very, very common
+
+48
+00:04:04,200 --> 00:04:09,290
+form of Intermediate Code, so widely used, and so widely used it actually has a name.
+
+49
+00:04:09,290 --> 00:04:16,290
+It's called Three Address Code because every instruction has at most three
+
+50
+00:04:17,279 --> 00:04:21,139
+addresses in it. Two arguments, at most two arguments and then a destination. Now,
+
+51
+00:04:21,139 --> 00:04:28,139
+to see that this code is actually low level notice that you know, higher level
+
+52
+00:04:30,800 --> 00:04:35,129
+expressions that involve multiple operations will have to be translated into
+
+53
+00:04:35,129 --> 00:04:40,139
+a sequence of instructions that do only one operation at a time. So, for example,
+
+54
+00:04:40,139 --> 00:04:46,900
+if I have the expression, x = sorry, x + y z, and let me put in parens here to show
+
+55
+00:04:46,900 --> 00:04:51,139
+the association. So the times binds more tightly than the plus, we're going to have
+
+56
+00:04:51,139 --> 00:04:55,620
+to, this can't be written directly in an intermediate , language of this form.
+
+57
+00:04:55,620 --> 00:04:58,289
+Instead, we would have to write it something like the following. We have to
+
+58
+00:04:58,289 --> 00:05:04,689
+first compute y z and assign that to a new register or a temporary or you know, a
+
+59
+00:05:04,689 --> 00:05:11,249
+new register t1 to hold the intermediate value. And then we would have to use t1 to
+
+60
+00:05:11,249 --> 00:05:15,120
+compute x + t1, which of course is the value of the entire expression and that
+
+61
+00:05:15,120 --> 00:05:20,530
+would end up getting stored in another register. I noticed that one effect of
+
+62
+00:05:20,530 --> 00:05:25,599
+forcing you to use only one operation at a time. You see, you do one primitive
+
+63
+00:05:25,599 --> 00:05:29,650
+operation at time and then the result of that has to be restored in a register. One
+
+64
+00:05:29,650 --> 00:05:34,560
+effect of that is to give every subexpression of the program a name. So,
+
+65
+00:05:34,560 --> 00:05:41,009
+if I look back at this expression here, I see you know, like y z is anonymous.
+
+66
+00:05:41,009 --> 00:05:47,270
+That in this expression x + y 'lt;i>z the expression y 'lt;/i> z itself doesn't have a
+
+67
+00:05:47,270 --> 00:05:52,090
+name. And by rewriting it like this, I actually name that intermediate result. So
+
+68
+00:05:52,090 --> 00:05:59,090
+again just to summarize this point, one consequence of having to write out
+
+69
+00:05:59,270 --> 00:06:04,430
+compound expressions as a sequence of instructions that do a single operation in
+
+70
+00:06:04,430 --> 00:06:11,430
+time is that every intermediate value will be given its own name. Generating
+
+71
+00:06:12,009 --> 00:06:16,749
+Intermediate Code is very similar to generating assembly code and we're not
+
+72
+00:06:16,749 --> 00:06:19,879
+going to go into this in any detail because it is so similar. But I will
+
+73
+00:06:19,879 --> 00:06:25,240
+sketch it for you, you know, briefly. The main difference between generating
+
+74
+00:06:25,240 --> 00:06:30,379
+assembly code and generating intermediate code is that we can use any number of
+
+75
+00:06:30,379 --> 00:06:37,379
+registers in the Intermediate Language to hold intermediate results. To generate
+
+76
+00:06:38,419 --> 00:06:41,990
+intermediate code, we could write a function called IGEN for Intermediate Code
+
+77
+00:06:41,990 --> 00:06:44,999
+Generation that takes two arguments. It takes the expression for which we're
+
+78
+00:06:44,999 --> 00:06:50,090
+generating code and it takes the register into which the results of that expression
+
+79
+00:06:50,090 --> 00:06:54,479
+should be stored. And to give you just one example, and this is the only example that
+
+80
+00:06:54,479 --> 00:07:00,020
+I'll do. Let's take a look at generating intermediate code for a+ expressions. I
+
+81
+00:07:00,020 --> 00:07:05,159
+wanna generate code for e1 + e2 and I want the results of that to be stored in the
+
+82
+00:07:05,159 --> 00:07:09,349
+register t, okay? So the first thing I'm going to do is I'm going to generate code
+
+83
+00:07:09,349 --> 00:07:12,789
+for the subexpressions and I need some place to store the results of the sub
+
+84
+00:07:12,789 --> 00:07:17,529
+expressions so I'm just going to make up new register names for those results. So
+
+85
+00:07:17,529 --> 00:07:21,849
+I'll generate code for e1 and store that in some register, t1 and I'll generate
+
+86
+00:07:21,849 --> 00:07:26,680
+code for e2 and I'll store the results of that in some register t2. And then, we can
+
+87
+00:07:26,680 --> 00:07:33,610
+just compute the sum. So t = t1 + t2 and notice that this is a Three Address
+
+88
+00:07:33,610 --> 00:07:38,189
+Instruction. So we're sticking to the rules here and only using three Address
+
+89
+00:07:38,189 --> 00:07:45,189
+Instructions In our Intermediate Code Generator. And also notice that because we
+
+90
+00:07:45,710 --> 00:07:49,839
+have an unlimited number of registers, this actually leads to very simple code
+
+91
+00:07:49,839 --> 00:07:53,330
+generation of intermediate code. In fact, it's even a little bit simpler than
+
+92
+00:07:53,330 --> 00:07:57,719
+generating code for a stack machine. Recall that, in a stack machine, we had to
+
+93
+00:07:57,719 --> 00:08:02,800
+save the intermediate results here of e1 on the stack. And that involved, you know,
+
+94
+00:08:02,800 --> 00:08:07,479
+more than one instruction to actually push the result and adjust the stack pointer
+
+95
+00:08:07,479 --> 00:08:14,479
+and things like that. And here we can just save it in a register, and, and then just
+
+96
+00:08:14,669 --> 00:08:21,389
+use that register name later on. So, that is actually all I have to say about
+
+97
+00:08:21,389 --> 00:08:26,360
+Intermediate Code for this course. You should be able to use Intermediate Code at
+
+98
+00:08:26,360 --> 00:08:30,309
+the level in which we are going to be using it in, in lectures. The, in the
+
+99
+00:08:30,309 --> 00:08:34,380
+future videos we'll actually be looking at Intermediate Code quite a bit and using it
+
+100
+00:08:34,380 --> 00:08:39,070
+especially to express certain kinds of optimizations. You should also be able to
+
+101
+00:08:39,070 --> 00:08:43,940
+write simple Intermediate Code programs and you should be able to write algorithms
+
+102
+00:08:43,940 --> 00:08:47,720
+that work on Intermediate Code. But I'm not going to expect you to know how to
+
+103
+00:08:47,720 --> 00:08:51,960
+generate Intermediate Code because we're not going to discuss it any further. And
+
+104
+00:08:51,960 --> 00:08:55,010
+quite frankly, it doesn't introduce any new any idea. That's really just a
+
+105
+00:08:55,010 --> 00:09:01,010
+variation on the cogeneration ideas that we've already discussed in quite a bit of detail.

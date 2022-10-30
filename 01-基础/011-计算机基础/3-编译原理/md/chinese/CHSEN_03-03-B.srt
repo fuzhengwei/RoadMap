@@ -1,0 +1,44 @@
+0
+00:00:00,940 --> 00:00:05,480
+好了, 我们已经讲完了这段视频, 总结一下, 我们看了常规的
+Well, we've come to the end of this video. And to summarize, we looked at regular
+
+1
+00:00:05,480 --> 00:00:11,400
+表达式, 用于定义常规语言。
+expressions, which are used to define regular languages. And the regular
+
+2
+00:00:11,400 --> 00:00:16,910
+表达式是语法（这是我们写的表达式）
+expressions are syntax (that's the expression that we write down), and it
+
+3
+00:00:16,910 --> 00:00:21,660
+表示一组字符串这是常规语言这就是
+denotes a set of strings which is the regular language and that's the meaning of
+
+4
+00:00:21,660 --> 00:00:26,870
+正则表达式, 有五种正则表达式
+the regular expression. And there are five kinds of regular expressions in the
+
+5
+00:00:26,870 --> 00:00:32,439
+标准定义, 这是空字符串的表达式这是由
+standard definition. There's an expression for the empty string and that's denoted by
+
+6
+00:00:32,439 --> 00:00:36,289
+然后我们有了所有的字符串然后是3个字符串
+epsilon and then we have all the one character strings and then there are three
+
+7
+00:00:36,289 --> 00:00:41,890
+复合表达式——从其他规则构建新的正则表达式的方法
+compound expressions - ways of building new regular expressions from other regular
+
+8
+00:00:41,890 --> 00:00:46,460
+表达式——这些是联合、连接和迭代。
+expressions - and these are union, concatenation, and iteration.

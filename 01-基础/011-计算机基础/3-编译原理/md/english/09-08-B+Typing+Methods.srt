@@ -1,0 +1,131 @@
+0
+00:00:01,670 --> 00:00:05,379
+The method environment has to be added to all of the other type rules in our
+
+1
+00:00:05,379 --> 00:00:09,970
+system. This is really easy to do, because only the dispatch rules actually care
+
+2
+00:00:09,970 --> 00:00:14,099
+about what the methods are. All the rest of the rules just pass the method environment
+
+3
+00:00:14,099 --> 00:00:17,820
+along. So what do I mean by that? Well, here's our rule for add, with
+
+4
+00:00:17,820 --> 00:00:21,260
+just the object environment. So now what were going to do, is we're going to add a
+
+5
+00:00:21,260 --> 00:00:24,760
+method environment. And the sub-expressions will be just type checked.
+
+6
+00:00:24,760 --> 00:00:31,279
+In exactly the same method environment as the entire expression and all the other rules
+
+7
+00:00:31,279 --> 00:00:34,839
+simply pass down the method environment from the root towards the leaves
+
+8
+00:00:34,839 --> 00:00:41,239
+without changing it just as in this rule. Now it turns out that for some cases
+
+9
+00:00:41,239 --> 00:00:45,679
+involving self-type, we actually need one more thing in our environment. And so, the
+
+10
+00:00:45,679 --> 00:00:50,159
+actual full environment for Cool type checking consists of three things. First of
+
+11
+00:00:50,159 --> 00:00:54,559
+all, there's the mapping O, that gives types to object IDs. There's this mapping
+
+12
+00:00:54,559 --> 00:00:58,389
+M, that gives types to methods. And finally, we just need to know the name of
+
+13
+00:00:58,389 --> 00:01:02,959
+the current class. So, whatever class the expression we're type checking actually sits
+
+14
+00:01:02,959 --> 00:01:09,030
+in. So the full form of a sentence in the Cool type checking [inaudible] looks like
+
+15
+00:01:09,030 --> 00:01:12,850
+this And is read as follows, under the assumption that the object identifiers
+
+16
+00:01:12,850 --> 00:01:17,399
+have the types given by O. That the methods have the signatures given by M And
+
+17
+00:01:17,399 --> 00:01:24,240
+that the expression sits in the class C. Then we can prove that the expression E has
+
+18
+00:01:24,240 --> 00:01:30,020
+the type T. And here's an example, the ad example, the, the rule for addition again,
+
+19
+00:01:30,020 --> 00:01:35,469
+written out with the full environment. So the rules that I've given
+
+20
+00:01:35,469 --> 00:01:39,329
+you for type checking here are cool specific and some other languages have very
+
+21
+00:01:39,329 --> 00:01:43,090
+different rules. But there are some general themes in type checking. First of
+
+22
+00:01:43,090 --> 00:01:47,189
+all, type rules are defined on the structure of expressions. So they're typically
+
+23
+00:01:47,189 --> 00:01:51,590
+done in this inductive fashion, where the types of an expres-, the type of
+
+24
+00:01:51,590 --> 00:01:57,109
+an expression depends on the types of its sub expressions. And also the types of variables
+
+25
+00:01:57,109 --> 00:02:01,039
+and more generally any free names in an expression, things like method
+
+26
+00:02:01,039 --> 00:02:05,520
+names, they're going to be modeled by an environment, so we're going to have some mapping
+
+27
+00:02:05,520 --> 00:02:10,259
+sitting around that's going to tell us any kind of fr-. A Russian what assumptions
+
+28
+00:02:10,258 --> 00:02:15,849
+the type rules should make about the types of those names And one thing
+
+29
+00:02:15,849 --> 00:02:18,909
+you've probably noticed by now but it's worth saying explicitly is that type
+
+30
+00:02:18,909 --> 00:02:24,340
+rules are really very compact. The notation is not complicated but there's actually
+
+31
+00:02:24,340 --> 00:02:27,730
+a lot of information in these rules. I mean you have to take some time to
+
+32
+00:02:27,730 --> 00:02:30,760
+sit and read them carefully to really understand what they are saying.

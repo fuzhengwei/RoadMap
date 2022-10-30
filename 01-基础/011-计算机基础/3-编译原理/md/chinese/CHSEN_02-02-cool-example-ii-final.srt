@@ -1,0 +1,829 @@
+0
+00:00:03,970 --> 00:00:07,800
+欢迎回来, 在这个视频中我们将会看到另一个很酷的例子
+Welcome back, In this video we're going to look at another example of cool
+
+1
+00:00:07,800 --> 00:00:14,800
+这一次, 让我们超越简单的hello world的例子
+programing. This time let's move beyond the simple hello world kind of examples
+
+2
+00:00:19,119 --> 00:00:24,400
+还有更令人兴奋的, 比如说, 最流行的阶乘函数, 
+and on to something more exciting, say, the ever popular factorial function. So,
+
+3
+00:00:24,400 --> 00:00:29,960
+为了写阶乘, 我们需要打开一个文件, 我们可以写一些代码。
+in order to write factorial, we'll need to open a file, which we can write some code.
+
+4
+00:00:29,960 --> 00:00:36,320
+让我开始吧, 回想一下上节课每个很酷的程序都必须有一个
+Let me start that. And recall from last time that every cool program has to have a
+
+5
+00:00:36,320 --> 00:00:42,790
+主类和主类被要求有一个主方法, 我们不关心
+main class and the main class is required to have a main method. And we don't care
+
+6
+00:00:42,790 --> 00:00:46,060
+主方法返回的是什么, 所以我们只要它返回一个类型对象, 
+what the main method return, so we'll just have it return something a type object,
+
+7
+00:00:46,060 --> 00:00:53,060
+然后我们在文件中填上一个骨架, 现在我们准备好了
+and then we'll just fill in a skeleton here on the file. And, so now we're ready
+
+8
+00:00:53,320 --> 00:00:58,360
+要写一些代码, 那么我们要用主方法做什么呢？
+to write some codes. So what are we going to have the main method do? Well, before
+
+9
+00:00:58,360 --> 00:01:02,090
+实际上, 我们可以把它写出来, 在我们讲这个程序的核心之前, 
+we can actually write factorially, before we can get to the guts of this program,
+
+10
+00:01:02,090 --> 00:01:06,360
+这其实不是很困难, 我们需要再讨论一下IO, 因为
+which is actually not very difficult. We need to talk about IO some more. Because
+
+11
+00:01:06,360 --> 00:01:12,600
+我们需要能够, 读写, 数字, 我们需要能够
+we're going to need to be able to, read and write, numbers. We need to be able to
+
+12
+00:01:12,600 --> 00:01:16,180
+读取运行程序的用户的数字, 然后将其打印出来
+read numbers from, the, the user who's running the program, and print them back
+
+13
+00:01:16,180 --> 00:01:20,580
+我们来复习一下关于IO的内容, 为了调用IO
+out. So let's just review little bit about IO, also. In order to invoke the IO
+
+14
+00:01:20,580 --> 00:01:25,140
+函数, 我们需要一个IO对象, 其中一个IO函数是
+functions, we need an IO object. And one of the IO functions is something that
+
+15
+00:01:25,140 --> 00:01:31,090
+打印出一个字符串, 让我们写一个我们已经知道怎么做的程序, 
+prints out a string. So let's just, write a program that we already know how to do,
+
+16
+00:01:31,090 --> 00:01:37,409
+只是为了确认我们记得这个, 并且, 我们可以编译这个程序, 它
+just to confirm that we remember that. And, we can compile this program. And it
+
+17
+00:01:37,409 --> 00:01:44,409
+应该只打印一个, 我们看看, 确实是这样的, 所以它打印出了
+should just print one. And, let's see. Indeed it does. Okay? So it prints out the
+
+18
+00:01:46,310 --> 00:01:53,110
+第一, 现在, 让我们回到这里, 让我们讨论如何做输入。
+number one. And so now, let's come back here and let's talk about how to do input.
+
+19
+00:01:53,110 --> 00:01:57,700
+所以, 我们不只是打印出数字1, 而是打印出一个
+So, instead of just printing out the number one, let's print out a strain that
+
+20
+00:01:57,700 --> 00:02:01,909
+用户输入, 在这里, 在这里, 我们要读取一个应变, 按顺序
+the user types in. So, ins-, in here, we're going to read a strain. And in order
+
+21
+00:02:01,909 --> 00:02:07,420
+要做到这一点, 我们需要一个IO对象, 因为有另一个函数, 另一个方法, 
+to do that, we need an IO object because there is another function, another method,
+
+22
+00:02:07,420 --> 00:02:14,420
+叫做内应变, 好的, 这将会更新这个字符串, 并返回到字符串。
+called in-strain. Okay. And so this will renew this string. And return to string.
+
+23
+00:02:15,569 --> 00:02:21,860
+为了确保我们得到了漂亮的输出我们把它连接到那个字符串
+And to make sure that we get the nice output let's concatenate on to that string
+
+24
+00:02:21,860 --> 00:02:27,209
+一条新线, 这是。当它打印出这个字符串时它会是
+a new line. So, this is just to. When it prints this string back out it will be
+
+25
+00:02:27,209 --> 00:02:34,209
+印在我自己的线上, 所以, 让我们试着编译这个, 牛排, 它编译, 
+printed on i ts own line. So, let's try compiling this, And steak. It compiles,
+
+26
+00:02:39,590 --> 00:02:44,620
+现在我们可以运行自旋, 记住UNIX中的bang命令运行前面的命令
+And now we can run spin. Remember the bang command in UNIX runs the previous command
+
+27
+00:02:44,620 --> 00:02:48,599
+这是由相同的字母开始的, 现在程序运行, 它在等待, 因为它是
+that began with the same letters. And now the program runs and it waits. Cause it's
+
+28
+00:02:48,599 --> 00:02:53,800
+等我输入一些东西, 如果我输入一个类型它会打印出一个
+waiting for me to type something. And if I type it type in one it prints back one and
+
+29
+00:02:53,800 --> 00:03:00,800
+如果我输入42, 它会给我42, 现在我们要讲的下一件事
+if I type in 42 it gives me back 42. And so now The next thing we need to talk
+
+30
+00:03:01,150 --> 00:03:06,020
+关于如何将字符串转换成整数, 因为如果我们要做a
+about is how to convert strings into integers, because if we're going to do a
+
+31
+00:03:06,020 --> 00:03:08,879
+阶乘, 我们想要处理整数而不是字符串, 现在我们只是
+factorial, we want to work on integers and not strings. And at the moment we're just
+
+32
+00:03:08,879 --> 00:03:14,629
+阅读和书写字符串, 所以, 有一个用酷写的库
+reading and writing strings. So, there is a library written in cool that does
+
+33
+00:03:14,629 --> 00:03:19,690
+整数和字符串之间的转换, 我们将给出主类
+conversion between integers and strings. And we're going to give the main class
+
+34
+00:03:19,690 --> 00:03:26,690
+这是该类的功能, 它被称为A2I, 用于ASCII到整数。
+here the functionality of that class. Which is called A2I for ASCII to integer.
+
+35
+00:03:28,230 --> 00:03:33,060
+它定义了一堆方法, 可以在字符串和整数之间进行转换。
+And that defines a bunch of methods, that can convert between strings and integers.
+
+36
+00:03:33,060 --> 00:03:40,060
+让我们在这里添加这些命令, 这是我们的字符串, 我们已经读过了
+So let's add those, commands in here. So here, here's our string. That we've read
+
+37
+00:03:41,860 --> 00:03:48,860
+我们现在要做的是, 把它转换成整数, 让我
+in. And what we want to do now is to, convert this into an integer. So let me
+
+38
+00:03:51,610 --> 00:03:57,550
+在这里加几个括号, 这是我们的字符串, 好吗？现在我们
+just add a couple of parens here. So there's our string, okay? And now we're
+
+39
+00:03:57,550 --> 00:04:03,650
+要调用。在这个方法上, 抱歉, 我们要调用那个
+going to invoke. On that the method I'm sorry we're going to call on that the
+
+40
+00:04:03,650 --> 00:04:10,650
+函数这个方法, A到i, 好吗？让我们再检查一下, 我们已经
+function the method, A to I. Okay? And let's just double check here that we've
+
+41
+00:04:11,170 --> 00:04:15,909
+把朋友放在正确的地方, 这就是A2I的论点, 现在, 我们回忆一下
+got friends in the right place. So that's the argument to A2I. Now, we recall that
+
+42
+00:04:15,909 --> 00:04:18,849
+当我们对一个方法进行调度时它就只是自己坐着不动
+when we have a dispatch to a method and it's just sitting by itself with not
+
+43
+00:04:18,849 --> 00:04:23,970
+对象, 它被发送到self对象, self对象就是对象
+object, it's dispatched to the self object. And the self object is the object
+
+44
+00:04:23,970 --> 00:04:28,160
+在当前的类中, 在本例中是主对象, 它有
+of the current class that we're in. In this case the main object, which has
+
+45
+00:04:28,160 --> 00:04:33,660
+继承了A2I方法, 因此A2I函数应该在这里定义。
+inherited the A2I methods, And so the A2I functions should be defined in there. Now
+
+46
+00:04:33,660 --> 00:04:38,150
+我们有一个整数, 如果我们愿意, 我们可以用这个整数做点什么。
+we have an integer. And we can do something with that integer if we like.
+
+47
+00:04:38,150 --> 00:04:42,250
+那么, 让我们在这里添加一些听不清的内容假设我们只在其中添加了一个
+So, let's add some more [inaudible] here and let's just say we add just one to the
+
+48
+00:04:42,250 --> 00:04:47,580
+整数, 好的, 一旦我们完成了整数, 不管它是什么运算
+integer. Okay. And then once we're done with our integer. Whatever operation it is
+
+49
+00:04:47,580 --> 00:04:51,410
+我们要用整数来做我们需要把它转换成字符串
+that we want to do with the integer we need to convert it back to a string so
+
+50
+00:04:51,410 --> 00:04:57,160
+我们可以把它打印出来, a有一个逆函数I2A可以这样做, 我
+that we can print it out. An there's an inverse function I2A that will do. So, I
+
+51
+00:04:57,160 --> 00:05:01,320
+不知道在这一点上是否有所有的副本, 所以, 
+don't know if we have all the parens in the right places at this point. So,
+
+52
+00:05:01,320 --> 00:05:08,320
+我们来检查一下, 是的, 看起来应该是这样的, 这是, 读入a
+let's just check. Yes. That looks like that should work. So this will, read in a
+
+53
+00:05:08,430 --> 00:05:14,150
+字符串, 转换, 把它转换成整数, 加1, 然后把它转换回一个字符串, 
+string, convert, convert it to an integer, add one to it convert it back to a string,
+
+54
+00:05:14,150 --> 00:05:18,810
+连接在一条新线上, 然后把它打印出来, 现在我们来看看是否所有这些
+concatenate on a new line, and print it out. Now let's see if all that actually
+
+55
+00:05:18,810 --> 00:05:23,650
+工作, 让我们运行编译器, 这里有个问题, 它说我们有
+works, so let's run the compiler and we have a problem here. It says that we have
+
+56
+00:05:23,650 --> 00:05:29,380
+一个未定义的类A, 原因是, 我们没有提供A2I的代码, 所以
+an undefined class A to I. And the reason is, we didn't supply the code for A2I. So
+
+57
+00:05:29,380 --> 00:05:33,690
+如果我们看一下我们的目录, 我们会看到我已经在类文件中复制了
+if we look in our directory here, we'll see I've already copied in the class file
+
+58
+00:05:33,690 --> 00:05:36,960
+对于A2I, 我鼓励你们去看那个代码, 它实际上是
+for A2I. And I encourage you to go and look at that code. It's actually
+
+59
+00:05:36,960 --> 00:05:40,199
+有趣的代码, 可以看到转换是如何写得很酷的。
+interesting code to see how the conversions are written in COOL.
+
+60
+00:05:40,199 --> 00:05:45,590
+但是现在我们需要讨论如何编译一个使用库的程序, 
+But now we need to talk about how to compile a program that uses a library, And
+
+61
+00:05:45,590 --> 00:05:50,310
+方法非常简单, 只需列出命令上的所有类文件
+the way you do it is very simple. You just list all the class files on the command
+
+62
+00:05:50,310 --> 00:05:53,880
+当你调用编译器时, 它会把所有的内容都读出来, 然后把它们当作a
+line when you call up the compiler. And it will read them all in and treat them as a
+
+63
+00:05:53,880 --> 00:06:00,000
+单个程序, 在这种情况下我们用A2I编译, 编译事实。
+single program. So in this case we compile, compile fact together with A2I.
+
+64
+00:06:00,000 --> 00:06:07,000
+这是符合的, 然后我们可以运行它, 声音, 现在, 如果我输入3, 它
+And that complies. And then we can run it. [sound]. And now, if I type in three, it
+
+65
+00:06:07,580 --> 00:06:13,330
+打印4, 如果我输入一个, 它会输出两个, 所以程序看起来是
+prints four. And if I type in one, it prints two. And so the program seems to be
+
+66
+00:06:13,330 --> 00:06:18,460
+工作, 现在我们已经准备好写出我们的阶乘函数了
+working. And now we're almost ready to write our factorial function. So what do
+
+67
+00:06:18,460 --> 00:06:21,900
+我们想要在阶乘中做什么呢？我们想要做的不仅仅是添加
+we want to do in factorial? Well, we want to do something other than just adding
+
+68
+00:06:21,900 --> 00:06:27,770
+一个, 我们要调用, 我们的特殊函数factorial, 所以我们插入一个调用
+one. Instead, we want to call, our special function factorial. So let's insert a call
+
+69
+00:06:27,770 --> 00:06:34,770
+到这里的阶乘, 好了, 我们消去+1, 然后我们来检查一下
+to factorial in here. Okay, and let's get rid of the plus one. And then let's check
+
+70
+00:06:35,610 --> 00:06:39,850
+我们有需要的所有参数, 所以我们需要关闭A2I调用, 
+that we have all the parens that we need. So we need to close off the, the A2I call,
+
+71
+00:06:39,850 --> 00:06:45,669
+阶乘调用, I2A调用, 最后一个应该是out字符串
+the factorial call, The I2A call. And then that last one should be the out string
+
+72
+00:06:45,669 --> 00:06:51,770
+调用, 它是, 好的, 现在我们可以给这个类添加一个方法事实, 事实是
+call, And it is, Okay. So now we can add a method fact to this class, And fact is
+
+73
+00:06:51,770 --> 00:06:56,819
+我们需要一个整数参数, 所以我们需要一个参数, 它的类型是
+gonna take an integer argument. So we need a parameter here, And it's type is in
+
+74
+00:06:56,819 --> 00:07:03,710
+力, 整个东西会返回一个整数, 然后是我们的主体
+force. And the whole thing is gonna return an integer. And then we have body of our
+
+75
+00:07:03,710 --> 00:07:09,610
+功能, 可能是一个好主意, 只是为了确保我们得到了这么多
+function, And probably a good idea here, just to make sure that we got this much
+
+76
+00:07:09,610 --> 00:07:13,520
+对, 做一些简单的事情, 让我们试着做一个返回的函数
+right, to do something simple. So let's just try to make a function that returns
+
+77
+00:07:13,520 --> 00:07:16,600
+还有一个比它的参数, 所以这和我们之前做的是一样的
+one more than it's argument. So this will do exactly the same thing that we had
+
+78
+00:07:16,600 --> 00:07:23,600
+在此之前, 我们先确认一下, 这是可行的, 用A2I进行新的编译
+before and let's just confirm that, that is working. So EW compile with the A2I
+
+79
+00:07:24,280 --> 00:07:30,880
+现在我们有了一个语法错误, 我们看到我忘记了关闭
+library and now we have a syntax error. And we see that I forgot the closing
+
+80
+00:07:30,880 --> 00:07:37,880
+这个方法的分号, 记住, 类体是一个方法列表, 
+semicolon here for the method. Remember the, the, class body is a list of methods,
+
+81
+00:07:38,860 --> 00:07:44,870
+并且每个方法都被分号终止, 必须再次尝试编译。
+and each method is terminated by a semicolon, Must try compiling that again.
+
+82
+00:07:44,870 --> 00:07:50,280
+现在它编译, 我们运行它, 我们键入4, 给出一个规范5, 好的, 看起来
+Now it compiles. Let's run it. We type in four gives a spec five. Alright, So looks
+
+83
+00:07:50,280 --> 00:07:54,280
+好了, 我们现在已经准备好了对factorial的代码进行正确的处理, 这将会
+right we're ready now to actually right the code for factorial. And this is gonna
+
+84
+00:07:54,280 --> 00:07:58,630
+是反高潮的因为这是一个非常简单的代码如果我们写下来
+be anti climactic because it's actually a very simple code if we write it
+
+85
+00:07:58,630 --> 00:08:05,630
+递归地, 我们来做一下, 这是怎么运作的呢, 大家都知道
+recursively. So let's do that. So how's that going to work? Well, everybody knows
+
+86
+00:08:07,289 --> 00:08:13,330
+哈代希望的定义, 如果I等于0那么0的阶乘就是0
+the definition by Hardy Hope. If I is equal to zero then the factorial of zero
+
+87
+00:08:13,330 --> 00:08:20,330
+是1, 我们有一个关键字, 然后一个, 否则阶乘就会变成
+is one. And we have a keyword there then one, otherwise the factorial is going to
+
+88
+00:08:22,060 --> 00:08:29,060
+是I乘以, I减1的阶乘, 对, 如果是
+be I times, the factorial of I minus one. Right, and then if statements in
+
+89
+00:08:31,690 --> 00:08:36,529
+听不清总是以关键字结尾, 所以这是一个if then
+[inaudible] always end in the keyword [inaudible] so it's an if then else
+
+90
+00:08:36,529 --> 00:08:41,129
+听不清结构, 这实际上是整个定义, 现在我们
+[inaudible] construct. And that is actually the entire definition. So now we
+
+91
+00:08:41,129 --> 00:08:45,179
+应该有一个实际计算阶乘的程序, 它会编译, 所以现在
+should have a program that actually computes factorial, it compiles, so now
+
+92
+00:08:45,179 --> 00:08:52,179
+我们来运行一下, 3的阶乘是6, 而6的阶乘是720
+let's run it. So factorial of three is six. And factorial of six, is 720 and that
+
+93
+00:08:55,639 --> 00:09:02,019
+看起来是对的, 如果我们再试一次用一个更大的数, 我们得到a, 我们
+looks right. And if we try it one more time with a bigger number, we get a, we
+
+94
+00:09:02,019 --> 00:09:05,050
+得到一个很大的数字, 我们认为这可能是正确的, 不管怎样
+get a large number, we think that's probably correct. And so, anyway our
+
+95
+00:09:05,050 --> 00:09:10,519
+阶乘函数, 是有效的, 现在让我们回到这里, 作为一个
+factorial function, is working. So, now let's come back here, and just as an
+
+96
+00:09:10,519 --> 00:09:14,699
+练习, 让我们迭代地重写这段代码, 而不是使用a
+exercise, let's rewrite this code iteratively. So instead of using a
+
+97
+00:09:14,699 --> 00:09:21,439
+递归函数, 让我们用一个循环来写, 为了听不清
+recursive function, let's write it using a loop. And in order to that [inaudible]
+
+98
+00:09:21,439 --> 00:09:26,239
+要去掉这些代码, 我们需要什么呢, 我们需要
+gonna get rid of that code. What are we going to need? Well, we're going to need
+
+99
+00:09:26,239 --> 00:09:32,899
+这里有一个累加器, 我们需要一个局部变量我们可以用它来做
+an accumulator here. We're going to need a, a local variable that we can use to
+
+100
+00:09:32,899 --> 00:09:37,170
+积累阶乘计算的结果, 以及您声明本地的方式
+accumulate the results of the factorial computation. And the way you declare local
+
+101
+00:09:37,170 --> 00:09:40,230
+听不清的变量是听不清的陈述, 或者是naudibl
+variables in [inaudible] is with [inaudible] Statements, or naudibl
+
+102
+00:09:40,230 --> 00:09:45,230
+表达式, 我们把它叫做变量事实, 因为, 结果
+expressions. So we're gonna have, let's call this, variable fact, for the, result
+
+103
+00:09:45,230 --> 00:09:48,429
+关于阶乘的, 注意这里我可以有一个同名的变量
+of factorial. And notice here that I can have a variable that has the same name as
+
+104
+00:09:48,429 --> 00:09:52,199
+这个函数, 以及编程语言, 听不清
+the function. And the programming language, [inaudible] will not get
+
+105
+00:09:52,199 --> 00:09:57,439
+对此感到困惑, 因为变量和函数, 扮演不同的角色, 所以我们会
+confused about that, Because variables and functions, play different roles. So we'll
+
+106
+00:09:57,439 --> 00:10:03,579
+有阶乘的事实, 不好意思, 它是Int类型的, 我们把它初始化
+have the factorial fact, excuse me, it's of type Int, and we do initialize it to
+
+107
+00:10:03,579 --> 00:10:10,139
+一个, 好了, 乘法会起作用, 我认为这是默认的
+one. Alright, so that multiplication will work. I think that the default for
+
+108
+00:10:10,139 --> 00:10:14,059
+整数被初始化为0如果我们要这样做, 那就不太好了
+integers is to be initialized to zero and that would not be good if we're going to
+
+109
+00:10:14,059 --> 00:10:20,610
+把事实和其他数字相乘, 好了, 那么, a
+be multiplying up fact with other with other numbers. Alright, so then the, a let
+
+110
+00:10:20,610 --> 00:10:24,910
+它有两个部分, 它有你要声明的变量或变量。
+has two parts. It has the variable or variables that you are declaring. This
+
+111
+00:10:24,910 --> 00:10:28,420
+实际上可以是一个变量列表, 我们这次只会有一个, 然后
+could actually be a list of variables. We'll only have one this time. And then it
+
+112
+00:10:28,420 --> 00:10:34,179
+有一个主体, 这个表达式或者是一个事实变量的计算
+has a body. The, the expression or the computation in which the fact variable is
+
+113
+00:10:34,179 --> 00:10:40,350
+有, 我们想做什么？我想我们需要把它设为a
+available. And what do we want to do? So, I think we're gonna need to have this be a
+
+114
+00:10:40,350 --> 00:10:43,049
+语句块因为我们需要有不止一个语句
+statement block 'cause we're gonna need to have more than one statement in the
+
+115
+00:10:43,049 --> 00:10:46,910
+序列, 我们马上就会知道为什么, 但是我们想要有一个循环。
+sequence. And we'll see why in just a minute. But then we wanna have a loop. And
+
+116
+00:10:46,910 --> 00:10:52,220
+那么我们的循环会怎么做呢, 我们会说, 当我不等于
+so what is our loop going to do? Well, we're gonna say while I is not equal to
+
+117
+00:10:52,220 --> 00:10:59,220
+0, 我们要做什么, 我们需要做什么来做循环体的开口
+zero. What do we, and what do we need to do the opening for the loop body the
+
+118
+00:11:01,110 --> 00:11:07,259
+打开关键字被称为循环。声音。现在, 我认为我们将需要
+opening keyword is called loop. [sound]. And now, I think we're going to need
+
+119
+00:11:07,259 --> 00:11:11,100
+另一个语句块, 让我们打开一个block, 我们可能需要
+another statement block here. So let's open up a block. We're gonna probably need
+
+120
+00:11:11,100 --> 00:11:17,899
+要做不止一件事, 我们首先要做的是要有事实。
+to do more than one thing. The first thing we want to do is we want to have fact. Be
+
+121
+00:11:17,899 --> 00:11:24,899
+事实乘以I, 所以我们知道我不是零所以我们需要将电流相乘
+fact times I, so we know that I is not zero so we need to multiply the current
+
+122
+00:11:25,459 --> 00:11:30,899
+我的价值是积累结果然后我们想要减去1
+value of I into fact to accumulate the result and then we want to subtract one
+
+123
+00:11:30,899 --> 00:11:35,220
+从我这里, 注意到, cool的赋值语句是这个反向箭头。
+from I and notice that the assignment statement in cool is this backwards arrow.
+
+124
+00:11:35,220 --> 00:11:37,589
+这就是分配的方式, 也是初始化的方法, 
+That's how you do assignment. It's also how you do initialization. So,
+
+125
+00:11:37,589 --> 00:11:44,569
+初始化和赋值看起来是一样的, 然后我们可以关闭语句
+initialization and assignment look the same. Then we can close off our statement
+
+126
+00:11:44,569 --> 00:11:50,259
+block, 好的, 所以while循环的主体始终是一个表达式。
+block. Okay, so the body of a while loop is always a single expression. In this
+
+127
+00:11:50,259 --> 00:11:56,899
+这个表达式是由两个语句组成的块, 声音和
+case, that expression is a block that consists of two statements. [sound] And
+
+128
+00:11:56,899 --> 00:12:03,489
+然后我们就可以结束循环了, 循环的结束是池的关键字。
+then we can close the loop. And the closing for a loop is the pool key word.
+
+129
+00:12:03,489 --> 00:12:07,119
+然后现在我们在一个语句块中, 所以这个必须以分号结尾。
+And then now we're in a statement block, so this has to end with a semicolon.
+
+130
+00:12:07,119 --> 00:12:11,959
+注意这里的语句块从let开始, 现在我们想要的结果是
+Notice the statement block up there from the let, And now we want the result of the
+
+131
+00:12:11,959 --> 00:12:16,609
+让block或let表达式成为阶乘, 不管怎样, 不管我们是什么
+let block, or the let expression, to be factorial. So whatever the, whatever we
+
+132
+00:12:16,609 --> 00:12:19,829
+从while循环中跳出来, 不管我们在while循环中计算出什么, 我们都想要
+got out of the while loop, whatever we computed in the while loop, we want that
+
+133
+00:12:19,829 --> 00:12:24,139
+这是整个let表达式的结果, 这是最后一个
+to be the result of the entire let expression. [sound] so that's the last
+
+134
+00:12:24,139 --> 00:12:29,009
+我们的博客的声明, 请记住声明博客的最后一句话, 是
+statement of our blog. Remember the last statement of a statement blog, is the
+
+135
+00:12:29,009 --> 00:12:35,089
+博客的价值, led的主体是led的结果, 所以事实会
+value of the blog. The body of the led is the, the result of the led, so fact will
+
+136
+00:12:35,089 --> 00:12:37,989
+这也是整个领导陈述的结果, 这仅仅是
+also be result of the whole led statements, it's just the result of the
+
+137
+00:12:37,989 --> 00:12:44,949
+声明博客, 因为, 阶乘方法本身就是led
+statement blog. And since the body of the, factorial method itself is just the led
+
+138
+00:12:44,949 --> 00:12:48,829
+表达式, 事实将会是整个事件的结果, 所以, 如果我们
+expression, fact will be the result of the whole thing. And so this, if we've
+
+139
+00:12:48,829 --> 00:12:53,889
+写的, 没有犯任何错误, 应该是阶乘的迭代版本, 所以, 
+written, haven't made any mistakes, should be an iterative version of factorial. So,
+
+140
+00:12:53,889 --> 00:12:59,839
+让我们来编译这个, 令人惊讶的是, 它符合第一次尝试, 现在让我们
+let's compile this. And amazingly it complies on the first try. And now let's
+
+141
+00:12:59,839 --> 00:13:05,480
+运行它, 声音和哇！它真的有用, 所以我们有6个, 我们来做一下
+run it. [sound] And whoa! It actually works. So we got six. And let's just do
+
+142
+00:13:05,480 --> 00:13:10,059
+还有一个测试, 为了让我们相信, 事情是有效的
+one more test, to see that, to convince ourselves that, things are working
+
+143
+00:13:10,059 --> 00:13:16,239
+很好, 它们是。现在, 让我指出, 一个, 常见的, 错误的
+reasonably well, and they are. Now, let me just point out, one, common, mistake, that
+
+144
+00:13:16,239 --> 00:13:19,629
+你可以很容易地做出, 而且, 当我还没有为a写一些很酷的程序时
+you can easily make, and, that I make when I haven't written cool programs for a
+
+145
+00:13:19,629 --> 00:13:26,149
+如果你是一个C或程序员或者Java程序员, 你可能会想
+little while. If you're a C or programmer or a Java programmer, you might, think
+
+146
+00:13:26,149 --> 00:13:30,290
+写作业, 像这样, 所以我用等号来写
+about, writing assignments, like this. So I just use the equal sign to write
+
+147
+00:13:30,290 --> 00:13:33,420
+作业, 如果你熟悉的话, 看起来很好
+assignment. That looks completely fine if you're, if you're familiar with those
+
+148
+00:13:33,420 --> 00:13:38,889
+语言, 或者用于这些语言的编程, 现在, 让我们看看会发生什么
+languages, or used to programming in those languages. And now, let's see what happens
+
+149
+00:13:38,889 --> 00:13:43,279
+当我们试着编译这个的时候, 哦, 它编译的很好, 然后发生了什么
+when we try to compile this. Oh, it compiles just fine. And then what happens
+
+150
+00:13:43,279 --> 00:13:48,939
+当我们试图运行它时, 它运行, 听不清输入所以我们给它输入
+when we try to run it. Well it runs [inaudible] input so let's give it input
+
+151
+00:13:48,939 --> 00:13:53,660
+然后, 我们看到热量耗尽了, 这看起来是无限的
+and. Then we see that we've run out of heat. And that looks like an infinite
+
+152
+00:13:53,660 --> 00:13:59,119
+循环, 所以我们在循环中绕圈, 消耗内存是有原因的。
+loop. So we're going around and around the loop And consuming memory for some reason.
+
+153
+00:13:59,119 --> 00:14:02,350
+我们会在课堂上笑得很晚, 为什么, 为什么这个循环
+And we'll, we '[laugh] get to that much later in the class. Why, why this loop
+
+154
+00:14:02,350 --> 00:14:07,720
+实际上, 最终消耗了内存, 但是, 很明显, 我们没有足够的内存
+actually ends up consuming memory. But, clearly, we don't have enough memory, in
+
+155
+00:14:07,720 --> 00:14:12,540
+这个循环, 最后我们用完了, 所以这是一个确定的信号
+the loop, and, and eventually we run out. And so, so that's a sure sign Of an
+
+156
+00:14:12,540 --> 00:14:16,859
+无限的外观, 这里发生了什么？它等于, 等于, 等于
+infinite look. So what is going on here? Well the thing is that equals. Equals
+
+157
+00:14:16,859 --> 00:14:22,109
+cool的运算符是比较运算符, 听不清我们比较了I
+operator in cool is the comparison operators. [inaudible] Well we compared I
+
+158
+00:14:22,109 --> 00:14:26,579
+和O一起返回一个布利, 这些都是非常有效的
+with O and that returns a boullion. So these are perfectly valid cool
+
+159
+00:14:26,579 --> 00:14:32,139
+表达式, 它们刚好是布利子, 所以, 你从来没有
+expressions. They just happen to be boullions. So, you don't ever actually I
+
+160
+00:14:32,139 --> 00:14:38,589
+或者是这个程序中的阶乘, 你只是比较了事实和事实
+or factorial in this program. Your just comparing fact with factoid body and I
+
+161
+00:14:38,589 --> 00:14:43,829
+用i-1, 程序很乐意这么做, 它只是
+with I minus one and the program is perfectly happy to do that. It just
+
+162
+00:14:43,829 --> 00:14:47,129
+不计算阶乘函数, 它永远不会终止, 因为我从来没有
+doesn't compute the factorial function. And it never terminates, because I never
+
+163
+00:14:47,129 --> 00:14:53,759
+达到0, 这就结束了我们的阶乘例子, 我们再做一个
+reaches zero. So that concludes our factorial example. And we'll do one more
+
+164
+00:14:53,759 --> 00:14:59,040
+再举个例子, 一个更复杂的, 一个很酷的程序
+example next time of a more complicated, of a, of a cool program with some
+
+165
+00:14:59,040 --> 00:15:00,489
+非平凡的数据结构。
+non-trivial data structures.

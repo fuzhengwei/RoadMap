@@ -1,0 +1,243 @@
+0
+00:00:04,270 --> 00:00:08,910
+In this brief video we're going to talk about alignment. A very low level but very
+
+1
+00:00:08,910 --> 00:00:13,260
+important detail of machine architecture that every compiler writer needs to be
+
+2
+00:00:13,260 --> 00:00:20,260
+aware of. First, let's review a few properties of Contemporary machines.
+
+3
+00:00:23,020 --> 00:00:30,020
+Currently, most modern machines are either 32 or 64 bit meaning you have the 32 or 64
+
+4
+00:00:30,320 --> 00:00:36,590
+bits in a word and the word is actually subdivided into smaller units. We would
+
+5
+00:00:36,590 --> 00:00:42,050
+say that there are eight bits in a bye and then four or eight byes in word depending
+
+6
+00:00:42,050 --> 00:00:48,579
+whether it's a 32 or 64 bit machine. And other important property is that machines
+
+7
+00:00:48,579 --> 00:00:54,460
+can be either byte or word addressable. Meaning that in the native language of the
+
+8
+00:00:54,460 --> 00:01:00,510
+machine in machine code it may be possible to either name only entire words or it may
+
+9
+00:01:00,510 --> 00:01:07,510
+be possible to reference memory at the granule area of individual bytes. They say
+
+10
+00:01:07,880 --> 00:01:14,729
+that data is word aligned if it begins at a word boundary. So if we think about.
+
+11
+00:01:14,729 --> 00:01:21,389
+Data in memory or the organization in the memory and is laid out into bytes. And
+
+12
+00:01:21,389 --> 00:01:28,389
+let's say. That this is a 32-bit machines so that four bytes make a word and one
+
+13
+00:01:28,709 --> 00:01:34,289
+word begins here and the next word begins here and if data is allocated on a word
+
+14
+00:01:34,289 --> 00:01:40,060
+boundary, say, it needs more bytes then that would be a word a line a piece of
+
+15
+00:01:40,060 --> 00:01:44,240
+data. If a piece of data begins in the middle of the word, so let's say for
+
+16
+00:01:44,240 --> 00:01:48,740
+example that begins here, and we have some data that's allocated here, this data is
+
+17
+00:01:48,740 --> 00:01:55,169
+not word aligned, doesn't begin on a word boundary And the important property or the
+
+18
+00:01:55,169 --> 00:02:00,989
+important issue is that most machines have some alignment restrictions. So these
+
+19
+00:02:00,989 --> 00:02:07,219
+restrictions come in one of two forms. So, on some machines, if the data is not
+
+20
+00:02:07,219 --> 00:02:11,770
+properly aligned, meaning that you tried to reference data that isn't aligned the
+
+21
+00:02:11,770 --> 00:02:17,470
+way the machines requires, then the machine may just fail to execute that
+
+22
+00:02:17,470 --> 00:02:23,640
+instruction. Your program may hang or even the machine may hang and it's, but, the
+
+23
+00:02:23,640 --> 00:02:27,740
+important thing is that program will not execute correctly. So there's a, it's
+
+24
+00:02:27,740 --> 00:02:34,740
+incorrect to not have the data aligned properly. Now, there are other machines
+
+25
+00:02:34,950 --> 00:02:39,010
+that well, actually al low you to put the data anywhere you like but at a
+
+26
+00:02:39,010 --> 00:02:43,920
+significantly cause And maybe that accessing data that is aligned in word
+
+27
+00:02:43,920 --> 00:02:50,220
+boundaries is cheaper than accessing that's on non-word boundaries And these
+
+28
+00:02:50,220 --> 00:02:57,220
+performance penalties Are often dramatic so it can easily be ten times lower to
+
+29
+00:02:59,460 --> 00:03:06,460
+access missile line data than to access data that has the alignment favored by
+
+30
+00:03:07,070 --> 00:03:13,400
+that particular machine. So let's take a look at an example where data alignment
+
+31
+00:03:13,400 --> 00:03:17,850
+issue tend to come up. One of the most common situations where we have to worry
+
+32
+00:03:17,850 --> 00:03:23,320
+about the alignment is in the allocation of strings. So let's say we have this
+
+33
+00:03:23,320 --> 00:03:29,540
+string, the string Hello and then we want to put it in memory. So let me draw our
+
+34
+00:03:29,540 --> 00:03:36,540
+memory as a linear sequence of bytes so I'll mark out some bytes here. And let's
+
+35
+00:03:40,500 --> 00:03:45,330
+assume this is a 32-bit machine so let me make the word boundaries a little bit
+
+36
+00:03:45,330 --> 00:03:52,330
+heavier boundaries. So, one, two, three, four. Okay. So, there are the, the word
+
+37
+00:03:54,330 --> 00:03:58,880
+boundaries And now let's say there were we are trying to have aligned data, a word
+
+38
+00:03:58,880 --> 00:04:02,620
+aligned data and so allocate this string beginning in the word boundary. So, the
+
+39
+00:04:02,620 --> 00:04:09,069
+each character will go on the first byte when e, then l, then l, then o. And now,
+
+40
+00:04:09,069 --> 00:04:14,190
+we may have terminating null depending on how strings are implemented. And let's
+
+41
+00:04:14,190 --> 00:04:20,799
+assume that we do. And this is fine placement of the strings extremely begins
+
+42
+00:04:20,798 --> 00:04:27,180
+in the word boundary and. That assess by presumably any alignment restrictions of
+
+43
+00:04:27,180 --> 00:04:34,180
+the machine and now the question is where does the next data item go? So we could
+
+44
+00:04:34,240 --> 00:04:39,840
+begin the next data item right in the next available byte and that would be good if
+
+45
+00:04:39,840 --> 00:04:43,729
+we are very concerned about not wasting memory. But, I noticed that, that data
+
+46
+00:04:43,729 --> 00:04:48,370
+item will then be were aligned. We may either run into correctness or performance
+
+47
+00:04:48,370 --> 00:04:54,060
+problems if the machine has restrictions on the alignment. So, the simple solution
+
+48
+00:04:54,060 --> 00:04:58,800
+here is to simply skip to the next word boundary and allocate the next data item
+
+49
+00:04:58,800 --> 00:05:05,800
+whenever it is on the next word beginning at the next word boundary. And what
+
+50
+00:05:06,680 --> 00:05:13,199
+happens to this two bytes here, well these bytes are just junks. T hey're not used at
+
+51
+00:05:13,199 --> 00:05:17,099
+all, they never reference by the program. It doesn't matter what they're value is
+
+52
+00:05:17,099 --> 00:05:21,819
+because the program should never refer to them. It's just unused memory. And note
+
+53
+00:05:21,819 --> 00:05:26,779
+that if we didn't have the terminating zero then there would be the terminating,
+
+54
+00:05:26,779 --> 00:05:33,559
+no character then and then would be three unused bytes after the string. So to
+
+55
+00:05:33,559 --> 00:05:37,419
+summarize this is the general strategy for dealing with alignment when you have
+
+56
+00:05:37,419 --> 00:05:42,689
+alignment restrictions. Data begins on the boundaries, typically word boundaries that
+
+57
+00:05:42,689 --> 00:05:49,469
+are required and if the particular data that you're allocating has a none integral
+
+58
+00:05:49,469 --> 00:05:53,990
+length. Meaning that it doesn't end directly on the next required boundary and
+
+59
+00:05:53,990 --> 00:05:58,699
+you just skip over whenever bytes are in between to get the data, the next data
+
+60
+00:05:58,699 --> 00:06:00,569
+that's going to be allocated on the correct boundary.

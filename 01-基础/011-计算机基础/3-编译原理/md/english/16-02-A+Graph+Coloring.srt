@@ -1,0 +1,135 @@
+0
+00:00:03,449 --> 00:00:07,779
+In this video we are going to continue our discussion of register interference graphs
+
+1
+00:00:07,779 --> 00:00:13,570
+and talk about how to use RIGS to come up with register assignments for procedures.
+
+2
+00:00:13,570 --> 00:00:16,770
+And we're going to look at one particular technique that's popular called graph
+
+3
+00:00:16,770 --> 00:00:23,770
+coloring. So first, a couple of definitions. A graph coloring is an
+
+4
+00:00:24,140 --> 00:00:27,930
+assignment of colors to nodes such that the nodes connected by an edge have
+
+5
+00:00:27,930 --> 00:00:34,930
+different colors. So if I have a graph let's say with, with three nodes and it's
+
+6
+00:00:35,280 --> 00:00:40,370
+fully connected so every node connect to every other node. And then, and then a
+
+7
+00:00:40,370 --> 00:00:45,079
+coloring of this graph would be an assignment of colors such that every pair
+
+8
+00:00:45,079 --> 00:00:48,220
+of nodes are connected by an edge have a different color. So for example I could
+
+9
+00:00:48,220 --> 00:00:54,780
+color this node blue and I could color this node green and I could color this
+
+10
+00:00:54,780 --> 00:01:00,489
+node black, okay. And then that would be a valid coloring of the graph because each
+
+11
+00:01:00,489 --> 00:01:05,430
+pair of neighbours has a different color. And then the graph is k-colorable if it
+
+12
+00:01:05,430 --> 00:01:12,430
+has a coloring that uses k or fewer colors. In our problem, the colors
+
+13
+00:01:13,060 --> 00:01:17,969
+corresponds to registers so we want to do is to assign colors or registers to the
+
+14
+00:01:17,969 --> 00:01:22,850
+graph nodes. And we're going to let k, the number, the maximum number of colors we're
+
+15
+00:01:22,850 --> 00:01:26,170
+allowed to use be the number of machine register. So the actual number of
+
+16
+00:01:26,170 --> 00:01:31,270
+registers present on the architecture for which we're generating code. And then if,
+
+17
+00:01:31,270 --> 00:01:34,889
+if a RIG, if a registered interference graph is k-colorable, then there's going
+
+18
+00:01:34,889 --> 00:01:41,240
+to be a register assignment that uses no more than k registers. So let's take a
+
+19
+00:01:41,240 --> 00:01:46,539
+look at an example rig and for this particular graph, there is no coloring. It
+
+20
+00:01:46,539 --> 00:01:52,649
+turns out that it uses fewer than four colors. But there is at least one for
+
+21
+00:01:52,649 --> 00:01:59,249
+coloring of this graph. And then here it is so I've used colored labels but also
+
+22
+00:01:59,249 --> 00:02:04,630
+register names so that you can see what registers we might assign to each of the
+
+23
+00:02:04,630 --> 00:02:09,610
+nodes. And just notice that although there are many more than four temporaries or
+
+24
+00:02:09,610 --> 00:02:14,000
+four nodes in this graph, we do manage to color it with only four colors and some of
+
+25
+00:02:14,000 --> 00:02:19,010
+the nodes have the same color. So for example, d and b are allocated the same
+
+26
+00:02:19,010 --> 00:02:26,010
+color, as are e and a. Just to remind ourselves where this register interference
+
+27
+00:02:26,480 --> 00:02:31,930
+graph came from, here is the original control flow graph again. And, once we
+
+28
+00:02:31,930 --> 00:02:36,010
+have the coloring of the graph, now we can do the register assignment. We can replace
+
+29
+00:02:36,010 --> 00:02:40,090
+the temporaries by their corresponding register names, and then we get this
+
+30
+00:02:40,090 --> 00:02:46,760
+control flow graph. So, here we've just renamed each of the variables of the
+
+31
+00:02:46,760 --> 00:02:51,430
+program with its register that it was assigned to. And now we're very close, as
+
+32
+00:02:51,430 --> 00:02:56,379
+you can see, to having code that we can emit and execute on the target
+
+33
+00:02:56,379 --> 00:02:56,879
+architecture.

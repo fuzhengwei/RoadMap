@@ -1,0 +1,1191 @@
+0
+00:00:04,220 --> 00:00:08,530
+Now we are ready to begin talking about actual program optimizations and we begin
+
+1
+00:00:08,530 --> 00:00:15,359
+with local optimizations. Local optimization is the simplest form of
+
+2
+00:00:15,359 --> 00:00:20,869
+program optimization because it focuses on optimizing just a single basic block, so
+
+3
+00:00:20,869 --> 00:00:25,849
+just one basic block and, in particular, there is no need worry about complicated
+
+4
+00:00:25,849 --> 00:00:29,980
+control flow, we are not going to be looking at the entire method or procedure
+
+5
+00:00:29,980 --> 00:00:36,340
+body. Let's dive right in and take a look at a couple of simple local optimizations.
+
+6
+00:00:36,340 --> 00:00:40,660
+If x is an integer valued variable And from here on, we'll assume that x has
+
+7
+00:00:40,660 --> 00:00:44,020
+type-ins. So let me just write that down. We're going to assume that x has type-ins
+
+8
+00:00:44,020 --> 00:00:49,990
+in all of our examples on this slide. Then the statement x=x+0, well that doesn't
+
+9
+00:00:49,990 --> 00:00:54,420
+change the value of x. Zero is the additive identity for +. We're just going
+
+10
+00:00:54,420 --> 00:00:58,040
+to assign x the value it currently has. And so this statement is actually useless.
+
+11
+00:00:58,040 --> 00:01:04,439
+It can just be deleted from the program. Similarly, for x=x'lt;i>1. Multiplying by one'lt;/i>
+
+12
+00:01:04,438 --> 00:01:08,220
+will not change the value of X, and so that statement can also be removed. And in
+
+13
+00:01:08,220 --> 00:01:13,220
+this case these are great optimizations because we actually save an entire
+
+14
+00:01:13,220 --> 00:01:19,250
+instruction. Now, some statements can't be deleted, but they can be simplified. A
+
+15
+00:01:19,250 --> 00:01:24,659
+simple example of that is if we have x=x'lt;i>0. So that can be replaced by the'lt;/i>
+
+16
+00:01:24,659 --> 00:01:28,560
+assignment, x=0, And again, we have, we still have a statement here. We still have
+
+17
+00:01:28,560 --> 00:01:33,430
+to execute a statement. But This statement may execute more quickly because it
+
+18
+00:01:33,430 --> 00:01:40,340
+doesn't involve actually running the, the, the times operator. It doesn't involve
+
+19
+00:01:40,340 --> 00:01:45,030
+referencing the value of X. Presumably X is registered, that doesn't really cost
+
+20
+00:01:45,030 --> 00:01:48,920
+anything. But you know, it's possible that this instruction over here will execute
+
+21
+00:01:48,920 --> 00:01:53,229
+faster than this instruction over here. Now, on many machines that's not the case.
+
+22
+00:01:53,229 --> 00:01:57,729
+In fact, this assignment of this, this assignment on the right will take the same
+
+23
+00:01:57,729 --> 00:02:03,330
+amount of time as the multiplication on the left, but as we will see. Having a
+
+24
+00:02:03,330 --> 00:02:07,530
+assignment of a constant to a variable will actually enable other optimization,
+
+25
+00:02:07,530 --> 00:02:13,240
+so this is still a very worthwhile transformation to do. An example that's
+
+26
+00:02:13,240 --> 00:02:18,900
+almost certainly an optimization is replacing, the exponentiation operator,
+
+27
+00:02:18,900 --> 00:02:24,150
+Raising a value to the power of two by an explicit multiply. So here, we're
+
+28
+00:02:24,150 --> 00:02:30,170
+computing y^2, And over here, we just replace that by y'lt;i>y. Why is this a good'lt;/i>
+
+29
+00:02:30,170 --> 00:02:37,170
+idea? Well this explanation operator here is almost certain not a built in machine
+
+30
+00:02:37,330 --> 00:02:41,670
+instructions. Probably this is gonna wind in our generated code being a call into to
+
+31
+00:02:41,670 --> 00:02:45,940
+some built in math library. And there will involve a functioning call overhead. And
+
+32
+00:02:45,940 --> 00:02:50,510
+then there will be some kind of general loop in there to do the right number of
+
+33
+00:02:50,510 --> 00:02:54,099
+multiplies. Depending on what the exponent is. So in the special case where we know
+
+34
+00:02:54,099 --> 00:02:58,650
+that the exponent is two. It's much, much more efficient. To just replace that, call
+
+35
+00:02:58,650 --> 00:03:05,300
+to exponentiation by an explicit multiply. Another example of, substituting one kind
+
+36
+00:03:05,300 --> 00:03:09,480
+of operation for another, In a in a special situation, Is if we have, a
+
+37
+00:03:09,480 --> 00:03:15,200
+multiplication by a power of two. We can replace that by a left bit shift, So here,
+
+38
+00:03:15,200 --> 00:03:20,319
+multiplying by eight. That's the same as shifting the, binary representation of x
+
+39
+00:03:20,319 --> 00:03:27,319
+over by three bits, And, I and, That will, you know, in fact compute the same thing.
+
+40
+00:03:27,640 --> 00:03:32,129
+And it doesn't even have to be a power of two. If we have a [inaudible] location by
+
+41
+00:03:32,129 --> 00:03:36,489
+some other number that is not a power of two, that can be replaced by some
+
+42
+00:03:36,489 --> 00:03:41,510
+combination of shifting and, and subtractions. Okay? So we can replace the
+
+43
+00:03:41,510 --> 00:03:46,239
+multiply by some combination of shifts and, and arithmetic operations, Simpler
+
+44
+00:03:46,239 --> 00:03:50,860
+arithmetic operations. Now these last two here I should point out, you know, these
+
+45
+00:03:50,860 --> 00:03:55,890
+are interesting transformations. On modern machines generally this will not result in
+
+46
+00:03:55,890 --> 00:03:59,810
+any kind of speed-up because on modern machines the integer multiply operation is
+
+47
+00:03:59,810 --> 00:04:04,129
+just as fast as any other single instruction. Now, on historical machines
+
+48
+00:04:04,129 --> 00:04:08,629
+these were actually significant optimizations. So all of these,
+
+49
+00:04:08,629 --> 00:04:15,099
+instructions together are examples of algebraic simplifications. So, that just
+
+50
+00:04:15,099 --> 00:04:21,500
+means exploiting properties of the mathematical operators, to replace more
+
+51
+00:04:21,500 --> 00:04:28,190
+complex, instruc tions or more complex operations by simpler ones. One of the
+
+52
+00:04:28,190 --> 00:04:33,710
+most important and useful local optimizations is to compute the results of
+
+53
+00:04:33,710 --> 00:04:38,470
+operations at compile time rather than at run time if the arguments are known at
+
+54
+00:04:38,470 --> 00:04:43,770
+compile time. So for example, let's say we have a three-address instruction x=y op z.
+
+55
+00:04:43,770 --> 00:04:47,880
+And it happens that y and z are both constants. These are both immediate
+
+56
+00:04:47,880 --> 00:04:51,860
+values. These are, you know, literals in the instruction. Then we can actually
+
+57
+00:04:51,860 --> 00:04:56,610
+compute the results of the right hand side at compile time, and replace this by an
+
+58
+00:04:56,610 --> 00:05:03,060
+assignment to a constant. So, for example, if we have the instruction x=2+2, that can
+
+59
+00:05:03,060 --> 00:05:09,990
+be replaced by the assignment x=4, And another example which is a very common and
+
+60
+00:05:09,990 --> 00:05:15,050
+important one, is if the predicate of a conditional consists only of immediate
+
+61
+00:05:15,050 --> 00:05:20,310
+values. Then we can pre-compute the result of that conditional, And, and decide what
+
+62
+00:05:20,310 --> 00:05:23,430
+the target of the conditional will be. What the next instruction will be at
+
+63
+00:05:23,430 --> 00:05:27,860
+compile time. So, in this case, we have a predicate, which is going to be false,
+
+64
+00:05:27,860 --> 00:05:32,550
+because two is not less than zero And so we will not take the jump And so this
+
+65
+00:05:32,550 --> 00:05:37,960
+instruction can just be deleted from the program. If we had the, Otherwise if two
+
+66
+00:05:37,960 --> 00:05:44,960
+is greater than zero, so if this is some predicate to valuate true Then we would
+
+67
+00:05:45,120 --> 00:05:50,180
+replace this conditional by the jump. Okay, this would become an unconditional
+
+68
+00:05:50,180 --> 00:05:56,449
+jump. Alright, And this class of optimization's is called constant folding,
+
+69
+00:05:56,449 --> 00:06:02,160
+And as I said this is one of the most common and most important optimizations
+
+70
+00:06:02,160 --> 00:06:08,770
+that compilers perform. Now, there is one situation that you should be aware of and
+
+71
+00:06:08,770 --> 00:06:13,850
+which can be very dangerous, and this situation is actually very instructive as
+
+72
+00:06:13,850 --> 00:06:19,810
+well. And so while it isn't that common, I, I wanted to mention it, because it
+
+73
+00:06:19,810 --> 00:06:24,520
+really illustrates some of the subtleties of program optimization and programming
+
+74
+00:06:24,520 --> 00:06:31,520
+language semantics. So what is this dangerous situation? So let's consider the
+
+75
+00:06:32,410 --> 00:06:38,979
+scenario where we have two machines. We have a machine X And we have a machine.
+
+76
+00:06:38,979 --> 00:06:45,979
+Why? Okay and now the compiler is being run on machine X. And the compiler is
+
+77
+00:06:48,770 --> 00:06:55,069
+producing code. Generated code this is the generated code produced as the output of
+
+78
+00:06:55,069 --> 00:06:59,789
+the compiler over here. That's gonna be run on machine Y. So this is a cross
+
+79
+00:06:59,789 --> 00:07:06,789
+compiler. Okay, So you are running the compiler On one machine, but you're
+
+80
+00:07:07,220 --> 00:07:11,639
+generating code for a different machine, and why would you want to do that? Well.
+
+81
+00:07:11,639 --> 00:07:15,400
+The, the common situation in which you want to do this is that this machine Y
+
+82
+00:07:15,400 --> 00:07:21,530
+over here is a very weak machine. So weak in the sense that it's very slow and has
+
+83
+00:07:21,530 --> 00:07:27,669
+very limited memory. Maybe very limited power then it's beneficial to develop your
+
+84
+00:07:27,669 --> 00:07:33,740
+program and even compile it on a much more powerful machine. So many embedded Systems
+
+85
+00:07:33,740 --> 00:07:38,490
+codes are developed in exactly this way. Code is developed on some powerful
+
+86
+00:07:38,490 --> 00:07:44,009
+workstations that are actually compiling it for some small embedded device that
+
+87
+00:07:44,009 --> 00:07:49,960
+well, executes the code. Now, the problem comes If x and y are different. So
+
+88
+00:07:49,960 --> 00:07:54,199
+consider the situation where x and y are different machines, different
+
+89
+00:07:54,199 --> 00:07:58,009
+architectures. Alright, And I've been implying that they are, but they don't
+
+90
+00:07:58,009 --> 00:08:02,270
+have to be. I mean, I mean, you could compile on, one kind of architecture and
+
+91
+00:08:02,270 --> 00:08:04,639
+run the same code on the same architecture. But the interesting
+
+92
+00:08:04,639 --> 00:08:09,539
+situation is when x and y are different architectures. And so let's consider
+
+93
+00:08:09,539 --> 00:08:15,139
+something like, you know, in, in, you know, machine X, let's say we have the
+
+94
+00:08:15,139 --> 00:08:22,139
+instruction, A=1.5+3.7. Mm-kay, And you would like to constant fold that down to
+
+95
+00:08:23,690 --> 00:08:30,690
+a=5.2 Alright? Now the problem is that if you simply execute this as a floating
+
+96
+00:08:32,068 --> 00:08:39,069
+point operation, on, architecture x, the round off and you know the floating point
+
+97
+00:08:39,629 --> 00:08:44,350
+semantics in architecture x maybe slightly different, from these semantics on
+
+98
+00:08:44,350 --> 00:08:49,689
+architecture y. It could be that if you do that in architecture y, directly, that you
+
+99
+00:08:49,689 --> 00:08:55,379
+might get something like a.5, you know, a=5.19. There might be a small difference
+
+100
+00:08:55,379 --> 00:08:59,790
+in the floating point result, depending on whether you execute the instruction here
+
+101
+00:08:59,790 --> 00:09:04,300
+or here. And this becomes significant in the case of constant folding and, and
+
+102
+00:09:04,300 --> 00:09:09,470
+cross compilation. Because some al gorithms really depend on the floating
+
+103
+00:09:09,470 --> 00:09:12,529
+point numbers being treated very, very consistently. So if you're going to round
+
+104
+00:09:12,529 --> 00:09:17,329
+off the operation one way, you need to do it that way for every time you do that
+
+105
+00:09:17,329 --> 00:09:22,339
+particular operation, And by shifting the computation from comp, from run time when
+
+106
+00:09:22,339 --> 00:09:26,579
+it would have executed an architecture y, back into the compiler winds of executing
+
+107
+00:09:26,579 --> 00:09:31,550
+architecture x. You can change the results of the program. So how do cross compilers
+
+108
+00:09:31,550 --> 00:09:35,300
+actually deal with this? So, so compilers that want to be careful about this kind of
+
+109
+00:09:35,300 --> 00:09:38,269
+thing, what they will do is, they will represent the floating point numbers as
+
+110
+00:09:38,269 --> 00:09:45,269
+strings inside the compiler and they will, do the obvious, long form addition, and
+
+111
+00:09:45,519 --> 00:09:49,300
+multiplication, division operations are the floating operations directly on the
+
+112
+00:09:49,300 --> 00:09:54,029
+strings. Keep the full precision Inside the compiler And then, in the generated
+
+113
+00:09:54,029 --> 00:09:59,230
+code, produced the literal, that is the full precision flowing point number And
+
+114
+00:09:59,230 --> 00:10:03,540
+then let the architecture, of the architecture y decide how it wants to
+
+115
+00:10:03,540 --> 00:10:07,129
+round that off, okay? So that's the really careful way to do constant folding of
+
+116
+00:10:07,129 --> 00:10:13,319
+floating point numbers if you're worried about cross compilation. Continuing on
+
+117
+00:10:13,319 --> 00:10:17,339
+with local optimizations, another important one is to eliminate unreachable
+
+118
+00:10:17,339 --> 00:10:21,299
+basic blocks. So what's an unreachable basic block? That is one that is not the
+
+119
+00:10:21,299 --> 00:10:25,639
+target of any jump or fall through. So if I have a piece of code, that can never
+
+120
+00:10:25,639 --> 00:10:30,299
+execute, and it might never execute because there's no jump that jumps to the
+
+121
+00:10:30,299 --> 00:10:34,299
+beginning of that piece of code and it's not, it doesn't follow after another
+
+122
+00:10:34,299 --> 00:10:37,709
+instruction that can fall through to it. Well than that piece of code, that basic
+
+123
+00:10:37,709 --> 00:10:43,399
+block is just not gonna be used, it's unreachable and it can be deleted from the
+
+124
+00:10:43,399 --> 00:10:48,670
+program. This has the advantage of making the code smaller. So obviously, since the
+
+125
+00:10:48,670 --> 00:10:53,999
+basic block is unreachable, it's not contributing to the execution costs of the
+
+126
+00:10:53,999 --> 00:10:57,829
+program in terms of the instruction count. So the code is never executed. So it's not
+
+127
+00:10:57,829 --> 00:11:02,199
+really slowing down the code because, you know, extra instructions are being
+
+128
+00:11:02,199 --> 00:11:06,499
+executed, But making the program smaller can actually make it run faster because of
+
+129
+00:11:06,499 --> 00:11:11,879
+cache effects. So the instructions have to fit into memory just like, just like the
+
+130
+00:11:11,879 --> 00:11:15,679
+data. And if you make the program smaller, it makes it easier to fit the program in
+
+131
+00:11:15,679 --> 00:11:19,739
+memory, and you may increase the spacial locality of the program. Instructions that
+
+132
+00:11:19,739 --> 00:11:24,049
+are used together may now be closer to each other. And that can make the program
+
+133
+00:11:24,049 --> 00:11:31,049
+run more quickly. Before continuing on I want to say a word or two about why
+
+134
+00:11:31,559 --> 00:11:36,149
+unreachable basic blocks occur. So why would a programmer, in their right mind,
+
+135
+00:11:36,149 --> 00:11:40,779
+ever write a program that had code in it that wasn't going to be executed? And
+
+136
+00:11:40,779 --> 00:11:44,179
+there's several actually ways in which unreachable code can arise, and it's
+
+137
+00:11:44,179 --> 00:11:47,670
+actually quite common. So this is an important optimization, getting rid of the
+
+138
+00:11:47,670 --> 00:11:51,290
+unreachable code is actually fairly important. Perhaps the most common
+
+139
+00:11:51,290 --> 00:11:57,220
+situation Is that the code is actually parameterized with, code that is only
+
+140
+00:11:57,220 --> 00:12:03,139
+compiled and used in certain situations. So, for example, in C, It would be sorta
+
+141
+00:12:03,139 --> 00:12:09,449
+typical to see some code that looks like this. If debug, then, you know, executes
+
+142
+00:12:09,449 --> 00:12:15,170
+something, where debug is a pound defying constant. So in C, you can define names
+
+143
+00:12:15,170 --> 00:12:22,170
+for literals. So you say something like this. You might define debug. To be zero,
+
+144
+00:12:23,679 --> 00:12:27,609
+and so you might see a program that had this piece of code in it, and what this
+
+145
+00:12:27,609 --> 00:12:33,929
+literally means is that this piece of code is equivalent to if zero, then blah, blah,
+
+146
+00:12:33,929 --> 00:12:37,569
+blah. Alright, so, so when you're compiling without debugging, you have
+
+147
+00:12:37,569 --> 00:12:40,439
+debug to find the zero, when you're compiling with debugging, you would change
+
+148
+00:12:40,439 --> 00:12:46,389
+this line to define debug to be some non zero constant. So in this case we are
+
+149
+00:12:46,389 --> 00:12:51,230
+compiling without debugging. What will happen? Well we'll see that this predicate
+
+150
+00:12:51,230 --> 00:12:54,920
+is guaranteed to be zero the constant folding will take care of that. And that
+
+151
+00:12:54,920 --> 00:12:58,379
+will result in an unreachable basic block on the ven branch and then that
+
+152
+00:12:58,379 --> 00:13:02,470
+code can be deleted And so essentially the compiler is able to go through using the
+
+153
+00:13:02,470 --> 00:13:06,499
+optimizer and strip out all  of the debugging code. That isn't going to be
+
+154
+00:13:06,499 --> 00:13:11,239
+used since your compiler without debugging. Another case where unreachable code comes
+
+155
+00:13:11,239 --> 00:13:18,199
+up is with libraries. So, very frequently, programs are written, to use generic
+
+156
+00:13:18,199 --> 00:13:22,249
+libraries. But the program might only use a very small part of the interface. So,
+
+157
+00:13:22,249 --> 00:13:27,329
+the library might supply 100 methods, to cover all the situations that various
+
+158
+00:13:27,329 --> 00:13:30,189
+programmers are interested in. But for your program, you might only be using
+
+159
+00:13:30,189 --> 00:13:33,649
+three of those methods. And the rest of those methods could potentially be
+
+160
+00:13:33,649 --> 00:13:38,589
+removed, from the final binary, to make the code smaller. And, finally another way
+
+161
+00:13:38,589 --> 00:13:44,889
+that unreachable basic blocks occur, is as the results of other optimizations. So as
+
+162
+00:13:44,889 --> 00:13:50,779
+we will see optimizations frequently lead to other to more optimizations. And it
+
+163
+00:13:50,779 --> 00:13:54,639
+could be that just through other rearrangements of the code that the
+
+164
+00:13:54,639 --> 00:14:01,639
+compiler makes some basic block redundant and, and able to be deleted. Now some
+
+165
+00:14:04,160 --> 00:14:09,559
+optimizations are simpler to express if each register occurs only once on the
+
+166
+00:14:09,559 --> 00:14:13,149
+left-hand side of an assignment. So that means if each register is assigned, at
+
+167
+00:14:13,149 --> 00:14:17,379
+most, once then some of these optimizations are easier to talk about. So
+
+168
+00:14:17,379 --> 00:14:22,449
+we're gonna rewrite our intermediate code, always to so that it's in single
+
+169
+00:14:22,449 --> 00:14:27,529
+assignment form. So this is called single assignment form. And all that means is
+
+170
+00:14:27,529 --> 00:14:32,179
+that if we see a register being reused, like over here, we have two assignments to
+
+171
+00:14:32,179 --> 00:14:38,369
+the register X. Okay. We're just going to introduce another register name, for one
+
+172
+00:14:38,369 --> 00:14:43,579
+of those assignments. So in this case I'm just gonna rename the first, use of X
+
+173
+00:14:43,579 --> 00:14:49,230
+here, definition of X here to be some new register B. I'll replace the uses of that
+
+174
+00:14:49,230 --> 00:14:54,579
+X, by the name B, and now I have an equivalent piece of code that satisfies
+
+175
+00:14:54,579 --> 00:15:01,579
+single assignment form. Every register is assigned at most, once. Let's take a look
+
+176
+00:15:02,989 --> 00:15:07,249
+at an optimization that depends on single assignment form. So we're going to assume
+
+177
+00:15:07,249 --> 00:15:10,829
+the basic blocks are in single assignment form, and if they are, then we're going to
+
+178
+00:15:10,829 --> 00:15:16,809
+know That a definition of a register is the first use of that register in th e
+
+179
+00:15:16,809 --> 00:15:20,660
+block, And so, in particular, we're also ruling out things like this. So there
+
+180
+00:15:20,660 --> 00:15:26,249
+could be something like this, where X is read. And then later on, X is used. Okay.
+
+181
+00:15:26,249 --> 00:15:31,220
+Sorry, X is read and then later on, X is defined. So we're not going to allow this.
+
+182
+00:15:31,220 --> 00:15:35,029
+This register here would have to be renamed to something else, say Y, And then
+
+183
+00:15:35,029 --> 00:15:39,479
+uses of X later on here, are renamed to Y. Alright, so we're going to insist that
+
+184
+00:15:39,479 --> 00:15:43,679
+whenever we have a definition Of a register in a basic block. That is the
+
+185
+00:15:43,679 --> 00:15:48,600
+first use of that register in the block. Alright, and if, if that's true, if we
+
+186
+00:15:48,600 --> 00:15:52,419
+main, if we put things in that form, and that's, that's easy to do as we've seen.
+
+187
+00:15:52,419 --> 00:15:55,299
+Then when two assignments have the same right hand side, they're guaranteed to
+
+188
+00:15:55,299 --> 00:16:00,169
+compute the same value. So, take a look here, This example. So let's say we have
+
+189
+00:16:00,169 --> 00:16:06,189
+an assignment, x=y+z. And then later on we have another assignment, w=y+z. And we
+
+190
+00:16:06,189 --> 00:16:11,879
+said that there could only be one assignment to x in any basic blocks. So,
+
+191
+00:16:11,879 --> 00:16:15,309
+all of these instructions that are alighted here, they can't be assigning
+
+192
+00:16:15,309 --> 00:16:20,519
+to X. And they also can't be assigning to y and z. Y and z already have their
+
+193
+00:16:20,519 --> 00:16:26,399
+definitions. So, y and z can't be changed. And that means that x and w here actually
+
+194
+00:16:26,399 --> 00:16:32,229
+compute the same value. And so we can replace the second computation Y plus C by
+
+195
+00:16:32,229 --> 00:16:36,799
+just the name that we already have for it X. Okay, and this saves us having to
+
+196
+00:16:36,799 --> 00:16:43,160
+recompute values. Alright so this is called common sub expression elimination.
+
+197
+00:16:43,160 --> 00:16:50,160
+Common it's a rather long name. Sub expression. The elimination. And this is
+
+198
+00:16:55,459 --> 00:16:59,970
+another one of the, more important compiler optimizations. This is actually
+
+199
+00:16:59,970 --> 00:17:04,929
+something that comes up surprisingly often. And saves quite a bit of work if,
+
+200
+00:17:04,929 --> 00:17:11,689
+if you perform this optimization. So, another use of single assignment form is
+
+201
+00:17:11,689 --> 00:17:18,039
+that if we see the assignment w equals x in a block. So here, the register w is
+
+202
+00:17:18,039 --> 00:17:23,269
+being just copied from the register x. Then all subsequent uses of w can be
+
+203
+00:17:23,269 --> 00:17:30,269
+replaced by uses of x. So, for example, Here we have an assignment to b And then
+
+204
+00:17:31,700 --> 00:17:38,159
+we have a copy, a, is=to b. And then, down here, w e have a use of a in the last
+
+205
+00:17:38,159 --> 00:17:42,630
+instruction. Well, that use of a in the last instruction can be replaced by a use
+
+206
+00:17:42,630 --> 00:17:49,630
+of B. And this is called copy propagation, okay? Propagating copies through the code
+
+207
+00:17:52,000 --> 00:17:56,370
+And by itself, notice, that this makes absolute no improvement in the code it's
+
+208
+00:17:56,370 --> 00:18:01,559
+only useful in conjunction with some of the other optimizations. So, for example,
+
+209
+00:18:01,559 --> 00:18:05,539
+in this case after we do the copy propagation, it might be the case that
+
+210
+00:18:05,539 --> 00:18:10,259
+this instruction can be deleted. If A is not used any place else in the code, then
+
+211
+00:18:10,259 --> 00:18:15,440
+this instruction can be removed. Now let's do a little more complex example and use
+
+212
+00:18:15,440 --> 00:18:19,470
+some of the optimizations that we've discussed so far On a slightly bigger
+
+213
+00:18:19,470 --> 00:18:23,139
+piece of code. So we are starting with this piece of code here on the left and we
+
+214
+00:18:23,139 --> 00:18:26,600
+are going to wind up with this piece of code here on the right. And how does that
+
+215
+00:18:26,600 --> 00:18:30,889
+work? Well, first we have a copy propagation, so we have A is assigned the
+
+216
+00:18:30,889 --> 00:18:35,700
+value five. And, so we can propagate that value forward. And replace the use of a
+
+217
+00:18:35,700 --> 00:18:42,419
+later on by five, and I should say. That when the value is propagated is a constant
+
+218
+00:18:42,419 --> 00:18:46,090
+rather than a registered name is called Constant propagation instead of Copy
+
+219
+00:18:46,090 --> 00:18:50,460
+propagation, but it's exactly the same thing. We, we, we have a single value
+
+220
+00:18:50,460 --> 00:18:54,039
+assigned on the right hand side, either a register name or constant and we are
+
+221
+00:18:54,039 --> 00:18:57,759
+replacing uses of that in later instructions by that register name or
+
+222
+00:18:57,759 --> 00:19:02,159
+constant. Okay? So once we have replaced a here by five now we can do constant
+
+223
+00:19:02,159 --> 00:19:05,720
+folding, and now we have two constant arguments for this instruction. So this
+
+224
+00:19:05,720 --> 00:19:11,279
+two times five can be replaced by the constant ten. Now notice we have another
+
+225
+00:19:11,279 --> 00:19:15,779
+assignment of a constant to a register and so we can propagate that constant forward.
+
+226
+00:19:15,779 --> 00:19:21,470
+We can replace the subsequent uses of X by the number ten. And now we have more
+
+227
+00:19:21,470 --> 00:19:26,090
+opportunities for constant folding ten plus six can be replaced by the value
+
+228
+00:19:26,090 --> 00:19:32,259
+sixteen. Alright now we have another, another value here which is a, a constant
+
+229
+00:19:32,259 --> 00:19:36,320
+assignment so another instruction here which is just an assignment of a constant
+
+230
+00:19:36,320 --> 00:19:40,909
+to a register so we can p ropagate that constant forward. Alright then we wind up
+
+231
+00:19:40,909 --> 00:19:47,029
+down here with ten times sixteen And I see over here in my final example here I
+
+232
+00:19:47,029 --> 00:19:54,029
+didn't bother to propagate the ten to x. But we can do that, and this So we can
+
+233
+00:19:54,200 --> 00:19:58,880
+either do this optimization. So x times sixteen if we didn't do the propagation,
+
+234
+00:19:58,880 --> 00:20:04,590
+would be equivalent to x left shift four. Or we can just replace this by ten times
+
+235
+00:20:04,590 --> 00:20:11,590
+sixteen. That'd be even better. We wind up achieving the value 160. Returning to an
+
+236
+00:20:13,360 --> 00:20:16,639
+idea I mentioned a couple of slides ago. Let's say there is an assignment in a
+
+237
+00:20:16,639 --> 00:20:20,460
+basic block. Some registered W is assigned some value that's computed on the right
+
+238
+00:20:20,460 --> 00:20:25,080
+hand side. Let's say that W, the registered name is not used anywhere else
+
+239
+00:20:25,080 --> 00:20:30,179
+in the program. It doesn't appear anywhere, not only in this basic block but
+
+240
+00:20:30,179 --> 00:20:36,659
+in any other part of the procedure in which this statement appears. Well then,
+
+241
+00:20:36,659 --> 00:20:41,360
+the statement is dead and can be just deleted from the program And dead here
+
+242
+00:20:41,360 --> 00:20:45,590
+means it does not contribute to the programs result. Since the value that we
+
+243
+00:20:45,590 --> 00:20:52,590
+write into W is never referenced anywhere, W is never used, doing the computation, of
+
+244
+00:20:52,659 --> 00:20:57,159
+W in the first place was a waste of time, so we can just delete that computation.
+
+245
+00:20:57,159 --> 00:21:01,490
+Here's a simple example. Let's assume that the register a is not used any place else,
+
+246
+00:21:01,490 --> 00:21:06,570
+in the program. And, the first thing we have to do, so here's our initial piece of
+
+247
+00:21:06,570 --> 00:21:09,850
+code. The first thing we do is we put it in single assignment form. And so I've
+
+248
+00:21:09,850 --> 00:21:16,850
+renamed here, this register x, to be, register b. Okay, and once we do that, let
+
+249
+00:21:18,620 --> 00:21:25,360
+me do that, so we'll say that B=Z+Y and A=B, and then we propagate this forward.
+
+250
+00:21:25,360 --> 00:21:31,669
+Alright, so we've now replaced this use of A by B, so this takes us to this state
+
+251
+00:21:31,669 --> 00:21:36,029
+where we have this piece of code. Now we can see that we have an assignment to A. A
+
+252
+00:21:36,029 --> 00:21:40,279
+is not used in the subsequent instruction. We already said that A is not used
+
+253
+00:21:40,279 --> 00:21:45,649
+anywhere outside of the basic block, and so the assignment a=b can be deleted, and
+
+254
+00:21:45,649 --> 00:21:52,370
+we wind up with this shorter basic block. Now each local optimization actually does
+
+255
+00:21:52,370 --> 00:21:55,799
+very little by itself. And some of these optim izations, some of these
+
+256
+00:21:55,799 --> 00:22:00,440
+transformations that are presented actually don't make the program run faster
+
+257
+00:22:00,440 --> 00:22:03,759
+at all. They don't make it run slower either but by themselves they don't
+
+258
+00:22:03,759 --> 00:22:08,590
+actually make any improvement to the program. But, Typically, the optimizations
+
+259
+00:22:08,590 --> 00:22:12,809
+will interact. So performing one optimization will enable another. And we
+
+260
+00:22:12,809 --> 00:22:17,809
+saw this in the little example that I did, a few slides ago. So the way to think
+
+261
+00:22:17,809 --> 00:22:23,009
+about an optimizing compiler is that it has a big bag of tricks. It has a lot of.
+
+262
+00:22:23,009 --> 00:22:27,889
+Individual program transformations that it knows And what it is going to do when
+
+263
+00:22:27,889 --> 00:22:32,519
+faced with a program's optimize, it's going to rummage around in its bag looking
+
+264
+00:22:32,519 --> 00:22:37,100
+for an optimization, that applies to some part of the code. If it finds one, it will
+
+265
+00:22:37,100 --> 00:22:40,559
+do the optimization, it will do the transformation and then it will repeat.
+
+266
+00:22:40,559 --> 00:22:43,419
+It'll go back and look at the program again, and see if there's another
+
+267
+00:22:43,419 --> 00:22:48,230
+optimization that reapplies. Then it will just keep doing this until it reaches a
+
+268
+00:22:48,230 --> 00:22:52,269
+point where none of the optimization's it knows about can be applied to the
+
+269
+00:22:52,269 --> 00:22:58,700
+programming. Next, we'll take a look at a bigger example and try applying some of
+
+270
+00:22:58,700 --> 00:23:03,070
+the optimizations that we've discussed, to it, and see how far we get. And of course
+
+271
+00:23:03,070 --> 00:23:07,659
+this example has been constructed to illustrate, many of the optimizations that
+
+272
+00:23:07,659 --> 00:23:13,399
+we discussed. So, the first thing we can do. There are a couple of opportunities
+
+273
+00:23:13,399 --> 00:23:20,379
+for algebraic simplifications. So, we can replace the squaring up here, by a
+
+274
+00:23:20,379 --> 00:23:25,570
+multiply. And down here we had a multiply by two, which we can replace by a left
+
+275
+00:23:25,570 --> 00:23:32,529
+shift of one. Next we can observe that we have some copies and constants. So we have
+
+276
+00:23:32,529 --> 00:23:36,190
+a constant assignment to b and a copy assignment to c And those can be
+
+277
+00:23:36,190 --> 00:23:42,970
+propagated forward to the uses of b and c. Once we've done that, we can do constant
+
+278
+00:23:42,970 --> 00:23:47,600
+folding. So here, the assignment to e, The opera-, the arguments to the shift are all
+
+279
+00:23:47,600 --> 00:23:54,230
+constants, And so that can be replaced by an assignment, that e gets the value six.
+
+280
+00:23:54,230 --> 00:23:56,620
+Next we could observe that we have a common sub expression that we could
+
+281
+00:23:56,620 --> 00:24:02,210
+eliminate that both a and d have the value x times x. So the assignment to d could be
+
+282
+00:24:02,210 --> 00:24:09,210
+replaced by a copy that d now gets the value of a. Now we have two opportunities
+
+283
+00:24:09,570 --> 00:24:13,409
+again for copying constant propagation the assignment to D and the assignment to E
+
+284
+00:24:13,409 --> 00:24:20,179
+can be propagated forward. And finally we can do a bunch of dead code elimination.
+
+285
+00:24:20,179 --> 00:24:27,179
+So, assuming that, none of these values, B, C, D, or E is used anyplace else in the
+
+286
+00:24:27,259 --> 00:24:30,480
+program, all four of these statements can be deleted. And this is where we actually
+
+287
+00:24:30,480 --> 00:24:34,830
+get some real performance improvement. So here we actually are now saving entire
+
+288
+00:24:34,830 --> 00:24:41,269
+instructions, and that's the best kind of savings that we can have And so we wind up
+
+289
+00:24:41,269 --> 00:24:46,139
+with this as our final form. So notice that a is assigned the value x'lt;i>x. F is'lt;/i>
+
+290
+00:24:46,139 --> 00:24:50,799
+then assigned, the value a+a, And then g is assigned the value six'lt;i>f. Now, this is'lt;/i>
+
+291
+00:24:50,799 --> 00:24:56,220
+not quite as fast as it could be, alright? There's actually one more algebraic
+
+292
+00:24:56,220 --> 00:25:03,220
+optimization that could be done. We can notice here that f is actually=to two'lt;i>a,'lt;/i>
+
+293
+00:25:04,100 --> 00:25:11,100
+And then we could do some rearrangement here to discover that g=12'lt;i>f. Sorry, sorry'lt;/i>
+
+294
+00:25:11,669 --> 00:25:17,379
+twelve x a. Alright, And then this statement assignment to F might become
+
+295
+00:25:17,379 --> 00:25:23,269
+dead code, and we could delete it from the program. I think some compilers would
+
+296
+00:25:23,269 --> 00:25:27,669
+actually find this, but I believe that even current state of the art compilers,
+
+297
+00:25:27,669 --> 00:25:33,269
+many of them, would not discover this last rearrangement to the program.

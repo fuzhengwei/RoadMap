@@ -1,0 +1,99 @@
+0
+00:00:01,530 --> 00:00:04,170
+It turns out that this left string, this stuff to the left
+
+1
+00:00:04,170 --> 00:00:08,900
+of the vertical bar can be implemented by a stack, and that's because we only do
+
+2
+00:00:08,900 --> 00:00:15,440
+reduced operations immediately to the left of the vertical bar. So it's always suffix
+
+3
+00:00:15,440 --> 00:00:19,010
+of the string to left of the vertical bar, where the reduction is happening so what a
+
+4
+00:00:19,010 --> 00:00:23,170
+shift move then does is to push a terminal onto the stack. It reads one token of
+
+5
+00:00:23,170 --> 00:00:27,870
+input, and pushed it onto the stack. And then a reduce, pops some number symbols
+
+6
+00:00:27,870 --> 00:00:31,560
+off of the stack. That's the production right hand side. And then it pushed one
+
+7
+00:00:31,560 --> 00:00:38,560
+non-terminal onto the stack. And that's the production, left hand side. Now it can
+
+8
+00:00:38,969 --> 00:00:43,989
+happen that in a given state, that more than one action, shift or reduce, may lead
+
+9
+00:00:43,989 --> 00:00:49,069
+to a valid parse. So in particular, if it's legal to shift or reduce, if you can
+
+10
+00:00:49,069 --> 00:00:52,789
+do either one of those things, then we say there is a shift re duce conflict. The
+
+11
+00:00:52,789 --> 00:00:57,210
+parser could either read one token of input and push it on the stack, or it
+
+12
+00:00:57,210 --> 00:01:02,870
+could perform a reduction. If it's legal to reduce by two different productions,
+
+13
+00:01:02,870 --> 00:01:07,090
+then there is what is called a reduce/reduce conflict. Okay. So reduce,
+
+14
+00:01:07,090 --> 00:01:12,290
+reduce conflicts are, are always bad, are almost always bad. They indicate usually
+
+15
+00:01:12,290 --> 00:01:16,600
+some kind of serious problem with the grammar. Shift reduce conflicts are not
+
+16
+00:01:16,600 --> 00:01:21,060
+good, but they're often easier to remove. So if you have reduce, reduce conflicts
+
+17
+00:01:21,060 --> 00:01:24,740
+particularly when you're building your, grammar for cool, then you're doing
+
+18
+00:01:24,740 --> 00:01:30,380
+something seriously wrong. If you have shift reduce conflicts then that, that's
+
+19
+00:01:30,380 --> 00:01:34,869
+to be almost expected, because of You're probably going to need to use precedence
+
+20
+00:01:34,869 --> 00:01:40,909
+declarations, Remove them, and we'll talk about that some more in another video. But
+
+21
+00:01:40,909 --> 00:01:45,049
+in general, if you have either one of these conflicts, it means that, there's
+
+22
+00:01:45,049 --> 00:01:48,979
+some state in which the parser doesn't know what to do. And you either need to
+
+23
+00:01:48,979 --> 00:01:52,299
+rewrite the grammar, or give it a hint as to what it should do in order to
+
+24
+00:01:52,299 --> 00:01:54,570
+successfully parse your language.

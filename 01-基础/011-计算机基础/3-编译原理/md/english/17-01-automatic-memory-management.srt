@@ -1,0 +1,747 @@
+0
+00:00:04,180 --> 00:00:07,649
+In this video we're going to start our discussion of garbage collection or
+
+1
+00:00:07,649 --> 00:00:12,289
+automatic memory management. This will take us a few videos to get through and
+
+2
+00:00:12,289 --> 00:00:15,330
+this first video is just an overview of the problem. And then we'll talk about
+
+3
+00:00:15,330 --> 00:00:22,330
+specific techniques in subsequent videos. To set the stage, let's first talk about
+
+4
+00:00:23,410 --> 00:00:28,320
+the problem that we're trying to solve. So, if one has to manage memory manually,
+
+5
+00:00:28,320 --> 00:00:33,329
+meaning you have to do all the allocation and deallocation explicitly yourself, that
+
+6
+00:00:33,329 --> 00:00:37,710
+is a hard way to programming leads to certain kinds of bugs that are very
+
+7
+00:00:37,710 --> 00:00:42,320
+difficult to eliminate from programs. So, in particular, these days you see this
+
+8
+00:00:42,320 --> 00:00:46,630
+primarily in C and C++ programs. Those are the main languages that are used that have
+
+9
+00:00:46,630 --> 00:00:50,809
+manual memory management. And, the kinds of storage bugs that you can get because
+
+10
+00:00:50,809 --> 00:00:55,770
+it has manual memory management are things like forgetting to free unused memory so
+
+11
+00:00:55,770 --> 00:01:00,450
+that's a, it means a memory leak. Dereferencing dangling pointers,
+
+12
+00:01:00,450 --> 00:01:04,629
+overriding parts of a data structure, unintentionally. And actually there's a
+
+13
+00:01:04,629 --> 00:01:07,149
+few more things, although these are probably the three most common problems
+
+14
+00:01:07,149 --> 00:01:12,200
+that people have and these bugs are really hard to find. And I want to emphasize that
+
+15
+00:01:12,200 --> 00:01:17,720
+these kinds of bugs are often some of the very, very last bugs to be found in, in
+
+16
+00:01:17,720 --> 00:01:23,180
+complex systems. They often persist into production and sometimes for a very long
+
+17
+00:01:23,180 --> 00:01:28,670
+time after the code is in production use. And why is that? The reason is that these,
+
+18
+00:01:28,670 --> 00:01:32,680
+these kinds of bugs, storage bugs, typically have effects that are far away
+
+19
+00:01:32,680 --> 00:01:38,020
+in time and space from the source and so how can that happen? Well let's think
+
+20
+00:01:38,020 --> 00:01:45,020
+about some object in memory and now let's say only on interesting you might have
+
+21
+00:01:45,680 --> 00:01:49,070
+some fields, let's say you have a few fields and I am keeping some pointers to
+
+22
+00:01:49,070 --> 00:01:54,659
+it. So somewhere on program is a reference to this particular object and now I come
+
+23
+00:01:54,659 --> 00:01:59,380
+along and free it. So I am doing my own memory management like free this object
+
+24
+00:01:59,380 --> 00:02:03,780
+but I forget that I had this pointer. And so now what's happen all the storage has
+
+25
+00:02:03,780 --> 00:02:08,829
+been freed it's no longer really valid memory but the pointer still exist to it.
+
+26
+00:02:08,829 --> 00:02:12,799
+And then when I come along and allocate something else it might allocate the same
+
+27
+00:02:12,799 --> 00:02:18,480
+piece of memory. So this might now be a different kind of object, okay. So I might
+
+28
+00:02:18,480 --> 00:02:22,739
+have a different type here even. In this memory might be used for something
+
+29
+00:02:22,739 --> 00:02:27,019
+completely different and now I have a pointer that says it thinks it's a red
+
+30
+00:02:27,019 --> 00:02:30,909
+object, it's pointing to a blue object. And when I come in and write stuff into
+
+31
+00:02:30,909 --> 00:02:34,409
+this object, of course I'm just writing nonsense. So I, this, whatever piece of
+
+32
+00:02:34,409 --> 00:02:39,340
+code holds this pointer thinks it's still the old kind of object. It will write some
+
+33
+00:02:39,340 --> 00:02:43,930
+bits in here and when I go in some other part of the program possibly quite far
+
+34
+00:02:43,930 --> 00:02:49,079
+away go out and read out, this is a blue object, I'll just get some random garbage
+
+35
+00:02:49,079 --> 00:02:55,459
+and that will probably cause my program to cash. So this is a very, very old problem.
+
+36
+00:02:55,459 --> 00:02:59,819
+It's been studied since at least the 1950s. It was first thought about
+
+37
+00:02:59,819 --> 00:03:04,069
+carefully in list. And there are some well-known techniques for completely
+
+38
+00:03:04,069 --> 00:03:09,430
+automatic memory management so you don't have to manage memory yourself. And this
+
+39
+00:03:09,430 --> 00:03:14,579
+only became mainstream actually in the 1990s so with the popularity of Java.
+
+40
+00:03:14,579 --> 00:03:19,099
+Prior to that time there was really no mainstream language that used automatic
+
+41
+00:03:19,099 --> 00:03:24,769
+memory managements so that's really just in the last now almost twenty years that
+
+42
+00:03:24,769 --> 00:03:29,129
+garbage collection and automatic memory management in general became a popular
+
+43
+00:03:29,129 --> 00:03:34,319
+mainstream programming technique. So the basic strategy in automatic memory
+
+44
+00:03:34,319 --> 00:03:37,909
+management is, is pretty simple. So, when an object is created, when we allocate a
+
+45
+00:03:37,909 --> 00:03:41,809
+new object the system, the run time system will find some unused space for that
+
+46
+00:03:41,809 --> 00:03:48,809
+object and it will just allocate it. So whenever you say new of some class name in
+
+47
+00:03:48,919 --> 00:03:53,229
+Cool. Some memory is automatically allocated by the system, some previously
+
+48
+00:03:53,229 --> 00:03:57,049
+unused memory is automatically allocated by the system for that object. And if you
+
+49
+00:03:57,049 --> 00:04:01,150
+keep doing this over and over and over again and after awhile you're going to run
+
+50
+00:04:01,150 --> 00:04:07,489
+out of space. So eventually there is no more unused space left for additional obj
+
+51
+00:04:07,489 --> 00:04:11,609
+ects. And at that point you have to do something. You have to reclaim some of the
+
+52
+00:04:11,609 --> 00:04:17,269
+space in order to allocate more objects and the observation that garbage
+
+53
+00:04:17,269 --> 00:04:22,139
+collection systems rely upon is that some of the spaces being used is probably
+
+54
+00:04:22,139 --> 00:04:27,490
+occupied by objects that will never be used again. So they, some of these objects
+
+55
+00:04:27,490 --> 00:04:31,639
+are not going to be referred to again by the program and if we can figure out which
+
+56
+00:04:31,639 --> 00:04:37,080
+objects those are, which objects are not longer going to be used. Then we could
+
+57
+00:04:37,080 --> 00:04:42,889
+deallocate them and reuse the space for new objects. So the big question is, how
+
+58
+00:04:42,889 --> 00:04:48,080
+can we know that an object will never be used again? And, most of the garbage
+
+59
+00:04:48,080 --> 00:04:52,479
+collection techniques that are out there today rely on the following observation,
+
+60
+00:04:52,479 --> 00:04:56,500
+then that's that a program can only use the objects that it can find and what do
+
+61
+00:04:56,500 --> 00:05:01,900
+we mean by that? So I'm going to switch colors so let's take a look at this piece
+
+62
+00:05:01,900 --> 00:05:05,219
+of code so what's going to happen? Well when we execute this the first thing that
+
+63
+00:05:05,219 --> 00:05:10,629
+happens is we allocate an A object, alright. And it's assigned x, so x will
+
+64
+00:05:10,629 --> 00:05:17,370
+have a pointer to that object. And then, in the body of this let, what's going to
+
+65
+00:05:17,370 --> 00:05:24,310
+happen well, we're going to assign x, the value that y points to so y is another
+
+66
+00:05:24,310 --> 00:05:30,469
+variable. It points to some other objects in memory, okay. And what's going to
+
+67
+00:05:30,469 --> 00:05:35,949
+happen, when we execute this assignment is that we're going to remove the old value
+
+68
+00:05:35,949 --> 00:05:42,949
+of x and x now is going to point to this object. Now observe that this object a is
+
+69
+00:05:43,379 --> 00:05:50,379
+unreachable. Meaning it has no references to it. There are no longer any pointers to
+
+70
+00:05:50,960 --> 00:05:55,229
+it. And how do I know that? Well, a brand new here when it was created. I only
+
+71
+00:05:55,229 --> 00:05:59,509
+created one pointer to it, x and then I immediately assigned x to something else.
+
+72
+00:05:59,509 --> 00:06:04,909
+So I dropped the only pointer to A. There is no reference to A anywhere in the
+
+73
+00:06:04,909 --> 00:06:09,060
+program. And so the program will never be able to find it again. The program, if no
+
+74
+00:06:09,060 --> 00:06:15,169
+variable or data structure in the program has a pointer to A, then A can never be
+
+75
+00:06:15,169 --> 00:06:20,090
+referred to by the program in the future. So any kind of subsequent execution of the
+
+76
+00:06:20,090 --> 00:06:23,729
+program has no p ointers to A and therefore it will never use A again and so
+
+77
+00:06:23,729 --> 00:06:30,020
+the space ray can be reclaimed and used for another object. Now it turns out that
+
+78
+00:06:30,020 --> 00:06:33,340
+we need a more general definition of object reachability than this example
+
+79
+00:06:33,340 --> 00:06:38,080
+illustrates so let's take a look at that. We're going to say that an object x is
+
+80
+00:06:38,080 --> 00:06:42,180
+reachable if and only if one of the following two things is true. So either A
+
+81
+00:06:42,180 --> 00:06:47,749
+register contains a pointer to x. So either the x is reachable immediately from
+
+82
+00:06:47,749 --> 00:06:51,669
+some register. Remember that the registers contain things like the local variables in
+
+83
+00:06:51,669 --> 00:06:56,419
+there and the intermediate expressions and they're just you know, the values that the
+
+84
+00:06:56,419 --> 00:07:03,039
+program has immediate access to or another reachable object y contains a pointer to
+
+85
+00:07:03,039 --> 00:07:07,469
+x. And so what does this say? Well, this says you're going start at the register so
+
+86
+00:07:07,469 --> 00:07:11,759
+you know the program might be implemented using a few registers. And then you're
+
+87
+00:07:11,759 --> 00:07:17,090
+going to look at all the things that those registers point to, all the objects that
+
+88
+00:07:17,090 --> 00:07:21,409
+they point to. And you will look at the pointers in those objects and everything
+
+89
+00:07:21,409 --> 00:07:27,789
+they can point to, okay. And some of these things might overlap. I mean, some of
+
+90
+00:07:27,789 --> 00:07:32,189
+these there might be multiple things which are reachable by more than one path
+
+91
+00:07:32,189 --> 00:07:35,370
+starting at the registers. But the complete side of things that you can
+
+92
+00:07:35,370 --> 00:07:39,319
+reach, beginning at the registers and following all the possible pointers, those
+
+93
+00:07:39,319 --> 00:07:44,199
+are all the reachable objects. And then the complement of that set, an unreachable
+
+94
+00:07:44,199 --> 00:07:48,819
+object is one that isn't reachable. So all the other objects, the ones that you were
+
+95
+00:07:48,819 --> 00:07:53,439
+not able to reach by recursively starting at registers and following pointers as far
+
+96
+00:07:53,439 --> 00:07:58,349
+as you could, those objects can never be used. Because clearly the implementation
+
+97
+00:07:58,349 --> 00:08:04,059
+can only access things through registers and, and then only find additional things
+
+98
+00:08:04,059 --> 00:08:07,189
+by, you know loading pointers out of objects that it could reach from the
+
+99
+00:08:07,189 --> 00:08:12,559
+registers. So anything that it can reach by some sequence of sub-steps will never
+
+100
+00:08:12,559 --> 00:08:18,809
+be used again, and is garbage. So let's take a look at another example that
+
+101
+00:08:18,809 --> 00:08:23,849
+illustrates some interesting aspects of re achability and its use in automatic memory
+
+102
+00:08:23,849 --> 00:08:27,629
+management. So what does this example do? The first thing it does, it allocates an A
+
+103
+00:08:27,629 --> 00:08:34,390
+object, on the heap and assigns that to the variable x. So, x is a pointer to that
+
+104
+00:08:34,390 --> 00:08:41,390
+object. And then it allocates a B object and y will point to that object. And then,
+
+105
+00:08:42,789 --> 00:08:49,789
+it assigns the value of y to x, alright. So, we'll have this configuration and, and
+
+106
+00:08:50,690 --> 00:08:57,690
+now let's draw a line here, okay and we'll come back and let's remember this point in
+
+107
+00:08:57,870 --> 00:09:02,170
+time, what things look like at this point in time. And then we're going to go off
+
+108
+00:09:02,170 --> 00:09:04,630
+and we're going to execute this conditional. And notice that this
+
+109
+00:09:04,630 --> 00:09:09,860
+conditional is going to do. It's going to always be true, alright? So the predicate
+
+110
+00:09:09,860 --> 00:09:12,490
+will always be true so it'll never take the false branch. All it's going to ever
+
+111
+00:09:12,490 --> 00:09:15,649
+do is take the true branch and what's it going to do there, is immediately going to
+
+112
+00:09:15,649 --> 00:09:19,910
+overwrite x. And so x is going to wind up pointing at some other new object. It
+
+113
+00:09:19,910 --> 00:09:24,740
+doesn't matter what it is. And now, let's say that at this point right here, is
+
+114
+00:09:24,740 --> 00:09:28,820
+where we try to do a garbage collection. So you know, for some reason this is the
+
+115
+00:09:28,820 --> 00:09:34,360
+point where the program stops and tries to collect unused memory. And what can it
+
+116
+00:09:34,360 --> 00:09:37,810
+collect? Well, just like before cuz the example up to this point is essentially
+
+117
+00:09:37,810 --> 00:09:44,790
+the same. We can see that this object is unreachable, okay. So the first A object
+
+118
+00:09:44,790 --> 00:09:49,940
+becomes unreachable at that point and it can be collected. Now what about the
+
+119
+00:09:49,940 --> 00:09:54,230
+second object? Well it is reachable, it's clearly reachable. It's reachable through
+
+120
+00:09:54,230 --> 00:09:58,779
+x, okay at that point and it's also reachable as it happens through y. And so
+
+121
+00:09:58,779 --> 00:10:03,800
+it's not garbage and it's not going to be collected but notice that the x value is
+
+122
+00:10:03,800 --> 00:10:09,180
+always going to be overwritten, okay? So the program, the compiler doesn't know
+
+123
+00:10:09,180 --> 00:10:13,709
+that this branch is always going to be true. So, it doesn't realize that the
+
+124
+00:10:13,709 --> 00:10:17,350
+value that x has at this point won't ever be used again but that value is
+
+125
+00:10:17,350 --> 00:10:20,779
+immediately going to be overwritten, every time we take this conditional. And
+
+126
+00:10:20,779 --> 00:10:24,839
+furthermore, if y is not used any place else in the program, if y i s dead at this
+
+127
+00:10:24,839 --> 00:10:30,610
+point. Let's say that y is dead here. Then, neither one of these references to B
+
+128
+00:10:30,610 --> 00:10:35,970
+is ever gonna be touched again. So in fact the B value will never be used again even
+
+129
+00:10:35,970 --> 00:10:40,660
+though it is reachable. And so what this tells you is that reachability is an
+
+130
+00:10:40,660 --> 00:10:47,660
+approximation. And by that I mean it's an approximation for the objects that will
+
+131
+00:10:48,170 --> 00:10:51,850
+never be used again. What we're really interested in when we do garbage
+
+132
+00:10:51,850 --> 00:10:55,300
+collection is collecting objects that will never be used in the future execution of
+
+133
+00:10:55,300 --> 00:10:59,440
+the program. Because obviously that space is wasted and could be put to some other
+
+134
+00:10:59,440 --> 00:11:03,360
+use that might be better and reachability approximates that. So if an object is
+
+135
+00:11:03,360 --> 00:11:07,730
+unreachable it definitely won't be used again however, just because an object is
+
+136
+00:11:07,730 --> 00:11:12,610
+reachable it's not a guarantee that it will be used again. So now let's talk
+
+137
+00:11:12,610 --> 00:11:18,170
+about how we do garbage collection in Coolc. So Coolc has a fairly simple
+
+138
+00:11:18,170 --> 00:11:21,570
+structure. It uses an accumulator in which of course points to an object and that
+
+139
+00:11:21,570 --> 00:11:25,410
+object may point to other objects and so on. So we have to trace all the objects
+
+140
+00:11:25,410 --> 00:11:29,190
+reachable from the accumulator but we also have to worry about the stack pointer so
+
+141
+00:11:29,190 --> 00:11:34,600
+there's also stuff reachable from the stack. And each stack frame of course may
+
+142
+00:11:34,600 --> 00:11:38,910
+contain pointers like, and you know for example the method parameters that are
+
+143
+00:11:38,910 --> 00:11:43,570
+stored on the stack. Each stack frame may also contain some non-pointers, alright?
+
+144
+00:11:43,570 --> 00:11:47,660
+So if I think about the layout of each activation record there would be some mix
+
+145
+00:11:47,660 --> 00:11:52,310
+of pointers and non-pointers. Things like the return address so we have to know the
+
+146
+00:11:52,310 --> 00:11:56,269
+layout of the frame. But if we do know the layout and of course the compiler is
+
+147
+00:11:56,269 --> 00:12:00,339
+deciding on the layout so it naturally does know the layout, it can find all the
+
+148
+00:12:00,339 --> 00:12:05,060
+pointers in the frame. Essentially, the compiler has to keep a record for each
+
+149
+00:12:05,060 --> 00:12:09,110
+kind of activation record it builds for each methods. If activation record for a
+
+150
+00:12:09,110 --> 00:12:14,329
+method foo and let's say that activation record has four slots then the compiler
+
+151
+00:12:14,329 --> 00:12:17,069
+would need to keep track of which one of these were pointers to objects. And
+
+152
+00:12:17,069 --> 00:12:21,139
+perhaps the second , and the fourth element of the frame are always pointers
+
+153
+00:12:21,139 --> 00:12:25,250
+to objects and the other two are always non-pointers. So the somewhere, the
+
+154
+00:12:25,250 --> 00:12:30,120
+compiler has to keep track of this information so that the garbage collector
+
+155
+00:12:30,120 --> 00:12:35,110
+will know at Run time when it's looking at an activation record for foo where the
+
+156
+00:12:35,110 --> 00:12:41,399
+pointers that it needs to follow are. So in Coolc, we start tracing from the
+
+157
+00:12:41,399 --> 00:12:45,509
+accumulator and the stack and these are called the roots, okay. So, in garbage
+
+158
+00:12:45,509 --> 00:12:51,230
+collection terminology the roots are the registers from which you begin tracing out
+
+159
+00:12:51,230 --> 00:12:54,910
+all the reachable objects. And if we do that here, what we can do, so you see we
+
+160
+00:12:54,910 --> 00:12:57,690
+have our object, here we have our accumulator, excuse me and our stack
+
+161
+00:12:57,690 --> 00:13:03,209
+pointer and so we can just walk through. This little diagram of memory and find all
+
+162
+00:13:03,209 --> 00:13:07,389
+the reachable objects so the acummulator points to object A so we'll mark that as
+
+163
+00:13:07,389 --> 00:13:11,290
+reachable. And A points to C so we'll mark it as reachable. C points to E so we'll
+
+164
+00:13:11,290 --> 00:13:15,750
+mark E as reachable. The stack pointer has a couple of frames on it. The first frame
+
+165
+00:13:15,750 --> 00:13:20,449
+has no pointers. The second frame points to E. We've already touched that one. It's
+
+166
+00:13:20,449 --> 00:13:23,060
+already marked so we can mark it again but it doesn't matter as long as it gets
+
+167
+00:13:23,060 --> 00:13:27,459
+marked by somebody and now everything that is not marked is unreachable. So what
+
+168
+00:13:27,459 --> 00:13:32,589
+objects didn't we touch and are traversal of the reachable objects? Well those are
+
+169
+00:13:32,589 --> 00:13:36,529
+objects B and D. And so those are, unreachable objects and they can be
+
+170
+00:13:36,529 --> 00:13:41,339
+reclaimed and we can reuse their storage. Now, one interesting thing to note here is
+
+171
+00:13:41,339 --> 00:13:47,420
+that, just because an object has pointers to it, it does not mean it is reachable,
+
+172
+00:13:47,420 --> 00:13:53,660
+so notice here object D. Object D actually has a pointer to it, okay and yet object D
+
+173
+00:13:53,660 --> 00:13:57,290
+is unreachable and why is that? Well because the only pointers to it are from
+
+174
+00:13:57,290 --> 00:14:01,560
+other unreachable objects. So it's important here to, you know just
+
+175
+00:14:01,560 --> 00:14:05,720
+understand that it's not the case that every unreachable object has no pointers
+
+176
+00:14:05,720 --> 00:14:08,610
+to it. There will be some unreachable objects or there may be some unreachable
+
+177
+00:14:08,610 --> 00:14:12,470
+objects that actually do have pointers to it, to them but they will on ly come from
+
+178
+00:14:12,470 --> 00:14:18,480
+other unreachable objects. So every garbage collection scheme has the
+
+179
+00:14:18,480 --> 00:14:21,920
+following steps. We're going to allocate space as needed for new objects, so we
+
+180
+00:14:21,920 --> 00:14:26,670
+just go ahead and allocate new space as long as we have space, so whenever we need
+
+181
+00:14:26,670 --> 00:14:31,629
+it. And when space runs out we need to compute what objects might be used again.
+
+182
+00:14:31,629 --> 00:14:35,060
+And generally that's done by tracing objects reachable from a set of root
+
+183
+00:14:35,060 --> 00:14:38,579
+registers and then we're going to free the complement of that set. We're going to
+
+184
+00:14:38,579 --> 00:14:44,879
+free the space used by the objects not found in part A. And I want to say that
+
+185
+00:14:44,879 --> 00:14:48,560
+some strategies do perform garbage collection before the space actually runs
+
+186
+00:14:48,560 --> 00:14:51,720
+out and we'll actually look at one of those in a future video.

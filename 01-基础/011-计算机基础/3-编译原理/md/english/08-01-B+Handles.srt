@@ -1,0 +1,115 @@
+0
+00:00:01,079 --> 00:00:03,810
+At this point we know enough to state the second important
+
+1
+00:00:03,810 --> 00:00:07,770
+fact about bottom- up parsing. So in shift reduce parsing handles appear
+
+2
+00:00:07,770 --> 00:00:12,759
+only at the top of the stack Never in sight Side, and in fact this is what justifies
+
+3
+00:00:12,759 --> 00:00:16,840
+using a stack because that string to the left of our focus point we know
+
+4
+00:00:16,840 --> 00:00:19,930
+that all the action will take place immediately to the left of the focus point.
+
+5
+00:00:19,930 --> 00:00:25,060
+We won't have to dive down to the string to look at its [inaudible] and therefore
+
+6
+00:00:25,060 --> 00:00:31,130
+the stack will be sufficient. So here's an informal proof, that handles only
+
+7
+00:00:31,130 --> 00:00:34,580
+appear at the top of the stack. And this is by induction on the number of reduce
+
+8
+00:00:34,580 --> 00:00:39,070
+moves. So this is true initially because the stack is empty. And so, we don't,
+
+9
+00:00:39,070 --> 00:00:42,080
+you know, so the only possible reduction is at the top of the stack if there's
+
+10
+00:00:42,080 --> 00:00:48,360
+an epsilon move, to make. And immediately after we reduce, the right most
+
+11
+00:00:48,360 --> 00:00:51,909
+non terminal is going to be on top of the stack. So immediately after we perform
+
+12
+00:00:51,909 --> 00:00:57,580
+a reduction, we have a, our stack, and then we have a, non terminal. And then our
+
+13
+00:00:57,580 --> 00:01:04,580
+vertical bar, And this is the right most non terminal. And since this is the right
+
+14
+00:01:05,600 --> 00:01:10,850
+most derivation that means that the next handle has to be somewhere to the right. The
+
+15
+00:01:10,850 --> 00:01:16,680
+next handle has to be, It has to include something that, and you know possibly
+
+16
+00:01:16,680 --> 00:01:20,780
+include some of this stuff. But it's either right here at the current focus
+
+17
+00:01:20,780 --> 00:01:25,100
+point, or it's to the right, Because we can't be doing any reductions to the left
+
+18
+00:01:25,100 --> 00:01:30,120
+of the rightmost non-terminal. And so it's gonna require a sequence of shift moves
+
+19
+00:01:30,120 --> 00:01:33,530
+to reach the next handle. So once we have this non-terminal on top of the stack,
+
+20
+00:01:33,530 --> 00:01:37,030
+it is by definition the rightmost non-terminal, and so the next handle has to
+
+21
+00:01:37,030 --> 00:01:43,979
+be somewhere to the right of that. Therefore in shift reduce parsing handles
+
+22
+00:01:43,979 --> 00:01:47,690
+always appear at the top of the stack. Handles are never to the left of the right
+
+23
+00:01:47,690 --> 00:01:52,450
+most knot terminal and this is why shift and reduce moves are sufficient. The shift
+
+24
+00:01:52,450 --> 00:01:57,540
+move only moves the vertical part to the right because we never need to move it left.
+
+25
+00:01:57,540 --> 00:02:01,720
+And bottom of parsing algorithms are based on recognizing handles. So as we saw
+
+26
+00:02:01,720 --> 00:02:05,190
+in the example at the beginning of this video. Just because you have a right hand
+
+27
+00:02:05,190 --> 00:02:10,130
+side on top of the stack that doesn't mean that it's a handle. And so we need to be smarter
+
+28
+00:02:10,130 --> 00:02:12,000
+about where we perform our

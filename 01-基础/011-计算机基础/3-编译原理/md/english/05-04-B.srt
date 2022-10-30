@@ -1,0 +1,455 @@
+0
+00:00:01,819 --> 00:00:06,590
+Now there are several ways to eliminate ambiguity from a grammar and the most direct
+
+1
+00:00:06,590 --> 00:00:10,099
+method which we'll talk about first is just to rewrite the grammar so it's an
+
+2
+00:00:10,099 --> 00:00:14,579
+ambiguous. That is to write a new grammar that generates the same language as the old
+
+3
+00:00:14,579 --> 00:00:21,470
+grammar but it only has a single Parse tree for each string. So here's a, a rewrite
+
+4
+00:00:21,470 --> 00:00:25,130
+of the grammar we've been looking at and let's write down our favorite input
+
+5
+00:00:25,130 --> 00:00:32,130
+string one more time, id id + id. And let's look at how that string will be parsed
+
+6
+00:00:35,489 --> 00:00:39,960
+according to this new grammar so it begin with the start symbol e and now notice
+
+7
+00:00:39,960 --> 00:00:44,739
+that e can no longer generate a plus or a times. In fact we separated the
+
+8
+00:00:44,739 --> 00:00:51,020
+grammar now into two sets of productions, two nonterminals and e controls the generation
+
+9
+00:00:51,020 --> 00:00:57,660
+of plus and e prime controls the generation of multiplications, okay. And
+
+10
+00:00:57,660 --> 00:01:04,660
+so in originally of + we have to use the production e prime + e. There is no other
+
+11
+00:01:05,710 --> 00:01:11,500
+way to do it. And now if we look at e prime, what can e prime do? Well, e prime
+
+12
+00:01:11,500 --> 00:01:16,860
+can generate an identifier times something and if you look at the grammar that
+
+13
+00:01:16,860 --> 00:01:21,290
+is the only production that can generate identifier times something else.
+
+14
+00:01:21,290 --> 00:01:25,350
+The only other possibility involving times is to generate apprenticed expression which
+
+15
+00:01:25,350 --> 00:01:31,490
+clearly won't match the string that we're trying to pars E. So we have to use
+
+16
+00:01:31,490 --> 00:01:38,490
+this production Id e prime. Well now in order to match the string, we can see that
+
+17
+00:01:41,470 --> 00:01:46,759
+this e prime, the second, the one remaining e prime here has to go to id because
+
+18
+00:01:46,759 --> 00:01:50,290
+sandwiched in between the times and the plus is a single id, there's only
+
+19
+00:01:50,290 --> 00:01:54,820
+one production that will do that so that's completely unique and determined. And finally,
+
+20
+00:01:54,820 --> 00:02:00,939
+we have the last e over here which we want to use to produce an id. Well
+
+21
+00:02:00,939 --> 00:02:07,939
+how can we do that? Well, the e can go to e prime. In fact it has to and then
+
+22
+00:02:08,149 --> 00:02:15,149
+the e prime can go to id by itself, and there. We've manage to parse the string. So
+
+23
+00:02:15,660 --> 00:02:19,390
+in general what does this grammar doing, well we do say we stratify the grammar.
+
+24
+00:02:19,390 --> 00:02:24,890
+We've divided the productions into two classes. One that handles times and
+
+25
+00:02:24,890 --> 00:02:30,940
+one that handles times and there's one nonterminal for each, each operator so. The
+
+26
+00:02:30,940 --> 00:02:36,910
+e productions control the generation of plus and let's just look at what happens
+
+27
+00:02:36,910 --> 00:02:42,360
+with that. So if I, e can go to e prime + e and just sticking with the e productions,
+
+28
+00:02:42,360 --> 00:02:46,630
+what can happen to this e here? Well, we could do it again, E prime
+
+29
+00:02:46,630 --> 00:02:53,630
++ e prime + e. And if we do it one more time, we'll have e prime + e prime + e prime
+
+30
+00:02:55,360 --> 00:03:01,560
++ e. And in general, I think you see the pattern, we can generate any number of
+
+31
+00:03:01,560 --> 00:03:08,270
+e primes summed together. And finally, that trailing e, there's always one e left
+
+32
+00:03:08,270 --> 00:03:12,780
+at the end. Eventually that e, when we want to stop generating pluses, has to be
+
+33
+00:03:12,780 --> 00:03:18,840
+rewritten to e prime. So in the end, we'll get a sequence of pluses of, of e primes separated
+
+34
+00:03:18,840 --> 00:03:23,400
+by pluses, okay? That's what e prime can do. I'm sorry, that's what e can
+
+35
+00:03:23,400 --> 00:03:30,400
+do. Now let's look at what e prime can do. So, e prime. And let's just focus on the first
+
+36
+00:03:31,040 --> 00:03:35,600
+two productions. As we can see at the first two productions are handling identifiers
+
+37
+00:03:35,600 --> 00:03:39,820
+times something and then the last two productions are handling parenthesized
+
+38
+00:03:39,820 --> 00:03:43,680
+expression but you know I hope you the symmetry that it's, it's really
+
+39
+00:03:43,680 --> 00:03:47,200
+the same idea for identifiers and parenthesized expressions. So we'll just do
+
+40
+00:03:47,200 --> 00:03:53,340
+identifiers just to keep the slide from getting too crowded. So e prime can go to
+
+41
+00:03:53,340 --> 00:04:00,340
+id e p rime. Well, we can repeat that, we can go to id. id e prime and we can repeat
+
+42
+00:04:06,220 --> 00:04:09,820
+that again and I hope you're beginning to see the same pattern. This is
+
+43
+00:04:09,820 --> 00:04:16,820
+the same idea as with plus. And when we wind up with n is a bunch of identifiers multiplied
+
+44
+00:04:19,160 --> 00:04:25,200
+together, alright. Because that trailing e prime in this case, in the end,
+
+45
+00:04:25,200 --> 00:04:32,010
+can be rewritten to id. Now, in the case of e prime there are actually two alternatives.
+
+46
+00:04:32,010 --> 00:04:35,280
+We could either be generating id's or we could be generating
+
+47
+00:04:35,280 --> 00:04:41,460
+parenthesized expression. So really, for each of these id's it could have been a parenthesized
+
+48
+00:04:41,460 --> 00:04:45,190
+expression. So let me just write some parenthesized e's down here just
+
+49
+00:04:45,190 --> 00:04:50,370
+to remind us that we have an alternative and in the end, we wind up with,
+
+50
+00:04:50,370 --> 00:04:57,370
+you know? A string of identifiers or parenthesized expressions separated by times,
+
+51
+00:04:57,710 --> 00:05:04,340
+Okay? Alright right, so I hope you see how this works. There's the, the way that
+
+52
+00:05:04,340 --> 00:05:09,690
+the grammar set up because we have these two separate groups of productions.
+
+53
+00:05:09,690 --> 00:05:15,720
+All the pluses must be generated Before any of the times. The times are gonna be nested
+
+54
+00:05:15,720 --> 00:05:19,850
+more deeply inside the Parse tree than the pluses. The pluses are generated
+
+55
+00:05:19,850 --> 00:05:24,160
+at the outer most level and then the e primes will generate the times inside the
+
+56
+00:05:24,160 --> 00:05:29,800
+pluses. And so the grammar enforces that times is gonna buy more tightly than plus.
+
+57
+00:05:29,800 --> 00:05:35,220
+The last detail that's worth pointing out here is I've noticed inside of the parenthesized
+
+58
+00:05:35,220 --> 00:05:40,170
+expression, we have an e, not an e prime. And why is that? Well once
+
+59
+00:05:40,170 --> 00:05:43,770
+we're inside of a parenthesized expression, the whole purpose of parentheses
+
+60
+00:05:43,770 --> 00:05:48,230
+is to show the explicit association and so that we can have pluses
+
+61
+00:05:48,230 --> 00:05:54,200
+inside of times by using parentheses. And that's all that, that, that's the significance
+
+62
+00:05:54,200 --> 00:06:01,200
+of using e in this part of the grammar rather than e prime. To review,
+
+63
+00:06:02,410 --> 00:06:07,910
+We started out with a grammar and A string we wanted to parse, id id + id, but
+
+64
+00:06:07,910 --> 00:06:11,570
+that grammar gave us two distinct Parse trees for the string and here are the
+
+65
+00:06:11,570 --> 00:06:15,990
+two Parse trees again. And by rewriting the grammar, we were able to eliminate
+
+66
+00:06:15,990 --> 00:06:20,030
+this Parse tree on the right. So, this Parse tree is no longer p ossible.
+
+67
+00:06:20,030 --> 00:06:24,780
+The Parse tree on the left is modified, there's more symbols in it now.
+
+68
+00:06:24,780 --> 00:06:30,980
+I mean for example, this became an e prime and there was a chain here of non-terminals,
+
+69
+00:06:30,980 --> 00:06:33,820
+this e went to e prime and went to id and there was some other minor
+
+70
+00:06:33,820 --> 00:06:39,330
+changes in here so the Parse tree is not exactly the same as before but. We were able
+
+71
+00:06:39,330 --> 00:06:46,330
+to get a parse where the times binds more tightly than the plus. So, now let's
+
+72
+00:06:47,810 --> 00:06:52,370
+consider another interesting example. If, then, else expressions were the else is optional
+
+73
+00:06:52,370 --> 00:06:59,370
+and here's one way to write that grammar. Here we have a if, then, else And
+
+74
+00:06:59,669 --> 00:07:05,030
+the usual way. But then we also have a production where there is no else. So that's
+
+75
+00:07:05,030 --> 00:07:08,300
+the case where the else is optional and then maybe there are some other kinds
+
+76
+00:07:08,300 --> 00:07:11,400
+of expressions that we don't need to concern ourselves with those. We'll just focus
+
+77
+00:07:11,400 --> 00:07:16,760
+on the if and else piece. The problem is, at this particular if, then, else
+
+78
+00:07:16,760 --> 00:07:23,340
+expression has two possible Parse tree. On the one hand, the else might belong
+
+79
+00:07:23,340 --> 00:07:30,340
+to the outer if, That is, this particular. Inner if might have no else and.
+
+80
+00:07:30,930 --> 00:07:37,930
+The else would be associated with the outer if. The other possibility is that the
+
+81
+00:07:38,260 --> 00:07:43,120
+else belongs to the inner if that we have this structure if then else is nested
+
+82
+00:07:43,120 --> 00:07:50,120
+inside of an if then that has no else statement. And in, what we want in on the
+
+83
+00:07:51,460 --> 00:07:55,930
+programming language I know of is the second form. We want else's to associate to
+
+84
+00:07:55,930 --> 00:08:02,930
+the closest matching if then and not one that's further away. We can write a grammar
+
+85
+00:08:03,560 --> 00:08:07,669
+to express the desired association. The property we want is that
+
+86
+00:08:07,669 --> 00:08:12,490
+every else should match the closest unmatched then. So whenever we see an else,
+
+87
+00:08:12,490 --> 00:08:16,699
+we want it to be associated with the closest then that doesn't already have a closer
+
+88
+00:08:16,699 --> 00:08:21,280
+matching else. So that means that the if statements are going to be divided
+
+89
+00:08:21,280 --> 00:08:26,940
+into two categories. We'll have the matched if's, those that have all of the then
+
+90
+00:08:26,940 --> 00:08:30,850
+statements nested within them matched with an else. And the unmatched if's where
+
+91
+00:08:30,850 --> 00:08:37,850
+some then's then expression inside of the unmatched if that has no matching else. So,
+
+92
+00:08:39,570 --> 00:08:43,000
+when matched ifs look like, well tha t's pretty straight forward, I, and if, then,
+
+93
+00:08:43,000 --> 00:08:48,110
+else is a matched if most have, must have both of them and an else and any nested
+
+94
+00:08:48,110 --> 00:08:55,110
+if statements on both branches must, must also have matching else's. And,
+
+95
+00:08:55,510 --> 00:09:00,060
+if you have any other kind of a constructs that's not an if and else, that's also considered
+
+96
+00:09:00,060 --> 00:09:06,790
+a matched if. What about the unmatched if's? One possibility is that they,
+
+97
+00:09:06,790 --> 00:09:10,310
+it's simply an unmatched if, that there is no else. So we have if and then and
+
+98
+00:09:10,310 --> 00:09:17,310
+no matching else out here. And now the crucial case, what if we have an if and else?
+
+99
+00:09:18,460 --> 00:09:24,200
+So that the top level if then has a matching else but then the unmatched if is
+
+100
+00:09:24,200 --> 00:09:30,460
+somewhere inside. Well, then we claim that the unmatched if has to be in the else branch,
+
+101
+00:09:30,460 --> 00:09:36,560
+it cannot be in the then branch. The then branch must be a matched if. And
+
+102
+00:09:36,560 --> 00:09:41,350
+why is that? Well, think about it. If this was an unmatched if, if this was an unmatched
+
+103
+00:09:41,350 --> 00:09:46,000
+if, that means that there will be some then in here. That had no matching
+
+104
+00:09:46,000 --> 00:09:52,150
+else. And then this else here would be closer to that then, than it is to this end
+
+105
+00:09:52,150 --> 00:09:57,339
+then. And so, we would have to match that one according to our definition. Okay.
+
+106
+00:09:57,339 --> 00:10:02,320
+So, that situation is not possible. So, the only possibility for an unmatched
+
+107
+00:10:02,320 --> 00:10:09,320
+if is that, that it's itself and if and else is that, that the any if, then, else's
+
+108
+00:10:10,600 --> 00:10:15,440
+under their branch have to be matched and the unmatched if and else has
+
+109
+00:10:15,440 --> 00:10:22,440
+to be in the else branch. So reconsidering the expression we had before, we can see that
+
+110
+00:10:23,560 --> 00:10:28,860
+this else is supposed to match this then. And so the association should be like
+
+111
+00:10:28,860 --> 00:10:34,990
+this, and, and therefore, this Parse tree on the right is not the one that we want
+
+112
+00:10:34,990 --> 00:10:40,610
+and the grammar we gave on the previous slide will parse the expression according
+
+113
+00:10:40,610 --> 00:10:42,310
+to this Parse tree on the left.

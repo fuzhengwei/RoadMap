@@ -1,0 +1,575 @@
+0
+00:00:04,009 --> 00:00:07,740
+In the last couple of videos we have talked about code generation for simple
+
+1
+00:00:07,740 --> 00:00:12,340
+programming language and I mentioned at the end of the last video that realistic
+
+2
+00:00:12,340 --> 00:00:16,869
+compilers do things a bit differently and in particular they do a better job of
+
+3
+00:00:16,869 --> 00:00:21,260
+keeping values and registers and of managing the temporaries that have to be
+
+4
+00:00:21,260 --> 00:00:24,850
+stored in the activation record. We're actually going to talk about both of those
+
+5
+00:00:24,850 --> 00:00:29,140
+problems. In this particular video, we're only going to talk about the second one
+
+6
+00:00:29,140 --> 00:00:34,030
+and so we're going to be covering a better ways for compilers to manage temporary
+
+7
+00:00:34,030 --> 00:00:41,030
+values. So the biggest idea which we've already seen is to keep temporaries in the
+
+8
+00:00:42,219 --> 00:00:47,069
+activation record. Now, this is not as efficient as keeping temporaries in
+
+9
+00:00:47,069 --> 00:00:50,670
+registers but that's the subject of a future video, we're not going to talk
+
+10
+00:00:50,670 --> 00:00:56,149
+about that today. What we're going to talk about is improving the language we manage
+
+11
+00:00:56,149 --> 00:00:59,409
+temporaries that happened to be in the activation record for whatever reasons. So
+
+12
+00:00:59,409 --> 00:01:02,979
+why, it doesn't matter why we want them to be into activation record, but given that
+
+13
+00:01:02,979 --> 00:01:07,260
+it's there, that's the most efficient code that we can generate And, the improvement
+
+14
+00:01:07,260 --> 00:01:12,960
+that we're going to make Is have the co-generator assign a fixed location In
+
+15
+00:01:12,960 --> 00:01:16,870
+the activation record for each temporaries. We're going to pre-allocate
+
+16
+00:01:16,870 --> 00:01:22,150
+memory or a spot in the activation record for each temporary and then we will be
+
+17
+00:01:22,150 --> 00:01:27,130
+able to save and restore the temporary without having to do the stack pointer
+
+18
+00:01:27,130 --> 00:01:33,460
+manipulations. So, let's take a look at the [inaudible] program for a simple
+
+19
+00:01:33,460 --> 00:01:37,740
+programming language. Here is the Fibonacci function again and let me change
+
+20
+00:01:37,740 --> 00:01:42,680
+colors to something that says more contrast and let's think about how many
+
+21
+00:01:42,680 --> 00:01:48,520
+temporaries we need to evaluate this functions. So, this function body when it
+
+22
+00:01:48,520 --> 00:01:52,909
+executes we'll need a certain number of temporaries and if we know how many
+
+23
+00:01:52,909 --> 00:01:57,570
+temporaries that needs in advance then we could allocate the space for those in the
+
+24
+00:01:57,570 --> 00:02:01,770
+activation record rather having to do push and pop, pushing and popping from the
+
+25
+00:02:01,770 --> 00:02:07,780
+stack at runtime. So, let's take a look and if then else is going t o involve a
+
+26
+00:02:07,780 --> 00:02:11,480
+temporary because it always do this predicate comparison here, we're going to
+
+27
+00:02:11,480 --> 00:02:15,280
+have to evaluate the, the first argument to the predicate and then save the result
+
+28
+00:02:15,280 --> 00:02:19,730
+of that while we evaluate the second argument to the predicate. So this one
+
+29
+00:02:19,730 --> 00:02:24,049
+involve one temporary, we'll need one temporary for that predicate. Similarly
+
+30
+00:02:24,049 --> 00:02:27,950
+for this predicate, to evaluate it since it's a two argument operation in
+
+31
+00:02:27,950 --> 00:02:34,400
+comparison, we'll also need one temporary for that. 1010. There's this expression
+
+32
+00:02:34,400 --> 00:02:37,269
+over here which is kind of complicated. How many temporaries will we need for
+
+33
+00:02:37,269 --> 00:02:43,180
+these? Well, remember how this works. So, evaluate the first expression and then we
+
+34
+00:02:43,180 --> 00:02:47,730
+save the results of that so this will require one temporary for the result of
+
+35
+00:02:47,730 --> 00:02:52,290
+the called fib going to have to be saved and only evaluate the plus And while we
+
+36
+00:02:52,290 --> 00:02:57,430
+are evaluating the call, the fib though is actually, before we evaluate to call the
+
+37
+00:02:57,430 --> 00:03:01,790
+fib, we have to evaluate the argument of fib and that involve the subtractions. We
+
+38
+00:03:01,790 --> 00:03:08,680
+also need one temporary here for the subtraction. Okay And now we have about
+
+39
+00:03:08,680 --> 00:03:15,680
+the second side of the, this edition here. Well this also involves a subtraction.
+
+40
+00:03:18,669 --> 00:03:24,169
+Okay So, we got to have one temporary here to hold on to the value x while we're
+
+41
+00:03:24,169 --> 00:03:29,019
+evaluating the minus to compute the value of the argument before we call
+
+42
+00:03:29,019 --> 00:03:35,049
+[inaudible]. Okay? So how many temporaries do we need in total? While we need one
+
+43
+00:03:35,049 --> 00:03:39,779
+here for the predicate, but notice that once the predicate is decided, once we
+
+44
+00:03:39,779 --> 00:03:43,260
+know the answer to whether this predicate is true or false, we don't need that
+
+45
+00:03:43,260 --> 00:03:48,749
+temporary anymore. So in fact, that temporary can be reclaimed; we don't need
+
+46
+00:03:48,749 --> 00:03:53,569
+the space for that temporary anymore by the time we get to the false branch. And
+
+47
+00:03:53,569 --> 00:03:56,939
+again, once this predicate is evaluated, we don't need the space for that temporary
+
+48
+00:03:56,939 --> 00:04:02,269
+anymore, okay? So now we're down to the plus. The first thing that happens is we
+
+49
+00:04:02,269 --> 00:04:06,680
+evaluate the argument to this first call the fib. Once that's evaluated, we don't
+
+50
+00:04:06,680 --> 00:04:12,090
+need the temporary for it anymore. Now the results of fib has to be saved somewhere
+
+51
+00:04:12,090 --> 00:04:16,949
+while we do the plus, okay? And then we'r e going to have to evaluate the argument
+
+52
+00:04:16,949 --> 00:04:22,390
+to the second call of fib and then notice that this happens while we still need this
+
+53
+00:04:22,390 --> 00:04:28,620
+temporary here so in fact, we need both of these temporaries at the same time. Okay
+
+54
+00:04:28,620 --> 00:04:31,230
+because while we're evaluating this argument, the second call of fib, we still
+
+55
+00:04:31,230 --> 00:04:35,950
+need to be holding on to the first argument to the plus. And so in fact this
+
+56
+00:04:35,950 --> 00:04:42,680
+particular function can be evaluated with just two temporaries. So all the space we
+
+57
+00:04:42,680 --> 00:04:49,680
+need to compute the value of this function body. So in general, we can define a
+
+58
+00:04:51,560 --> 00:04:58,560
+function nt of e that computes a number of temporaries  needed to evaluate e1 + e2.
+
+59
+00:05:04,400 --> 00:05:09,100
+So, that's going to need at least as many temporaries as e1. Okay, so if we need a
+
+60
+00:05:09,100 --> 00:05:13,420
+number of temporary's k to evaluate e1, let's have at least k temporaries to
+
+61
+00:05:13,420 --> 00:05:17,390
+evaluate the whole expression And then, we'll also need at least as many
+
+62
+00:05:17,390 --> 00:05:22,230
+temporaries as it's needed to evaluate the two+1 because we have to hold on to the
+
+63
+00:05:22,230 --> 00:05:27,880
+value of e2 while we are evaluating so we have to hold on the value of e1 while
+
+64
+00:05:27,880 --> 00:05:34,710
+we're evaluating the two. Okay And it's going to be the maximum. Over these two so
+
+65
+00:05:34,710 --> 00:05:38,560
+it'll be the maximum number with between the maximum number of temporaries need to
+
+66
+00:05:38,560 --> 00:05:43,230
+evaluate a one and one + the number of temporaries to evaluate two. That would be
+
+67
+00:05:43,230 --> 00:05:46,640
+the total number of temporaries, the minimum number of temporaries needed to
+
+68
+00:05:46,640 --> 00:05:53,640
+evaluate e1 + e2 And the reason is a max instead of a sum. Is that once we've
+
+69
+00:05:54,740 --> 00:06:00,960
+evaluate e1 we don't need any of the space that was used to evaluate e1 anymore. All
+
+70
+00:06:00,960 --> 00:06:04,200
+those temporaries are done. All we need is the answer. We don't need the immediate
+
+71
+00:06:04,200 --> 00:06:08,640
+results and that means that the temporaries that were used to evaluate e1
+
+72
+00:06:08,640 --> 00:06:15,640
+can be reused to evaluate e2. So, generalizing from that one example, here
+
+73
+00:06:16,870 --> 00:06:22,020
+is the system of equations that subscribes the number of temporaries needed to
+
+74
+00:06:22,020 --> 00:06:26,950
+evaluate every kind of expression in our little language. So, let's take a look.
+
+75
+00:06:26,950 --> 00:06:31,920
+So, we already talked about e1+e2 is just the max of over the number or temporaries
+
+76
+00:06:31,920 --> 00:06:37,550
+to value of e1 and one + number of temporaries to value of e2. So, e1-e2 is
+
+77
+00:06:37,550 --> 00:06:41,250
+exactly the same thing because the same structure is a different computational
+
+78
+00:06:41,250 --> 00:06:45,750
+operation but is a binary operation and we have to save the value of e1 while
+
+79
+00:06:45,750 --> 00:06:52,750
+evaluated e2. So, it's the same formula. [inaudible] Now for if and else well what
+
+80
+00:06:53,530 --> 00:06:57,920
+do we need? We need one, I'm sorry we need, it's going to max again. It's going
+
+81
+00:06:57,920 --> 00:07:04,920
+to be max over some number of different quantities. How many temporaries might we
+
+82
+00:07:05,090 --> 00:07:09,630
+need? Well, we might need as many temporaries or as needed to evaluate the
+
+83
+00:07:09,630 --> 00:07:12,770
+value of e1 and we certainly need at least as many, alright. So, if you want to take
+
+84
+00:07:12,770 --> 00:07:16,710
+a certain number of temporaries, the whole f and l is going to require at least as
+
+85
+00:07:16,710 --> 00:07:21,060
+many temporaries. Now of course, once e1 is done evaluating, we don't need its
+
+86
+00:07:21,060 --> 00:07:26,250
+temporaries anymore. And, and we can evaluate e2, okay. And while we are
+
+87
+00:07:26,250 --> 00:07:30,310
+evaluating e2, we have to hold on. To the results of e1, that's where the one plus
+
+88
+00:07:30,310 --> 00:07:34,770
+comes from. So, to that, while we're evaluating e2, we need one plus the number
+
+89
+00:07:34,770 --> 00:07:39,730
+of temporaries to evaluating two to hold all the temporaries of the computation.
+
+90
+00:07:39,730 --> 00:07:42,170
+And then once the predicate is done, we don't need any of those temporaries
+
+91
+00:07:42,170 --> 00:07:47,500
+anymore at all ad we're going to evaluate either e3 or e4. And so then, we just need
+
+92
+00:07:47,500 --> 00:07:52,020
+however many temporaries each of those requires and whatever the maximum is over
+
+93
+00:07:52,020 --> 00:07:56,230
+these four quantities, that's the minimum number of temporaries we can get away with
+
+94
+00:07:56,230 --> 00:08:03,230
+to evaluate the entire if then else. Let's take a look at a function call. So that
+
+95
+00:08:03,570 --> 00:08:08,980
+the space needed for the function call is number of temporaries, the max over the
+
+96
+00:08:08,980 --> 00:08:14,090
+number of temporaries to evaluate anyone of the arguments and this is actually an
+
+97
+00:08:14,090 --> 00:08:20,340
+interesting case because notice. That we don't need, we don't have anywhere in this
+
+98
+00:08:20,340 --> 00:08:25,710
+formula space for the results for the e1 through en Of course once we've evaluated
+
+99
+00:08:25,710 --> 00:08:31,650
+the e1 then we need to save it somewhere and so you would think that we might see
+
+100
+00:08:31,650 --> 00:08:36,260
+some numbers in here representing the temporary space needed to hold on to the
+
+101
+00:08:36,260 --> 00:08:39,950
+results of the evaluating these expressions. And the reason that we don't
+
+102
+00:08:39,950 --> 00:08:44,960
+have that in here is that. Even though those values are saved, they are indeed
+
+103
+00:08:44,960 --> 00:08:49,390
+saved; they're not saved in the current activation record The space where the
+
+104
+00:08:49,390 --> 00:08:55,900
+results of e1 and the results of all, any of the arguments. Yeah, again, is saved in
+
+105
+00:08:55,900 --> 00:09:01,420
+the new activation record that we're building And so, the space for the, the
+
+106
+00:09:01,420 --> 00:09:05,260
+results of e1 through en is that those values are stored in new activation record
+
+107
+00:09:05,260 --> 00:09:08,730
+and that storage of current activation record and we're trying to compute the
+
+108
+00:09:08,730 --> 00:09:14,810
+number of temporaries needed to evaluate inside of the current activation And then
+
+109
+00:09:14,810 --> 00:09:18,800
+for integer, that doesn't take any space at all to require any temporaries I mean.
+
+110
+00:09:18,800 --> 00:09:23,920
+So there's zero temporaries required for that and also for a variable reference so
+
+111
+00:09:23,920 --> 00:09:30,190
+it requires no temporaries. So now let's go through our example and work out
+
+112
+00:09:30,190 --> 00:09:37,190
+systematically using the equations. How many temporaries we will need? Okay? So,
+
+113
+00:09:37,310 --> 00:09:44,310
+here for this if then else, remember it was going to be the max over the number
+
+114
+00:09:44,380 --> 00:09:51,090
+required to evaluate e1, well that zero. One + the number to evaluate e2 which is
+
+115
+00:09:51,090 --> 00:09:55,800
+the second expression in the predicate so that would be one, because the number one
+
+116
+00:09:55,800 --> 00:10:02,590
+requires zero temporaries and the one, the we have one hold on to x, all right? And
+
+117
+00:10:02,590 --> 00:10:09,590
+then max over the branches. So, to evaluate zero requires Zero temporaries
+
+118
+00:10:09,990 --> 00:10:16,260
+and now. We have to compute. The number required here. Okay so once again to
+
+119
+00:10:16,260 --> 00:10:22,100
+evaluate the first expression if and else requires zero temporaries to evaluate the
+
+120
+00:10:22,100 --> 00:10:29,100
+second one we require one. One + the number required, one + zero to evaluate
+
+121
+00:10:29,390 --> 00:10:35,350
+that constant we got zero temporaries and now for the last expression how many will
+
+122
+00:10:35,350 --> 00:10:42,350
+this one will require. Well this is going to require zero for this guy. One for the
+
+123
+00:10:44,290 --> 00:10:50,760
+second argument so to evaluate fib is going to require one temporary, okay and
+
+124
+00:10:50,760 --> 00:10:57,760
+then it's going to be one plus over here. We have to hold on to the results there.
+
+125
+00:10:58,190 --> 00:11:03,190
+The value of x - two so how much that going to require? That is going to require
+
+126
+00:11:03,190 --> 00:11:09,670
+the max of zero and one + zero okay so this would be one alright so we have over
+
+127
+00:11:09,670 --> 00:11:16,670
+here we have one + one = two okay and now we're taking the max over two and one. So
+
+128
+00:11:19,360 --> 00:11:25,180
+that's two, okay? And this is the last expression in the, our if and else. So
+
+129
+00:11:25,180 --> 00:11:29,680
+clearly, this if then else here will require two temporaries okay? Because the
+
+130
+00:11:29,680 --> 00:11:34,029
+max over the number required for either part of the predicate, the then branch and
+
+131
+00:11:34,029 --> 00:11:40,180
+the else branch And now, this whole expression. Requires two temporaries and
+
+132
+00:11:40,180 --> 00:11:44,540
+that'll be the max of the four components of the outer if then else And so then for,
+
+133
+00:11:44,540 --> 00:11:51,540
+for the entire expression we get two temporaries. Once it computed the number
+
+134
+00:11:56,770 --> 00:12:00,430
+of temporaries required to evaluate the function value, we can add that much space
+
+135
+00:12:00,430 --> 00:12:04,300
+to the activation record. So, now our activation record is going to require two
+
+136
+00:12:04,300 --> 00:12:10,210
++ n + nt (e) elements And so, the two of course are for the return address for the
+
+137
+00:12:10,210 --> 00:12:14,770
+frame pointer. The n is for the n argument of the function And then, the rest of it
+
+138
+00:12:14,770 --> 00:12:20,800
+is just the space required for the temporaries And now we can talk about how
+
+139
+00:12:20,800 --> 00:12:24,430
+we're going to layout the activation record. We'll leave the first part of it
+
+140
+00:12:24,430 --> 00:12:29,310
+the same, so everything up to the return address is laid out just before. First the
+
+141
+00:12:29,310 --> 00:12:34,779
+color string pointer then the and arguments in reverse order, and then the
+
+142
+00:12:34,779 --> 00:12:41,410
+return address. And then after the return address come the and locations or the
+
+143
+00:12:41,410 --> 00:12:44,850
+nt(e), excuse me, locations for the temporaries.

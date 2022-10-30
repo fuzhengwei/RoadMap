@@ -1,0 +1,115 @@
+0
+00:00:01,660 --> 00:00:04,230
+To wrap up this video, here are a few comments on
+
+1
+00:00:04,230 --> 00:00:09,440
+implementing type checking in the presence of self-type. First of all, the extended
+
+2
+00:00:09,440 --> 00:00:15,030
+subtyping and least upper bound operations can do a lot of the work. If you extend
+
+3
+00:00:15,030 --> 00:00:18,470
+subtyping and least upper bound the way that we did then a lot of the rules don't
+
+4
+00:00:18,470 --> 00:00:22,000
+have to change and for the most part, you don't have to do anything special for self
+
+5
+00:00:22,000 --> 00:00:27,830
+type. Self-type can only be used in a very few places in the language and it's up to
+
+6
+00:00:27,830 --> 00:00:30,699
+you to check that it isn't used anywhere else. Those restrictions have to be
+
+7
+00:00:30,699 --> 00:00:36,940
+followed carefully. And finally, for the most part, a use of self-type always
+
+8
+00:00:36,940 --> 00:00:41,410
+refers to any sub-type of the current class. There is one exception to this in
+
+9
+00:00:41,410 --> 00:00:46,649
+the type checking of dispatch. In dispatch there's a method look up where we look up
+
+10
+00:00:46,649 --> 00:00:53,649
+in some class C, a method F. And it's possible that, that method will have a
+
+11
+00:00:53,690 --> 00:01:00,340
+return type self-type. And this class here c, may have nothing to do with the current
+
+12
+00:01:00,340 --> 00:01:04,059
+class. We are dispatching here to a different class and whatever our current
+
+13
+00:01:04,059 --> 00:01:09,110
+class is, this particular self type refers self type in That class, the class in
+
+14
+00:01:09,110 --> 00:01:12,090
+which we're doing the look up, not whatever class in which we're doing type
+
+15
+00:01:12,090 --> 00:01:16,320
+checking. And fortunately we never need to compare that self-type to any self -type
+
+16
+00:01:16,320 --> 00:01:21,120
+in the current class so there's no cross talk between different kinds of self-type.
+
+17
+00:01:21,120 --> 00:01:26,600
+And again this is the only place in the type checking rules where you look at a
+
+18
+00:01:26,600 --> 00:01:33,600
+self-type that is not one in the current class. To summarize our discussion of
+
+19
+00:01:35,290 --> 00:01:39,080
+self-type, self-type is still a research idea. It adds more expressiveness to the
+
+20
+00:01:39,080 --> 00:01:42,520
+type system, and I think that's, yeah, easy to see, but you won't find self type
+
+21
+00:01:42,520 --> 00:01:47,890
+in mainstream languages. Self-type by itself I think is not so important, except
+
+22
+00:01:47,890 --> 00:01:51,560
+for the project that you're going to implement. Rather, the reason for
+
+23
+00:01:51,560 --> 00:01:55,440
+including self-type is to illustrate that type checking can be quite subtle. It's
+
+24
+00:01:55,440 --> 00:02:00,180
+not all INT plus INT equals INT. There are actually are fairly sophisticated things
+
+25
+00:02:00,180 --> 00:02:05,880
+and fairly sophisticated reasoning that goes on inside type checking In practice,
+
+26
+00:02:05,880 --> 00:02:09,780
+of course, there needs to be a balance between the complexity of the type-system
+
+27
+00:02:09,780 --> 00:02:14,310
+and its expressiveness. So more complex type-systems are harder to learn and
+
+28
+00:02:14,310 --> 00:02:18,770
+they're harder to use effectively, but they also allow you to write more programs.

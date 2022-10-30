@@ -1,0 +1,684 @@
+0
+00:00:04,240 --> 00:00:07,879
+欢迎回来, 在这个视频中我们将讨论有限自动机
+Welcome back. In this video we're going to talk about finite automata
+
+1
+00:00:07,879 --> 00:00:11,920
+我们将在以后的视频中看到这是一个很好的实现模型
+which we'll see in future videos are a good implementation model for regular
+
+2
+00:00:11,920 --> 00:00:18,920
+在前几个视频中, 我们一直在讨论正则表达式
+expressions. So in the last few videos, we've been talking about regular
+
+3
+00:00:19,680 --> 00:00:23,400
+我们用作词汇的规范语言的表达式
+expressions which we use as the specification language for lexical
+
+4
+00:00:23,400 --> 00:00:27,939
+分析, 在这个视频中, 我们要开始一些新的东西, 我们要讲的是
+analysis. And, in this video we're gonna start something new. We're gonna talking
+
+5
+00:00:27,939 --> 00:00:34,939
+关于有限自动机它是作为一种实现机制的便利
+about Finite Automata which are the For a convenience as an implementation mechanism
+
+6
+00:00:35,540 --> 00:00:39,640
+对于正则表达式, 所以正则表达式和有限自动机是非常重要的
+for regular expressions. And so regular expressions and finite automaton are very
+
+7
+00:00:39,640 --> 00:00:44,909
+密切相关, 结果是它们可以指定完全相同的语言
+close related. It turns out that they can specify exactly the same languages called
+
+8
+00:00:44,909 --> 00:00:49,019
+常规语言, 我们不会在这门课上证明但是我们一定会
+the regular languages. We won't prove that in this course but we'll certainly make
+
+9
+00:00:49,019 --> 00:00:54,229
+利用这个事实, 那么, 沿着, 什么是有限自动机？好, 这是
+use of that fact. So, moving right along, What is a finite automaton? Well, here is
+
+10
+00:00:54,229 --> 00:00:59,729
+一个典型的定义, 你们可能在自动机理论教科书中看到。
+a typical definition as you might see in a automaton theory textbook. Finite
+
+11
+00:00:59,729 --> 00:01:03,580
+自动机由一个输入字母表组成, 因此, 它是一组字符
+automaton consists of an input alphabet. So, it's a set of characters that it can
+
+12
+00:01:03,580 --> 00:01:10,580
+阅读, 它有有限的状态, 我们应该强调一下, 这是
+read. It has this finite set of states. We should probably emphasize that. This is
+
+13
+00:01:10,619 --> 00:01:15,130
+使它成为有限自动机的原因是它有一些状态可以是
+what makes it a finite automaton is that it has some set of states that it can be
+
+14
+00:01:15,130 --> 00:01:19,979
+其中一个状态是特殊的, 它被指定为起始状态。
+in. One of those states is special and it's designated as the start state. Some
+
+15
+00:01:19,979 --> 00:01:25,090
+国家的子集是接受状态所以这些是状态, 但是, 嗯, 
+subset of the states are accepting states so these are the states that. But, well,
+
+16
+00:01:25,090 --> 00:01:31,469
+我们会在一分钟内发现更多, 但直觉上, 如果自动机终止, 
+we'll just find that more in a minute but intuitively, if the automaton terminates,
+
+17
+00:01:31,469 --> 00:01:34,619
+在读取了其中一个输入之后, 它接受输入。
+after reading some input on one of these takes that it accepts the input.
+
+18
+00:01:34,619 --> 00:01:39,039
+否则, 它会拒绝输入最终自动机有一些
+Otherwise, it rejects the input and finally the automaton has some set of
+
+19
+00:01:39,039 --> 00:01:42,899
+状态转换在一个状态, 它们可以读取一些输入然后切换到另一个状态
+state transitions that is in one state, they can read some input and go to another
+
+20
+00:01:42,899 --> 00:01:49,729
+状态, 让我们看一下更详细的情况在有限的情况下
+state. So let's look at that little more detail so a transition in a finite
+
+21
+00:01:49,729 --> 00:01:54,069
+自动机, 如果我在这里, 在这个例子中我写了一个特定的过渡
+automaton. If I'm in, in this case I've written out one particular transition
+
+22
+00:01:54,069 --> 00:01:59,560
+这里, 我们在状态1, 我们读取输入A然后, 自动机可以移动到
+here. We're in state one and we read the input A then, the automaton can move to
+
+23
+00:01:59,560 --> 00:02:04,619
+状态2, 好的, 对于自动机可能有很多不同的转换
+state two, okay. And there could be lots of different transitions for the automaton
+
+24
+00:02:04,619 --> 00:02:08,910
+从不同的状态和不同的输入, 它的阅读方式如下, 如果我们
+from different states and different inputs and its read the following way. If we're
+
+25
+00:02:08,910 --> 00:02:15,910
+在状态1的输入A中, 我们会进入状态2, 如果自动机结束
+in state one on input A , we would go to state two. And, if the automaton ends in
+
+26
+00:02:17,060 --> 00:02:20,620
+一个接受状态当它到达输入端时它将会做什么
+an accepting state when it gets to the end of the input that is going to do what's
+
+27
+00:02:20,620 --> 00:02:26,030
+叫做接受字符串意思是它会说yes, 那个字符串在
+called accepting the string Meaning that it will say yes, That string was in the
+
+28
+00:02:26,030 --> 00:02:31,730
+这台机器的语言, 从直观上讲, 自动机从开始状态开始
+language of this machine. So intuitively the automaton starts in the start state and
+
+29
+00:02:31,730 --> 00:02:37,330
+它不断地读取输入一个输入字符一次进行转换, 所以
+it repeatedly reads inputs one input character at a time makes a transition. So
+
+30
+00:02:37,330 --> 00:02:41,060
+它会根据它的当前状态来判断它是怎样的
+it'll see what kind of transition it can make out of its current state based on
+
+31
+00:02:41,060 --> 00:02:45,820
+这个输入到另一个状态如果它已经完成了输入它就在其中一个
+that input to another state and if that's done ringing the input it's in one of the
+
+32
+00:02:45,820 --> 00:02:52,120
+最终的状态是它会接受的, 否则就会拒绝输入。
+final states that it will accept. Otherwise is going to reject the input.
+
+33
+00:02:52,120 --> 00:02:59,120
+现在, 它拒绝的一种情况是, 如果它在一个状态中终止
+Now, one of the situations in which it rejects, well, if it terminates In a state
+
+34
+00:03:00,450 --> 00:03:07,450
+S, 这不是最终的或接受的状态, 对吧？所以这就结束了
+S, that's no one of the final or accepting states, okay? So that ends in any other
+
+35
+00:03:08,760 --> 00:03:13,150
+状态除了一个接受状态, 它会拒绝, 如果机器
+state besides one of the accepting states and it's going to reject. If the machine
+
+36
+00:03:13,150 --> 00:03:20,150
+被卡住了, 这意味着它发现自己处于一种状态并且没有这种转变
+gets stuck, Meaning it finds itself in a state and there's no transition of that
+
+37
+00:03:20,480 --> 00:03:25,010
+输入的状态, 特别地, 假设在某种状态下, 作为一个新闻
+state on the input. So in particular, let's say that in some state as a news and
+
+38
+00:03:25,010 --> 00:03:29,360
+输入是A, 没有过渡, 每个状态没有指定的转换
+the input is A, and there's no transition. There's no transition specified per state
+
+39
+00:03:29,360 --> 00:03:33,890
+作为输入A所以机器不能移动任何地方它会被卡住, 这也是
+as an input A so the machine can't move anywhere and it get stuck and that's also
+
+40
+00:03:33,890 --> 00:03:39,210
+一个拒绝的状态, 所以在这两种情况下, 如果你能到达
+a rejecting state. And so in these two situations, if, if you either get to the
+
+41
+00:03:39,210 --> 00:03:44,080
+输入的结束, 它不是在最终状态或者, 如果它永远不会到达
+end of the input and it's not in a final state or. If it never reaches the end of
+
+42
+00:03:44,080 --> 00:03:47,860
+输入, 因为它可以卡住, 这两种情况都拒绝了字符串。
+the input because it can stuck and both of those cases it rejects the string. That
+
+43
+00:03:47,860 --> 00:03:54,860
+字符串不是在有限自动机的语言中, 现在有一个
+string is not in the language of the finite automaton. Now there's an
+
+44
+00:03:55,600 --> 00:03:59,720
+有限自动机的替代符号我认为更直观
+alternative notation for Finite Automata that I think is more intuitive for
+
+45
+00:03:59,720 --> 00:04:05,130
+举个例子, 我们要强调的是写这个坐骑的方法
+examples and so we're going to emphasize that way of writing the mount. In this
+
+46
+00:04:05,130 --> 00:04:10,870
+符号a状态被表示为一个已知的图形, 它画出一个大圆。
+notation a state is represented as a known graph which just draws a big circle. The
+
+47
+00:04:10,870 --> 00:04:17,530
+起始状态被表示为一个节点, 它有一个边或一个箭头, 没有
+start state is represented as a node that has an edge or an arrow into it with no
+
+48
+00:04:17,529 --> 00:04:24,139
+源, 这是向节点的过渡但没有源节点
+source. So, this is a transition into the node but no source node that it comes from
+
+49
+00:04:24,139 --> 00:04:29,120
+这就表示了唯一的开始状态, 一个接受状态被绘制成一个节点的智慧
+and that indicates the unique start state. An accepting state is drawn as a node wit
+
+50
+00:04:29,120 --> 00:04:33,699
+像这样的双圈, 最后一个过渡被画成一条边
+h just double circles like this. And finally a transition is drawn as an edge
+
+51
+00:04:33,699 --> 00:04:38,819
+在图的两个节点之间, 这是这个状态下的时间
+between two nodes of the graph. So with this as the time in this state that I'm
+
+52
+00:04:38,819 --> 00:04:44,580
+在蓝色圈中, 我读了输入a然后我就可以移动到这个状态了
+circling in blue and I read the input a well then I can move to this state at, at
+
+53
+00:04:44,580 --> 00:04:51,580
+箭头的尾部, 现在, 我们来做一个简单的例子, 让我们试着把它写出来
+the tail of the arrow. So now, let's do a simple example. Let's try to write up the
+
+54
+00:04:53,229 --> 00:05:00,229
+只接受单个数字1的自动机, 所以我们只需要启动状态。
+automaton that accepts only the single digit one. So all we need is start state.
+
+55
+00:05:01,080 --> 00:05:07,249
+也可能想要一个接受的状态现在的问题是
+And will probably want an accepting state as well and now the questions is what do
+
+56
+00:05:07,249 --> 00:05:10,560
+我们把两者放在两者之间？好吧, 这里会有某种过渡
+we put in between the two? Well, there would be some kind of transition here and
+
+57
+00:05:10,560 --> 00:05:16,050
+这是一个很好的猜测, 如果机器读取了这个转换, 我们应该进行这个转换。
+it's a good guess that we should take that transition if the machine reads the one.
+
+58
+00:05:16,050 --> 00:05:21,319
+现在让我花点时间来谈谈机器是如何执行的
+Now let me take a moment here to talk about how the machine executes so let's
+
+59
+00:05:21,319 --> 00:05:28,319
+标记这些状态, 我们称这个状态为a我们称这个状态为b, 好的
+label these states. Let's call this state a and let's call this state b, okay. So
+
+60
+00:05:29,629 --> 00:05:35,889
+机器会有一些输入, 好的, 我们可以把输入写出来
+the machine will have some input. Okay, and we can write that input out will be
+
+61
+00:05:35,889 --> 00:05:39,099
+这里, 我们说, 我们有单个字符1, 它从一些开始
+here. So let's just say, we have the single character one and it begins in some
+
+62
+00:05:39,099 --> 00:05:43,779
+状态即起始状态, 因此, 机器的一个配置是状态
+state namely the start state. And so, one configuration of the machine is the state
+
+63
+00:05:43,779 --> 00:05:50,779
+它是in和输入, 通常我们会指出它在输入中的位置
+that it is in And the input. And typically we would indicate where it is in the input
+
+64
+00:05:51,729 --> 00:05:56,099
+通过一个指针, 说明它在输入中是什么位置, 重要的是
+by just a pointers saying what position it is in the input. And, the important thing
+
+65
+00:05:56,099 --> 00:06:01,969
+要知道输入, 听不清输入指针总是前进的, 所以, 当
+to know about input in [inaudible] the input pointer always advances. So, when
+
+66
+00:06:01,969 --> 00:06:06,499
+我们, 或者它只是在我们读取字符输入时, 输入指针移动
+we, or it only advances so when we read a character input, the input pointer moves
+
+67
+00:06:06,499 --> 00:06:12,469
+对右边, 它永远不会后退, 好的, 从a状态开始, 我们有一个规则。
+to the right and it never moves back. Alright, So from state a, we have a rule.
+
+68
+00:06:12,469 --> 00:06:16,479
+我们可以看到, 我们在状态a, 下一个输入字符是1, 这允许
+We can see that we're in state a. The next input character is a one and that allows
+
+69
+00:06:16,479 --> 00:06:22,870
+我们要过渡到状态b现在b在b状态下, 在哪里
+us to take a transition to state b and so now where b in state b and where as our
+
+70
+00:06:22,870 --> 00:06:25,979
+输入点很好, 它超出了输入的末端表明我们已经结束了
+input point well it's beyond the end of the input indicating we are at the end of
+
+71
+00:06:25,979 --> 00:06:32,789
+输入, 现在这是。我们处于一个接受状态, 我们通过了
+the input. And so now this is. We are in an accepting state and we pass the end of
+
+72
+00:06:32,789 --> 00:06:39,789
+输入, 所以我们接受, 好吧, 我们再执行一次, 我们开始
+the input and so we accept. Okay? So let's, do another execution. So we start
+
+73
+00:06:42,059 --> 00:06:49,059
+在状态a中, 让我们输入字符串0, 好的, 我想要画出来
+in state a and let's take as our input the string zero. Okay. And I'd like to draw
+
+74
+00:06:50,659 --> 00:06:54,599
+这个指针, 实际上我应该在输入之前把它画出来所以我们会把它放在
+the pointer. Actually I should have drawn it before the input so we'll al ways put
+
+75
+00:06:54,599 --> 00:07:00,659
+两个输入元素之间的指针。在本例中, 它仅仅是左边的
+the pointer between two input elements. In this case it's a merely to the left of the
+
+76
+00:07:00,659 --> 00:07:05,509
+一个我们要读的, 在这个例子中我们是读零的所以在状态a中
+one we're about to read. So in this case we're about read zero so in state a. Our
+
+77
+00:07:05,509 --> 00:07:10,759
+输入是零, 我们看一下我们的机器, 我们看到在零上没有过渡。
+input is zero. We look at our machine. We see that there is no transition on zero.
+
+78
+00:07:10,759 --> 00:07:16,129
+好吧, 所以机器就卡住了, 它根本不动, 这个
+All right? And so the machine stays stuck. It doesn't make any move at all and this
+
+79
+00:07:16,129 --> 00:07:21,569
+这是我们的最终配置, 我们可以看到, 我们并没有在输入的末尾
+is our final configuration. And we could see that we're not at the end of the input
+
+80
+00:07:21,569 --> 00:07:28,569
+这是一个拒绝, 在这种情况下机器会拒绝这个字符串
+and so this is a reject. Okay, so in this case the machine rejects that string as
+
+81
+00:07:29,860 --> 00:07:35,949
+不是在机器的语言中, 我们再举一个例子, 假设
+not being in the language of the machine. Let's do one more example. Let's say that
+
+82
+00:07:35,949 --> 00:07:40,819
+我们处于状态, 我们总是从状态a和开始状态开始, 
+we're in state, well we're always beginning in state a and the start state,
+
+83
+00:07:40,819 --> 00:07:47,819
+假设我们输入的是字符串10, 好吗？我们的输入指针是
+and let's say our input this time is the string ten, okay? And our input pointer is
+
+84
+00:07:47,839 --> 00:07:54,839
+好了, 我们在状态a, 输入是1, 所以我们要移动到
+there. All right? So again we're in state a. The input is a one and so we'll move to
+
+85
+00:07:55,520 --> 00:08:00,809
+状态b, 现在输入没有改变, 只是输入点改变了, 但我还是
+state b. And now the input doesn't change. Just the input point changes but I'll just
+
+86
+00:08:00,809 --> 00:08:04,589
+复制输入, 以显示差异, 现在输入指针有
+copy the input over to show the difference. Now the input pointer has
+
+87
+00:08:04,589 --> 00:08:10,389
+因为我们已经读过了输入的一个字符现在我们在另一个状态。
+advanced cuz we've read one character of input and now we're in another state. And
+
+88
+00:08:10,389 --> 00:08:17,080
+现在我们可以看到, 我们在状态b下, 我们的下一个输入是零, 没有
+now we can see that we're in state b. Our next input is zero and there is no
+
+89
+00:08:17,080 --> 00:08:23,150
+从状态b过渡到0, 所以即使我们处于接受状态b
+transition on zero from state b and so even though we're in an accepting state, b
+
+90
+00:08:23,150 --> 00:08:26,999
+作为最终的状态, 它是一个接受状态我们还没有完全消耗掉
+as a final state, it's one of the accept state and we haven't consumed the entire
+
+91
+00:08:26,999 --> 00:08:32,490
+输入, 所以这台机器也会拒绝这个字符串所以这也是a
+input. And so this, The machine also rejects this string so this is also a
+
+92
+00:08:32,490 --> 00:08:39,490
+拒绝, 一般来说, 我们可以讨论一种有限自动机的语言
+reject. And in general we can talk about the language. Of a finite automata that is
+
+93
+00:08:43,360 --> 00:08:50,360
+等于一组被接受的字符串, 对吧？所以有限的语言
+equal to the set of...accepted strings. Okay? So the language of a finite
+
+94
+00:08:57,570 --> 00:09:00,320
+自动机, 当我说到有限自动机的语言时, 我指的是
+automaton, when I'm talking about the language of a finite automaton, I mean the
+
+95
+00:09:00,320 --> 00:09:06,959
+自动机接受的一组字符串, 现在我们来做一个更复杂的例子。
+set of strings that the automaton accepts. So now let's do a more complex example.
+
+96
+00:09:06,959 --> 00:09:11,779
+让我们试着写出一个自动机来接受任意数量的一个
+Let's try to write out an automaton that accepts any number of one followed by a
+
+97
+00:09:11,779 --> 00:09:18,779
+单零, 再一次需要一个启动状态我们还需要一个final
+single zero. So once again well need a start state and we'll also need a final
+
+98
+00:09:19,250 --> 00:09:25,490
+状态, 现在我们先来考虑最短的字符串是什么
+state and now let's start by thinking about what's the shortest string is that's
+
+99
+00:09:25,490 --> 00:09:30,690
+在这台机器的语言中, 在这种情况下, 我们知道它必须以a结尾
+in the language of this machine. So in this case, we know it has to end in a
+
+100
+00:09:30,690 --> 00:09:35,630
+是零, 所以0肯定是, 零跃迁必须是最后一个
+singl e zero. So a zero definitely has to be, a zero transition has to be the last
+
+101
+00:09:35,630 --> 00:09:41,350
+移动, 在这个0之前可以有任意数量的什么？在一个特定的地方
+move and before that zero can come any number of what? In a particular there
+
+102
+00:09:41,350 --> 00:09:48,180
+可能不是1, 所以这台机器的一个转变是从开始状态输入到输入
+could be no 1's. So one transition in this machine is that from start state on input
+
+103
+00:09:48,180 --> 00:09:52,649
+零, 我们可以进入最终状态因为单个字符串包含
+zero we can definitely go to the final state because the single string consisting
+
+104
+00:09:52,649 --> 00:09:56,220
+在一个零的情况下不是这台机器的语言, 现在唯一的问题是
+of a single zero isn't the language of this machine. And now the only question is
+
+105
+00:09:56,220 --> 00:10:01,310
+我们如何编码任意数量的1可以继续为0呢？好吧, 有
+how do we encode the fact that any number of 1's can proceed to zero? Well, there is
+
+106
+00:10:01,310 --> 00:10:07,569
+这是一种简单的方法, 我们可以在开始状态下添加一个, 听不清
+an easy way to do that. We can just add a [inaudible] by the start state. And take
+
+107
+00:10:07,569 --> 00:10:11,190
+这个转变, 如果我们读一下, 这意味着什么？这意味着我们将
+that transition if we read at one. And what does this mean? This means that we'll
+
+108
+00:10:11,190 --> 00:10:14,519
+停留在状态, 状态越久我们读的是1, 当我们阅读的时候
+stay in the state, state as longer are we're reading 1's and as soon as we read
+
+109
+00:10:14,519 --> 00:10:18,639
+0, 我们将移到最终状态因为这必须是最后的状态
+zero, we'll move to the final state because that has to be the end of the
+
+110
+00:10:18,639 --> 00:10:25,139
+如果机器要接受它, 我们来做几个例子
+string if the machine is going to accept it. So let's do a couple of examples to
+
+111
+00:10:25,139 --> 00:10:29,440
+让我们相信这是可行的, 我再标记一下这个状态, 这是状态
+convince ourselves that this works. Let me label this state?s again. So this is state
+
+112
+00:10:29,440 --> 00:10:36,440
+a, 这是stat b, 我们写一下状态和输入, 我们从这里开始
+a, and that's stat b. So Let's write out here states and input. So we'll begin in
+
+113
+00:10:41,670 --> 00:10:48,670
+状态a, 让我们输入110, 好的, 我们先来做一个接受的例子
+state a and let's take as input 110, okay. So let's do an accepting case first. All
+
+114
+00:10:50,579 --> 00:10:55,690
+好的, 我们的输入指针从第一个字符的左边开始, 所以, 我们在
+right, So our input pointer begins to the left of the first character. So, we're in
+
+115
+00:10:55,690 --> 00:10:59,540
+状态a在开始状态, 我们读了一个, 说我们应该选a
+state a in start state. We're reading a one and that says we should take a
+
+116
+00:10:59,540 --> 00:11:05,230
+转换使我们回到状态a, 所以, 我们推进输入指针。
+transition that puts us back in state a. And so, we advance the input pointer. And
+
+117
+00:11:05,230 --> 00:11:09,920
+现在我们使用第一个, 再一次, 我们在状态a和下一个输入
+now we consume the first one and, and again we're in state a and the next input
+
+118
+00:11:09,920 --> 00:11:16,110
+是一个, 所以我们要对状态a进行另一个转换, 输入清洁器会
+is a one so we'll make another transition to state a. And the input cleaner will
+
+119
+00:11:16,110 --> 00:11:21,980
+前进, 现在我们在状态a下一个输入是0, 所以我们要
+advance. So now we're in state a and the next input is a zero and so we'll take the
+
+120
+00:11:21,980 --> 00:11:27,709
+转换到b现在在这个配置中, 所以输入指针有
+transition to b and now in this configuration, so the input pointer has
+
+121
+00:11:27,709 --> 00:11:32,759
+到达输入的末端我们处于一个接受状态, 所以机器
+reached the end of the input we're in an accepting state and so the machine
+
+122
+00:11:32,759 --> 00:11:39,759
+接受。110是在这台机器的语言中, 现在我们来举个例子
+accepts. 110 is in the language of this machine. So now let's do an example where
+
+123
+00:11:41,060 --> 00:11:47,829
+我们会拒绝输入, 我们会从a和a开始
+we will reject the input. And what configuration do we begin in and again a
+
+124
+00:11:47,829 --> 00:11:52,480
+一个有限自动机的构型也就是说, 你知道一个点
+configuration for a finite automaton that just means you know a point in the
+
+125
+00:11:52,480 --> 00:11:58,550
+执行it alwa是由一个状态和一个输入指针的位置组成的。
+execution it alwa ys consist of a state and a position of the, the input pointer.
+
+126
+00:11:58,550 --> 00:12:03,949
+所以我们的初始状态是a现在我们来选择弦, 我不知道, 
+So our initial state is a and now let's just choose the string. I don't know,
+
+127
+00:12:03,949 --> 00:12:10,949
+让我们取100, 让我们确认这不是在机器的语言中。
+let's take 100 and let's confirm that this is not in the language of the machine. All
+
+128
+00:12:11,310 --> 00:12:16,819
+好的, 我们从状态a开始, 输入指针在这里, 现在我们读了一个
+right, So we begin in state a and our input pointer is there. Now we read a one
+
+129
+00:12:16,819 --> 00:12:21,350
+这意味着, 你知道, 这是从状态转换为1的状态, 我们待在
+and that means, well, you know. So it's from state a transition of one. We stay in
+
+130
+00:12:21,350 --> 00:12:27,209
+状态a和输入指针前进, 现在我们看到一个0, 从状态a和
+state a and the input pointer advances. And now we see a zero. So from state a and
+
+131
+00:12:27,209 --> 00:12:34,209
+输入零, 我们向状态b过渡, 现在输入点在这里, 现在, 
+input zero, we make a transition to state b. And now the input point is here so now,
+
+132
+00:12:35,449 --> 00:12:41,029
+我们在状态b, 我们有一个0的输入但是没有转换b和
+we're in state b and we have an input of zero but there is no transition the b and
+
+133
+00:12:41,029 --> 00:12:45,829
+0, b根本就没有转变所以机器就卡住了
+zero, there are no transitions out of b at all and so the machine gets stuck, it
+
+134
+00:12:45,829 --> 00:12:49,019
+无法到达输入的en, 尽管我们在接受
+can't get to the en of the input and again, even though we're in an accepting
+
+135
+00:12:49,019 --> 00:12:54,329
+状态, 我们还没有读取整个输入, 所以这意味着机器会拒绝。
+state we haven't read the entire input yet and so that means the machine will reject.
+
+136
+00:12:54,329 --> 00:12:58,480
+所以, 100不是这台机器的语言。
+And so, 100 is not in the language of this machine.

@@ -1,0 +1,759 @@
+0
+00:00:03,419 --> 00:00:08,940
+In this video, we are going to look at the second garbage collection technique, stop
+
+1
+00:00:08,940 --> 00:00:14,540
+and copy. In stop-and-copy garbage collection memory is organized into two
+
+2
+00:00:14,540 --> 00:00:19,359
+areas. We have an old space that's used for allocation and so all of the data that
+
+3
+00:00:19,359 --> 00:00:23,270
+the program is currently using lives in this area called the old space. And then
+
+4
+00:00:23,270 --> 00:00:27,520
+there's a new space which is reserved for the garbage collector. And so, this is not
+
+5
+00:00:27,520 --> 00:00:33,940
+used by the program, it's just for the GC. And so the first decision in stop-and-copy
+
+6
+00:00:33,940 --> 00:00:39,589
+garbage collection is that the program can only use half the space. And there are
+
+7
+00:00:39,589 --> 00:00:43,190
+some techniques more advance techniques, for stop-and-copy garbage collection that
+
+8
+00:00:43,190 --> 00:00:47,729
+allow the program to use more than half the space. So, this isn't as bad as it
+
+9
+00:00:47,729 --> 00:00:51,600
+sounds but fundamentally, a fairly significant fraction of the space has to
+
+10
+00:00:51,600 --> 00:00:56,789
+be reserved for the garbage collector. Now the way allocation works is that there's a
+
+11
+00:00:56,789 --> 00:01:03,170
+heat pointer here in the old space and everything to the left of the heat pointer
+
+12
+00:01:03,170 --> 00:01:06,470
+is currently in use. This is where all the objects have already been allocated in
+
+13
+00:01:06,470 --> 00:01:12,280
+this area that I just shaded here in red. And then when it comes time to allocate a
+
+14
+00:01:12,280 --> 00:01:16,030
+new object, we simply allocate it at the heap pointers. So, the heap pointer will
+
+15
+00:01:16,030 --> 00:01:22,820
+simply bump up and some block of space will be allocated to a, the next object
+
+16
+00:01:22,820 --> 00:01:27,250
+that we want to do. And it will just keep marching through the old space allocating
+
+17
+00:01:27,250 --> 00:01:32,020
+as you allocate more objects. Okay, so allocation just advances the heap pointer
+
+18
+00:01:32,020 --> 00:01:36,280
+so one of the advantages, actually, of stop-and-copy is a very simple and fast
+
+19
+00:01:36,280 --> 00:01:42,549
+allocation strategy. Now eventually, of course, if we allocate over and over
+
+20
+00:01:42,549 --> 00:01:46,060
+again, we're going to fill up the old space and so garbage collection will start
+
+21
+00:01:46,060 --> 00:01:52,189
+GC, will start when the old space is full. And what it's going to do is going to copy
+
+22
+00:01:52,189 --> 00:01:56,289
+all the reachable objects, all the reachable objects from the old space into
+
+23
+00:01:56,289 --> 00:02:00,189
+the new space. And the beauty of this idea is that when you copy the reachable
+
+24
+00:02:00,189 --> 00:02:04,829
+objects, the garbage is left behind. So, you simply pickup all the data that you're
+
+25
+00:02:04,829 --> 00:02:09,140
+using and move it over to the new space and all the junk that you didn't need
+
+26
+00:02:09,139 --> 00:02:14,769
+anymore is left behind in the old space. And then, after you copy stuff to the new
+
+27
+00:02:14,769 --> 00:02:20,290
+space first of all since you left the garbage behind, you're using less space
+
+28
+00:02:20,290 --> 00:02:23,569
+than you did before the collection. So, there's some space available now in the
+
+29
+00:02:23,569 --> 00:02:28,450
+new space for allocating new objects. And then, you simply swap the roles of the old
+
+30
+00:02:28,450 --> 00:02:32,950
+and new space. So, the old and new spaces are reversed what was old becomes the new,
+
+31
+00:02:32,950 --> 00:02:39,920
+and what was new becomes the old, and then the program resumes. So, let's take a look
+
+32
+00:02:39,920 --> 00:02:44,390
+at a quick example here just to get a idea of how this works. Let's say we have our
+
+33
+00:02:44,390 --> 00:02:50,019
+old space over here, this is the old space, and we have one root which is this
+
+34
+00:02:50,019 --> 00:02:54,500
+object A. And so what we're going to do, well we're going to make a copy of all the
+
+35
+00:02:54,500 --> 00:02:58,409
+objects reachable from A. We're gonna move them over to the new space. And what
+
+36
+00:02:58,409 --> 00:03:02,180
+that's going to look like, well, here it is, afterward. But let's trace it out. So,
+
+37
+00:03:02,180 --> 00:03:06,670
+we started A, we follow pointers from A, we can see there's a pointer to C, okay,
+
+38
+00:03:06,670 --> 00:03:11,610
+so C is going to be reachable and there's a pointer to F , okay. And then F points
+
+39
+00:03:11,610 --> 00:03:18,019
+back to A, and that's all the reachable objects so we copy them. And notice when
+
+40
+00:03:18,019 --> 00:03:21,349
+we copy them, we also copy their pointers, and now the pointers have all been
+
+41
+00:03:21,349 --> 00:03:27,989
+changed. So, in the copy of A, it now points to the copy of C, okay. And of
+
+42
+00:03:27,989 --> 00:03:33,040
+course, C will point to the copy of F and there's a little issue here, this line is
+
+43
+00:03:33,040 --> 00:03:39,610
+not in the right place so it should look like that. And then F points back to the
+
+44
+00:03:39,610 --> 00:03:42,819
+copy of A. So, what we know, when the object and move their pointers and we
+
+45
+00:03:42,819 --> 00:03:46,920
+adjust them so that we've really copied the whole graph of objects over to the
+
+46
+00:03:46,920 --> 00:03:51,590
+news space. Now, we're using less space so there's some free space here, okay. And
+
+47
+00:03:51,590 --> 00:03:58,590
+now, this will become the old space. This now our old space and this is now the new
+
+48
+00:03:58,609 --> 00:04:04,219
+space which we will use for the next garbage collection. To summarize the
+
+49
+00:04:04,219 --> 00:04:08,890
+discussi on so far, one of the essential problems in stop-and-copy is to make sure
+
+50
+00:04:08,890 --> 00:04:12,769
+that we find all the reachable objects and we saw this same problem with
+
+51
+00:04:12,769 --> 00:04:16,260
+mark-and-sweep garbage collection. Now, the thing that really distinguishes
+
+52
+00:04:16,260 --> 00:04:20,010
+stop-and-copy is that we're going to copy these objects. So, when we find a
+
+53
+00:04:20,010 --> 00:04:24,850
+reachable object we copy it into the new space. And that means that we have to find
+
+54
+00:04:24,850 --> 00:04:30,100
+and fix all the pointers that point to that object and this is actually not
+
+55
+00:04:30,100 --> 00:04:35,480
+obvious how to do, alright. Cuz when you find an object, of course, you can't see
+
+56
+00:04:35,480 --> 00:04:39,180
+all the pointers that point into that object. So, how are we going to do that?
+
+57
+00:04:39,180 --> 00:04:44,040
+Well, here is an idea. Well, we copy the object, we're going to store in the old
+
+58
+00:04:44,040 --> 00:04:49,330
+version of it, it was called, a forwarding pointer to the new copy. So, let's take a
+
+59
+00:04:49,330 --> 00:04:53,170
+look at what that would how that would, how that looks like. So we have our old
+
+60
+00:04:53,170 --> 00:04:59,230
+space, we have our new space. And let's say, we discover some reachable object A
+
+61
+00:04:59,230 --> 00:05:02,820
+in the old space. So, what we're going to do is we're going to make a copy of it
+
+62
+00:05:02,820 --> 00:05:07,460
+over here in the new space and that's easy enough to do. But now what we're going to
+
+63
+00:05:07,460 --> 00:05:11,660
+do is we're gonna take A and we're going to reuse its space and we're gonna store
+
+64
+00:05:11,660 --> 00:05:16,520
+what's called a forwarding pointer in it. So, we're going to, yeah, first of all,
+
+65
+00:05:16,520 --> 00:05:19,580
+we're going to mark somehow that this has been copied. So, this will have some
+
+66
+00:05:19,580 --> 00:05:24,400
+special mark on it which I'll just, you know, indicate with here with a purple bar
+
+67
+00:05:24,400 --> 00:05:28,600
+something. This is we're marking someway so that we can tell this object has
+
+68
+00:05:28,600 --> 00:05:32,990
+already been copied. And then at a. At a distinguished location in the object,
+
+69
+00:05:32,990 --> 00:05:35,470
+we're going to store the forwarding pointer. And you can think of this as like
+
+70
+00:05:35,470 --> 00:05:39,750
+a forwarding address. So, if you know where somebody lives you can go to their
+
+71
+00:05:39,750 --> 00:05:43,910
+house and if they have moved, you can ask for the forwarding address. And that's
+
+72
+00:05:43,910 --> 00:05:47,960
+exactly and then you can go off to their new house wherever they've wherever
+
+73
+00:05:47,960 --> 00:05:51,460
+they've gone to and presumably find them. And so, that's what's going to happen
+
+74
+00:05:51,460 --> 00:05:57,580
+here. If we have a pointer that points into this object later on and maybe much
+
+75
+00:05:57,580 --> 00:06:01,620
+later on in the garbage collection, we may discover this pointer, we may follow this
+
+76
+00:06:01,620 --> 00:06:05,580
+pointer, find out it points in this object, realize that this object has moved
+
+77
+00:06:05,580 --> 00:06:08,600
+because we've marked it and the object was moved. And then we can use the forwarding
+
+78
+00:06:08,600 --> 00:06:14,000
+pointer to find out where the new object is and then update this pointer wherever
+
+79
+00:06:14,000 --> 00:06:21,000
+it is to point to the new object. Now, just like with mark-and-sweep, we still
+
+80
+00:06:22,410 --> 00:06:27,020
+have the issue of how to implement the traversal of the object graph without
+
+81
+00:06:27,020 --> 00:06:32,500
+using any extra space. Again, when these garbage collection algorithms, they only
+
+82
+00:06:32,500 --> 00:06:37,770
+get used, they only get run in low memory situations. And you can't assume that you
+
+83
+00:06:37,770 --> 00:06:42,130
+can build unbounded data structures to use with the garbage collectors. The garbage
+
+84
+00:06:42,130 --> 00:06:48,240
+collector really needs to work in constants base. And now here is the idea
+
+85
+00:06:48,240 --> 00:06:53,000
+that will, that is used in stop-and-copy algorithms to solve the problem. So, we're
+
+86
+00:06:53,000 --> 00:06:57,120
+going partition in new space and this is just the new space here into three
+
+87
+00:06:57,120 --> 00:07:02,850
+contiguous regions. We're going to have we'll start with the one on the far right.
+
+88
+00:07:02,850 --> 00:07:06,550
+We're going to have the empty region where we're allocating new objects. And there's
+
+89
+00:07:06,550 --> 00:07:10,900
+an allocation pointer that points to the beginning of that region. So this is the
+
+90
+00:07:10,900 --> 00:07:14,190
+region that we're filling up with objects that we're copying over and this is just
+
+91
+00:07:14,190 --> 00:07:20,790
+empty unused space. Now, immediately to the left of that region are the objects
+
+92
+00:07:20,790 --> 00:07:27,530
+that have already been copied, but not scanned, okay? This is copied and not
+
+93
+00:07:27,530 --> 00:07:34,060
+scanned. And, what does that mean? Well, that means that the object has been copied
+
+94
+00:07:34,060 --> 00:07:38,060
+over. And so, we've actually, you know, made a copy of the object into the new
+
+95
+00:07:38,060 --> 00:07:41,400
+space. But we haven't yet looked at its pointers. We haven't yet looked at the
+
+96
+00:07:41,400 --> 00:07:46,210
+pointers inside the object to see where they go. And then, to the left of that,
+
+97
+00:07:46,210 --> 00:07:48,560
+are the objects that have been copied and scanned. These are objects that have been
+
+98
+00:07:48,560 --> 00:07:53,460
+copied over. And we've also processed all the pointers inside of those obje cts. And
+
+99
+00:07:53,460 --> 00:07:57,360
+so, you can think of this area here, between the scanned pointer and the
+
+100
+00:07:57,360 --> 00:08:02,800
+allegation pointer, this is the work quest. So, these are the objects that
+
+101
+00:08:02,800 --> 00:08:06,680
+still need to be processed. These are the objects that have been copied over but
+
+102
+00:08:06,680 --> 00:08:10,690
+might yet still point to objects that haven't been copied. And so, these are the
+
+103
+00:08:10,690 --> 00:08:13,220
+objects where we have to look at their pointers to see whether they point to
+
+104
+00:08:13,220 --> 00:08:20,220
+something that still needs to be copied over to finish the garbage collection.
+
+105
+00:08:20,530 --> 00:08:24,560
+Returning to our little example, I'm now going to walk through how a stop-and-copy
+
+106
+00:08:24,560 --> 00:08:29,210
+garbage collector would collect this particular heap step by step. So, notice
+
+107
+00:08:29,210 --> 00:08:33,969
+that we only have one root object and it's A, okay, I just want to point out that A
+
+108
+00:08:33,969 --> 00:08:40,000
+has one pointer which points to object C, alright. So, at the very first step, what
+
+109
+00:08:40,000 --> 00:08:46,110
+we're going to do is we're going to copy the A object over to the new space, okay.
+
+110
+00:08:46,110 --> 00:08:52,060
+And this is literally a byte for byte copy. So, we just take the bytes of A and
+
+111
+00:08:52,060 --> 00:08:57,100
+we do a copy without, you know, doing any inspection of the interior of the object,
+
+112
+00:08:57,100 --> 00:09:02,800
+over to the new space. And how's that work? Of course, our allocation pointer
+
+113
+00:09:02,800 --> 00:09:08,230
+isn't in, initially right here at the beginning of the new space. And then we
+
+114
+00:09:08,230 --> 00:09:11,610
+add and we copy this one object over. And then that means allocating an object and
+
+115
+00:09:11,610 --> 00:09:15,879
+so now, the allocation pointer points to the first word of memory, beyond the
+
+116
+00:09:15,879 --> 00:09:20,110
+object that we just allocated, okay. Now what happens when we copy it over? Well,
+
+117
+00:09:20,110 --> 00:09:24,310
+because it is just a byte for byte copy, all the pointers in A still point to the
+
+118
+00:09:24,310 --> 00:09:27,750
+objects as they pointed to before which are the objects in old space. And notice
+
+119
+00:09:27,750 --> 00:09:33,529
+now that this copy of A points to the object C in the old space. The other thing
+
+120
+00:09:33,529 --> 00:09:38,180
+we do is we leave a forwarding pointer in the old copy of A. So, we mark A as having
+
+121
+00:09:38,180 --> 00:09:41,300
+been copied, that's why it's grayed out. Indicates that this object has already
+
+122
+00:09:41,300 --> 00:09:47,170
+been moved. And that this dotted line here indicates that somewhere, we stored a
+
+123
+00:09:47,170 --> 00:09:52,170
+pointer to the new copy of A. And now, we're ready to begin the algorithms. And
+
+124
+00:09:52,170 --> 00:09:59,170
+not ice that we have some objects here that have been copied but not scanned so
+
+125
+00:09:59,430 --> 00:10:04,249
+this is our work list. So, now it's going to repeatedly work off of those objects
+
+126
+00:10:04,249 --> 00:10:08,199
+and how do we know they're objects in there? Well, we just compare the scan and
+
+127
+00:10:08,199 --> 00:10:12,899
+the allocation pointers. So, if they're if they are different, if there's an object
+
+128
+00:10:12,899 --> 00:10:16,230
+in between the scan and the allocation pointer, at least one object between the
+
+129
+00:10:16,230 --> 00:10:21,540
+two, then there's work to do. There's an object that needs to be scanned that and,
+
+130
+00:10:21,540 --> 00:10:27,249
+and possibly resulting in more objects being moved and allocated. So, what
+
+131
+00:10:27,249 --> 00:10:33,040
+happens next? So, object, we, we process A, so we walk over A and find all the
+
+132
+00:10:33,040 --> 00:10:38,649
+pointers in A. And we copy any objects that it points to that haven't already
+
+133
+00:10:38,649 --> 00:10:42,689
+been moved. And so, before we said, you know, the A, this, this copy of A pointed
+
+134
+00:10:42,689 --> 00:10:48,389
+to the old copy of C. So, now what we discover the C object, it hasn't been
+
+135
+00:10:48,389 --> 00:10:52,980
+moved, it's still in the old space. So, we copy it over and we update the pointer in
+
+136
+00:10:52,980 --> 00:10:59,079
+A to point to the new copy of C. Now, of course and then the scan pointer moves
+
+137
+00:10:59,079 --> 00:11:03,199
+over A. We've scanned all the pointers in A, alright. And the allocation pointer
+
+138
+00:11:03,199 --> 00:11:08,519
+also moves because we had to allocate space for C. And of course, C is just a
+
+139
+00:11:08,519 --> 00:11:13,420
+byte for byte copy of what was in the old space. And so it, any pointers that it has
+
+140
+00:11:13,420 --> 00:11:17,430
+that point to objects that haven't been moved yet, moved yet just point back into
+
+141
+00:11:17,430 --> 00:11:22,670
+the old space. So, in this case the object C points to the object F in the old space.
+
+142
+00:11:22,670 --> 00:11:26,399
+And I probably should indicate here, here's the original dividing line, you
+
+143
+00:11:26,399 --> 00:11:31,639
+know, this is the old space over here and this is the new space over there, alright.
+
+144
+00:11:31,639 --> 00:11:36,569
+And finally we mark C as having been copied, having been moved to the new space
+
+145
+00:11:36,569 --> 00:11:40,749
+and we left a forwarding pointer to it in case so we can fix any pointers that point
+
+146
+00:11:40,749 --> 00:11:47,660
+to C that we come across in the future. And now we have to continue scanning
+
+147
+00:11:47,660 --> 00:11:51,370
+objects that have been copied but not scanned. And we can see that there is an
+
+148
+00:11:51,370 --> 00:11:55,509
+object between the scan and the allocatio n pointer namely C and so we'll now
+
+149
+00:11:55,509 --> 00:12:02,509
+process all the pointers in C. Next, we scan C. And, we discover that it points to
+
+150
+00:12:02,759 --> 00:12:08,199
+F. Which hasn't been moved yet and so we copy F over into the new space and we
+
+151
+00:12:08,199 --> 00:12:14,059
+update the pointer in C. And now C has been copied and scanned, okay. So, the
+
+152
+00:12:14,059 --> 00:12:20,180
+scan pointer moves past C and of course, F again is a byte for byte copy and so all
+
+153
+00:12:20,180 --> 00:12:24,670
+it's pointers into old space are still pointing to old space, in particular F
+
+154
+00:12:24,670 --> 00:12:29,480
+points to A and the allocation pointer is moved again because we moved F, alright.
+
+155
+00:12:29,480 --> 00:12:35,990
+And now, we have to process F. And this will be the last object that we move. And
+
+156
+00:12:35,990 --> 00:12:42,129
+what happens, well, we discover that F points to A, okay. And A is already marked
+
+157
+00:12:42,129 --> 00:12:46,990
+as having been moved and it has a forwarding pointer. So, instead of copying
+
+158
+00:12:46,990 --> 00:12:53,019
+A again, we simply update the pointer in F that pointed to the old version of A to
+
+159
+00:12:53,019 --> 00:12:59,100
+point to the copy of A, okay. And so, now F is completely scanned. All the pointers
+
+160
+00:12:59,100 --> 00:13:03,189
+in F have been processed. We didn't allocate any new objects so the allocation
+
+161
+00:13:03,189 --> 00:13:06,759
+pointer didn't move and now the scan pointer and the allocation pointer are
+
+162
+00:13:06,759 --> 00:13:11,319
+equal. There are no objects in between them and so our work list is empty and
+
+163
+00:13:11,319 --> 00:13:17,040
+this is the garbage collected heap. This is a complete graph, a complete copy of
+
+164
+00:13:17,040 --> 00:13:23,449
+its A, of the graph of reachable objects from the old space. So, now we're done and
+
+165
+00:13:23,449 --> 00:13:29,399
+we simply swap the role of the new and old space and we resume the program so that
+
+166
+00:13:29,399 --> 00:13:34,360
+when the program starts running again, it will allocate out of this area and it'll
+
+167
+00:13:34,360 --> 00:13:38,939
+be on the allocation pointer until it fills up what is now the old space, you
+
+168
+00:13:38,939 --> 00:13:43,490
+know, and then this will be the new space that will be used for the next garbage
+
+169
+00:13:43,490 --> 00:13:50,490
+collection. Here's a pseudo code algorithm outlining how stop-and-copy garbage
+
+170
+00:13:51,249 --> 00:13:54,420
+collection should work. So, while the scan and allocation pointers are different,
+
+171
+00:13:54,420 --> 00:13:58,079
+remember, we keep running until the scan pointer catches up with the allocation
+
+172
+00:13:58,079 --> 00:14:01,920
+pointer and they're equal. What we're going to do is we're going to look at the
+
+173
+00:14:01,920 --> 00:14:05,389
+object that is at the scan pointer. That we'll call that objec t , and then for
+
+174
+00:14:05,389 --> 00:14:08,660
+every pointer in O, we're going to do the following. We're going to find the object
+
+175
+00:14:08,660 --> 00:14:14,279
+O' that, that pointer points to. And then there are two cases. One is that there is
+
+176
+00:14:14,279 --> 00:14:18,240
+no forwarding pointer, alright. And if there's no forwarding pointer, then we
+
+177
+00:14:18,240 --> 00:14:22,910
+have to copy that object to new space and that will involve allocating a new object
+
+178
+00:14:22,910 --> 00:14:26,850
+and updating the allocation pointer. Then we're going to set and here it says the
+
+179
+00:14:26,850 --> 00:14:30,360
+first word, they really shouldn't emphasize the first word. Set a word. So,
+
+180
+00:14:30,360 --> 00:14:33,459
+it's a distinguished word, that's what's important. We have to know which word
+
+181
+00:14:33,459 --> 00:14:37,379
+we're going to use and will always be the same word. But anyways, we set a word of
+
+182
+00:14:37,379 --> 00:14:44,100
+the old object to point to the new copy. We mark the old object as copied. Mark old
+
+183
+00:14:44,100 --> 00:14:51,100
+object as copied, okay. So, that's so that we can tell if we ever come to a pointer
+
+184
+00:14:52,249 --> 00:14:57,639
+to it again, we know it's already been moved and then we change p, the pointer,
+
+185
+00:14:57,639 --> 00:15:01,329
+to point to the new copy of O', alright. So, if there was, that's what we do if
+
+186
+00:15:01,329 --> 00:15:04,540
+there is no forwarding pointer. And if there is a forwarding pointer, then we
+
+187
+00:15:04,540 --> 00:15:10,540
+simply update the pointer to point to the same place as the forwarding pointer. And
+
+188
+00:15:10,540 --> 00:15:17,540
+we just repeat this loop over and over again until we've scanned all the copied
+
+189
+00:15:17,589 --> 00:15:17,839
+options.

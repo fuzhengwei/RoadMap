@@ -1,0 +1,379 @@
+0
+00:00:04,420 --> 00:00:11,030
+In this video, we're going to take a look at Java Arrays. Let's say we have two
+
+1
+00:00:11,030 --> 00:00:15,820
+classes, a and b, and that b is a sub class of a. And let's think about what
+
+2
+00:00:15,820 --> 00:00:20,270
+happens when we execute the following piece of code. So, the first thing we're
+
+3
+00:00:20,270 --> 00:00:25,449
+going to do is we're going to allocate an array of b's. So, this is an array that's
+
+4
+00:00:25,449 --> 00:00:32,449
+supposed to hold B's, okay? And, we're going to have an array variable b here
+
+5
+00:00:33,970 --> 00:00:39,059
+that points to it. And then, we're going to have another variable, array variable
+
+6
+00:00:39,059 --> 00:00:45,489
+A, that also points to the same array as B. But notice the type of a. So a is an
+
+7
+00:00:45,489 --> 00:00:51,370
+array of A's, little a here is an array of A's, and b is typed as an array of B's.
+
+8
+00:00:51,370 --> 00:00:57,350
+And now what we're going to do is we're going to assign into a sub zero, okay,
+
+9
+00:00:57,350 --> 00:01:02,369
+into the first position of a, a new a object. And that should be fine, right?
+
+10
+00:01:02,369 --> 00:01:06,680
+Because a is an array of A's and that seems like that should work out alright.
+
+11
+00:01:06,680 --> 00:01:13,590
+Alright, so here there will be an a sitting in the first position. And then,
+
+12
+00:01:13,590 --> 00:01:19,840
+we're going to access b sub zero which, because A and B point to the same array,
+
+13
+00:01:19,840 --> 00:01:23,939
+is the same element as a sub zero. And we're going to call some method that is
+
+14
+00:01:23,939 --> 00:01:30,100
+not declared in A. Now remember, B is a sub-type of A, alright? So B has all the
+
+15
+00:01:30,100 --> 00:01:35,049
+methods of A. A but B might have more methods. And since this is an array of
+
+16
+00:01:35,049 --> 00:01:38,979
+B's, we should be able to call all the B methods on it and yet here, when we call
+
+17
+00:01:38,979 --> 00:01:42,990
+some methods that's declared in B but not in A, we are going to get a run-time error
+
+18
+00:01:42,990 --> 00:01:48,259
+because the object stored in the array is actually an A object at the first
+
+19
+00:01:48,259 --> 00:01:53,009
+position. To understand what's going on in this example, we have to take a look at
+
+20
+00:01:53,009 --> 00:01:59,170
+the sub typing rules in Java. So, if we use a subtype of A if B inherits from A,
+
+21
+00:01:59,170 --> 00:02:02,380
+that's one case. So if B and B inherits from A, then B is a subtype of A. And
+
+22
+00:02:02,380 --> 00:02:04,689
+that's just like in Cool and, and most other object oriented languages. And
+
+23
+00:02:04,689 --> 00:02:09,369
+we're, we're very familiar with that from our lectures in type checking. Further
+
+24
+00:02:09,369 --> 00:02:15,150
+more, type, sub typing is transitive. So if C is a subtype of B, and B is a subtype
+
+25
+00:02:15,150 --> 00:02:21,019
+of A then C is also a subtype of A. Okay, a nd that's also completely standard. But
+
+26
+00:02:21,019 --> 00:02:25,700
+then there's this other rule that's not quite standard or is definitely
+
+27
+00:02:25,700 --> 00:02:31,310
+nonstandard. And that's that, an array of B's is a sub-type of an array of A's if
+
+28
+00:02:31,310 --> 00:02:35,140
+the element types are in a sub-type relationship. So if B is a sub-type of A,
+
+29
+00:02:35,140 --> 00:02:39,280
+then array of B is a sub-type of array of A. And Cool doesn't have anything like
+
+30
+00:02:39,280 --> 00:02:42,500
+that, Cool doesn't have arrays so it wouldn't even have the opportunity to have
+
+31
+00:02:42,500 --> 00:02:47,129
+something like that. But this is also not the way it's done in other languages that
+
+32
+00:02:47,129 --> 00:02:52,709
+have objects and sub-typing. So let's take a look at our little example again and let
+
+33
+00:02:52,709 --> 00:02:59,120
+me explain it in a slightly different way. So, the issue here is that we have a, area
+
+34
+00:02:59,120 --> 00:03:02,819
+of memory, and it actually doesn't matter here. It's not essential that this be an
+
+35
+00:03:02,819 --> 00:03:07,549
+array. What's important is that's an updatable part of memory so that we have
+
+36
+00:03:07,549 --> 00:03:12,329
+pointers to it. We have two pointers to it, a and b and we can, they can both read
+
+37
+00:03:12,329 --> 00:03:15,280
+and write this part of memory. So this could be just a single cell, it doesn't
+
+38
+00:03:15,280 --> 00:03:20,189
+have to be an array of multiple cells. But what's important is that there is some
+
+39
+00:03:20,189 --> 00:03:25,319
+memory location that both of these point to, that they can both read and write,
+
+40
+00:03:25,319 --> 00:03:30,129
+okay? And the trouble comes and by the way, that there's a name that, that's
+
+41
+00:03:30,129 --> 00:03:37,129
+called Aliasing, okay? So when you have two names, two program names for the same
+
+42
+00:03:37,849 --> 00:03:42,650
+part of memory that is called aliasing, and here you know, we have the, the two
+
+43
+00:03:42,650 --> 00:03:49,650
+arrays, A and B, that point to the same area of memory, okay? Now, aliasing is
+
+44
+00:03:49,950 --> 00:03:55,849
+very common in real programs since not bad by itself but the problem in this example
+
+45
+00:03:55,849 --> 00:04:02,849
+is that A and B have different types, okay? And in general, if you have aliasing
+
+46
+00:04:05,040 --> 00:04:09,689
+updatable references, okay? Meaning if two names for the same location, that location
+
+47
+00:04:09,689 --> 00:04:13,329
+is both readable and writable, so it can be updated through the two names. And
+
+48
+00:04:13,329 --> 00:04:18,690
+those two names have different types then that is going to be unsound, okay? We're
+
+49
+00:04:18,690 --> 00:04:24,800
+not going to have a sound type system and to see the problem, let's say here in this
+
+50
+00:04:24,800 --> 00:04:31,800
+case what was it? We had that B, type B was sub type of A, okay? And what did that
+
+51
+00:04:32,910 --> 00:04:38,330
+mean? Well that meant is we could do a wright through this pointer, okay? And
+
+52
+00:04:38,330 --> 00:04:44,360
+write an A object into this location and then we could read that out through this
+
+53
+00:04:44,360 --> 00:04:50,510
+point over here as a B object. But now, it doesn't have all the methods and, and
+
+54
+00:04:50,510 --> 00:04:54,590
+fields of A and treating it as the object, we could potentially use an operation on
+
+55
+00:04:54,590 --> 00:05:00,100
+it that's undefined. And you can see that it doesn't help if we swap the roles of,
+
+56
+00:05:00,100 --> 00:05:05,070
+of A and B, alright? So in particular, if we reverse the, if we reverse the
+
+57
+00:05:05,070 --> 00:05:08,990
+sub-typing relationship so that A was a sub type of B, we can do exactly the same
+
+58
+00:05:08,990 --> 00:05:13,570
+problem because aliasing is symmetric. We just do the write through the B pointer
+
+59
+00:05:13,570 --> 00:05:17,890
+and the read out of the A pointer swapping the roles of the recent right here and we
+
+60
+00:05:17,890 --> 00:05:23,040
+have exactly the same problem. So in general, multiple aliases do updatable
+
+61
+00:05:23,040 --> 00:05:28,150
+locations with different types is unsound, okay? And this problem actually has come
+
+62
+00:05:28,150 --> 00:05:32,460
+up in many different programming languages. Java is not the only
+
+63
+00:05:32,460 --> 00:05:36,620
+programming language to have had this issue. It's a fairly subtle aspect of type
+
+64
+00:05:36,620 --> 00:05:42,080
+systems and in many languages have done things similar to Java where they've
+
+65
+00:05:42,080 --> 00:05:47,090
+created a problem really for the static type system by wanting to have a
+
+66
+00:05:47,090 --> 00:05:52,750
+sub-typing work through arrays. Now, the standard solution or the solution that's
+
+67
+00:05:52,750 --> 00:05:57,660
+used in, I should say, in many languages and is probably most widely accepted in
+
+68
+00:05:57,660 --> 00:06:01,130
+the programming languages research community is that you need a different
+
+69
+00:06:01,130 --> 00:06:07,460
+sub-typing rule for arrays. So we would say, you know, the rule that is commonly
+
+70
+00:06:07,460 --> 00:06:11,680
+used the standard solution to this problem at the type level is that to do the
+
+71
+00:06:11,680 --> 00:06:18,320
+following things. So you only allows sub-typing on arrays. So, you know, an
+
+72
+00:06:18,320 --> 00:06:25,320
+array of B's is a sub-type in array of A's only if B and A are the same type. If B =
+
+73
+00:06:25,350 --> 00:06:30,610
+A. And if you think about that for a second, if we have an array and now we
+
+74
+00:06:30,610 --> 00:06:35,780
+have our two pointers to it, A and B and we know the type of A the subtype or the
+
+75
+00:06:35,780 --> 00:06:41,710
+type of B. Well, that only h appens if the element types are, are equal. And so we
+
+76
+00:06:41,710 --> 00:06:45,940
+can't create two references to an updateable location with different types.
+
+77
+00:06:45,940 --> 00:06:52,060
+Okay, and that will guarantee soundness of, of the type, of the type system. So
+
+78
+00:06:52,060 --> 00:06:56,150
+Java fixes the problem differently. So instead of statically checking that array
+
+79
+00:06:56,150 --> 00:07:03,150
+accesses will all be type correct, Java does this at run time. And so whenever an
+
+80
+00:07:03,250 --> 00:07:07,930
+assignment is done into an array at runtime, Java checks whether the type of
+
+81
+00:07:07,930 --> 00:07:12,610
+the object being assigned in compatible with the type of the array. So when you
+
+82
+00:07:12,610 --> 00:07:19,610
+say new B sub ten in Java, Java will remember inside the array that this was
+
+83
+00:07:19,710 --> 00:07:23,930
+supposed to be an array of Bs. And then whatever you assign into the array, it
+
+84
+00:07:23,930 --> 00:07:28,960
+will check that the thing you're assigning is either a B or a sub type of B. Now,
+
+85
+00:07:28,960 --> 00:07:34,460
+this obviously adds an overhead on array computations so every assignment to an
+
+86
+00:07:34,460 --> 00:07:40,330
+array is going to have, have a type check on it at run time. And fortunately though,
+
+87
+00:07:40,330 --> 00:07:43,890
+the most kinds of arrays are arrays of primitive types, in particular arrays of
+
+88
+00:07:43,890 --> 00:07:48,500
+ints and arrays of floating point numbers and these are not affected because the
+
+89
+00:07:48,500 --> 00:07:52,490
+primitive types are not classes. There's no subtyping on them and so you can never
+
+90
+00:07:52,490 --> 00:07:57,970
+create an array, say, of floating point numbers, with any kind of subtyping
+
+91
+00:07:57,970 --> 00:08:03,060
+relationship that would result in this problem. So, so, that we're saved, or in
+
+92
+00:08:03,060 --> 00:08:07,210
+better shape, for the primitive types, and they don't need these extra checks. But if
+
+93
+00:08:07,210 --> 00:08:11,090
+you have arrays of objects, then we do assignments into those arrays in Java,
+
+94
+00:08:11,090 --> 00:08:12,550
+there's additional run time overhead.

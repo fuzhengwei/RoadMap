@@ -1,0 +1,263 @@
+0
+00:00:04,029 --> 00:00:07,439
+In this video, we're going to continue our discussion of type checking and cool with
+
+1
+00:00:07,439 --> 00:00:14,439
+the rules for type checking methods and method calls. So here's the situation, we
+
+2
+00:00:15,690 --> 00:00:19,829
+want to type check a method call, let's say that we have a dispatch on some
+
+3
+00:00:19,829 --> 00:00:24,029
+expression easier, and we're calling some method named F, and we have some arguments
+
+4
+00:00:24,029 --> 00:00:28,090
+E one through E N. Well, so clearly we're gonna type check E zero, it's gonna have
+
+5
+00:00:28,090 --> 00:00:32,340
+some type E zero, and similarly we're gonna type check all of the arguments and
+
+6
+00:00:32,340 --> 00:00:36,710
+they're gonna have some types, and then the question is, what is the return type
+
+7
+00:00:36,710 --> 00:00:40,769
+of this method call, what value, what kind of value do we get back after we call this
+
+8
+00:00:40,769 --> 00:00:46,129
+method? And as you can probably see we're in a very similar situation here that we
+
+9
+00:00:46,129 --> 00:00:50,769
+were in before when we were typing check the variable reference. We have this name
+
+10
+00:00:50,769 --> 00:00:56,339
+F and we don't know anything about what it does, we don't know the behavior of F is
+
+11
+00:00:56,339 --> 00:01:01,059
+unless we have some information about F's behavior, we can't really say what kind of
+
+12
+00:01:01,059 --> 00:01:07,600
+value it is going to return. An added wrinkle in cool is that method object
+
+13
+00:01:07,600 --> 00:01:12,439
+identifiers live in different name spaces. That is, it is possible in the same scope
+
+14
+00:01:12,439 --> 00:01:17,659
+to have a method called foo and also an object called foo and we won't get them
+
+15
+00:01:17,659 --> 00:01:21,659
+confused. They are different enough and used differently enough in the language
+
+16
+00:01:21,659 --> 00:01:24,990
+that we can always tell when we're talking about the object foo and when we're
+
+17
+00:01:24,990 --> 00:01:28,909
+talking about the method foo. But what this means in effect is that there's two
+
+18
+00:01:28,909 --> 00:01:34,740
+different environments. One for objects and one for methods and so in the type
+
+19
+00:01:34,740 --> 00:01:38,479
+rules, this is going to be reflected by having a separate mapping a separate
+
+20
+00:01:38,479 --> 00:01:44,130
+method environment that's going to record the signature of each of the methods. And
+
+21
+00:01:44,130 --> 00:01:48,210
+a signature, as is a standard name that you'll probably hear used in other
+
+22
+00:01:48,210 --> 00:01:54,259
+contexts, but the signature of a function is just its input and output types. And so
+
+23
+00:01:54,259 --> 00:01:58,920
+this table, m, is gonna take the name of a class. It's gonna take the name of a
+
+24
+00:01:58,920 --> 00:02:04,229
+method in that class and is just gonna tell us what are the argument types of the
+
+25
+00:02:04,229 --> 00:02:08,950
+methods. So all but the last type in the list here is one of the arguing types of
+
+26
+00:02:08,949 --> 00:02:14,610
+the method and then the last type is the result type. That's the type of the return
+
+27
+00:02:14,610 --> 00:02:18,330
+value. So the way we are going to write the method signature is just as a tutor or
+
+28
+00:02:18,330 --> 00:02:23,950
+a list of types, the first, all but the last one taken together are the, are the
+
+29
+00:02:23,950 --> 00:02:27,819
+types of the arguments in order. And then the very last one is the type of the
+
+30
+00:02:27,819 --> 00:02:34,370
+result And so an entry like this in our method, environment just means that f has
+
+31
+00:02:34,370 --> 00:02:38,360
+a signature that looks like this. It takes in arguments, with the respective types
+
+32
+00:02:38,360 --> 00:02:45,360
+and it returns something of type t n plus one. So with the method environment added
+
+33
+00:02:46,290 --> 00:02:50,870
+to our rules, now we can write a rule for dispatch. So notice, first of all, that we
+
+34
+00:02:50,870 --> 00:02:55,720
+have these two mappings, one for object identifiers and one for method names on
+
+35
+00:02:55,720 --> 00:03:01,310
+the left hand side of the turnstile. We have to propagate that method environment
+
+36
+00:03:01,310 --> 00:03:06,540
+through all the typing for the sub expressions and for the case of method
+
+37
+00:03:06,540 --> 00:03:12,439
+dispatch, we just type The, type of the expression we're dispatching to e zero,
+
+38
+00:03:12,439 --> 00:03:17,640
+and all of the arguments and get types t one through t n, and then we look up the
+
+39
+00:03:17,640 --> 00:03:24,390
+type of f in the class t zero. So, what class are we dispatching to? Well, that's
+
+40
+00:03:24,390 --> 00:03:28,680
+gonna be to the class of e zero And so where do we look up m in our environment.
+
+41
+00:03:28,680 --> 00:03:34,200
+Where there better be a method called F to find in class T0, and it must have some
+
+42
+00:03:34,200 --> 00:03:39,430
+signature with the right number of arguments. And then, the actual arguments
+
+43
+00:03:39,430 --> 00:03:44,010
+that we're passing, the E1 through E-N, they're types have to be sub-types of the
+
+44
+00:03:44,010 --> 00:03:49,269
+declared formal parameter. So here, the signature of F. Says that, for example,
+
+45
+00:03:49,269 --> 00:03:54,870
+the first argument of f has type t one prime, and so we're going to require that
+
+46
+00:03:54,870 --> 00:04:00,409
+the type of e one be some type t one such that t one is a sub type of t one prime.
+
+47
+00:04:00,409 --> 00:04:05,829
+And similarly for all the other arguments of the method call. And if all of that
+
+48
+00:04:05,829 --> 00:04:09,980
+checks out, if that has a signature like this, and all the sub type requirements on
+
+49
+00:04:09,980 --> 00:04:15,519
+the actual arguments and the formal arguments match, then we're going to say
+
+50
+00:04:15,519 --> 00:04:21,209
+that the entire expression. [inaudible] Return something of type t n plus one the
+
+51
+00:04:21,209 --> 00:04:28,030
+return type of the method. The typing rule for static dispatch is very similar to the
+
+52
+00:04:28,030 --> 00:04:32,580
+rule for regular dispatch. So recall that, syntactically, the only thing that's
+
+53
+00:04:32,580 --> 00:04:36,030
+different is that the programmer writes the name of the class at which they wish
+
+54
+00:04:36,030 --> 00:04:42,210
+to run the, the method. So instead of running the method F as defined in the
+
+55
+00:04:42,210 --> 00:04:46,120
+class E0, whatever that class happens to be, we're going to run whatever that
+
+56
+00:04:46,120 --> 00:04:51,340
+method F happens to be in some ancestor class of the class of E0. And how is that
+
+57
+00:04:51,340 --> 00:04:55,740
+expressed in the type rules? Well once again, we type E0 and all of the
+
+58
+00:04:55,740 --> 00:05:02,000
+arguments. And now we require that, whatever the type was we discovered for
+
+59
+00:05:02,000 --> 00:05:08,710
+E0, it has to be a sub-type of T. So T has to be an ancestor type in the class
+
+60
+00:05:08,710 --> 00:05:14,770
+hierarchy of the type of E0. And moreover, that class T had better have a method
+
+61
+00:05:14,770 --> 00:05:19,889
+called F. That has the right number of our units, with the right kind of types, such
+
+62
+00:05:19,889 --> 00:05:25,650
+that all the type constraints work out, that the, actual argument types are sub
+
+63
+00:05:25,650 --> 00:05:29,990
+types of the corresponding formal argument types, and then if all of that is true,
+
+64
+00:05:29,990 --> 00:05:34,979
+we'll be able to conclude that the entire dispatch expression has a type t n plus
+
+65
+00:05:34,979 --> 00:05:38,110
+one which is the return type of the method.

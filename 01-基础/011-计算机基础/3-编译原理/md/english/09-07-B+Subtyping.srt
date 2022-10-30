@@ -1,0 +1,179 @@
+0
+00:00:01,319 --> 00:00:04,590
+Now we can give a type-checking role for if-then-else. So
+
+1
+00:00:04,590 --> 00:00:08,210
+the first thing to know is about if-then-else expressions is that they do not
+
+2
+00:00:08,210 --> 00:00:11,959
+affect the environment, and if-then-else neither introduces nor removes
+
+3
+00:00:11,959 --> 00:00:16,420
+any variables from the environment, so all the sub-expressions are
+
+4
+00:00:16,420 --> 00:00:21,740
+typed in the same environment as the entire expression. Now, the predicate of the
+
+5
+00:00:21,740 --> 00:00:25,509
+FNL30, well that should have type [inaudible]. Because that's our decision whether
+
+6
+00:00:25,509 --> 00:00:28,480
+we're going to take the true branch or the false branch, But then the two
+
+7
+00:00:28,480 --> 00:00:33,570
+branches can have different types. E1 just has to have some type T1, and E2 just
+
+8
+00:00:33,570 --> 00:00:37,780
+has to have some type T2. So notice again what this is sayi ng. This is just saying
+
+9
+00:00:37,780 --> 00:00:41,649
+that E1 and E2 do have a type check. They have to be type correct but we don't care
+
+10
+00:00:41,649 --> 00:00:45,039
+what the type is. The type can be anything. And then the type of the entire
+
+11
+00:00:45,039 --> 00:00:49,809
+expression is just going to be the least upper bound of T1 and T2. Because that's going
+
+12
+00:00:49,809 --> 00:00:54,469
+to be the best Estimate we can give to the final type of the expression given
+
+13
+00:00:54,469 --> 00:00:59,320
+that the truth branch might return T one something of type T one. And the false branch
+
+14
+00:00:59,320 --> 00:01:06,320
+might return something of type T two. The rule for case expression is the most
+
+15
+00:01:06,890 --> 00:01:13,250
+complex one we've seen so far. But really it's a glorified if then L's. And it's
+
+16
+00:01:13,250 --> 00:01:17,030
+relatively easy to understand if we just pull it apart. So, so let's begin by
+
+17
+00:01:17,030 --> 00:01:22,390
+reminding ourselves of what case does. First of all it looks at E0. It evaluates
+
+18
+00:01:22,390 --> 00:01:29,040
+E0 and then it looks at the runtime type of E0. So, so it takes the dynamic class of
+
+19
+00:01:29,040 --> 00:01:33,720
+E0 and then it looks at the first branch. >> Let's do that. >> And what is it
+
+20
+00:01:33,720 --> 00:01:37,520
+going to do? It's going to compare the type of these [inaudible] at run time to the
+
+21
+00:01:37,520 --> 00:01:44,409
+type t one, and if t one is super type. Of the run time type of E O And in fact,
+
+22
+00:01:44,409 --> 00:01:47,759
+it is the smallest of all the possible branches. It's the smallest super
+
+23
+00:01:47,759 --> 00:01:52,100
+type of all the possible branches. Then it's going to pick this branch. It's going
+
+24
+00:01:52,100 --> 00:01:58,039
+to bind X1 to the value. It's going to give it the type T1. So combine X1 to the
+
+25
+00:01:58,039 --> 00:02:04,090
+value of E O. It's going to retype it as. Type T one and it's going to evaluate E one.
+
+26
+00:02:04,090 --> 00:02:08,899
+So you can see in one sense it's a, it's a glorified if then else, we're just
+
+27
+00:02:08,899 --> 00:02:14,020
+picking the best matching branch, the one that, whose type, declared type, is, most
+
+28
+00:02:14,020 --> 00:02:18,050
+closely matches the runtime type of E zero. And then we're going to execute that
+
+29
+00:02:18,050 --> 00:02:23,820
+branch with the variable that's named in that branch bound to the type of E zero. So
+
+30
+00:02:23,820 --> 00:02:28,220
+let's see how the typing works out. So first we type check E0 and we can some type
+
+31
+00:02:28,220 --> 00:02:35,220
+T0, and now what's going to happen well if we select. The branch, The first branch,
+
+32
+00:02:35,800 --> 00:02:39,660
+Well, then, we're going to take the environment and we're going to extend
+
+33
+00:02:39,660 --> 00:02:44,640
+it with the new variable x one which is going to have type t one. And so we only take
+
+34
+00:02:44,640 --> 00:02:50,120
+this branch, remember, if the runtime type of e zero matches t one, most closely
+
+35
+00:02:50,120 --> 00:02:53,870
+among all the branches, but if we do take it, then we're going to execute, execute e
+
+36
+00:02:53,870 --> 00:02:59,950
+one in this environment and we'll get back something of some type, t one prime, and similarly
+
+37
+00:02:59,950 --> 00:03:04,100
+for all the other branches until finally the last branch, which is exactly
+
+38
+00:03:04,100 --> 00:03:08,760
+the same as the first one, just with the letter n replacing the number one. And so
+
+39
+00:03:08,760 --> 00:03:13,620
+since we don't know which brain to match at one time, it could be any of the branches
+
+40
+00:03:13,620 --> 00:03:17,650
+that actually executes and therefore the type of the entire expression
+
+41
+00:03:17,650 --> 00:03:23,120
+is just going to be least upper bound over all of the types a, of the various
+
+42
+00:03:23,120 --> 00:03:26,510
+branches, and here I've just extendedly super bound from a binding area
+
+43
+00:03:26,510 --> 00:03:30,420
+of the operation a, to an in area operation a, that should be clear enough,
+
+44
+00:03:30,420 --> 00:03:33,410
+we're just going to take the least upper bound to all of these types.

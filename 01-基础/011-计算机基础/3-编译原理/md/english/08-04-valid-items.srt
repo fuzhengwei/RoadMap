@@ -1,0 +1,151 @@
+0
+00:00:04,509 --> 00:00:08,709
+In this video, we're going to use our example automaton for recognizing viable
+
+1
+00:00:08,709 --> 00:00:15,709
+prefixes, to introduce one more idea, The idea of a valid item. To refresh your
+
+2
+00:00:16,890 --> 00:00:19,890
+memory, here's where we left off last time. This is the complete
+
+3
+00:00:19,890 --> 00:00:25,199
+nondeterministic automaton for recognizing the viable prefixes of the example grammar
+
+4
+00:00:25,199 --> 00:00:30,539
+[sound]. And Using the standard subset of states construction, we can build a
+
+5
+00:00:30,539 --> 00:00:34,890
+deterministic automaton that is equivalent to the non-deterministic automaton. So
+
+6
+00:00:34,890 --> 00:00:39,600
+here's the deterministic automaton that recognizes exactly the same language. This
+
+7
+00:00:39,600 --> 00:00:44,069
+automa, this deterministic automaton notices the viable prefixes, of our
+
+8
+00:00:44,069 --> 00:00:49,719
+example grammar. But now notice that each state is a set of items. So there's a set
+
+9
+00:00:49,719 --> 00:00:54,670
+of non-deterministic automaton states, in each of these states. And recall that what
+
+10
+00:00:54,670 --> 00:00:59,749
+that means is that the non-deterministic automaton could be in any one of these
+
+11
+00:00:59,749 --> 00:01:05,650
+states. And in particular, this state here is the start state because it has the item
+
+12
+00:01:05,650 --> 00:01:12,650
+S prime goes to dot E. The states of this deterministic automaton are called
+
+13
+00:01:13,600 --> 00:01:18,260
+variously cananugal collections of items or the cananugal collections of LR zero
+
+14
+00:01:18,260 --> 00:01:22,530
+items. If you look in the dragon book it gives another way of constructing the LR
+
+15
+00:01:22,530 --> 00:01:28,050
+zero items than the one that I gave. Mine is somewhat simplified but I think also a
+
+16
+00:01:28,050 --> 00:01:33,270
+little easier to understand if you are seeing this for the first time. Now we
+
+17
+00:01:33,270 --> 00:01:40,090
+need another definition. We'll say that a given item is valid for a viable prefix
+
+18
+00:01:40,090 --> 00:01:45,300
+alpha beta. If the following is true, that beginning from the start symbol, this is
+
+19
+00:01:45,300 --> 00:01:52,159
+our extra start symbol, and by a series of right-most derivation steps, we can get to
+
+20
+00:01:52,159 --> 00:01:58,050
+a configuration, alpha-x-omega, and then in one step, x can go to beta-gamma. And,
+
+21
+00:01:58,050 --> 00:02:05,050
+what this says is after parsing alpha and beta, after seeing. Alpha and beta on the
+
+22
+00:02:05,409 --> 00:02:10,420
+stack, the valid items are the possible tops of the stack of items. That, that we
+
+23
+00:02:10,419 --> 00:02:14,639
+could, that this item, could be the determination state of the
+
+24
+00:02:14,639 --> 00:02:21,450
+nondeterministic automaton. A simpler way of explaining the same idea is that for a
+
+25
+00:02:21,450 --> 00:02:27,650
+given viable prefix alpha the items that are valid in that prefix are exactly the
+
+26
+00:02:27,650 --> 00:02:31,659
+items that are in the final state of the DFA after it reads that prefix. So these
+
+27
+00:02:31,659 --> 00:02:38,659
+are the items that describe the state after you've seen the stack alpha. Now, an
+
+28
+00:02:39,829 --> 00:02:44,920
+item is often valid for many, many prefixes. So, for example, the item T goes
+
+29
+00:02:44,920 --> 00:02:51,920
+to open paren .e closed paren is valid for all sequences of open parens. And to see
+
+30
+00:02:52,099 --> 00:02:56,840
+that, We can just look at our automaton and confirm that if we see an open paren,
+
+31
+00:02:56,840 --> 00:03:00,329
+remember, this is the start state. So if we see an open paren, we take this
+
+32
+00:03:00,329 --> 00:03:04,849
+transition, we wind up in this state here. And then every open paren we see, we just
+
+33
+00:03:04,849 --> 00:03:10,310
+go round and round in this state. So if I have a sequence of five open parens as my
+
+34
+00:03:10,310 --> 00:03:16,540
+input, then I'll have transitions one, two, three, four, five, all looping in
+
+35
+00:03:16,540 --> 00:03:22,430
+this state. And notice that this item. Is, in, is one of the items in that state. And
+
+36
+00:03:22,430 --> 00:03:27,109
+that just says that this item is valid for any prefix, or for, excuse me, any
+
+37
+00:03:27,109 --> 00:03:29,030
+sequence of open parens.

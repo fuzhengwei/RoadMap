@@ -1,0 +1,663 @@
+0
+00:00:03,780 --> 00:00:07,370
+In the next two videos, we're going to be looking at code generation for a language
+
+1
+00:00:07,370 --> 00:00:11,139
+that's higher level than a simple stack machine language we've been talking about
+
+2
+00:00:11,139 --> 00:00:18,139
+so far. So here's a language with integers and integer operation and this was the
+
+3
+00:00:21,630 --> 00:00:26,590
+grammar. So a program consists of a list of declarations, and what's a declaration?
+
+4
+00:00:26,590 --> 00:00:30,670
+A declaration is a function definition so it has a function name, the function takes
+
+5
+00:00:30,670 --> 00:00:35,570
+a list of arguments which are just identifiers, and the function has an
+
+6
+00:00:35,570 --> 00:00:39,550
+expression, which is the body of the function And what in function bodies look
+
+7
+00:00:39,550 --> 00:00:45,719
+like, well they expressions can be integers identifiers if then else, and the
+
+8
+00:00:45,719 --> 00:00:50,100
+only predicate that we're going to allow is an equality test between integers and
+
+9
+00:00:50,100 --> 00:00:57,100
+then sums of expressions, differences of expressions, and function calls. Now we'll
+
+10
+00:00:57,449 --> 00:01:01,050
+just say that the first function definition in the list is the entry point.
+
+11
+00:01:01,050 --> 00:01:04,019
+This will be the main routine, or the function that gets run when the program
+
+12
+00:01:04,019 --> 00:01:09,170
+starts And this language is expressive enough to write a Fibonacci function And
+
+13
+00:01:09,170 --> 00:01:13,250
+here it is And this is just a standard definition, if X is one then the result is
+
+14
+00:01:13,250 --> 00:01:17,930
+zero. If X is two, the result is one. Otherwise it's the sum of fib of X minus
+
+15
+00:01:17,930 --> 00:01:24,930
+one and fib of X minus two. Now, it's a two code generation for this language. We
+
+16
+00:01:25,899 --> 00:01:30,240
+need to generate code for each expression E; we need to produce MIPS code for each
+
+17
+00:01:30,240 --> 00:01:34,560
+expression E that accomplishes two things. First of all, that code is going to
+
+18
+00:01:34,560 --> 00:01:39,840
+compute the value of E, and leave it in the accumulator A zero. Right? So when the
+
+19
+00:01:39,840 --> 00:01:46,509
+code for E is done, the value of E will be stored in the accumulator And furthermore,
+
+20
+00:01:46,509 --> 00:01:50,799
+E is going to, the code for E, excuse me, the generated code for E is going to
+
+21
+00:01:50,799 --> 00:01:55,369
+preserve the stack pointer and the contents of the stack. That means whatever
+
+22
+00:01:55,369 --> 00:02:00,600
+the stack is when we started executing E, or the code for E, the stack will be
+
+23
+00:02:00,600 --> 00:02:06,310
+exactly the same after we're done, executing the code for E And we're going
+
+24
+00:02:06,310 --> 00:02:12,129
+to write a code generation function C-gen of E that produces code. Okay? So C-gen
+
+25
+00:02:12,129 --> 00:02:15,670
+would be something that produces a program. It produces code that will
+
+26
+00:02:15,670 --> 00:02:21,599
+accomplish these two things. Now our co-generation function is just going to
+
+27
+00:02:21,599 --> 00:02:25,510
+work by cases And to begin with let's focus on the expressions, and we're just
+
+28
+00:02:25,510 --> 00:02:29,230
+going to have, different kind of code or a certain kind of code that's generated for
+
+29
+00:02:29,230 --> 00:02:33,739
+each kind of expression in the language. So to evaluate an expression, which is a
+
+30
+00:02:33,739 --> 00:02:38,069
+just an integral constant, all we have to do is load that constant into the
+
+31
+00:02:38,069 --> 00:02:43,819
+accumulator. So, the code generation for ‘I', for the constant, ‘I', is the
+
+32
+00:02:43,819 --> 00:02:49,890
+instruction, load immediate into the accumulator the value of ‘I' And it's
+
+33
+00:02:49,890 --> 00:02:53,659
+easy to see that this preserves the stack as required, so this doesn't modify the
+
+34
+00:02:53,659 --> 00:02:57,099
+stack pointer or the contents of the stack at all, so the stack is exactly the same
+
+35
+00:02:57,099 --> 00:03:02,450
+before and after the execution of this instruction. >> And another thing I want
+
+36
+00:03:02,450 --> 00:03:07,120
+to point out or I want to emphasize here, is I'm going to be following a convention
+
+37
+00:03:07,120 --> 00:03:12,349
+that things that are in red, are things that are done at compile time And things
+
+38
+00:03:12,349 --> 00:03:17,150
+that are in blue are things that are going to be done in run time. So in this case,
+
+39
+00:03:17,150 --> 00:03:24,150
+at compile time we execute the function C gen of I And that produces code. Here that
+
+40
+00:03:24,230 --> 00:03:28,159
+will run at run time, okay. So, C gen of I, something that would execute a compile
+
+41
+00:03:28,159 --> 00:03:33,959
+time, and it produces a program that will be executed at run time And this is to
+
+42
+00:03:33,959 --> 00:03:39,840
+help you separate in your mind, and, and to develop a very, firm grip on the idea
+
+43
+00:03:39,840 --> 00:03:43,540
+that we have a real division of time in these programs, There's stuff that happens
+
+44
+00:03:43,540 --> 00:03:47,430
+inside the compiler, and then there's computation that's deferred until the
+
+45
+00:03:47,430 --> 00:03:53,860
+program that we are producing, actually executes. All right, now let's look at
+
+46
+00:03:53,860 --> 00:03:58,010
+another example. Let's, let's take on the addition of two expressions and think
+
+47
+00:03:58,010 --> 00:04:02,659
+about the code that gets generated for that. So, what are we going to do? Well
+
+48
+00:04:02,659 --> 00:04:06,549
+the first thing that happens when we execute E1+E2 is that we have to compute
+
+49
+00:04:06,549 --> 00:04:09,599
+the values of the sum expressions, we have to know what integers we're going to add.
+
+50
+00:04:09,599 --> 00:04:13,290
+So we better generate code for E1. And that's going to happen at com pile time.
+
+51
+00:04:13,290 --> 00:04:16,970
+We're definitely going to generate that code at compile time. And then, once we've
+
+52
+00:04:16,970 --> 00:04:21,959
+got the value of E1, well, remember we only have one, register stack machine, so
+
+53
+00:04:21,959 --> 00:04:25,030
+we're going to have to save that value somewhere until we also know the value of
+
+54
+00:04:25,030 --> 00:04:28,360
+E2 and where we're going to put it. We'll do what we always do; we'll put it on a
+
+55
+00:04:28,360 --> 00:04:34,470
+stack. So, E1 The, the, the code for E1 is guaranteed to leave the value of E1 and
+
+56
+00:04:34,470 --> 00:04:40,750
+the accumulator. So what we're going to store the value of E1 onto the stack. And
+
+57
+00:04:40,750 --> 00:04:46,250
+we know how to do that. We store A0 onto the stack, and then we have to bump the
+
+58
+00:04:46,250 --> 00:04:53,250
+stack pointer. >> And then we can generate code for E2. Okay and again, this stuff in
+
+59
+00:04:54,300 --> 00:04:59,199
+blue is a part of the program that will be executed at, at run time. These are calls
+
+60
+00:04:59,199 --> 00:05:04,550
+to the co-generator that are happening at compile time. And so we generate the code
+
+61
+00:05:04,550 --> 00:05:09,750
+for E2, and then that goes here after this code for pushing the value of E1 on the
+
+62
+00:05:09,750 --> 00:05:16,229
+stack And once we have the value for E2, now we can perform the add, So how do we
+
+63
+00:05:16,229 --> 00:05:21,509
+do that? Well, first we retrieve the value of E1. So we load the value of E1 Which is
+
+64
+00:05:21,509 --> 00:05:28,069
+on the stack. And notice that. This works because E2 is guaranteed the code for E2
+
+65
+00:05:28,069 --> 00:05:31,550
+is guaranteed to preserve the stack. You know this code for E2 here, and let me
+
+66
+00:05:31,550 --> 00:05:35,710
+digress for a moment; this code for E2 can be arbitrarily complicated. This could be
+
+67
+00:05:35,710 --> 00:05:39,590
+a whole program. It could go call functions. It could allocate data
+
+68
+00:05:39,590 --> 00:05:44,130
+structures. It could print things out. It could do all kinds of complicated things
+
+69
+00:05:44,130 --> 00:05:49,610
+But because we have this invariant that all code generation for all expressions
+
+70
+00:05:49,610 --> 00:05:53,060
+will preserve the stack, we know that no matter how complicated this is and how
+
+71
+00:05:53,060 --> 00:05:56,919
+long it takes. When it's done executing, the stack will be in the same state. And
+
+72
+00:05:56,919 --> 00:06:02,050
+that's what allows us to know. Where to find the value of E1 that we stored away
+
+73
+00:06:02,050 --> 00:06:06,080
+It's going to be at the top of the stack, Okay, so we load the value B one back into
+
+74
+00:06:06,080 --> 00:06:11,840
+a temporary register, now we can do the add Okay, so we add T1 and A0 together,
+
+75
+00:06:11,840 --> 00:06:17,509
+and store that back in the accumulator And now we have to pop the stack And now
+
+76
+00:06:17,509 --> 00:06:23,630
+notice that this is all the code, here, for E1+E2, and when we're done, we've,
+
+77
+00:06:23,630 --> 00:06:29,080
+established our the value of E1+E2 is in the accumulator. That was established by
+
+78
+00:06:29,080 --> 00:06:33,560
+this instruction. And this pop here restores the state of the stacks. Now, the
+
+79
+00:06:33,560 --> 00:06:38,680
+state of the stacks here is exactly what it was when we entered this block of code
+
+80
+00:06:38,680 --> 00:06:45,680
+up here. Now to be completely precise I really should write this code generation
+
+81
+00:06:46,830 --> 00:06:52,199
+function out a slightly different way And that would be like this. So what we're
+
+82
+00:06:52,199 --> 00:06:56,129
+really doing here is we are generating code for E1 and then we're printing out
+
+83
+00:06:56,129 --> 00:07:03,129
+into a file or something like that the code to do the push. Okay, and then we
+
+84
+00:07:04,629 --> 00:07:09,009
+generate the code for U2 And now, these calls, the code generation, are also
+
+85
+00:07:09,009 --> 00:07:12,910
+printing in to the same file, okay. So, here, you know, they just printed out
+
+86
+00:07:12,910 --> 00:07:16,360
+the instructions, whatever the instructions are, like security one, this
+
+87
+00:07:16,360 --> 00:07:21,669
+is printing out the code to execute, to do the push. You print out the code to do U2
+
+88
+00:07:21,669 --> 00:07:26,879
+And then, we print out the code to do the ad and the pop Fence. Yes, The add and the
+
+89
+00:07:26,879 --> 00:07:33,120
+pop. Okay, and this is just a, this is much more verbose over here, and so I'm
+
+90
+00:07:33,120 --> 00:07:37,099
+trying to go in and leave out the prints and just indicate in blue the instructions
+
+91
+00:07:37,099 --> 00:07:39,740
+that are deferred, but I hope you understand what this means. Everything in
+
+92
+00:07:39,740 --> 00:07:43,259
+red here, of course is being done in compile time so you know, we're calling
+
+93
+00:07:43,259 --> 00:07:47,490
+these co-generation functions a compile time. The print statements are being
+
+94
+00:07:47,490 --> 00:07:51,159
+executed in compile time and then we're accumulating somewhere in some data
+
+95
+00:07:51,159 --> 00:07:56,159
+structure or in a file, all the instructions that will be executed at run
+
+96
+00:07:56,159 --> 00:08:03,159
+time. So let's think about a possible optimization to this code. Instead of
+
+97
+00:08:03,699 --> 00:08:08,060
+pushing the result of E1 on the stack, what if we stored the result of E1 in a
+
+98
+00:08:08,060 --> 00:08:14,110
+temporary register T1. What would the code for that look like? >> Well in that world,
+
+99
+00:08:14,110 --> 00:08:20,620
+to generate code for E1 plus E2, what would we do? We'd generate code for E1 and
+
+100
+00:08:20,620 --> 00:08:24,520
+that would be followed now by instead of pushing the result on the stack, we would
+
+101
+00:08:24,520 --> 00:08:29,229
+take the result of E1, which of course is in the accumul ator A0, we would store it
+
+102
+00:08:29,229 --> 00:08:35,479
+in a temporary register And then we would generate code for E2. Alright, that we
+
+103
+00:08:35,479 --> 00:08:39,730
+followed by the code for E2, and then we could just do the add. We would, take the
+
+104
+00:08:39,730 --> 00:08:45,350
+result of E2, which is in the accumulator A0, add it to the contents of T1, and
+
+105
+00:08:45,350 --> 00:08:50,000
+store that into the accumulator A0, and of course there's no pushing and popping from
+
+106
+00:08:50,000 --> 00:08:54,660
+the stack here, so this code preserves the stack, and it looks like, anyway, that it
+
+107
+00:08:54,660 --> 00:09:00,110
+actually puts the value of E1 plus E2, into, the accumulator. Unfortunately, this
+
+108
+00:09:00,110 --> 00:09:06,020
+code is incorrect, so this is actually wrong, and you don't want to do this And
+
+109
+00:09:06,020 --> 00:09:13,020
+to see why, let's consider what would happen. If, E2 Was itself the actually,
+
+110
+00:09:15,700 --> 00:09:20,960
+let's do it for a concrete example. Let's do the example one plus two Plus three
+
+111
+00:09:20,960 --> 00:09:27,960
+Parenthesize like that, okay. So what's going to happen, so E1 here, so we're
+
+112
+00:09:27,970 --> 00:09:33,150
+doing one plus two plus three. So this will be a load immediate, the first, the
+
+113
+00:09:33,150 --> 00:09:40,150
+code for E1 will be a load immediate into A0 of the number one. Okay, and then we'll
+
+114
+00:09:42,770 --> 00:09:49,770
+have the move. We'll try to save that value I, in, temporary register T1. And
+
+115
+00:09:52,720 --> 00:09:56,440
+now we're going to generate code for E2. And what's E2? Well, E2 is itself, a plus
+
+116
+00:09:56,440 --> 00:10:00,150
+expression. So we're going to recursively call the code generator to generate code
+
+117
+00:10:00,150 --> 00:10:07,150
+for two+3. So we generate code for the new first, expression. So that will be a
+
+118
+00:10:07,260 --> 00:10:14,260
+load immediate, into A0 of the value two And now you should be able to
+
+119
+00:10:14,650 --> 00:10:20,360
+see what's going to go wrong, because. Since this uses the same co-generation
+
+120
+00:10:20,360 --> 00:10:25,880
+strategy, it's also going to try to use T-1 to hold the temporary value. So it's
+
+121
+00:10:25,880 --> 00:10:32,650
+going to move the accumulator into T-1, thereby clobbering the value of the
+
+122
+00:10:32,650 --> 00:10:38,450
+previous self expression that we had evaluated, the number one. Okay, so that
+
+123
+00:10:38,450 --> 00:10:45,450
+value's going to be overwritten and then we're going to do and add  And oops I may
+
+124
+00:10:51,190 --> 00:10:54,960
+have made a mistake, we're not going to do an ad, let me erase that Forgot to
+
+125
+00:10:54,960 --> 00:11:01,960
+generate the code for the three, so now we load the value of three. I, in to the
+
+126
+00:11:03,170 --> 00:11:10,170
+accumulator And now we can do the add, now comes the add And so we do A0 T1 A0 and
+
+127
+00:11:13,570 --> 00:11:19,020
+when you execute this what do you get. You get two + three which is five and that's
+
+128
+00:11:19,020 --> 00:11:26,020
+fine but now, Now we have the value of this sub expression. In the accumulator
+
+129
+00:11:29,110 --> 00:11:33,610
+and now ready to do the outer add. So that generates another add instruction. Which
+
+130
+00:11:33,610 --> 00:11:39,560
+is exactly the same But unfortunately, the first value of T1, the first temporary we
+
+131
+00:11:39,560 --> 00:11:43,000
+tried to restore has been overwritten And so what's in that, what's in T1 at this
+
+132
+00:11:43,000 --> 00:11:50,000
+point is the value two, instead of the value one, and we get that one+2+3=7.
+
+133
+00:11:51,870 --> 00:11:55,730
+Which is not what we wanted And so the problem here of course is that in the
+
+134
+00:11:55,730 --> 00:12:00,400
+presence of nested expressions, and particularly nested expressions of the
+
+135
+00:12:00,400 --> 00:12:05,680
+same kind, if the expressions try to use a fixed register for their temporary
+
+136
+00:12:05,680 --> 00:12:09,930
+values, then if you try to generate a code for two different expressions that are
+
+137
+00:12:09,930 --> 00:12:12,960
+nested - sorry two expressions of the same kind that are nested beside each
+
+138
+00:12:12,960 --> 00:12:18,000
+other, they will step on each other's temporary intermediate results And so
+
+139
+00:12:18,000 --> 00:12:24,750
+that's why we have to use a stack to store intermediate values. So this example
+
+140
+00:12:24,750 --> 00:12:28,710
+illustrates a couple of features of code generation that I just want to emphasize.
+
+141
+00:12:28,710 --> 00:12:33,010
+First of all, notice that the code for plus is really a template that has holes
+
+142
+00:12:33,010 --> 00:12:38,140
+in it for the code, for evaluating E1, E2, that is there are some fixed instructions,
+
+143
+00:12:38,140 --> 00:12:45,140
+that we admit And then there are places where we plug in the code for E one and
+
+144
+00:12:45,190 --> 00:12:49,170
+the code for E two, okay, so that's what I mean by a template, so there's some fixed
+
+145
+00:12:49,170 --> 00:12:53,050
+stuff which are the instructions that actually do the ad, and then there's a
+
+146
+00:12:53,050 --> 00:12:58,130
+place where we can just plug directly in, arbitrary code, whatever it is for
+
+147
+00:12:58,130 --> 00:13:04,050
+implementing E one and E two, and we'll see the same pattern with all the other
+
+148
+00:13:04,050 --> 00:13:09,100
+kinds of expressions. The other important point is that stack machine code,
+
+149
+00:13:09,100 --> 00:13:14,380
+generation is recursive. That is you know the code for E1 plus E2 is code for E1 and
+
+150
+00:13:14,380 --> 00:13:17,910
+E2 glued together and recursively regenerate code E1 and E2 which will have
+
+151
+00:13:17,910 --> 00:13:21,940
+their own templates and may even be other expressions of the same kind as we just
+
+152
+00:13:21,940 --> 00:13:27,870
+saw And what this means is that code generation can be written as a recursive
+
+153
+00:13:27,870 --> 00:13:34,870
+descent of the abstract syntax tree, at least for the expressions. Alright so
+
+154
+00:13:34,930 --> 00:13:40,240
+let's consider another new instruction. Let's add the subtraction instruction And
+
+155
+00:13:40,240 --> 00:13:44,140
+this is just like addition instruction so sub just subtraction to register instead
+
+156
+00:13:44,140 --> 00:13:50,690
+of adding them. And code generation then for subtraction expression as you might
+
+157
+00:13:50,690 --> 00:13:54,820
+imagine look and awful like code generation for a plus expression. So what
+
+158
+00:13:54,820 --> 00:14:00,810
+do we have first we have a place where we plug in the code for E1. >> Then we have
+
+159
+00:14:00,810 --> 00:14:05,600
+to store the value of E1 on the stack. We have to remember that intermediate result
+
+160
+00:14:05,600 --> 00:14:11,570
+And then we can go off and compute the value of E2. So this is where the code for
+
+161
+00:14:11,570 --> 00:14:17,510
+E2 gets plugged in And then at the end, we load the value of E1 back into a temporary
+
+162
+00:14:17,510 --> 00:14:23,620
+register. I actually do the operation, the subtraction, and then pop the stack And
+
+163
+00:14:23,620 --> 00:14:27,820
+the thing to do note about this code is that it's exactly the same as the code for
+
+164
+00:14:27,820 --> 00:14:32,640
+addition except for this instruction right here where we do a subtraction instead of
+
+165
+00:14:32,640 --> 00:14:32,890
+an add.

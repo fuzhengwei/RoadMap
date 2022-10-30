@@ -1,0 +1,507 @@
+0
+00:00:03,959 --> 00:00:10,959
+In this video we're going to generate code for a small example program. The program
+
+1
+00:00:11,080 --> 00:00:15,610
+we'll take a look at takes a positive imaginary X and sums all the numbers from
+
+2
+00:00:15,610 --> 00:00:22,610
+O up to X. So if X is O then the result is O. Otherwise it is X plus the sum of all
+
+3
+00:00:23,640 --> 00:00:29,259
+the numbers up to X minus one. So this isn't a interesting program but it does
+
+4
+00:00:29,259 --> 00:00:35,870
+illustration all of the features that we discuss in the previous couple of videos.
+
+5
+00:00:35,870 --> 00:00:41,199
+So let's dive right in and talk about how we're going to generate code for sum two.
+
+6
+00:00:41,199 --> 00:00:46,780
+So we begin by giving it a label for the entry point to the function, so that'll be
+
+7
+00:00:46,780 --> 00:00:53,780
+the sum two entries. Alright and now we have to generate code for the caller's
+
+8
+00:00:54,690 --> 00:00:59,629
+side, call, callee side excuse me, of the calling sequence. So what was that? So the
+
+9
+00:00:59,629 --> 00:01:04,720
+first thing we have to do is we have to set up the frame pointer, which would just
+
+10
+00:01:04,720 --> 00:01:09,110
+be the value of the stack pointer. So that's the frame pointer for this
+
+11
+00:01:09,110 --> 00:01:16,110
+activation, and. Then we're going to have to store the return address at the current
+
+12
+00:01:17,390 --> 00:01:21,450
+value of the stack pointer. And then we're going to move the stack pointer
+
+13
+00:01:21,450 --> 00:01:26,659
+into the - Whenever we store something on the stack we have to move the stack
+
+14
+00:01:26,659 --> 00:01:32,299
+pointer to the next unused location.  Alright. Okay And so now we have to
+
+15
+00:01:32,299 --> 00:01:37,759
+generate code, for this if then else All right? And the very first thing if you go
+
+16
+00:01:37,759 --> 00:01:42,490
+back and look at the code for if then else is to generate code for the first sub
+
+17
+00:01:42,490 --> 00:01:46,399
+expression of the predicate. So we're going to generate code for X, and that's
+
+18
+00:01:46,399 --> 00:01:51,630
+really easy And we're generating code for a variable, just looks up the variable in
+
+19
+00:01:51,630 --> 00:01:57,700
+the current position of the frame. Sorry, at the correct offset from the frame
+
+20
+00:01:57,700 --> 00:02:04,700
+pointer, alright? Alright so once we do that now we are generating code for the
+
+21
+00:02:05,020 --> 00:02:07,880
+predicate And how do we do that? Well we generate code for this first sub
+
+22
+00:02:07,880 --> 00:02:12,760
+expression, and now we have to save that sub expression somewhere Because we are
+
+23
+00:02:12,760 --> 00:02:16,130
+going to generate code for another sub expression. So the equality there is a
+
+24
+00:02:16,130 --> 00:02:21,160
+binary operator, so we have to save the value we just computed somewhere on the
+
+25
+00:02:21,160 --> 00:02:28,160
+stack Alright? So we'll do that, so we'll st ore the value of a zero on the stack.
+
+26
+00:02:30,520 --> 00:02:37,520
+And that will involve, as always, moving the side pointer. Okay and now we generate
+
+27
+00:02:41,930 --> 00:02:47,680
+code for the second sub-expression of the predicate. All right, that's also easy.
+
+28
+00:02:47,680 --> 00:02:52,980
+That's just load the immediate of the immediate value into the accumulator,
+
+29
+00:02:52,980 --> 00:02:59,090
+alright. And now I'm going to load the value that we said, the first or we move
+
+30
+00:02:59,090 --> 00:03:03,420
+the predicate back into a temporary register and actually do the comparison.
+
+31
+00:03:03,420 --> 00:03:09,340
+So this is more code, as actually part of the conditional, alright, so we do a load
+
+32
+00:03:09,340 --> 00:03:16,340
+word Entity one Of the value that we saved before. Okay and now we need to pop the
+
+33
+00:03:27,840 --> 00:03:34,840
+stack okay. We'll do that here because we're done with that value. Alright, and
+
+34
+00:03:41,420 --> 00:03:48,420
+now we're going to do the branch. So now we test whether. The two sub-expressions
+
+35
+00:03:48,640 --> 00:03:53,090
+of the predicate are equal or not, and if they are, then we jump to the true branch.
+
+36
+00:03:53,090 --> 00:03:56,620
+And here I'm going to give the true branch a unique label, because this might be part
+
+37
+00:03:56,620 --> 00:04:00,260
+of a larger program where there are many if-then-else's, and so I'm going to append
+
+38
+00:04:00,260 --> 00:04:04,460
+some identifying number on the end. Instead of writing out true branch, I'll
+
+39
+00:04:04,460 --> 00:04:10,350
+call this true one Alright? Okay, and then if we fall through, then we're on the
+
+40
+00:04:10,350 --> 00:04:15,180
+false branch, we'll call that false one And now we're generating code for the
+
+41
+00:04:15,180 --> 00:04:20,329
+false branch, which is this summation here Alright? And how are we going to do that?
+
+42
+00:04:20,329 --> 00:04:22,710
+Well this, whole thing is a plus expression, which means we have the
+
+43
+00:04:22,710 --> 00:04:28,520
+generic code first. For the first sub-expression which is just X. Alright?
+
+44
+00:04:28,520 --> 00:04:35,469
+So what do we do? Well we load. To generate code for x we look up x at its
+
+45
+00:04:35,469 --> 00:04:40,340
+current offset. And that is the appropriate offset in the frame, using the
+
+46
+00:04:40,340 --> 00:04:43,500
+frame pointer. Okay? It is the only argument, and so it's at four from the
+
+47
+00:04:43,500 --> 00:04:48,620
+frame pointer. I'm sorry the only argument to the procedure, and so that's stored at
+
+48
+00:04:48,620 --> 00:04:53,250
+the first position for arguments, which is always four from the frame pointer in our
+
+49
+00:04:53,250 --> 00:04:57,659
+scheme. All right, and now that we've loaded it we have to save it because it is
+
+50
+00:04:57,659 --> 00:05:04,659
+part of a binary operation so we're going to save that value on the stack. Kay. And
+
+51
+00:05:07,689 --> 00:05:14,689
+now we will adjust the stack pointer. Okay. And what are we going to do next? Well,
+
+52
+00:05:22,830 --> 00:05:27,999
+now we've, we've, we computed this sub-expression, this X. We can't do the
+
+53
+00:05:27,999 --> 00:05:31,889
+plus yet until we compute the second sub-expression which is the function call
+
+54
+00:05:31,889 --> 00:05:35,379
+Alright? So now we have the generate code for the function call and I'm going to
+
+55
+00:05:35,379 --> 00:05:39,819
+move up here to the other side of the screen here to, to show the rest of the
+
+56
+00:05:39,819 --> 00:05:46,819
+code. Okay And the first thing we do, to generate code, for the function call Is to
+
+57
+00:05:47,770 --> 00:05:52,099
+start setting up our activation record Alright? This is even setting up the new
+
+58
+00:05:52,099 --> 00:05:56,650
+activation record for the function, call that we're about to make Alright? So what
+
+59
+00:05:56,650 --> 00:06:02,229
+do we do there? We store The frame pointer. 'Kay, use this to our old frame
+
+60
+00:06:02,229 --> 00:06:09,229
+pointer. Add the stack on the stack. [sound] Alright, and now, we have to
+
+61
+00:06:17,139 --> 00:06:21,620
+compute the argument All right? We have to compute the x-1. So that code gets
+
+62
+00:06:21,620 --> 00:06:26,740
+inserted here in the template for our function call. So, what's going to happen
+
+63
+00:06:26,740 --> 00:06:29,529
+there? Well, we're completing subtraction, so the template for subtraction is to
+
+64
+00:06:29,529 --> 00:06:32,879
+first generate code for the first sub-expression, then generate code for the
+
+65
+00:06:32,879 --> 00:06:36,849
+second sube-xpression, and then subtract them. All right, so let's do that. So,
+
+66
+00:06:36,849 --> 00:06:43,849
+first we generate code for x again. Okay, and now, since it's the first argument of
+
+67
+00:06:48,319 --> 00:06:55,319
+a binary operation, we're going to save it on stack. Alright now we generate code for
+
+68
+00:07:04,039 --> 00:07:10,520
+the second argument of the subtraction. Okay, and now we perform the subtractions
+
+69
+00:07:10,520 --> 00:07:17,520
+so we have to load the first argument back into a temporary register. Have to
+
+70
+00:07:19,779 --> 00:07:26,779
+actually do the subtraction. Excuse me here. Alright, and then we can pop the
+
+71
+00:07:34,099 --> 00:07:41,099
+temporary value off the stack. Okay, now we have actually done subtraction. Let me
+
+72
+00:07:44,689 --> 00:07:51,689
+see that. There is everything, from about here to down there is computing x minus y.
+
+73
+00:07:52,900 --> 00:07:58,569
+Okay... So this is computing x And this was computing one And then this whole
+
+74
+00:07:58,569 --> 00:08:04,020
+thing is computing the subtraction Alright? So now we compute the argument.
+
+75
+00:08:04,020 --> 00:08:09,719
+What are we going to do? Well we save it on the stack. So now we save the result on
+
+76
+00:08:09,719 --> 00:08:14,809
+the stack. We're saving it into the new activat ion record that we're building
+
+77
+00:08:14,809 --> 00:08:21,809
+Alright? And then we have to advance this, or move the stack pointers as always And
+
+78
+00:08:26,289 --> 00:08:28,580
+now we're ready, we have to do the function calls And now we do the jump in
+
+79
+00:08:28,580 --> 00:08:35,580
+the link to the entry point of sum two Okay? And now when this returns, what it's
+
+80
+00:08:38,080 --> 00:08:42,330
+going to return with, it's going to return what the result of computing the sum to in
+
+81
+00:08:42,330 --> 00:08:46,640
+the accumulator, all right? And so then, we're ready to perform the addition And
+
+82
+00:08:46,640 --> 00:08:50,900
+now we've computed the second argument to the addition and how do we do that? Well,
+
+83
+00:08:50,900 --> 00:08:53,960
+look back at the template for addition the next thing what happens is we reload the
+
+84
+00:08:53,960 --> 00:09:00,960
+temporary value that we saved on the stack. Alright and now we got actually
+
+85
+00:09:03,960 --> 00:09:10,960
+perform the edition. Okay? And then we could pop the temporary value of the stack
+
+86
+00:09:17,490 --> 00:09:24,490
+Alright And that actually ends the, the else branch, the false branch of the
+
+87
+00:09:30,560 --> 00:09:35,930
+entire if and else And there's now a branch around the rest of the if and else
+
+88
+00:09:35,930 --> 00:09:42,930
+code And we'll call that label if and one And now comes the code for the true
+
+89
+00:09:44,880 --> 00:09:51,880
+branch. And what we are going to put there, well, it's not very complicated
+
+90
+00:09:54,150 --> 00:09:59,340
+because all we're doing true branch is loading or generating codes for zero which
+
+91
+00:09:59,340 --> 00:10:06,200
+is a single load immediate, load immediate Alright And that's the entire true branch
+
+92
+00:10:06,200 --> 00:10:11,940
+and so now we're at um there should not be a colon there excuse me, and in fact I can
+
+93
+00:10:11,940 --> 00:10:18,930
+just erase that a little bit Alright And now we're at and actually I see it notice
+
+94
+00:10:18,930 --> 00:10:25,090
+in the wrong place so let's fix that so this is a branch at the end of the false
+
+95
+00:10:25,090 --> 00:10:29,950
+branch, at the end of the else, part of the if and we're going to, to branch
+
+96
+00:10:29,950 --> 00:10:35,260
+around per quote for the two branch which is only one instruction. And so the very
+
+97
+00:10:35,260 --> 00:10:42,030
+next instruction is the label end if. So now what's left to do, we've generated code for the whole if then else so
+
+98
+00:10:42,030 --> 00:10:47,720
+now it goes here is the rest of the template for the function definition so
+
+99
+00:10:47,720 --> 00:10:52,440
+now we have to generate the code returns back to the caller and how do we do well
+
+100
+00:10:52,440 --> 00:10:59,440
+we have to load the return address The on the stack, okay? And now we pop the stacks
+
+101
+00:11:02,660 --> 00:11:05,920
+so we pop the entire activation record off the stack and now because of the
+
+102
+00:11:05,920 --> 00:11:09,240
+activation reco rd well remember, there's always two words. One for the return
+
+103
+00:11:09,240 --> 00:11:12,820
+address and one for the frame pointer and then a number of words equals to the
+
+104
+00:11:12,820 --> 00:11:16,580
+number of arguments where there's only one argument here, so we have three words, so
+
+105
+00:11:16,580 --> 00:11:23,120
+it's twelve bytes. So we increment the stack pointer by twelve, all right? And
+
+106
+00:11:23,120 --> 00:11:30,120
+then we load the old frame pointer, we store the frame pointer. Okay, and then we
+
+107
+00:11:34,760 --> 00:11:41,090
+return. So, one more instruction, we'll do a jump register to the return address And
+
+108
+00:11:41,090 --> 00:11:47,790
+that is the entire code for this simple functions sum2 And there's a couple of
+
+109
+00:11:47,790 --> 00:11:53,150
+things to point out. So, first of all the, the code is constructed as a bunch of
+
+110
+00:11:53,150 --> 00:11:56,770
+templates pasted together and I try to point out as we go along how that
+
+111
+00:11:56,770 --> 00:12:03,010
+works But we do lined up with one linear sequence of code. Alright and if, if
+
+112
+00:12:03,010 --> 00:12:06,260
+you're all confused as we work as to go back and look at those templates and look
+
+113
+00:12:06,260 --> 00:12:11,670
+at this example and understand how the code all fits together and how it works.
+
+114
+00:12:11,670 --> 00:12:14,460
+And the other thing I would point out is just that this is your extremely
+
+115
+00:12:14,460 --> 00:12:21,460
+inefficient code so later here where we were generating code to check whether x=0.
+
+116
+00:12:23,240 --> 00:12:30,240
+Notice here that we, we load x so this is a load Of x And then we immediately store
+
+117
+00:12:30,640 --> 00:12:34,550
+the x again into the stacks, we just loaded it now from the frame then we
+
+118
+00:12:34,550 --> 00:12:39,380
+immediately store it back in the memory and then we and load the immediate value
+
+119
+00:12:39,380 --> 00:12:44,320
+then we reload the value of x here. So, you know, moving the value of x we you
+
+120
+00:12:44,320 --> 00:12:48,800
+know, all around. So we load it, we store it, we load it again and this was a lot of
+
+121
+00:12:48,800 --> 00:12:53,940
+wasted motion here and that's a result of this very simple cogeneration strategy
+
+122
+00:12:53,940 --> 00:12:58,370
+where we want to be able to compose code together. We will be able to compose these
+
+123
+00:12:58,370 --> 00:13:02,730
+templates in a way that it will work properly. This code does not have to be
+
+124
+00:13:02,730 --> 00:13:06,970
+this inefficient in a lot of the techniques of what we discussed in
+
+125
+00:13:06,970 --> 00:13:10,920
+sub-sequential lectures we talked about in a smarter code generation techniques and
+
+126
+00:13:10,920 --> 00:13:14,630
+also optimizations like even improve the code further.

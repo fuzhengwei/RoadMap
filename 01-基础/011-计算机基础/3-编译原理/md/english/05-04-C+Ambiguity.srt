@@ -1,0 +1,151 @@
+0
+00:00:01,439 --> 00:00:06,050
+Now you might think that the unambiguous if, then, else grammar is complicated and hard
+
+1
+00:00:06,050 --> 00:00:10,959
+to understand and frankly I would have to agree with you. Unfortunately, it's
+
+2
+00:00:10,959 --> 00:00:15,699
+impossible to automatically convert an unambiguous grammar to an ambiguous one,
+
+3
+00:00:15,699 --> 00:00:19,190
+so we have to do these conversions by hand. If we're going to have unambiguous
+
+4
+00:00:19,190 --> 00:00:23,020
+grammars, we have t o figure out how to write them by hand and that does result
+
+5
+00:00:23,020 --> 00:00:27,820
+insignificantly more complex grammars and grammars that are hard to read and
+
+6
+00:00:27,820 --> 00:00:33,160
+maintain than if we use the, well more straightforward ambiguous grammars. A
+
+7
+00:00:33,160 --> 00:00:38,670
+possibility is to we'll try to somehow live with ambiguity cuz that will allow us
+
+8
+00:00:38,670 --> 00:00:43,899
+more depth natural definitions. And, but then we would need some disambiguation
+
+9
+00:00:43,899 --> 00:00:48,440
+mechanism. We need some way to tell which Parse tree we want when more than one
+
+10
+00:00:48,440 --> 00:00:55,229
+Parse tree is possible. In fact, most practical parsing tools adopt the second
+
+11
+00:00:55,229 --> 00:00:58,989
+approach. So, instead of rewriting the grammar, we used the more natural
+
+12
+00:00:58,989 --> 00:01:03,690
+ambiguous grammar and the tool provide some kind of disambiguating declarations.
+
+13
+00:01:03,690 --> 00:01:09,070
+The most popular form of disambiguating declarations are precedence and
+
+14
+00:01:09,070 --> 00:01:16,070
+associativity declarations. So, here is a natural grammar for plus over the integers
+
+15
+00:01:16,320 --> 00:01:21,040
+and this is ambiguous even just with a single infix operation, we can get
+
+16
+00:01:21,040 --> 00:01:25,650
+ambiguity because this grammar doesn't tell us whether plus is left associative
+
+17
+00:01:25,650 --> 00:01:30,840
+or right associative. And. So, simple solution here is to have associativity
+
+18
+00:01:30,840 --> 00:01:35,600
+declarations. So here, we declare plus to be left associative and this is the
+
+19
+00:01:35,600 --> 00:01:41,360
+notation used in Bison. So, Bison is a particular tool and a present left plus
+
+20
+00:01:41,360 --> 00:01:46,950
+declares that plus is a left-associative operation and so that would rule out this
+
+21
+00:01:46,950 --> 00:01:51,820
+particular Parse tree over here. Here [inaudible] more complex grammar
+
+22
+00:01:51,820 --> 00:01:56,770
+essentially the grammar we began with the, at the start of this video. Here we have
+
+23
+00:01:56,770 --> 00:02:00,920
+plus and times over the integers and again this grammar is ambiguous because it
+
+24
+00:02:00,920 --> 00:02:05,960
+doesn't say what the precedence of times is with respect to plus. And the solution
+
+25
+00:02:05,960 --> 00:02:11,830
+for this is to have multiple associativity declarations. We declare plus to be left
+
+26
+00:02:11,830 --> 00:02:16,730
+associative and we declare times to be left associative and then the precedence
+
+27
+00:02:16,730 --> 00:02:21,230
+between plus and times is given by the order. So the fact here that times appears
+
+28
+00:02:21,230 --> 00:02:28,230
+after. Plus means that times has a higher precedence than plus. Just one word of
+
+29
+00:02:33,760 --> 00:02:37,810
+caution, These declarations are called associativity and precedence declarations
+
+30
+00:02:37,810 --> 00:02:42,170
+but that's not what's quite what's going on inside the parser. The parser doesn't
+
+31
+00:02:42,170 --> 00:02:45,750
+really understand about associativity and precedence. Instead, these declarations
+
+32
+00:02:45,750 --> 00:02:50,560
+tell it to make certain kinds of moves in certain situations. We won't really be
+
+33
+00:02:50,560 --> 00:02:54,480
+able to explain this until we get much further into parsing technology, but just
+
+34
+00:02:54,480 --> 00:02:59,180
+be aware that we have to be a little bit cautious in using these declarations.
+
+35
+00:02:59,180 --> 00:03:02,480
+Usually they behave like associativity and precedence in the way you expect but there
+
+36
+00:03:02,480 --> 00:03:07,709
+are some situations in which they will cause Rising behavior And is important
+
+37
+00:03:07,709 --> 00:03:11,590
+that you check the behavior of your grammar after you add these declarations.

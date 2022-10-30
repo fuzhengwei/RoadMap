@@ -1,0 +1,187 @@
+0
+00:00:01,589 --> 00:00:05,279
+So, just as was the case with mark-and-sweep, when we scan an object, we
+
+1
+00:00:05,279 --> 00:00:09,340
+have to know how big it is and we also need to know where the pointers and the
+
+2
+00:00:09,340 --> 00:00:13,840
+object are. So, if we think about this for a minute, let's say we're scanning this
+
+3
+00:00:13,840 --> 00:00:17,560
+object, so this is our scan pointer and we want now to process all the pointers in
+
+4
+00:00:17,560 --> 00:00:20,670
+it, well, we have to know where the pointers are. So, there's a pointer here
+
+5
+00:00:20,670 --> 00:00:23,820
+and there's a pointer here and we'll be able to find those pointers and we don't
+
+6
+00:00:23,820 --> 00:00:28,250
+want to confuse them with other fields of the object that might look like pointers.
+
+7
+00:00:28,250 --> 00:00:32,359
+So, in a bit pattern for an integer could look an awful lot like a pointer. Now,
+
+8
+00:00:32,359 --> 00:00:36,300
+this is not a big problem because the compiler, of course, in terms of, a lot of
+
+9
+00:00:36,300 --> 00:00:40,140
+the objects in the heap and it can stor e that information somewhere communicated to
+
+10
+00:00:40,140 --> 00:00:44,100
+the garbage collector so that it will be able to find the pointers. So, you can
+
+11
+00:00:44,100 --> 00:00:49,730
+imagine easily a little bit of information stored with the program indicating for
+
+12
+00:00:49,730 --> 00:00:55,899
+each type where the pointers are. And similarly once we've scanned this object,
+
+13
+00:00:55,899 --> 00:00:59,850
+we need to be able to advance our scan pointer just past the object so that we
+
+14
+00:00:59,850 --> 00:01:03,410
+can find the beginning of the next object and that's why we need to know the size,
+
+15
+00:01:03,410 --> 00:01:07,709
+okay. So, we need to know that size so that the scan pointer can be moved past
+
+16
+00:01:07,709 --> 00:01:12,359
+the object and we can find the beginning of the next object. Another issue is that
+
+17
+00:01:12,359 --> 00:01:15,389
+whenever we do a garbage collection, I haven't mentioned this up to this point
+
+18
+00:01:15,389 --> 00:01:20,630
+but it should be clear, we also have to scan and copy objects pointed to by the
+
+19
+00:01:20,630 --> 00:01:25,209
+stack. And we also have to update pointers in the stack. And this can actually turn
+
+20
+00:01:25,209 --> 00:01:30,599
+out to be kind of an expensive operation with stop-and-copy because, you know, you
+
+21
+00:01:30,599 --> 00:01:35,499
+still have to walk the entire stack each time you do a collection in order to make
+
+22
+00:01:35,499 --> 00:01:42,090
+sure that you've copied all the objects pointed to by the stack. To conclude
+
+23
+00:01:42,090 --> 00:01:46,779
+stop-and-copy, I think it's fair to say, is generally believed to be the fastest
+
+24
+00:01:46,779 --> 00:01:50,679
+garbage collection technique. Certainly, I believe that variations on stop-and- copy
+
+25
+00:01:50,679 --> 00:01:56,189
+are the most efficient approaches known to automatic memory management. Allocation is
+
+26
+00:01:56,189 --> 00:02:00,499
+very cheap, alright. So, cuz all you have to do is increment the e-pointer. So,
+
+27
+00:02:00,499 --> 00:02:05,049
+you're just moving a, a, single pointer forward to allocate space. There's no
+
+28
+00:02:05,049 --> 00:02:10,810
+complicated free list future verse or decisions to make about where to put the
+
+29
+00:02:10,810 --> 00:02:13,159
+object, you know, you're just going to allocate it directly at the allocation
+
+30
+00:02:13,159 --> 00:02:18,040
+pointer. So, you know, this, this part of memory management is, is very inexpensive.
+
+31
+00:02:18,040 --> 00:02:22,019
+And at the same time, collection is also relatively cheap. And, and interestingly
+
+32
+00:02:22,019 --> 00:02:27,689
+it's especially cheap if there is a lot of garbage because, because of making a copy
+
+33
+00:02:27,689 --> 00:02:32,969
+of the reachable objects stop-and-copy only touches the reac hable object, It is
+
+34
+00:02:32,969 --> 00:02:39,969
+not, in particular, does not touch the garbage. So, if you think about that for a
+
+35
+00:02:41,500 --> 00:02:46,680
+minute, that means that the garbage collection is in stop-and-copy is order
+
+36
+00:02:46,680 --> 00:02:52,859
+the size of the live objects. So, whatever the sub-graph is that you're copying,
+
+37
+00:02:52,859 --> 00:02:59,780
+that's the cost of a garbage collection and that's in contrast to mark-and-sweep
+
+38
+00:02:59,780 --> 00:03:05,030
+were the cost is proportional to all the memory that you're using cuz you have the
+
+39
+00:03:05,030 --> 00:03:08,329
+sweep phase where you have to go through and touch every single object whether it's
+
+40
+00:03:08,329 --> 00:03:13,890
+live or garbage, okay. And so, if you have a relatively lot of garbage and a
+
+41
+00:03:13,890 --> 00:03:17,340
+relatively small set of live objects, stop-and-copy is actually much, much
+
+42
+00:03:17,340 --> 00:03:22,640
+faster than mark-and-sweep. Now, of course the down side of stop-and-copy is that it
+
+43
+00:03:22,640 --> 00:03:28,400
+moves the objects in some languages, in particular C and C++, can't allow you to
+
+44
+00:03:28,400 --> 00:03:33,689
+move objects because the address that which an object lives is actually visible
+
+45
+00:03:33,689 --> 00:03:38,079
+exposed in the program and is part of the semantics of the object. And so there, you
+
+46
+00:03:38,079 --> 00:03:41,090
+really have to use mark-and-sweep because you're not allowed to move anything.

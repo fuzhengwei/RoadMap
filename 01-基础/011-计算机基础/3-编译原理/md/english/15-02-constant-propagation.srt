@@ -1,0 +1,955 @@
+0
+00:00:04,569 --> 00:00:08,650
+In this video we are going to continue our discussion on global data flow analysis by
+
+1
+00:00:08,650 --> 00:00:15,650
+taking a look at how global constant propagation works in detail. To begin,
+
+2
+00:00:16,820 --> 00:00:21,400
+let's review what the conditions are to do global constant propagation. So to replace
+
+3
+00:00:21,400 --> 00:00:25,820
+a use of a variable x by a constant k, we have to know the following property. That
+
+4
+00:00:25,820 --> 00:00:31,480
+on, that on every path to the use of x, the last assignment to the variable x is,
+
+5
+00:00:31,480 --> 00:00:36,140
+x equals the constant k, okay? And this has to be true again on every path to the
+
+6
+00:00:36,140 --> 00:00:43,140
+use of x. Now, global constant propagation can be performed at any point where this
+
+7
+00:00:43,730 --> 00:00:48,160
+property holds. What we're going to look at in this video, is the case of computing
+
+8
+00:00:48,160 --> 00:00:53,899
+the property for a single variable x at all program points. So we're going to take
+
+9
+00:00:53,899 --> 00:00:56,609
+one, we're going to focus on one variable x and we're going to compute whether it's
+
+10
+00:00:56,609 --> 00:01:02,070
+a constant at every program point. It's easy to extend the algorithm to compute
+
+11
+00:01:02,070 --> 00:01:06,860
+this property for all variables. One very simple but very efficient way to do that
+
+12
+00:01:06,860 --> 00:01:13,860
+is just to repeat the computation once for each variable in the method body. The way
+
+13
+00:01:15,210 --> 00:01:19,880
+we are going to compute the information that we want is to associate one of the
+
+14
+00:01:19,880 --> 00:01:25,790
+following values with the variable x at every point in the program. And, let's
+
+15
+00:01:25,790 --> 00:01:31,920
+start with the last one here we will assign x this special value here which is
+
+16
+00:01:31,920 --> 00:01:38,920
+pronounced top if x is not a constant. So if we can't figure out whether x is a
+
+17
+00:01:39,200 --> 00:01:43,140
+constant at a particular point in the program, then we'll just say x is top at
+
+18
+00:01:43,140 --> 00:01:49,610
+that point. And, this is going to be our safe situation. It's always okay to say we
+
+19
+00:01:49,610 --> 00:01:54,820
+don't know what the value of x is and when we say that x has a value top, and we
+
+20
+00:01:54,820 --> 00:01:58,969
+could say, we, we were essentially saying we don't know whether x is a constant or
+
+21
+00:01:58,969 --> 00:02:03,340
+not at this point in the program, x could have any value. Alright? Now, another
+
+22
+00:02:03,340 --> 00:02:08,429
+possibility is that we will say that x is some constant c, okay? So this is a
+
+23
+00:02:08,429 --> 00:02:12,450
+particular constant and if we say that x is a constant c at a program point, that
+
+24
+00:02:12,450 --> 00:02:17,549
+means, in fact, at that program point, we believe o r we have proven that x is
+
+25
+00:02:17,549 --> 00:02:24,549
+always that constant. Now, there is a third possibility which is not immediately
+
+26
+00:02:24,980 --> 00:02:30,669
+intuitive, perhaps. But, as we will see, plays a very important role in algorithms
+
+27
+00:02:30,669 --> 00:02:36,109
+for, for global constant propagation. And in fact, in all global data flow analysis,
+
+28
+00:02:36,109 --> 00:02:43,109
+and that is bottom, okay? So this value is pronounced bottom and intuitively the idea
+
+29
+00:02:43,829 --> 00:02:48,799
+anyway that is kind of opposite of top, alright? And the interpretation of bottom
+
+30
+00:02:48,799 --> 00:02:55,799
+is going to be that this statement never executes, alright? So, when we don't know
+
+31
+00:02:55,980 --> 00:03:01,480
+whether a statement is even executed at all we will say that x at that point has a
+
+32
+00:03:01,480 --> 00:03:06,510
+value bottom. Meaning that, as far as we know that point in the program is never
+
+33
+00:03:06,510 --> 00:03:09,810
+reached. It doesn't matter what the value of x is at that point because that
+
+34
+00:03:09,810 --> 00:03:15,000
+statement never executes. Alright, so we're going to assign x one of these three
+
+35
+00:03:15,000 --> 00:03:22,000
+kinds of values. Either bottom, some constant, or top. Let's begin by working
+
+36
+00:03:22,410 --> 00:03:27,220
+through an example by hand and our goal is going to be for every program point to
+
+37
+00:03:27,220 --> 00:03:32,229
+decide whether x could be a constant definitely not a constant, or whether we
+
+38
+00:03:32,229 --> 00:03:38,669
+think that statement might not ever execute, okay? So, execution will begin at
+
+39
+00:03:38,669 --> 00:03:44,010
+the top of this control flip graph. So this the entry point and before executions
+
+40
+00:03:44,010 --> 00:03:48,400
+begins, we don't anything about the value of x. So, I'm not making any assumptions
+
+41
+00:03:48,400 --> 00:03:53,850
+about what code came before this basic block and so to be safe, I will say that
+
+42
+00:03:53,850 --> 00:03:59,009
+at this point, x has some unknown value. We don't know what the value of x is, it
+
+43
+00:03:59,009 --> 00:04:05,650
+could be anything. So x = T, is the property that we want entry to the first
+
+44
+00:04:05,650 --> 00:04:11,540
+basic block. Now after the assignment x = three, that was indicated there, where
+
+45
+00:04:11,540 --> 00:04:15,030
+what point we're talking about. So, after the assignment x = three, we'll definitely
+
+46
+00:04:15,030 --> 00:04:19,509
+will know that x is the constant three. Alright, now there's something here that's
+
+47
+00:04:19,509 --> 00:04:22,400
+worth pointing out which is that our program points, the points that we're
+
+48
+00:04:22,400 --> 00:04:29,070
+attaching this knowledge to or these, these facts to are in between the statem
+
+49
+00:04:29,070 --> 00:04:33,200
+ents. So, when I say x = three at this program point, what I mean is that after
+
+50
+00:04:33,200 --> 00:04:39,000
+x, after this assignment has executed, x = three, but before this predicate of the
+
+51
+00:04:39,000 --> 00:04:45,280
+conditional has executed, I know that x = three, okay? So, the program points are in
+
+52
+00:04:45,280 --> 00:04:50,190
+between statements and there's a program point before and after every statement.
+
+53
+00:04:50,190 --> 00:04:54,530
+Alright, so the next thing that happens is this conditional branch. Notice that the
+
+54
+00:04:54,530 --> 00:04:59,590
+branch doesn't update x, doesn't even refer to x so after the branch executes
+
+55
+00:04:59,590 --> 00:05:05,260
+we'll definitely knows that x = three on both branches. Alright, now let's do the
+
+56
+00:05:05,260 --> 00:05:09,180
+right hand branch. The next thing that happens is the assignment to y that would
+
+57
+00:05:09,180 --> 00:05:13,810
+not affect the value of x. So after the assignment to y, we'll still know that x =
+
+58
+00:05:13,810 --> 00:05:19,010
+three, alright? Now let's take a look at the left hand branch so the first thing
+
+59
+00:05:19,010 --> 00:05:22,690
+that happens over here is another assignment to y. Well that won't affect
+
+60
+00:05:22,690 --> 00:05:27,650
+the value of x. After the assignment of Y we'll know that x = three. And now comes
+
+61
+00:05:27,650 --> 00:05:32,380
+to the assignment of x, alright. So after this assignment happens at this program
+
+62
+00:05:32,380 --> 00:05:35,060
+point we're going to know that the value of x is different. We're going to know
+
+63
+00:05:35,060 --> 00:05:41,940
+that x = four, alright. So, now after this statement we know x = four and after this
+
+64
+00:05:41,940 --> 00:05:46,990
+statement over here we know x = three, alright? Now what do we know then about
+
+65
+00:05:46,990 --> 00:05:53,330
+what happens before this statement, okay? The a = two x and I just want to point
+
+66
+00:05:53,330 --> 00:05:57,460
+out here. I said that there's a program point before and after every statement And
+
+67
+00:05:57,460 --> 00:06:02,400
+so this program point here, which is before this assignment to a is different
+
+68
+00:06:02,400 --> 00:06:09,400
+from the program points that are after x = four and y = zero. So intuitively, after x
+
+69
+00:06:09,700 --> 00:06:14,639
+= four we know that we're still on this path over here on the left and so we know
+
+70
+00:06:14,639 --> 00:06:18,520
+that x = four and over here after y = zero, we still know that we're on this
+
+71
+00:06:18,520 --> 00:06:25,520
+path is x = three. But, when we reach the point before a = two x, we no longer
+
+72
+00:06:25,900 --> 00:06:30,060
+know which path we're coming from. This is the point of the merge of these two paths
+
+73
+00:06:30,060 --> 00:06:34,810
+that both lead to this statement. And what can we say about the value of x here?
+
+74
+00:06:34,810 --> 00:06:40,800
+Well, there is no constant that we can assign to x because on o ne path x is
+
+75
+00:06:40,800 --> 00:06:44,670
+three and on the other path, x is four. And so what we have to say here is that
+
+76
+00:06:44,670 --> 00:06:51,270
+before this assignment executes, a = x, sorry, x = T. We don't know what the value
+
+77
+00:06:51,270 --> 00:06:55,400
+of x is. Another way of saying it is we know we, we don't know that x is a
+
+78
+00:06:55,400 --> 00:07:00,060
+constant, alright. So, after the assignment executes it doesn't affect the
+
+79
+00:07:00,060 --> 00:07:07,060
+value of x, we will also have that x = T. Now notice that once we have the global
+
+80
+00:07:08,910 --> 00:07:13,260
+constant information, once we know for every program point, what the state of x
+
+81
+00:07:13,260 --> 00:07:19,570
+is, it's going to be very easy to perform the optimization. We simply look at the
+
+82
+00:07:19,570 --> 00:07:24,830
+information associated with the statement and then it will tell us whether x is a
+
+83
+00:07:24,830 --> 00:07:29,130
+constant when that statement executes or not. And if x is a constant at that point,
+
+84
+00:07:29,130 --> 00:07:34,770
+then we can replace that use of x by the constant. And crucial question of course
+
+85
+00:07:34,770 --> 00:07:39,020
+is how do we compute these properties. So, we did this example by hand but how in a
+
+86
+00:07:39,020 --> 00:07:43,800
+systematic fashion, an arbitrary control flow graph do we actually compute these
+
+87
+00:07:43,800 --> 00:07:49,710
+properties for x for every program point? Now we're ready to talk about data flow
+
+88
+00:07:49,710 --> 00:07:53,740
+analysis algorithms and there's one basic principle that you see in all of these
+
+89
+00:07:53,740 --> 00:07:58,180
+algorithms that's worth mentioning right away. And that's that the analysis of a
+
+90
+00:07:58,180 --> 00:08:03,800
+complicated program can be expressed as a combination of very simple rules that
+
+91
+00:08:03,800 --> 00:08:09,370
+relate the change in information between adjacent statements. So we're just going
+
+92
+00:08:09,370 --> 00:08:14,590
+to focus on local rules and the way we're going to build our global data flow
+
+93
+00:08:14,590 --> 00:08:19,860
+analysis is actually by a combination of rules that look only at a single statement
+
+94
+00:08:19,860 --> 00:08:26,540
+and its neighbors. The idea behind the rules is going to be the push or transfer
+
+95
+00:08:26,540 --> 00:08:30,860
+information from one statement to the next And so for each statement s, we're going
+
+96
+00:08:30,860 --> 00:08:34,889
+to compute information about the value of x immediately before and after s. Remember
+
+97
+00:08:34,889 --> 00:08:39,789
+that's where, those are the program points that we want to attach information to. So
+
+98
+00:08:39,789 --> 00:08:43,320
+in particular we're going to have a function C. It stands for constant
+
+99
+00:08:43,320 --> 00:08:47,760
+information and C will take three arguments, takes the name of the variable,
+
+100
+00:08:47,760 --> 00:08:51,460
+x. It takes the stat ement that we're talking about, the particular statement in
+
+101
+00:08:51,460 --> 00:08:55,920
+the program that we're looking at. And then either in or out and this is what
+
+102
+00:08:55,920 --> 00:09:02,040
+distinguishes the value of x before s executes versus the value of x after s
+
+103
+00:09:02,040 --> 00:09:08,670
+executes. We're going to be defining a set of transfer functions that push
+
+104
+00:09:08,670 --> 00:09:13,040
+information or transfer information from one statement to another. And in the rules
+
+105
+00:09:13,040 --> 00:09:17,870
+for constant propagation we need to talk about a statement and its predecessors. So
+
+106
+00:09:17,870 --> 00:09:22,610
+we're going to say that every statement s has some set of immediate predecessors p1
+
+107
+00:09:22,610 --> 00:09:27,450
+through pn, alright? So, it's either of these statements that lead in one step to
+
+108
+00:09:27,450 --> 00:09:34,360
+the statement s. Let's do our first rule. So we have a statement s and it has some
+
+109
+00:09:34,360 --> 00:09:41,360
+set of predecessor statements, P1, P2, P3, P4. And the situation that we're
+
+110
+00:09:41,650 --> 00:09:48,630
+interested in here is, let's assume that x is top at the program point after one of
+
+111
+00:09:48,630 --> 00:09:53,510
+these predecessors. So, after some predecessor, it doesn't matter which one,
+
+112
+00:09:53,510 --> 00:09:59,180
+if it happens that x is top at the program point after that predecessor, well, then x
+
+113
+00:09:59,180 --> 00:10:04,500
+has to be top before the execution of s, okay? So that's what this rule says. It
+
+114
+00:10:04,500 --> 00:10:11,500
+says if the out of any predecessor for x is top, then the in of s for x is also
+
+115
+00:10:12,710 --> 00:10:18,029
+top. Alright, and this makes sense. It says that if we don't know whether x is a
+
+116
+00:10:18,029 --> 00:10:23,240
+constant on some path that leads to s, well then, we don't know that x is a
+
+117
+00:10:23,240 --> 00:10:27,870
+constant at s. Because for all we know, execution came down that particular, came
+
+118
+00:10:27,870 --> 00:10:31,630
+from that particular predecessor and so, we can't make any prediction about whether
+
+119
+00:10:31,630 --> 00:10:38,620
+s is, whether x is a constant before s executes. Now let's look at another
+
+120
+00:10:38,620 --> 00:10:45,320
+situation. Let's say that x is some constant C after the execution of some
+
+121
+00:10:45,320 --> 00:10:50,010
+predecessor. And that on a, after another predecessor a distinct predecessor x is a
+
+122
+00:10:50,010 --> 00:10:57,010
+different constant D. So D is not equal to C. Well then what do we know about x at
+
+123
+00:10:57,320 --> 00:11:04,130
+the program point before s executes? Well, we don't know anything, x has to be top,
+
+124
+00:11:04,130 --> 00:11:08,779
+because we don't know which constant, s will be, since we don't know which path
+
+125
+00:11:08,779 --> 00:11:13,380
+will reach s at run time. And this is the situation that we saw in the example we
+
+126
+00:11:13,380 --> 00:11:20,380
+did by hand. Another possibility is that the predecessors all agree on what the
+
+127
+00:11:23,080 --> 00:11:27,960
+value of x could be. So let's say that we have, you know, predecessor here and that
+
+128
+00:11:27,960 --> 00:11:32,149
+after it executes x is known to be the constant C and x is known to be the
+
+129
+00:11:32,149 --> 00:11:35,310
+constant C after this predecessor and x is known to be the constant C after this
+
+130
+00:11:35,310 --> 00:11:38,490
+predecessor. There's one other possibility. Let's say that after this
+
+131
+00:11:38,490 --> 00:11:45,020
+predecessor over here, all we know is that x is bottom, okay? And so what the rule
+
+132
+00:11:45,020 --> 00:11:51,899
+says is that if we have this situation where either x has the property bottom
+
+133
+00:11:51,899 --> 00:11:55,300
+after a predecessor or all the predecessors agree on the particular
+
+134
+00:11:55,300 --> 00:12:01,610
+constant that x could be, then before at the program point before s executes, we
+
+135
+00:12:01,610 --> 00:12:08,220
+know that x is going to guarantee to be the constant C. And if you think about it
+
+136
+00:12:08,220 --> 00:12:12,750
+for a second, it's easy to see why this is correct. First of all, clearly if we come
+
+137
+00:12:12,750 --> 00:12:17,410
+along one of the paths where x is known to be the constant C, since they all agree
+
+138
+00:12:17,410 --> 00:12:23,800
+and then when we get to s, x will definitely have the value C. What about
+
+139
+00:12:23,800 --> 00:12:27,240
+the bottom case? Well, remember what that means. That means that this statement is
+
+140
+00:12:27,240 --> 00:12:32,560
+never reached so there's some predecessor P here which never executes. Which means
+
+141
+00:12:32,560 --> 00:12:38,089
+if P never executes then we could never reach S along this path from P. So the
+
+142
+00:12:38,089 --> 00:12:42,370
+only paths that will reach s are the ones where x is known to be a constant,
+
+143
+00:12:42,370 --> 00:12:49,360
+alright? So that's why it's okay in this situation say that x, if control if
+
+144
+00:12:49,360 --> 00:12:54,480
+execution reaches s at all its guaranteed to reach it in a state where x is the
+
+145
+00:12:54,480 --> 00:13:01,480
+constant C. One last possibility is let's say that x is bottom for all the
+
+146
+00:13:01,930 --> 00:13:07,700
+predecessors, okay? And what does that mean? Well, that means that every
+
+147
+00:13:07,700 --> 00:13:13,350
+predecessor of S never executes so they're all unreachable. And therefore if every
+
+148
+00:13:13,350 --> 00:13:18,850
+predecessor of x never executes s itself can never execute, and so we can conclude
+
+149
+00:13:18,850 --> 00:13:25,850
+that entry to s, x is bottom. The first four rules that we just looked at relate
+
+150
+00:13:26,120 --> 00:13:32,140
+the out of one statement to the in of the next. We also have to have rules that
+
+151
+00:13:32,140 --> 00:13:36,959
+relate the in of a statement to the out of the same statement. So we have to push
+
+152
+00:13:36,959 --> 00:13:41,260
+information from the input of a statement to the output of the same statement. So,
+
+153
+00:13:41,260 --> 00:13:46,610
+once again, there are several cases. And let's take a look at an easy one first. If
+
+154
+00:13:46,610 --> 00:13:51,800
+x is bottom on an entry s, if the program point before s well, that says that at
+
+155
+00:13:51,800 --> 00:13:57,420
+the, that s is never reached, that s never executes. And therefore, x will be bottom
+
+156
+00:13:57,420 --> 00:14:02,730
+after s, after s as well. So if the program point before s is never reached,
+
+157
+00:14:02,730 --> 00:14:08,890
+the program point after s definitely can't be reached either. Another possibility is
+
+158
+00:14:08,890 --> 00:14:14,209
+that we're assigning x to constant C in this statement. In that case the out of
+
+159
+00:14:14,209 --> 00:14:18,990
+the statement is going to be equal to C. Alright, so it doesn't matter what the
+
+160
+00:14:18,990 --> 00:14:24,830
+state of x was before the statement, after we execute the statement, x will be the
+
+161
+00:14:24,830 --> 00:14:29,100
+constant C. And I should say there is a conflict with the previous rule. Okay, it
+
+162
+00:14:29,100 --> 00:14:34,899
+could be that x is bottom, before the statement. So rule six, has lower priority
+
+163
+00:14:34,899 --> 00:14:40,490
+than rule five. So we, so if we could say that x is bottom after the statement, we
+
+164
+00:14:40,490 --> 00:14:44,040
+would prefer you to say that so rule five would be applied first, and then if rule
+
+165
+00:14:44,040 --> 00:14:50,850
+five does not apply. So if x is some other constant D or x = T, then we would apply
+
+166
+00:14:50,850 --> 00:14:56,070
+this rule and we would conclude that x is the constancy afterwards and that makes
+
+167
+00:14:56,070 --> 00:15:01,510
+sense. If x is d or x is the, is top that means that control, as far as we know, can
+
+168
+00:15:01,510 --> 00:15:05,040
+reach this statement. And then what we're saying here is that well, after the
+
+169
+00:15:05,040 --> 00:15:07,640
+execution of this statement, if control can reach this statement after the
+
+170
+00:15:07,640 --> 00:15:14,640
+execution of it, x is guaranteed to be the constant C. Another possibility is that we
+
+171
+00:15:15,410 --> 00:15:19,529
+have an assignment to x but the right hand side is more complicated than a constant.
+
+172
+00:15:19,529 --> 00:15:24,709
+So this case is for everything other than the constant assignment. Okay, so this F
+
+173
+00:15:24,709 --> 00:15:30,010
+here just stands for some more complicated expression than just a simple constant.
+
+174
+00:15:30,010 --> 00:15:32,750
+And in this case we, we're just going to say we don't know what the value is, we're
+
+175
+00:15:32,750 --> 00:15:37,850
+not going to try to guess what the result of that computation is and we'll just say
+
+176
+00:15:37,850 --> 00:15:43,660
+that x = T. X, w e don't know what the value of x is after the execution of this
+
+177
+00:15:43,660 --> 00:15:48,279
+statement. And once again, rule five takes precedence so if rule five applies, then
+
+178
+00:15:48,279 --> 00:15:52,630
+we would apply then, then we would use that rule instead of rule seven. But, if
+
+179
+00:15:52,630 --> 00:15:59,630
+control can reach this statement, so up here x = C or x = T. Then we'll apply rule
+
+180
+00:16:01,529 --> 00:16:08,529
+seven and conclude that x is top after the statement. And finally Rule eight, another
+
+181
+00:16:09,399 --> 00:16:14,420
+possibility is that we're assigning to some variable other than x. And in that
+
+182
+00:16:14,420 --> 00:16:21,420
+case, if x = k before the statement then we just keep that value. Okay, so whatever
+
+183
+00:16:24,360 --> 00:16:28,890
+x was before the statement bottom, a constant or top, if the assignment is to
+
+184
+00:16:28,890 --> 00:16:33,589
+some other variable other than x then x will have the same property after the
+
+185
+00:16:33,589 --> 00:16:40,589
+statement executes. Now, we can put these rules together into an algorithm. For
+
+186
+00:16:40,839 --> 00:16:44,360
+every entry point, for every entry, statement to the program, we're going to
+
+187
+00:16:44,360 --> 00:16:49,690
+say on entry that we don't know anything about the value of x. So the program point
+
+188
+00:16:49,690 --> 00:16:56,120
+before that entry point we're gonna say that x has an unknown value, top. And then
+
+189
+00:16:56,120 --> 00:17:03,120
+everywhere else we're going to say that the value of x, is bottom, okay. And this
+
+190
+00:17:03,279 --> 00:17:09,169
+is actually important so we're going, what this intuitively is doing is its saying
+
+191
+00:17:09,169 --> 00:17:13,709
+well, as far as we know except for the entry point to the program, which can
+
+192
+00:17:13,709 --> 00:17:17,459
+definitely be executed, we don't know whether any of the other statements in the
+
+193
+00:17:17,459 --> 00:17:21,409
+control flow graph are actually ever executed and so we're going to assume
+
+194
+00:17:21,409 --> 00:17:25,909
+initially, that they're not. And we're just going to say that x has the value
+
+195
+00:17:25,909 --> 00:17:31,789
+bottom everywhere except at an entry point And now what we're going to do is a kind
+
+196
+00:17:31,789 --> 00:17:36,100
+of constraint satisfaction algorithm. We're going to pick some statement that
+
+197
+00:17:36,100 --> 00:17:39,989
+doesn't satisfy one of the rules, one through eight. And then we're going to
+
+198
+00:17:39,989 --> 00:17:43,679
+update it using the appropriate rules. So we'll look for places in the control flow
+
+199
+00:17:43,679 --> 00:17:47,330
+graph where the information is inconsistent according to the rules and
+
+200
+00:17:47,330 --> 00:17:54,330
+then we'll update, the information to make it consistent with the rules. Let's take a
+
+201
+00:17:54,330 --> 00:17:59,119
+look at our example again. So, we're going to start out by saying x = T at the entry
+
+202
+00:17:59,119 --> 00:18:03,539
+point, and then we're going to have all of our other program points And let me
+
+203
+00:18:03,539 --> 00:18:08,039
+indicate them here. Okay, so these are all the other program points that we have to
+
+204
+00:18:08,039 --> 00:18:14,350
+be concerned with. And there again, there's a program point before and after
+
+205
+00:18:14,350 --> 00:18:21,350
+every statement. And we are going to say the x = bottom for all of these. So, again
+
+206
+00:18:27,830 --> 00:18:33,549
+what this means is, that as far as we know, control doesn't reach any of these
+
+207
+00:18:33,549 --> 00:18:38,489
+points. We have not yet proven to ourselves that any of these statements can
+
+208
+00:18:38,489 --> 00:18:43,559
+execute. And now we just look around in the program and try to find places, where
+
+209
+00:18:43,559 --> 00:18:46,779
+the information is inconsistent according to the rules, and then we update the
+
+210
+00:18:46,779 --> 00:18:51,739
+information. Let me switch colors here. So, when we begin, the information is
+
+211
+00:18:51,739 --> 00:18:57,549
+consistent everywhere except at this first statement because if x is T before and
+
+212
+00:18:57,549 --> 00:19:02,809
+we're assigning x to value three. Well, then we should not have x = bottom as the
+
+213
+00:19:02,809 --> 00:19:08,600
+result. In fact this should be x = three. It should be the appropriate information
+
+214
+00:19:08,600 --> 00:19:12,909
+here and once we update that, then we see that this next statement is inconsistent
+
+215
+00:19:12,909 --> 00:19:16,210
+because now we know this statement is reachable. We have a statement here and
+
+216
+00:19:16,210 --> 00:19:22,169
+we're concluding that the point after is not reachable which is not, not correct
+
+217
+00:19:22,169 --> 00:19:26,419
+according to the rules. So that I believe that this is an application of rule eight.
+
+218
+00:19:26,419 --> 00:19:32,009
+We have a statement here that doesn't refer to x as and so whatever the value of
+
+219
+00:19:32,009 --> 00:19:36,179
+x was before the statement becomes the value of x after the statement so that
+
+220
+00:19:36,179 --> 00:19:43,179
+becomes x = three. And then, now we can see that this information is inconsistent.
+
+221
+00:19:43,879 --> 00:19:49,320
+The out of the statement here, is not consistent with the in of the statement
+
+222
+00:19:49,320 --> 00:19:52,950
+here. In this case, you know, it's just one predecessor. And so, the, the value
+
+223
+00:19:52,950 --> 00:19:57,159
+should be the same so x should be three. At this point And similarly x should be
+
+224
+00:19:57,159 --> 00:20:00,609
+three at this point. Here we have an assignment to a variable other than x.
+
+225
+00:20:00,609 --> 00:20:05,119
+That should, information should be the same before and after the statements, same
+
+226
+00:20:05,119 --> 00:20:10,499
+thing here. Now we have an assignment x. The point before that assignment is
+
+227
+00:20:10,499 --> 00:20:16,759
+reachable and so sin ce this is a constant assignment we should know that x is that
+
+228
+00:20:16,759 --> 00:20:23,759
+constant after the assignment. So here again we have a in and out issue so the
+
+229
+00:20:23,899 --> 00:20:29,210
+out of this statement is not consistent with the in of this statement. So this is
+
+230
+00:20:29,210 --> 00:20:33,999
+going to have to be updated but now, what should this be? Well, we have two
+
+231
+00:20:33,999 --> 00:20:38,039
+inconsistent predecessors and so this has to be top and then finally, an assignment
+
+232
+00:20:38,039 --> 00:20:43,779
+to x, sorry, an assignment to a state, to a variable other than x so the information
+
+233
+00:20:43,779 --> 00:20:49,139
+should just propagate across. And that, same is updated like this so now x is
+
+234
+00:20:49,139 --> 00:20:54,649
+known to be top afterwards. And now, if we look around at all the program points,
+
+235
+00:20:54,649 --> 00:20:58,659
+we'd see that all the information is consistent. All the rules, if you, if you,
+
+236
+00:20:58,659 --> 00:21:02,389
+if you check whether the information before and after a statement or across a
+
+237
+00:21:02,389 --> 00:21:06,229
+statement. I'm sorry, or between predecessors and successors is correct,
+
+238
+00:21:06,229 --> 00:21:09,599
+it's correct everywhere according to the rules and so we're done.

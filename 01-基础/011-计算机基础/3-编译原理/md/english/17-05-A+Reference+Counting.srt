@@ -1,0 +1,431 @@
+0
+00:00:03,870 --> 00:00:07,680
+In this video we're going to conclude our discussion of automatic memory management
+
+1
+00:00:07,680 --> 00:00:12,130
+with the third and last technique we're going to talk about for garbage collection
+
+2
+00:00:12,130 --> 00:00:19,009
+called Reference Counting. So the basic idea behind reference counting is that
+
+3
+00:00:19,009 --> 00:00:22,360
+rather than waiting for memory to be completely exhausted, we're going to try
+
+4
+00:00:22,360 --> 00:00:25,640
+to collect an object as soon as soon as there are no more pointers to it. So as
+
+5
+00:00:25,640 --> 00:00:29,939
+soon as we discard the last pointer to an object and it becomes unreachable, we will
+
+6
+00:00:29,939 --> 00:00:34,890
+try to collect it at that point in time. And how can we do this? Well, as the name
+
+7
+00:00:34,890 --> 00:00:39,440
+suggests we're going to count the number of references to each object. So in each
+
+8
+00:00:39,440 --> 00:00:43,719
+object we are going to store the number of pointers to that object. So if I have an
+
+9
+00:00:43,719 --> 00:00:50,719
+object in memory, and it has say, three pointers to it from other objects then
+
+10
+00:00:51,269 --> 00:00:56,870
+somewhere in this object is going to be a dedicated field that contains the number
+
+11
+00:00:56,870 --> 00:01:01,850
+three. And if this number ever drops to zero, if we discard these pointers and
+
+12
+00:01:01,850 --> 00:01:07,000
+this number becomes a zero, then we know that nobody is pointing to this object,
+
+13
+00:01:07,000 --> 00:01:12,890
+and it can be free. And what this means is that every assignment has to manipulate
+
+14
+00:01:12,890 --> 00:01:16,550
+the reference count in order to maintain an accurate count of the number of
+
+15
+00:01:16,550 --> 00:01:22,590
+pointers pointing to an object. So allocating a new object, returns an object
+
+16
+00:01:22,590 --> 00:01:27,240
+with a reference count of one. So when a object is created by new it will already
+
+17
+00:01:27,240 --> 00:01:31,810
+have a reference count of one. The pointer that is returned is the only reference to
+
+18
+00:01:31,810 --> 00:01:36,150
+the object. And so we're gonna write the reference count of an object x is rc of x.
+
+19
+00:01:36,150 --> 00:01:42,710
+And now when we have an assignment x gets assigned y we're going to have to update
+
+20
+00:01:42,710 --> 00:01:47,330
+the reference counts of both the object that x points to and the object that y
+
+21
+00:01:47,330 --> 00:01:52,700
+points to before the assignment. So, what happens here? So, if y points to p, so
+
+22
+00:01:52,700 --> 00:01:56,830
+let's draw our objects here, so y is a local variable and it points to some
+
+23
+00:01:56,830 --> 00:02:03,830
+object p in memory, and x is also a local variable and it points to some object, o.
+
+24
+00:02:03,940 --> 00:02:10,940
+Okay? So now x is getting the value of y and so that's going to move this po inter
+
+25
+00:02:11,640 --> 00:02:15,680
+from where pointer before, pointing to the same thing as y. So what's going to
+
+26
+00:02:15,680 --> 00:02:20,590
+happen, while p's reference count is going to go up by one, and o's reference count
+
+27
+00:02:20,590 --> 00:02:24,579
+is going to go down by one. And since we decremented o's reference counts, as we
+
+28
+00:02:24,579 --> 00:02:29,870
+dropped this pointer to the object o, we need to do a check to see if the reference
+
+29
+00:02:29,870 --> 00:02:32,900
+count has become zero. And if the reference count has dropped to zero, then
+
+30
+00:02:32,900 --> 00:02:37,969
+we can free the memory for o. And then in addition to updating the reference counts
+
+31
+00:02:37,969 --> 00:02:43,139
+and checking whether the reference count of o became zero, we actually need to do
+
+32
+00:02:43,139 --> 00:02:47,359
+the assignment itself, alright? So every assignment, I want to stress that, every
+
+33
+00:02:47,359 --> 00:02:53,670
+single assignment in the program it's now translated into these four operations that
+
+34
+00:02:53,670 --> 00:02:59,749
+need to be done to maintain the reference counts. There are tradeoffs in reference
+
+35
+00:02:59,749 --> 00:03:03,689
+counting. It has advantages and disadvantages. One of the big advantages
+
+36
+00:03:03,689 --> 00:03:08,719
+is that it collects garbage incrementally without large pauses in the execution. So
+
+37
+00:03:08,719 --> 00:03:13,719
+for, for kind, for applications where large pauses would be problematic, say
+
+38
+00:03:13,719 --> 00:03:17,469
+real time applications or interactive applications, reference counting can
+
+39
+00:03:17,469 --> 00:03:22,340
+really help because it minimizes the length of the longest possible pause.
+
+40
+00:03:22,340 --> 00:03:26,450
+Okay, so your program will never go to sleep. And just appear to stop running for
+
+41
+00:03:26,450 --> 00:03:30,260
+some period of time because it's off collecting garbage. It always collects the
+
+42
+00:03:30,260 --> 00:03:35,739
+garbage in small incremental amounts, and so that you never see a long pause.
+
+43
+00:03:35,739 --> 00:03:38,319
+Reference counting, or at least a basic implementation of reference counting is
+
+44
+00:03:38,319 --> 00:03:43,989
+also quite easy to implement. It's very straight forward to go through and modify
+
+45
+00:03:43,989 --> 00:03:48,230
+the code to add reference counts. So you can easily imagine a code generator that
+
+46
+00:03:48,230 --> 00:03:53,389
+would simply generate different code for, for the assignment operation than it
+
+47
+00:03:53,389 --> 00:03:57,079
+normally did if you were adding reference counting to an implementation. So really
+
+48
+00:03:57,079 --> 00:04:00,599
+the, the changes that are needed for a simple implementation of reference
+
+49
+00:04:00,599 --> 00:04:05,719
+counting to a compiler are not that pervasive. Now there are some
+
+50
+00:04:05,719 --> 00:04:11,109
+disadvantages , to reference counting. One, is that manipulating the reference
+
+51
+00:04:11,109 --> 00:04:16,269
+counts at each assignment is really quite slow. So, if you remember what happens, we
+
+52
+00:04:16,269 --> 00:04:19,879
+have a couple of updates to reference counts, so we have to update, you know,
+
+53
+00:04:19,879 --> 00:04:24,810
+the reference count of two objects. To do an assignment. This is, this is the code
+
+54
+00:04:24,810 --> 00:04:29,460
+to do an assignment and then we have an if statement. And then we actually, do the
+
+55
+00:04:29,460 --> 00:04:32,729
+assignment itself. So there's two reference count updates that's has to see
+
+56
+00:04:32,729 --> 00:04:35,620
+if our reference count became zero and then we actually do the assignment. So the
+
+57
+00:04:35,620 --> 00:04:40,990
+overhead here is substantial. You're taking every single assignment, in the
+
+58
+00:04:40,990 --> 00:04:45,419
+program and blowing up its cost by at least four or five times. And that will
+
+59
+00:04:45,419 --> 00:04:50,250
+have a very noticeable impact on the performance of many programs. Now it is
+
+60
+00:04:50,250 --> 00:04:56,810
+possible to optimize reference counting. So for example, if we had two updates to
+
+61
+00:04:56,810 --> 00:05:01,449
+the same object, say within a basic block or even within a control flow graph, a
+
+62
+00:05:01,449 --> 00:05:06,310
+compiler, a smart optimizing compiler, could frequently combine those reference
+
+63
+00:05:06,310 --> 00:05:10,129
+count operations together. So instead of updating the reference count to the object
+
+64
+00:05:10,129 --> 00:05:14,909
+two times, it can just update it one time. And, similarly if there were even more
+
+65
+00:05:14,909 --> 00:05:20,460
+reference count updates, potentially all of those could be coalesced within some
+
+66
+00:05:20,460 --> 00:05:26,060
+region of the program. The problem with that, is that is becomes very tricky to
+
+67
+00:05:26,060 --> 00:05:32,520
+get that right. So a, a simple implementation of reference counting is
+
+68
+00:05:32,520 --> 00:05:39,289
+quite slow. But easy to get right. A very sophisticated implementation of reference
+
+69
+00:05:39,289 --> 00:05:42,620
+counting or highly optimized implementation of reference counting, is
+
+70
+00:05:42,620 --> 00:05:47,090
+somewhat faster. Still has a noticeable performance impact if you're reference
+
+71
+00:05:47,090 --> 00:05:51,419
+counting all objects but it is substantially faster. However, it's quite
+
+72
+00:05:51,419 --> 00:05:58,169
+tricky to get it correct. The other problem with reference counting is that it
+
+73
+00:05:58,169 --> 00:06:03,550
+cannot directly collect circular structures. So to see this let's draw, a
+
+74
+00:06:03,550 --> 00:06:08,500
+little heap with a circular structure. And so let's say we have a local variable x
+
+75
+00:06:08,500 --> 00:06:15,500
+and it points to some object in t he heap. And that object has a pointer to another
+
+76
+00:06:16,250 --> 00:06:21,919
+object, alright? And that object, that second object then has a pointer back to
+
+77
+00:06:21,919 --> 00:06:27,220
+the first object. Okay so here x is pointing to say a circularly length list
+
+78
+00:06:27,220 --> 00:06:30,729
+of length two, alright? And if we add in the reference counts here, what would
+
+79
+00:06:30,729 --> 00:06:35,740
+those look like? Well, this object down here the second object here actually one
+
+80
+00:06:35,740 --> 00:06:39,720
+reference to it so its reference count will be one. And this first object has two
+
+81
+00:06:39,720 --> 00:06:43,919
+pointers to it, one from x and one from the other object and so its reference
+
+82
+00:06:43,919 --> 00:06:49,919
+count is two. Okay, so here is our little heap and we can see that there is no
+
+83
+00:06:49,919 --> 00:06:56,099
+garbage here because all the objects are reachable from a, a local variable or
+
+84
+00:06:56,099 --> 00:07:00,650
+variable of the program. Now if we were to assign a new value to x, lets say that we
+
+85
+00:07:00,650 --> 00:07:07,240
+have the assignment x gets null. Alright, so this pointer goes away. But what's
+
+86
+00:07:07,240 --> 00:07:11,960
+going to happen? Well when we do that assignment, we're going to change the
+
+87
+00:07:11,960 --> 00:07:17,289
+reference count here of this object, it's now gonna be one. And if we look at this
+
+88
+00:07:17,289 --> 00:07:22,830
+heap we now see that these objects, these two objects are unreachable. Okay, so
+
+89
+00:07:22,830 --> 00:07:29,819
+these are unreachable. But notice that the reference counts are not zero, so we can't
+
+90
+00:07:29,819 --> 00:07:33,259
+collect them. The garbage collector or the reference counting implementation, will
+
+91
+00:07:33,259 --> 00:07:37,009
+check the reference counts and see oh, these are one and so we can't delete them.
+
+92
+00:07:37,009 --> 00:07:42,500
+And then, what it can't see is that the only references to these objects are from
+
+93
+00:07:42,500 --> 00:07:48,729
+other, unreachable objects. So, the bottom line is that reference counting can't
+
+94
+00:07:48,729 --> 00:07:53,939
+collect circular structures and there is only really two ways to deal with that.
+
+95
+00:07:53,939 --> 00:08:00,530
+One is if the programmer remembers whenever a circular structure is going to
+
+96
+00:08:00,530 --> 00:08:05,479
+become unreadable, to somehow break the circularity. So for example, before we
+
+97
+00:08:05,479 --> 00:08:09,919
+clobbered the pointer to x here, we remembered to go in and say set, you know,
+
+98
+00:08:09,919 --> 00:08:15,969
+this pointer here to null. If we nulled out one of the pointers in this cycle, so
+
+99
+00:08:15,969 --> 00:08:19,419
+that there was no longer a cycle, then the reference counting would work correctly
+
+100
+00:08:19,419 --> 00:08:23,039
+because then the reference count of this object would go to zero when, when this
+
+101
+00:08:23,039 --> 00:08:27,659
+pointer was dropped from x and that would cause the reference count of this object
+
+102
+00:08:27,659 --> 00:08:33,680
+also to go to zero after this object was deleted, okay? The other possibility is to
+
+103
+00:08:33,679 --> 00:08:39,669
+back reference counting by some other garbage collection technique that can
+
+104
+00:08:39,669 --> 00:08:44,700
+collect cycles. And so, in some reference counting systems for example most of the
+
+105
+00:08:44,700 --> 00:08:49,060
+garbage collection is done by reference counting but every now and again, once in
+
+106
+00:08:49,060 --> 00:08:52,910
+a very, very while, you might want to mark and sweep collector to go through and
+
+107
+00:08:52,910 --> 00:08:56,139
+clean out any circular but unreachable data structures.

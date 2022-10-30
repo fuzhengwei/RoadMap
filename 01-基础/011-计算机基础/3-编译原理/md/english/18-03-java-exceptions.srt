@@ -1,0 +1,695 @@
+0
+00:00:04,040 --> 00:00:11,040
+In this video, we're going to talk about programmer defined exceptions. So, think
+
+1
+00:00:11,520 --> 00:00:15,219
+about the following typical programming scenario. You're deep into some fairly
+
+2
+00:00:15,219 --> 00:00:20,540
+complex section of code and you come to a place where you could experience an
+
+3
+00:00:20,540 --> 00:00:24,950
+unexpected error. That there could be something that could happen that would
+
+4
+00:00:24,950 --> 00:00:28,860
+violate some important property of your program. So, for example, maybe you're
+
+5
+00:00:28,860 --> 00:00:32,680
+going to discover there's a place where you could be out of memory or there's some
+
+6
+00:00:32,680 --> 00:00:36,810
+data structure that doesn't satisfy some variant. So, a list that's supposed to be
+
+7
+00:00:36,810 --> 00:00:39,640
+sorted, that is not, or something like that. And the question is, how do you
+
+8
+00:00:39,640 --> 00:00:44,250
+handle these errors? How do you write code that will handle the error gracefully and
+
+9
+00:00:44,250 --> 00:00:50,510
+not make your program really, really ugly? So, a popular solution to this problem in
+
+10
+00:00:50,510 --> 00:00:55,450
+many languages including Java is add a new kind of value to the language called an
+
+11
+00:00:55,450 --> 00:00:59,520
+exception. And we'll have a couple of control constructs for dealing with
+
+12
+00:00:59,520 --> 00:01:03,780
+exceptions. Here is the two that are probably the most popular. And these are,
+
+13
+00:01:03,780 --> 00:01:08,820
+as they appear in Java. So, we can throw exceptions and what this does is it causes
+
+14
+00:01:08,820 --> 00:01:14,850
+an exception to be created at this point wherever the throw occurs. And, that
+
+15
+00:01:14,850 --> 00:01:18,360
+exception will simply propagate out of the program. It will basically halt the
+
+16
+00:01:18,360 --> 00:01:25,360
+execution of the program at that point and any containing constructs will also throw
+
+17
+00:01:26,690 --> 00:01:30,460
+the exception. So, the exception will, you know, simply propagate up out of the code
+
+18
+00:01:30,460 --> 00:01:37,190
+that, that's currently executing, until it hits a try catch. So, how does this work?
+
+19
+00:01:37,190 --> 00:01:41,610
+Well, we can try something. We can execute some expression here and this will be some
+
+20
+00:01:41,610 --> 00:01:46,590
+expression. And if this expression throws an exception, if the throw occurs
+
+21
+00:01:46,590 --> 00:01:51,710
+somewhere inside this expression, then we will catch that exception and there can be
+
+22
+00:01:51,710 --> 00:01:56,450
+a binding here to say what we are going to call the exception value. So, this is like
+
+23
+00:01:56,450 --> 00:02:00,770
+a let, we will grab the exception that comes out of here. We'll call it X and
+
+24
+00:02:00,770 --> 00:02:05,950
+then we can execute this piece of cleanup code to how, to handle the exception in
+
+25
+00:02:05,950 --> 00:02:12,950
+some way. And so, the basic idea behind this thi design for handling exceptions,
+
+26
+00:02:13,930 --> 00:02:16,989
+is that the place where you have the exception, the place where you actually
+
+27
+00:02:16,989 --> 00:02:20,939
+detect the exception, might be somewhere deep inside the code and not a very good
+
+28
+00:02:20,939 --> 00:02:24,790
+place for actually dealing with the exception. So, what you want to do is get
+
+29
+00:02:24,790 --> 00:02:28,549
+out of that part of the code, get back to some higher level point where you can
+
+30
+00:02:28,549 --> 00:02:34,029
+clean things up deal with the exception, and then retry, perhaps, some larger block
+
+31
+00:02:34,029 --> 00:02:41,029
+of code. Here's a little example of using exceptions. So, here we have our main
+
+32
+00:02:42,150 --> 00:02:45,680
+method. And what are we going to do? We're going to have a try-block that just calls
+
+33
+00:02:45,680 --> 00:02:51,269
+a function X. And if that raises a, an exception, then we will catch the
+
+34
+00:02:51,269 --> 00:02:53,540
+exception. In this case we don't do anything with the exception, we just print
+
+35
+00:02:53,540 --> 00:02:57,499
+out a message saying there was an error and we terminate the program. So, we don't
+
+36
+00:02:57,499 --> 00:03:01,099
+do anything very smart but we do catch the exception and at least print out an error
+
+37
+00:03:01,099 --> 00:03:07,449
+rather than just terminating. So, what does x do? Well, X simply throws an
+
+38
+00:03:07,449 --> 00:03:14,449
+exception. So this function X allocates an exception object. This is just a value,
+
+39
+00:03:14,739 --> 00:03:17,799
+it's just a class like everything else. But it has a special property that it can
+
+40
+00:03:17,799 --> 00:03:22,139
+be thrown. So, when we throw it, that's when X terminates abnormally and we end up
+
+41
+00:03:22,139 --> 00:03:27,819
+in the catch block of the try-catch expression back in the main method. Now,
+
+42
+00:03:27,819 --> 00:03:33,109
+in the last couple of slides, I gave you a very informal description of how
+
+43
+00:03:33,109 --> 00:03:37,959
+exceptions work and it, it might not have been very clear and in fact it's hard I
+
+44
+00:03:37,959 --> 00:03:43,909
+think to give a very clear description without some kind of formal description of
+
+45
+00:03:43,909 --> 00:03:47,749
+how exceptions are supposed to behave. But fortunately, we've looked at operational
+
+46
+00:03:47,749 --> 00:03:51,499
+semantics in this class and so now you're familiar with those kinds of descriptions
+
+47
+00:03:51,499 --> 00:03:56,139
+of language behavior and I can actually describe you pretty succinctly how
+
+48
+00:03:56,139 --> 00:04:01,109
+try-catch actually really works, alright. So, we're going to give operational rules
+
+49
+00:04:01,109 --> 00:04:06,329
+here for Try-Catch expressions. And I just noticed, I just poin t out here that I had
+
+50
+00:04:06,329 --> 00:04:10,769
+some kind of font problem and so I had to write in the turnstiles by hand in this
+
+51
+00:04:10,769 --> 00:04:15,889
+slide. So those handwritten characters are all supposed to be the turnstile
+
+52
+00:04:15,889 --> 00:04:21,730
+character. Now, to more important things there's a distinction with exceptions.
+
+53
+00:04:21,730 --> 00:04:26,570
+Okay, there are two kinds of states that an exception object could be in. It could
+
+54
+00:04:26,570 --> 00:04:31,370
+just be an ordinary value. So, when I say new exception object in Java, so, when I
+
+55
+00:04:31,370 --> 00:04:34,950
+say something new, something exception class is just an ordinary value. At that
+
+56
+00:04:34,950 --> 00:04:39,970
+point, it just behaves like any other object. But then, there is a distinction
+
+57
+00:04:39,970 --> 00:04:43,270
+when the object is thrown. So, when the exception is actually thrown, it becomes a
+
+58
+00:04:43,270 --> 00:04:47,390
+special kind of value and it gets treated differently, alright. So, we're going to
+
+59
+00:04:47,390 --> 00:04:53,250
+distinguish between an ordinary object V, okay. And objects that have been thrown,
+
+60
+00:04:53,250 --> 00:04:59,980
+okay, which are then active exceptions. Alright? So, let's take a look at some of
+
+61
+00:04:59,980 --> 00:05:05,740
+the operational rules for the exception constructs. So, here's one rule for its
+
+62
+00:05:05,740 --> 00:05:10,910
+try-catch-block. And what this rule says is that if an expression evaluates to an
+
+63
+00:05:10,910 --> 00:05:15,520
+ordinary value. If it doesn't throw an exception, then the results of the
+
+64
+00:05:15,520 --> 00:05:19,290
+try-catch-block is just that value. So, the way the try-catch-block works is you
+
+65
+00:05:19,290 --> 00:05:24,770
+evaluate the expression in the try-block. If that terminates normally with a value,
+
+66
+00:05:24,770 --> 00:05:30,590
+then the results of the whole expression is just that value, alright? Now, the
+
+67
+00:05:30,590 --> 00:05:34,720
+other possibility is that you'll evaluate a try catch block and when you go to
+
+68
+00:05:34,720 --> 00:05:39,100
+evaluate the expression of the try-block E1, it will throw an exception. So, it
+
+69
+00:05:39,100 --> 00:05:43,760
+could result in a thrown exception. And so, in this case. Okay, that is that,
+
+70
+00:05:43,760 --> 00:05:49,490
+excuse me, that is this case where E1 evaluates to one of these special values
+
+71
+00:05:49,490 --> 00:05:54,740
+has been marked as a thrown exception. What do we do in that case? Well, like
+
+72
+00:05:54,740 --> 00:05:59,760
+unwrap the exception, we pull out value that is in the thrown exception, alright.
+
+73
+00:05:59,760 --> 00:06:05,270
+We bind it to some local name, alright, that's named in the catch expression and
+
+74
+00:06:05,270 --> 00:06:09,490
+then we evaluate the cleanup code. So, with the ex ception value available, we
+
+75
+00:06:09,490 --> 00:06:14,250
+evaluate E2 and whatever the result is of E2, that is the result of the
+
+76
+00:06:14,250 --> 00:06:21,250
+try-catch-block. How does throw work? It's very simple. So, throw just takes an
+
+77
+00:06:22,700 --> 00:06:27,550
+expression, it evaluates that expression against some value V. And then, it marks
+
+78
+00:06:27,550 --> 00:06:33,480
+that value as a thrown exception, as a thrown exception so it wraps the value in
+
+79
+00:06:33,480 --> 00:06:38,960
+this T thing and that indicate that this exception now has been thrown. Now, the
+
+80
+00:06:38,960 --> 00:06:42,770
+only other thing we need to talk about is how the rest of the language, all the
+
+81
+00:06:42,770 --> 00:06:48,830
+other constructs in the language deal with these thrown exceptions. And that's very
+
+82
+00:06:48,830 --> 00:06:54,750
+simple. We want those thrown exceptions to simply propagate out of any other kind of
+
+83
+00:06:54,750 --> 00:06:58,300
+expression. So, for example, we'll just do one example here because the idea is the
+
+84
+00:06:58,300 --> 00:07:04,620
+same for every other language construct. Let's say, that we're evaluating E1 + E2,
+
+85
+00:07:04,620 --> 00:07:10,389
+alright. So, the first thing we have to do of course is to evaluate E1 and if that
+
+86
+00:07:10,389 --> 00:07:14,770
+happens the thrown exception. So, if something goes wrong in the evaluation of
+
+87
+00:07:14,770 --> 00:07:19,300
+E1 and E1 evaluates to the thrown in exception, well then we stop the
+
+88
+00:07:19,300 --> 00:07:23,450
+evaluation of the plus right there. We don't even evaluate E2, notice that E2 is
+
+89
+00:07:23,450 --> 00:07:28,990
+not mentioned here above the line of one of the things to be evaluated so that E1
+
+90
+00:07:28,990 --> 00:07:33,170
+terminates normally with an exception, then the results of the entire addition is
+
+91
+00:07:33,170 --> 00:07:38,990
+that exception. And similarly, for all the other constructs if, if there's, one of
+
+92
+00:07:38,990 --> 00:07:42,889
+their sub-expressions results in an exception. In fact, if the, if, as soon as
+
+93
+00:07:42,889 --> 00:07:47,480
+one of their sub-expressions results in an exception, they stop evaluating and
+
+94
+00:07:47,480 --> 00:07:51,400
+propagate that exception up. The only thing that will stop the exception from
+
+95
+00:07:51,400 --> 00:07:55,030
+propagating all the way out to become the result of the whole program is if it is
+
+96
+00:07:55,030 --> 00:08:02,030
+caught in a try-catch-block. There are many ways to implement exceptions and here
+
+97
+00:08:02,889 --> 00:08:08,010
+is one simple way to do it. So, we encounter a try expression, we will mark
+
+98
+00:08:08,010 --> 00:08:11,250
+the current location in the stack. So, we will mark the position in the stack where
+
+99
+00:08:11,250 --> 00:08:17,300
+we encountered the try. So, for example, here, say, is our s tack. Let's say that,
+
+100
+00:08:17,300 --> 00:08:22,120
+you know, the stack is going this way. We encounter a try expression here so we put
+
+101
+00:08:22,120 --> 00:08:25,770
+some kind of marker in the stack to indicate that there's a try that was
+
+102
+00:08:25,770 --> 00:08:29,560
+encountered there. And then you go on, you know, evaluating things inside of the try
+
+103
+00:08:29,560 --> 00:08:34,620
+which might add more stuff to the stack. Now, when we throw an exception, if down
+
+104
+00:08:34,620 --> 00:08:39,599
+here, all of a sudden a throw occurs and we're at this point in the execution,
+
+105
+00:08:39,599 --> 00:08:43,219
+what's going to happen is we're going to unwind the stacks. We're going to knock
+
+106
+00:08:43,219 --> 00:08:46,689
+everything off the stack. We're going to pop all of this stuff of the stack, so
+
+107
+00:08:46,689 --> 00:08:51,699
+it's all gone, back to the first try. And then we'll execute the corresponding
+
+108
+00:08:51,699 --> 00:08:55,249
+catch. So, here we marked, you know, the place and the code where there was a try
+
+109
+00:08:55,249 --> 00:09:00,189
+and we can use that to find the expression the piece of the code that has the
+
+110
+00:09:00,189 --> 00:09:03,620
+corresponding catch-block and we'll unwind the stack to that point and then begin
+
+111
+00:09:03,620 --> 00:09:10,620
+evaluation of the catch. So at this particular design it has the disadvantage
+
+112
+00:09:11,170 --> 00:09:15,439
+that try actually cost something. So, even if you don't throw an, even if you don't
+
+113
+00:09:15,439 --> 00:09:19,649
+throw an exception, you still pay something to execute a try-catch-block.
+
+114
+00:09:19,649 --> 00:09:23,620
+You have to at least mark the stack and, and remember to unmark it of course, when
+
+115
+00:09:23,620 --> 00:09:27,749
+you pop things off the stack when you leave the try-block. So, more complex
+
+116
+00:09:27,749 --> 00:09:33,519
+techniques tries to reduce the cost of try and throw and also trade off between them.
+
+117
+00:09:33,519 --> 00:09:37,930
+And generally the thing you want to do is because exceptions are probably relatively
+
+118
+00:09:37,930 --> 00:09:43,480
+rare in, in most programs is to make the cost of try as low as possible, possibly
+
+119
+00:09:43,480 --> 00:09:50,480
+at the expense of making throws slightly more expensive. Now, here's a little
+
+120
+00:09:52,059 --> 00:09:56,850
+trivia question about Java. So, what happens to an uncaught exception as thrown
+
+121
+00:09:56,850 --> 00:10:01,889
+during object finalization? So, if you don't know what object finalization is,
+
+122
+00:10:01,889 --> 00:10:05,839
+well, when an object is collected, when an object is garbage collected, it is
+
+123
+00:10:05,839 --> 00:10:12,619
+possible to run a method on that object to clean it up before the garbage collector
+
+124
+00:10:12,619 --> 00:10:16,680
+actually deallocates it and this is called the finali zation method. So, objects have
+
+125
+00:10:16,680 --> 00:10:21,439
+finalization methods in, in Java and those methods are essentially invoked by the
+
+126
+00:10:21,439 --> 00:10:24,759
+garbage collector. Some garbage collector discovers that some objects, this garbage
+
+127
+00:10:24,759 --> 00:10:28,860
+is going to be clean it up, it will first invoke the finalization method. And why
+
+128
+00:10:28,860 --> 00:10:34,949
+would you wanted to do this unless, say, we have an object and it might have, say,
+
+129
+00:10:34,949 --> 00:10:39,569
+a file handle. It might have a pointer to an open file or something like that. And
+
+130
+00:10:39,569 --> 00:10:43,569
+now, when this object becomes unreachable, it will be collected by the garbage
+
+131
+00:10:43,569 --> 00:10:47,110
+collector. But if you don't close the file, well, that's gonna cause problems.
+
+132
+00:10:47,110 --> 00:10:50,930
+Having lots of open files that are hanging around without the program using them it
+
+133
+00:10:50,930 --> 00:10:55,209
+can cause problems later on, especially if you run out of file handles. Usually,
+
+134
+00:10:55,209 --> 00:10:59,829
+there's a fixed number of file handles available from the operating system. So,
+
+135
+00:10:59,829 --> 00:11:02,430
+the right thing to do is when this is garbage collected is to first close the
+
+136
+00:11:02,430 --> 00:11:08,119
+file and essentially get rid of this pointer, okay, and then, deallocate the
+
+137
+00:11:08,119 --> 00:11:12,709
+object, and that it was object finalization is for. So, again, you can
+
+138
+00:11:12,709 --> 00:11:17,559
+define the method in Java that will be run by the garbage collector to kinda clean up
+
+139
+00:11:17,559 --> 00:11:22,689
+any resources the object has before it's actually deallocated. And now the question
+
+140
+00:11:22,689 --> 00:11:26,649
+is, if that finalization method raises an exception, who catches it? Because it was
+
+141
+00:11:26,649 --> 00:11:29,649
+invoked by the garbage collector, it's unpredictable when it's going to be
+
+142
+00:11:29,649 --> 00:11:34,269
+invoked and it's not clear where that exception should be handled. And the
+
+143
+00:11:34,269 --> 00:11:40,790
+answer to the question is no one handles that method or nothing handles that
+
+144
+00:11:40,790 --> 00:11:45,990
+method. The exception is simply dropped. And so, any exceptions that happen during
+
+145
+00:11:45,990 --> 00:11:50,389
+object finalization that are not handled within the finalization method itself are
+
+146
+00:11:50,389 --> 00:11:56,559
+simply thrown away. One of the nice innovations in Java is that exceptions are
+
+147
+00:11:56,559 --> 00:12:02,619
+actually part of the method interface and they are checked by the compiler. So, in,
+
+148
+00:12:02,619 --> 00:12:05,730
+in the example that I gave at the beginning of this lecture, we had a method
+
+149
+00:12:05,730 --> 00:12:09,730
+X that could raise an exception, my exception, and notice that the declaration
+
+150
+00:12:09,730 --> 00:12:14,249
+of X actually declares that X can throw that exception. So, it's part of the
+
+151
+00:12:14,249 --> 00:12:18,649
+interfaced X, part of the checked interfaced X that it can raise a
+
+152
+00:12:18,649 --> 00:12:22,889
+particular exception. And why would you want to check this at compile time? Well,
+
+153
+00:12:22,889 --> 00:12:27,720
+the observation that was made, actually in the original Java project was that there
+
+154
+00:12:27,720 --> 00:12:32,410
+were many exceptions that could be raised by Java programs and people easily lost
+
+155
+00:12:32,410 --> 00:12:36,129
+rack of what possible exceptions could be raised, they didn't know what exceptions
+
+156
+00:12:36,129 --> 00:12:41,199
+they had to handle. And in fact, when they added this to the language the compiler
+
+157
+00:12:41,199 --> 00:12:46,269
+would actually enforce now that a method declared every exception it could raise.
+
+158
+00:12:46,269 --> 00:12:51,290
+They discovered lots of places in the, in the compiler where there were exceptions
+
+159
+00:12:51,290 --> 00:12:57,529
+being raised but not properly handled. So, this led to better air handling in, in the
+
+160
+00:12:57,529 --> 00:13:02,860
+Java compiler itself, and, and I think people generally agree that this is een a
+
+161
+00:13:02,860 --> 00:13:07,439
+good idea because it helps programmers to write more robust code because they can
+
+162
+00:13:07,439 --> 00:13:12,670
+see exactly which exceptions they have to handle. Now, there are some exceptions to
+
+163
+00:13:12,670 --> 00:13:17,439
+this rule. In particular there's, there's some kinds of runtime errors that don't
+
+164
+00:13:17,439 --> 00:13:22,589
+have to be part of the method signature simply because it's very hard to check
+
+165
+00:13:22,589 --> 00:13:25,819
+statistically that the method would never raise them. So, things like dereferencing
+
+166
+00:13:25,819 --> 00:13:31,709
+null or interprocedural overflow don't have to be handled and declared in the
+
+167
+00:13:31,709 --> 00:13:38,709
+interface. But for the most part any exception that a, a method can raise has
+
+168
+00:13:38,949 --> 00:13:42,429
+to be declared as part of its interface in Java. And then there are other
+
+169
+00:13:42,429 --> 00:13:47,249
+mundane-type rules about the particular design for exceptions in Java. So, for
+
+170
+00:13:47,249 --> 00:13:51,800
+example, throw has to be applied to an object of type exception, it can't be
+
+171
+00:13:51,800 --> 00:13:56,389
+applied to an object of an arbitrary type. But overall exceptions are rather nicely
+
+172
+00:13:56,389 --> 00:14:03,389
+done in Java and that this particular idea of, of declaring the types of exceptions
+
+173
+00:14:04,170 --> 00:14:06,920
+that a method can raise was a new idea in Java.

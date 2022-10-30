@@ -1,0 +1,335 @@
+0
+00:00:04,040 --> 00:00:07,990
+In this video, we're going to talk about Coercions which is a feature of type
+
+1
+00:00:07,990 --> 00:00:12,380
+systems that appears in many languages and we will be looking specifically how
+
+2
+00:00:12,380 --> 00:00:19,380
+coercions are done in Java. Java allows primitive types to be coerced in certain
+
+3
+00:00:22,020 --> 00:00:26,680
+context. And, coerced means converted from one type to another. So here's an example,
+
+4
+00:00:26,680 --> 00:00:32,780
+lets take the expression one + 2.0 and the difficulty with this expression is that
+
+5
+00:00:32,780 --> 00:00:39,770
+the, the one here is, is an integer and the 2.0 is a floating point number. And
+
+6
+00:00:39,770 --> 00:00:45,710
+there is no way to add an int to a float directly. We either have to convert the
+
+7
+00:00:45,710 --> 00:00:49,850
+integer to a float and then do the add as floating point numbers or convert the
+
+8
+00:00:49,850 --> 00:00:53,850
+floating point number to an integer and then do the addition as integer addition.
+
+9
+00:00:53,850 --> 00:00:57,570
+So they have to be converted to a common representation, before we can actually do
+
+10
+00:00:57,570 --> 00:01:01,730
+the operation. And the normal thing to do, and the thing that Java does, is to
+
+11
+00:01:01,730 --> 00:01:08,730
+convert the integer to the floating point number 1.0. Now, a coercion the right way
+
+12
+00:01:09,340 --> 00:01:13,580
+I think, to think of coercions is they're really just primitive functions that the
+
+13
+00:01:13,580 --> 00:01:17,720
+compiler inserts for you. So it's like, you left out a function call and the
+
+14
+00:01:17,720 --> 00:01:21,140
+compiler notices that and puts it in. So, in this particular example, what would be
+
+15
+00:01:21,140 --> 00:01:25,110
+the function call? Well, there, we can think of there being a primitive function
+
+16
+00:01:25,110 --> 00:01:30,870
+that converts integers to floating point numbers in the obvious way. And so really
+
+17
+00:01:30,870 --> 00:01:36,140
+this expression here gets converted to the expression into float applied to the
+
+18
+00:01:36,140 --> 00:01:43,140
+number one plus 2.0. All right. So coercions are probably best thought of as
+
+19
+00:01:44,470 --> 00:01:49,640
+a convenience for you, the programmer to let you avoid having to write some
+
+20
+00:01:49,640 --> 00:01:54,659
+function calls. And, so where it is obvious that a type conversion is going on
+
+21
+00:01:54,659 --> 00:01:59,820
+the compiler can insert the function that performs that type conversion for you. And
+
+22
+00:01:59,820 --> 00:02:03,990
+most languages really have extensive coercions so the conversions are very,
+
+23
+00:02:03,990 --> 00:02:10,649
+very common particularly between numeric types and so this is not just Java. This
+
+24
+00:02:10,649 --> 00:02:16,150
+is really many different programming languages of all styles that have lots of
+
+25
+00:02:16,150 --> 00:02:22,769
+differe nt kinds of coercions. Now, Java in particular distinguishes two kinds of
+
+26
+00:02:22,769 --> 00:02:27,430
+coercions and casts. You have widening coercions and these will always succeed.
+
+27
+00:02:27,430 --> 00:02:30,180
+Alright, so that means that Java will always put them in and there will never be
+
+28
+00:02:30,180 --> 00:02:34,129
+any complaining from the compiler or the runtime system about them and we already
+
+29
+00:02:34,129 --> 00:02:38,659
+saw one of those, so the conversion from int to float is an example of a widening
+
+30
+00:02:38,659 --> 00:02:44,540
+cast. Now, narrowing casts may fail if the data can't be converted to the desired
+
+31
+00:02:44,540 --> 00:02:51,540
+type. So in particular, float to int well, this will work fine. Something like 2.0
+
+32
+00:02:51,790 --> 00:02:57,099
+can be converted in obvious way to two but if you're converting something that
+
+33
+00:02:57,099 --> 00:03:00,909
+doesn't have an integer representation something say like 2.5 you know, there's a
+
+34
+00:03:00,909 --> 00:03:06,219
+question of what we should do here. Okay, and for such narrowing casts, where there
+
+35
+00:03:06,219 --> 00:03:09,069
+isn't a, a clear mapping, whether we should go or, you know or whether we
+
+36
+00:03:09,069 --> 00:03:15,879
+should try here or round up, or whatever then Java will actually complain and not
+
+37
+00:03:15,879 --> 00:03:22,879
+let you do it. Okay perhaps for better example of the kind of narrowing cast
+
+38
+00:03:23,650 --> 00:03:30,650
+that's that Java will complain about is something like a down cast. So if I have
+
+39
+00:03:31,290 --> 00:03:38,139
+two classes A and B. And B is a subtype of A and then I have something of type A.
+
+40
+00:03:38,139 --> 00:03:45,139
+Well, I can cast it to B. I can say, let's say I have X which is a type A and then I
+
+41
+00:03:46,389 --> 00:03:51,849
+can have an expression where I try to convert x to a B object. So here I have a
+
+42
+00:03:51,849 --> 00:03:57,609
+cast, I've indicated that I want to treat this expression x as a B object and this
+
+43
+00:03:57,609 --> 00:04:01,790
+will type check, okay. So the, the compiler will let this through since B is
+
+44
+00:04:01,790 --> 00:04:06,249
+subtype of A. But at run time, it's actually going to check whether x is
+
+45
+00:04:06,249 --> 00:04:10,049
+actually a B object and if it's not you're going to get an exception. So this can
+
+46
+00:04:10,049 --> 00:04:14,599
+fail at run time if the object thatt x actually holds at the point of the cast is
+
+47
+00:04:14,599 --> 00:04:20,130
+not a B object. So the rule in Java is that narrowing cast must be explicit. You
+
+48
+00:04:20,130 --> 00:04:25,540
+have to put the function in yourself. You have to put in the typecase in the code so
+
+49
+00:04:25,540 --> 00:04:30,280
+that it's obvious that you really want to do it, but widening casts in coercions can
+
+50
+00:04:30,280 --> 00:04:34,160
+be implicit, so it's alright. If you're widening, if you're either promoting to a
+
+51
+00:04:34,160 --> 00:04:39,350
+super type or you are converting between initial type where it's clear that the,
+
+52
+00:04:39,350 --> 00:04:45,820
+one type embeds in the other then those can be filled in for you by the compiler.
+
+53
+00:04:45,820 --> 00:04:51,190
+And here's a little Java trivia question. So it turns out that there is one type in
+
+54
+00:04:51,190 --> 00:04:57,430
+Java for which there are no coercions or casts defined. Okay so there are no
+
+55
+00:04:57,430 --> 00:05:02,680
+implicit conversions or even explicit conversions from that type to any other
+
+56
+00:05:02,680 --> 00:05:07,810
+type. And the answer to the question, which is the only one, is bool. Okay so
+
+57
+00:05:07,810 --> 00:05:14,810
+only the type boolean has no conercions or casts to another type. Now personally, I'm
+
+58
+00:05:17,800 --> 00:05:24,100
+not a big fan of coercions. I think that it's clearly a convenience for
+
+59
+00:05:24,100 --> 00:05:28,620
+programmers, it's clearly something that is widely accepted as being necessary in
+
+60
+00:05:28,620 --> 00:05:34,220
+programming languages because casts, implicit casts and conversions are so
+
+61
+00:05:34,220 --> 00:05:40,570
+ubiquitous but I do think that it tends to lead to programs that have behavior that's
+
+62
+00:05:40,570 --> 00:05:44,300
+different from what the programmer probably expected. And, here's a good
+
+63
+00:05:44,300 --> 00:05:48,780
+example from the language PL/1, which recalls stood for Programming Language one
+
+64
+00:05:48,780 --> 00:05:53,890
+designed by IBM in the 1960s. And had many, many features in it so we've talked
+
+65
+00:05:53,890 --> 00:06:00,190
+about PL/1 a few times in this class. And one thing that PL/1 had was very extensive
+
+66
+00:06:00,190 --> 00:06:04,700
+cast and coercions and this could lead us to some surprising behaviors. So here's an
+
+67
+00:06:04,700 --> 00:06:10,100
+example we have a, A, B, and C are strings of three characters so it's important to
+
+68
+00:06:10,100 --> 00:06:17,100
+know here that the length three is part of the type. So B is string '123' C is '456'
+
+69
+00:06:17,780 --> 00:06:24,160
+and then A is going to be B + c and the question is what is A? And, and you
+
+70
+00:06:24,160 --> 00:06:30,680
+probably won't guess, so let me show you what I think is the right answer. So first
+
+71
+00:06:30,680 --> 00:06:34,840
+of all the question is what happens with this + operation here? Well, so that is
+
+72
+00:06:34,840 --> 00:06:40,840
+going to be interpreted as an integer + so B and C are both going to be cast to
+
+73
+00:06:40,840 --> 00:06:46,390
+integers and the, and this will be done as a integer arithmetic. So B will get
+
+74
+00:06:46,390 --> 00:06:52,540
+converted to the number 123. C will get conver ted to the number 456, okay? And
+
+75
+00:06:52,540 --> 00:06:59,540
+then we'll add them and we'll get out the number 579. Okay, so the result of this
+
+76
+00:07:00,620 --> 00:07:06,670
+expression is 579 but A is also a string of three characters so this has to be cast
+
+77
+00:07:06,670 --> 00:07:11,580
+back to a string. Now, it turns out that this cast happens in two steps. First
+
+78
+00:07:11,580 --> 00:07:18,310
+this, this number here is cast to a string of the default length, okay. And the
+
+79
+00:07:18,310 --> 00:07:25,310
+default length happens to be six so this is cast to a string looks like this.
+
+80
+00:07:25,580 --> 00:07:32,580
+There's three blanks followed by 579. And then that string of six characters is
+
+81
+00:07:33,200 --> 00:07:35,810
+converted to a string of three characters. And we just take the first three
+
+82
+00:07:35,810 --> 00:07:42,810
+characters and so we get out that, and so the answer is that this program stores a
+
+83
+00:07:43,920 --> 00:07:48,240
+string of three blanks in A. Which is probably not what was expected.

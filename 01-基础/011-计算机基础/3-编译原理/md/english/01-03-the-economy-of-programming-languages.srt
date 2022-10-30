@@ -1,0 +1,803 @@
+0
+00:00:03,699 --> 00:00:08,029
+Hello. In this video we're going to talk about something that I've referred to as the economy
+
+1
+00:00:08,029 --> 00:00:15,029
+of programming languages. 
+
+2
+00:00:15,029 --> 00:00:18,949
+So the idea behind this video is that before we get into the
+
+3
+00:00:18,970 --> 00:00:25,360
+details of how languages are implemented or designed, I wanted to say something about
+
+4
+00:00:25,360 --> 00:00:31,260
+how languages work in the real world and why certain languages are used and others are not.
+
+5
+00:00:31,320 --> 00:00:35,180
+And if you look around, there's actually a few obvious questions that come up to anybody
+
+6
+00:00:35,190 --> 00:00:40,080
+who thinks about programming languages for more than a few minutes. One question is,
+
+7
+00:00:40,080 --> 00:00:45,390
+why are there so many of these things? We have hundreds, if not thousands, of programming
+
+8
+00:00:45,390 --> 00:00:50,310
+languages in everyday use, and why do all these things need to exist? Why wouldn't one
+
+9
+00:00:50,310 --> 00:00:53,350
+programming language for example be enough?
+
+10
+00:00:53,350 --> 00:00:56,960
+A related question but slightly different is why are there new programming languages?
+
+11
+00:00:56,960 --> 00:01:03,130
+That given that we have so many programming languages already, what is the need for new
+
+12
+00:01:03,130 --> 00:01:08,799
+ones to be created? And finally, how do we know a good programming language when we see
+
+13
+00:01:08,799 --> 00:01:12,710
+it? So what makes a good programming language and what makes a bad programming language?
+
+14
+00:01:12,710 --> 00:01:19,700
+I just want to spend this video talking about these three questions. And as we'll see, I
+
+15
+00:01:20,209 --> 00:01:26,119
+think the answers to these questions are largely independent of the technical aspects of language
+
+16
+00:01:26,119 --> 00:01:33,119
+design and implementation. But very interesting in their own right.
+
+17
+00:01:33,810 --> 00:01:38,240
+So let's begin with the question of why there are so many programming languages. And at
+
+18
+00:01:38,240 --> 00:01:42,459
+least a partial answer to this question is not too hard to come by. If you think for
+
+19
+00:01:42,459 --> 00:01:47,639
+a few minutes, you'd realize that the application domains for programming have very distinctive
+
+20
+00:01:47,639 --> 00:01:54,209
+and conflicting needs. That is, it's very hard to design one language that would actually
+
+21
+00:01:54,209 --> 00:01:58,770
+do everything in every situation for all programmers.
+
+22
+00:01:58,770 --> 00:02:03,700
+And let's just go through some examples. One domain that you might not think about very
+
+23
+00:02:03,700 --> 00:02:12,080
+much is scientific computing. So these are all the big calculations that are done for
+
+24
+00:02:12,090 --> 00:02:19,090
+engineering applications primarily but also big science and long running experiments,
+
+25
+00:02:20,790 --> 00:02:22,980
+simulation experiments.
+
+26
+00:02:22,980 --> 00:02:28,730
+And what are the needs for such computations? Well typically you need very good floating
+
+27
+00:02:28,730 --> 00:02:35,730
+point support. I'll abbreviate that as FP. You need good support for arrays and operations
+
+28
+00:02:37,420 --> 00:02:42,840
+on arrays because the most common data type in most scientific applications is larger
+
+29
+00:02:42,840 --> 00:02:49,840
+arrays of floating point numbers. And then you also need parallelism. 
+
+30
+00:02:49,840 --> 00:02:52,440
+Today to get sufficient
+
+31
+00:02:52,450 --> 00:02:57,360
+performance you really have to exploit parallelism in these applications.
+
+32
+00:02:57,360 --> 00:03:01,459
+And it's not every language actually supports all of these things well. This is actually
+
+33
+00:03:01,459 --> 00:03:06,290
+not an exhaustive list of the things you need but a few distinctive things that are needed.
+
+34
+00:03:06,290 --> 00:03:11,120
+But one language that has traditionally done a very good job of supporting these things
+
+35
+00:03:11,120 --> 00:03:15,930
+is Fortran. And Fortran is still heavily used in the scientific community.
+
+36
+00:03:15,930 --> 00:03:20,109
+It was originally designed for scientific applications. If you recall that the name
+
+37
+00:03:20,109 --> 00:03:27,109
+means formula translation. And it has evolved over time. It doesn't really look much like
+
+38
+00:03:27,659 --> 00:03:32,319
+the original language anymore but it's always retain this core constituency in scientific
+
+39
+00:03:32,319 --> 00:03:37,260
+computing and remains one of the leading languages in that domain.
+
+40
+00:03:37,260 --> 00:03:47,720
+Now a completely different kind of a domain is business applications. And so what do you
+
+41
+00:03:47,730 --> 00:03:53,189
+need here? Well so here you're going to need things like persistence. You don't want to
+
+42
+00:03:53,189 --> 00:03:58,079
+lose your data. Businesses go to a lot of trouble to get the data, and they need a way
+
+43
+00:03:58,079 --> 00:04:03,790
+to hold onto it, and they want that to be extremely reliable.
+
+44
+00:04:03,790 --> 00:04:10,579
+You're going to need good report facilities. Because typically you want to do something
+
+45
+00:04:10,579 --> 00:04:16,739
+with the data. So you need good facilities for report generation. And also, you want
+
+46
+00:04:16,738 --> 00:04:20,220
+to be able to exploit the data. The data's actually in many modern businesses one of
+
+47
+00:04:20,220 --> 00:04:26,510
+the most valuable assets and so you need good facilities for asking questions about your
+
+48
+00:04:26,510 --> 00:04:28,220
+data. Let's call it data analysis.
+
+49
+00:04:28,220 --> 00:04:34,530
+And again, this is not an exhaustive list of things that you need, but it is representative
+
+50
+00:04:34,530 --> 00:04:41,750
+I would say. And probably the most common or one of the most common used languages for
+
+51
+00:04:41,750 --> 00:04:48,280
+this class of applications is SQL, the database query language. So relational databases and
+
+52
+00:04:48,280 --> 00:04:55,220
+their associated programming language-- languages, I should say, but most notably SQL-- really
+
+53
+00:04:55,220 --> 00:04:59,100
+dominate in this application domain.
+
+54
+00:04:59,100 --> 00:05:06,100
+And then another domain, let's do one more, is systems programming.
+
+55
+00:05:06,340 --> 00:05:13,140
+So by this I mean things like embedded systems, things to control devices, operating systems, things like that.
+
+56
+00:05:13,140 --> 00:05:19,650
+And what are the characteristics here? Well, we need very low level control of the resources.
+
+57
+00:05:19,650 --> 00:05:24,280
+The whole point of systems programming is to do a good job of managing resources and
+
+58
+00:05:24,280 --> 00:05:32,060
+so we really want fine grained control over the resources. And often there's a time aspect,
+
+59
+00:05:32,060 --> 00:05:39,060
+so you might have some real time constraints. So you need to be able to reason about time.
+
+60
+00:05:41,020 --> 00:05:46,590
+Because these are actually again devices and they need to be able to react within certain
+
+61
+00:05:46,590 --> 00:05:50,960
+amount of time - if it's a network device or something like that - you need to be responsive
+
+62
+00:05:50,960 --> 00:05:56,470
+to the network. Lots and lots of examples where timing is important. And these are just
+
+63
+00:05:56,470 --> 00:06:00,780
+two aspects and I'm a little bit - I'm running out of space here so I'll just stop with that.
+
+64
+00:06:00,780 --> 00:06:05,900
+But again these are representative of the kinds of things you need in systems programming.
+
+65
+00:06:05,900 --> 00:06:11,150
+And probably today still the most widely used systems programming language or family systems
+
+66
+00:06:11,150 --> 00:06:18,150
+of programming languages is the C and to some extent C++ family of languages.
+
+67
+00:06:19,190 --> 00:06:23,350
+And as you can see the requirements in these different domains are just completely
+
+68
+00:06:23,350 --> 00:06:26,490
+different from each other. What's important in one domain or most important in one
+
+69
+00:06:26,490 --> 00:06:32,140
+domain is not the same as in another domain. And it's easy I think to imagine at least
+
+70
+00:06:32,140 --> 00:06:37,430
+that it would be difficult to integrate all of these into one system that would do a good
+
+71
+00:06:37,430 --> 00:06:43,740
+job on all of these things.
+
+72
+00:06:43,740 --> 00:06:47,980
+That brings us to our second question: Why are there new programming languages?
+
+73
+00:06:47,980 --> 00:06:54,180
+There are so many languages in existence, why would we ever need to design a new one? And I'm
+
+74
+00:06:54,180 --> 00:06:58,830
+going to begin the answer to this question with an observation that at first glance has
+
+75
+00:06:58,830 --> 00:07:03,180
+nothing to do with the question at all. So let me just take a moment to explain it.
+
+76
+00:07:03,180 --> 00:07:07,680
+I claim that programmer training is the dominant cost for a programming language. And I think
+
+77
+00:07:07,680 --> 00:07:13,800
+this is really important so just going to emphasize the bit that's important here. It's
+
+78
+00:07:13,800 --> 00:07:18,590
+the programmer training. The cost of educating the programmers in the language. So we think
+
+79
+00:07:18,590 --> 00:07:23,750
+about a programming language there are several things that have to happen for that language
+
+80
+00:07:23,750 --> 00:07:28,310
+to get used. Somebody has to design it. But that's really not very expensive. That's just
+
+81
+00:07:28,310 --> 00:07:33,840
+one or very few people typically. Somebody has to build a compiler, but that is also
+
+82
+00:07:33,840 --> 00:07:39,440
+not actually all that expensive. Maybe 10 to 20 people for a really large compiler project
+
+83
+00:07:39,440 --> 00:07:42,170
+can build quite a good compiler.
+
+84
+00:07:42,170 --> 00:07:48,140
+The real cost is in all the users and educating them. So if you have thousands or hundreds
+
+85
+00:07:48,140 --> 00:07:53,930
+of thousands or millions of users of the language, the time and money that it takes to teach
+
+86
+00:07:53,930 --> 00:07:59,590
+them all the language is really the dominant cost. And here I don't mean just the actual
+
+87
+00:07:59,590 --> 00:08:04,180
+dollar expense of buying textbooks and taking classes and things like that.
+
+88
+00:08:04,180 --> 00:08:08,420
+It's also the fact that the programmers have to decide it's worth it for them to learn
+
+89
+00:08:08,420 --> 00:08:13,560
+this language and many programmers learn on their own time, but that's a use of their
+
+90
+00:08:13,560 --> 00:08:19,180
+time and the expense of their time is a real economic cost. And so if you think about the
+
+91
+00:08:19,180 --> 00:08:25,560
+number of hours that it takes to teach a population of a million programmers a language, that's
+
+92
+00:08:25,560 --> 00:08:30,710
+really quite a significant economic investment.
+
+93
+00:08:30,710 --> 00:08:35,880
+Now from this observation, we can make a couple of predictions pretty easily. And again, these
+
+94
+00:08:35,880 --> 00:08:42,880
+are just predictions now that follow from this claim. If you believe that it's true.
+
+95
+00:08:44,070 --> 00:08:51,070
+So let me erase it and fix it. So first prediction is that widely used languages will be slow
+
+96
+00:08:53,820 --> 00:09:00,820
+to change. And why should that be true? Well, if I make a change to a language of lots of
+
+97
+00:09:06,100 --> 00:09:11,880
+people use, I have to educate everybody in that community about the change. And so even
+
+98
+00:09:11,880 --> 00:09:18,550
+relatively minor language extensions small changes to syntax, small new features, even
+
+99
+00:09:18,550 --> 00:09:22,790
+just simple changes in the interface of the compiler, if you have a lot of users it takes
+
+100
+00:09:22,790 --> 00:09:27,410
+a very long time and is quite expensive to teach them all about that.
+
+101
+00:09:27,410 --> 00:09:34,410
+So as languages become widely used the rate of change, their rate of change will slow
+
+102
+00:09:35,340 --> 00:09:40,720
+down. And this predicts over time as the world of programming grows, as we have more more
+
+103
+00:09:40,720 --> 00:09:44,810
+programmers in the world, we would expect the most popular languages, which will have
+
+104
+00:09:44,810 --> 00:09:50,170
+larger and larger user bases so larger and larger programmer basis, to become more and
+
+105
+00:09:50,170 --> 00:09:55,340
+more ossified. To evolve more and more slowly. And I think actually what you see in practice
+
+106
+00:09:55,340 --> 00:09:58,960
+is very consistent with that prediction.
+
+107
+00:09:58,960 --> 00:10:05,960
+Now at the other end of the spectrum, this same observation makes an almost what appears
+
+108
+00:10:06,170 --> 00:10:13,170
+to be contradictory prediction, which is that easy to start, it's easy to start a new language.
+
+109
+00:10:13,840 --> 00:10:20,840
+That in fact the cost of starting up a new language is very low. And why is that? Well
+
+110
+00:10:21,820 --> 00:10:26,990
+because you start with zero users and so there is essentially zero training cost at the beginning
+
+111
+00:10:26,990 --> 00:10:32,340
+and then even when you have just a few users the cost of teaching them the changes in the
+
+112
+00:10:32,340 --> 00:10:39,310
+language is not very high. And it's so new languages can evolve much more quickly. They
+
+113
+00:10:39,310 --> 00:10:46,310
+can adapt much more quickly to changing situations. And it's just not very costly to experiment
+
+114
+00:10:48,710 --> 00:10:55,710
+with a new language at all. And there's a tension between these two things.
+
+115
+00:10:55,900 --> 00:11:01,540
+When is a programmer going to choose between a widely used existing language that perhaps
+
+116
+00:11:01,540 --> 00:11:06,710
+doesn't change very quickly, and a brand new language? Well they're going to choose it
+
+117
+00:11:06,710 --> 00:11:13,710
+if the productivity, if their productivity exceeds the training cost. So if they perceive
+
+118
+00:11:17,340 --> 00:11:21,890
+that by spending a little bit of time and money to learn this new language, they're
+
+119
+00:11:21,890 --> 00:11:26,240
+going to be much more productive over a relatively short period of time then they're going to
+
+120
+00:11:26,240 --> 00:11:30,029
+make the switch.
+
+121
+00:11:30,029 --> 00:11:37,029
+So when is this likely to happen? Well putting this all together languages are most likely
+
+122
+00:11:38,100 --> 00:11:45,100
+to be adopted  to fill a void. And again this is a prediction that follows from the fact that programmer
+
+123
+00:11:54,040 --> 00:12:00,170
+training is the main cost. What do I mean by this? Well what I mean is that, programming
+
+124
+00:12:00,170 --> 00:12:07,120
+languages exist for purpose, people use them to get work done. And because we're still
+
+125
+00:12:07,120 --> 00:12:11,460
+in the middle of the information revolution and there are new application domains coming
+
+126
+00:12:11,460 --> 00:12:12,460
+along all the time.
+
+127
+00:12:12,460 --> 00:12:18,940
+So there are new kinds of programming that emerge every few years or even more often
+
+128
+00:12:18,940 --> 00:12:24,070
+than that. So just in terms of recent history mobile applications are now something that's
+
+129
+00:12:24,070 --> 00:12:29,940
+relatively new. And there's a lot of new technology being built up to support mobile computing.
+
+130
+00:12:29,940 --> 00:12:34,240
+A few years ago it was the internet itself was a new programming platform and a bunch
+
+131
+00:12:34,240 --> 00:12:41,150
+of new programming languages like Java in particular got started during that time.
+
+132
+00:12:41,150 --> 00:12:45,730
+So a new programming niche is open up because the technology changes that what people want
+
+133
+00:12:45,730 --> 00:12:52,610
+to do with software changes. And this creates new opportunities for languages. The old languages
+
+134
+00:12:52,610 --> 00:12:59,610
+are slow to change and so they have some difficulty in adapting to fit these new domains. And
+
+135
+00:13:02,050 --> 00:13:05,810
+they aren't really necessarily well suited to them for the reasons we talked about on
+
+136
+00:13:05,810 --> 00:13:11,000
+the previous slide with the previous question because it's hard to have one language that
+
+137
+00:13:11,000 --> 00:13:13,860
+incorporates all the features you would want.
+
+138
+00:13:13,860 --> 00:13:19,330
+And so there are so these languages are not necessarily perfect for these application
+
+139
+00:13:19,330 --> 00:13:26,130
+domains. They're slow to adapt to the new situation. And this tends to call forth new
+
+140
+00:13:26,130 --> 00:13:31,430
+languages. So when there's a new opportunity and some application domain. If there are
+
+141
+00:13:31,430 --> 00:13:35,750
+enough programmers to support the language, often a new language will arise.
+
+142
+00:13:35,750 --> 00:13:42,750
+Just want to point out another prediction that can be made from this one observation.
+
+143
+00:13:44,520 --> 00:13:48,899
+That programmer training and I'll underline that, is a dominant cost per programming language.
+
+144
+00:13:48,899 --> 00:13:55,899
+And that is that new languages  tend to look like old languages. That is that new languages are rarely if ever completely
+
+145
+00:14:10,410 --> 00:14:17,330
+new. They have a family resemblance to some predecessor language sometimes a number of
+
+146
+00:14:17,330 --> 00:14:19,130
+predecessor languages.
+
+147
+00:14:19,130 --> 00:14:24,310
+And why is that? Well partly that it's hard to think of truly new things. But also I think
+
+148
+00:14:24,310 --> 00:14:29,890
+if there's an economic benefit to this namely that it reduces the training cost by having
+
+149
+00:14:29,890 --> 00:14:33,839
+your new language look like an old language, by leveraging off what people already know
+
+150
+00:14:33,839 --> 00:14:37,740
+about the old language, you make it easier for people to learn the language and make
+
+151
+00:14:37,740 --> 00:14:44,740
+them learn it more quickly. And the most classic example of this is a Java versus C++, where
+
+152
+00:14:45,520 --> 00:14:52,470
+Java was designed to look a lot like C++. And that was I think very conscious to make
+
+153
+00:14:52,470 --> 00:14:58,170
+it easy for all of the existing C++ programmers to start programming in Java.
+
+154
+00:14:58,170 --> 00:15:05,170
+Finally, we can ask ourselves what is a good programming language. And here unfortunately
+
+155
+00:15:06,270 --> 00:15:13,270
+the situation is much less clear. I would just make one claim that there is no and I'll
+
+156
+00:15:14,550 --> 00:15:21,550
+emphasize no universally accepted metric for language design. And what I mean by that?
+
+157
+00:15:28,149 --> 00:15:35,149
+Well I guess the most important part of this statement is the universally accepted bit.
+
+158
+00:15:37,880 --> 00:15:41,600
+So I mean that people don't agree on what makes a good language.
+
+159
+00:15:41,600 --> 00:15:46,839
+There are lots of metrics out there and people have proposed lots of ways of measuring programming
+
+160
+00:15:46,839 --> 00:15:53,839
+languages but most people don't believe that these are very good measures and there is
+
+161
+00:15:54,410 --> 00:15:59,080
+certainly no consensus. If you just look at the world of programmers, they can't agree
+
+162
+00:15:59,080 --> 00:16:02,940
+on what the best language is and to convince yourself of this, just go and take a look
+
+163
+00:16:02,940 --> 00:16:08,610
+at any of the many news group posts where people get into a semi religious arguments
+
+164
+00:16:08,610 --> 00:16:15,550
+about why one group of languages or particular language is better than another language.
+
+165
+00:16:15,550 --> 00:16:20,490
+But even in the research community in the scientific community in among people who design
+
+166
+00:16:20,490 --> 00:16:27,490
+languages, I would say there is no universally accepted consensus on what makes a good language.
+
+167
+00:16:27,649 --> 00:16:31,770
+And to just kind of illustrate the difficulties in trying to come up with such a metric, let
+
+168
+00:16:31,770 --> 00:16:37,720
+me discuss one that I've heard people propose in all seriousness and that is that a good
+
+169
+00:16:37,720 --> 00:16:44,720
+language  is one people use. And let me put a question mark on that because I don't believe this
+
+170
+00:16:53,930 --> 00:16:56,370
+statement.
+
+171
+00:16:56,370 --> 00:17:02,620
+And I think a moment's reflection with a moment's reflection I can convince you that this isn't
+
+172
+00:17:02,620 --> 00:17:08,319
+a great measure. On the positive side I guess the argument for this is that it's a very
+
+173
+00:17:08,319 --> 00:17:12,689
+clear measure. It measures the popularity of the language. How many people are actually
+
+174
+00:17:12,689 --> 00:17:19,689
+using it and presumably languages are more widely used for a good reason. In some sense
+
+175
+00:17:20,269 --> 00:17:26,149
+perhaps they are better languages. But this would imply if you believe this and follow
+
+176
+00:17:26,148 --> 00:17:33,149
+it its logical conclusion that Visual Basic is the best language above all other programming
+
+177
+00:17:37,169 --> 00:17:38,739
+languages.
+
+178
+00:17:38,739 --> 00:17:43,429
+And I've nothing against Visual Basic. It's a well designed system but I don't even think
+
+179
+00:17:43,429 --> 00:17:50,429
+the designers of Visual Basic, would claim that it is in fact the world's best programming
+
+180
+00:17:50,529 --> 00:17:55,549
+language. And as we saw in the discussion that we just had, there are many, many other
+
+181
+00:17:55,549 --> 00:18:02,159
+factors besides technical excellence that go into whether a programming languages is
+
+182
+00:18:02,159 --> 00:18:03,149
+widely used or not.
+
+183
+00:18:03,149 --> 00:18:08,249
+And in fact technical excellence is probably not even the most important reason that a
+
+184
+00:18:08,249 --> 00:18:15,249
+language might be used. It has much more to do with whether it addresses a niche or application
+
+185
+00:18:15,539 --> 00:18:19,850
+domain for which there isn't a better tool. And then once it's established and has lots
+
+186
+00:18:19,850 --> 00:18:24,379
+of users of course there's inertia in history that aided in surviving. And that's why we
+
+187
+00:18:24,379 --> 00:18:31,379
+still have Fortran and Cobalt and lots of other languages from long long ago that we
+
+188
+00:18:31,950 --> 00:18:36,909
+could if we were starting over today designed much better.
+
+189
+00:18:36,909 --> 00:18:41,090
+So to conclude this video on the economy of programming languages, I think the two most
+
+190
+00:18:41,090 --> 00:18:47,820
+important things to remember are that application domains have conflicting needs and therefore
+
+191
+00:18:47,820 --> 00:18:54,820
+it is difficult to design one system that incorporates everything that you would like
+
+192
+00:18:57,110 --> 00:19:04,110
+to have. So you can't get all the features that you would like into a single system in
+
+193
+00:19:04,759 --> 00:19:09,769
+a coherent design at least it's very hard to do that and so it takes a lot of time to
+
+194
+00:19:09,769 --> 00:19:14,279
+add new features to existing systems.
+
+195
+00:19:14,279 --> 00:19:18,700
+And the second point is that programmer training is the dominant cost for programming
+
+196
+00:19:18,700 --> 00:19:25,700
+language. And together these two things, these two observations, these really explain why
+
+197
+00:19:25,879 --> 00:19:30,909
+we get new programming languages, because the old languages are difficult to change
+
+198
+00:19:30,909 --> 00:19:36,769
+and when we have new opportunities, it's often easier and more direct to just design a new
+
+199
+00:19:36,769 --> 00:19:43,279
+language for those rather than trying to move the entire community of programmers and an
+
+200
+00:19:43,279 --> 00:19:46,989
+existing systems to accommodate those new applications.

@@ -1,0 +1,455 @@
+0
+00:00:04,000 --> 00:00:08,200
+Welcome back, In this video we're going to wrap up our presentations on lexical
+
+1
+00:00:08,200 --> 00:00:12,550
+analysis with the discussion of how we implement Finite Automata, using a variety
+
+2
+00:00:12,550 --> 00:00:19,550
+of different techniques. Just to review, here's our little flow chart of how
+
+3
+00:00:19,950 --> 00:00:25,119
+lexical analyzers are constructed. And today we're going to be focusing on this
+
+4
+00:00:25,119 --> 00:00:31,859
+last step. The implementation of DFA's and actually I should say that this chart is
+
+5
+00:00:31,859 --> 00:00:35,739
+not quite completely accurate because sometimes we don't go all the way to
+
+6
+00:00:35,739 --> 00:00:39,960
+DFA's. We stop with NFA's and we implement them directly and so we'll talk a little
+
+7
+00:00:39,960 --> 00:00:44,370
+bit about that. What if we didn't want to build a DFA and instead wanted to base our
+
+8
+00:00:44,370 --> 00:00:51,370
+lexical analyzers directly on an NFA. So, beginning now with DFA's, It's very simple
+
+9
+00:00:53,510 --> 00:00:59,370
+to implement a deterministic finite automaton as an array. There's dimensional
+
+10
+00:00:59,370 --> 00:01:06,370
+array and one of the dimensions will be the state. So we might have states here
+
+11
+00:01:07,070 --> 00:01:14,070
+and the other dimension will be the input symbols. And so I might have a state i and
+
+12
+00:01:17,659 --> 00:01:24,659
+then input A and I simply look up in that position and there will be the next state
+
+13
+00:01:25,170 --> 00:01:32,170
+k to which we're going to move. So the table stores at every particular input
+
+14
+00:01:32,380 --> 00:01:39,380
+symbol and state, the next state that the machine will move to. So, let's do an
+
+15
+00:01:41,400 --> 00:01:45,729
+example of converting a deterministic automaton into a table driven
+
+16
+00:01:45,729 --> 00:01:51,229
+implementation so here is the automaton that we built last time and recall that
+
+17
+00:01:51,229 --> 00:01:55,180
+several videos ago. We started with a regular expression which we convert into a
+
+18
+00:01:55,180 --> 00:01:59,649
+non-deterministic finite automaton and then we converted it to a deterministic
+
+19
+00:01:59,649 --> 00:02:04,450
+automaton just in the last video. And here it is again and now let's talk about how
+
+20
+00:02:04,450 --> 00:02:09,590
+to realize it as a table. So draw 2-dimensional table and there are three
+
+21
+00:02:09,590 --> 00:02:16,590
+states so we will need three rows. And just label these rows S, T, and U and then
+
+22
+00:02:19,260 --> 00:02:25,620
+there are two inputs, zero and one and now let's fill in the entries in the table.
+
+23
+00:02:25,620 --> 00:02:32,620
+So, in state S on input zero, where do we go? We go to state T. So, the entry in the
+
+24
+00:02:33,930 --> 00:02:40,930
+S0 entry will be T. And some really from state S input one will wind up in state U.
+
+25
+00:02:44,629 --> 00:02:51,629
+So on so the S1 entry will be U, okay? And then certainly for the other the other
+
+26
+00:02:53,099 --> 00:03:00,099
+rows of the table let's do the T row next on one we go to U and on zero we stay in
+
+27
+00:03:01,769 --> 00:03:08,769
+T. So, this, this row is also TU. And finally for U, what happens well, on zero
+
+28
+00:03:10,659 --> 00:03:17,659
+we go to T and on one we stay in U so this row is also TU and there's our table. That
+
+29
+00:03:18,830 --> 00:03:24,250
+describes the transition relation of the automaton. And now if we would think about
+
+30
+00:03:24,250 --> 00:03:30,940
+how we would use this transition relation in a program, you can easily imagine. We
+
+31
+00:03:30,940 --> 00:03:37,940
+would start out say with our input index. Porting to the beginning of the input and
+
+32
+00:03:38,799 --> 00:03:44,129
+let's call that zero and we can have to have a current state and we start at the
+
+33
+00:03:44,129 --> 00:03:48,879
+start state, let's just say that that's row zero so in this case that would be row
+
+34
+00:03:48,879 --> 00:03:55,879
+S. And then while what we wanted to do, we wanted to walk over the input. And check
+
+35
+00:03:58,959 --> 00:04:04,290
+whether, and checking on it, you know and make the transitions for each element of
+
+36
+00:04:04,290 --> 00:04:09,530
+the input one at a time and we want to stop when the input is empty. So while
+
+37
+00:04:09,530 --> 00:04:13,939
+there is still as input, let's say we have an array of characters that is our, that
+
+38
+00:04:13,939 --> 00:04:20,620
+is our input and while the entry in that array is not null, let's do the following.
+
+39
+00:04:20,620 --> 00:04:26,770
+We're gonna update the state. At each step and what are we gonna update it to let's
+
+40
+00:04:26,770 --> 00:04:32,630
+give this array a name. Let's call this array A. So, we're gonna look up in our
+
+41
+00:04:32,630 --> 00:04:37,169
+transition relation A and what are we going to use? Well, we're gonna look up
+
+42
+00:04:37,169 --> 00:04:44,169
+the current state, And we're going to look up the input. And in that entry I think,
+
+43
+00:04:47,020 --> 00:04:50,120
+you know? Using the, the current state and the current input, we're gonna transition
+
+44
+00:04:50,120 --> 00:04:54,710
+to a new state and we also wanted to increment the input pointer. So we'll do
+
+45
+00:04:54,710 --> 00:05:01,710
+that at the same time. And there is our loop that processes an input according to
+
+46
+00:05:04,440 --> 00:05:10,009
+the transition table A. And as you can see this is a very compact, very efficient
+
+47
+00:05:10,009 --> 00:05:17,009
+process. Just really, just a little bit of index arithmetic and one two table look
+
+48
+00:05:17,050 --> 00:05:22,520
+ups, one for the input and one for the state transition table per character of
+
+49
+00:05:22,520 --> 00:05:26,870
+input. So that's really hard to imagine having a process that's much faster or
+
+50
+00:05:26,870 --> 00:05:33,870
+more compact than this. Now that was one strategy for implementing a deterministic
+
+51
+00:05:35,699 --> 00:05:40,880
+finite automaton and you may have noticed that one disadvantage of that particular
+
+52
+00:05:40,880 --> 00:05:45,570
+approach was that there were a lot of duplicate rows in the table. In fact all
+
+53
+00:05:45,570 --> 00:05:52,570
+the rows of the table were exactly the same and we could save some space by using
+
+54
+00:05:53,330 --> 00:05:58,940
+a slightly different representation. So instead of having a 2-dimensional table,
+
+55
+00:05:58,940 --> 00:06:05,940
+we can just have a 1-dimensional table and this table again. Would be one entry for
+
+56
+00:06:07,949 --> 00:06:14,949
+each state so S, T, and U. And what this table would contain is a pointer to a
+
+57
+00:06:16,169 --> 00:06:22,789
+vector of moves for that particular state. So, there will be a pointer here and it
+
+58
+00:06:22,789 --> 00:06:28,360
+would point to another. Table, another one dimensional table that would say what we
+
+59
+00:06:28,360 --> 00:06:33,669
+should do zero and what we should do on one. So in the case of S, we wanted to
+
+60
+00:06:33,669 --> 00:06:40,669
+move to state T if it was a zero and to state U if it was a one. And now when we
+
+61
+00:06:40,960 --> 00:06:46,100
+go to fill in the entry for T, we see we don't need to duplicate this row. We can
+
+62
+00:06:46,100 --> 00:06:50,949
+actually just share this row and similarly for U. And so this table, this
+
+63
+00:06:50,949 --> 00:06:54,919
+representation is actually much more compact which just share the rows that are
+
+64
+00:06:54,919 --> 00:06:59,039
+duplicated in the automaton. And it turns out that in the kinds of automata that we
+
+65
+00:06:59,039 --> 00:07:04,139
+look at for lexical analysis it's very, very common to have duplicated rows. And
+
+66
+00:07:04,139 --> 00:07:08,660
+so this can actually resolve the significant compaction of the table
+
+67
+00:07:08,660 --> 00:07:13,389
+particularly when you consider a number of possible states. Remember there could be.
+
+68
+00:07:13,389 --> 00:07:20,389
+To the N - one states in a DFA. For an NFA with end states. And while the blow up is
+
+69
+00:07:26,319 --> 00:07:32,150
+often not the worst case it can be very substantial. So the two dimensional table
+
+70
+00:07:32,150 --> 00:07:35,569
+we had on the, in the previous slide could actually be quite, quite large and we
+
+71
+00:07:35,569 --> 00:07:39,940
+keep, we can sometimes have a much more compact representation by little tricks
+
+72
+00:07:39,940 --> 00:07:44,610
+like this. Now in this advantage of this particular representation is this extra
+
+73
+00:07:44,610 --> 00:07:48,470
+interaction, right here. I mean these pointers actually take time to the
+
+74
+00:07:48,470 --> 00:07:52,759
+reference and so now in our loop will be a little bit slower. We, we, we have to do
+
+75
+00:07:52,759 --> 00:07:56,669
+table look up the reference. Pointer do another tab le look up and then we can
+
+76
+00:07:56,669 --> 00:08:03,669
+make the move. Finally, it's also possible that we might not want to convert to a DFA
+
+77
+00:08:05,080 --> 00:08:09,830
+at all. It might be that the particular specification we gave is very expensive to
+
+78
+00:08:09,830 --> 00:08:15,580
+turn into a DFA. The table has just become truly huge and we might be better off just
+
+79
+00:08:15,580 --> 00:08:21,780
+using the NFA directly. And so, one can imagine an implementation of an NFA as
+
+80
+00:08:21,780 --> 00:08:28,780
+well. We can also implement that via a table. In this case, we would have to have
+
+81
+00:08:28,849 --> 00:08:35,849
+a row for each state in the NFA. And we won't do them all here. But we could have
+
+82
+00:08:37,760 --> 00:08:42,080
+Rows for every state of the NFA and then, you know where we're going to go if the
+
+83
+00:08:42,080 --> 00:08:49,080
+input is zero or if the input is one. And so in this case, And I almost forgot we
+
+84
+00:08:49,110 --> 00:08:52,890
+would also need a transition in the most naive or the most straight forward
+
+85
+00:08:52,890 --> 00:08:58,910
+implementation of, where we would go if, if an epsilon. And, and now, remember
+
+86
+00:08:58,910 --> 00:09:02,950
+because these are NFAs in general, this will be a set of states because we might
+
+87
+00:09:02,950 --> 00:09:07,440
+have more than one epsilon transition or more than one transition on zero and one.
+
+88
+00:09:07,440 --> 00:09:14,440
+And so, in this case an epsilon A can go to B. So this would be the set of states B
+
+89
+00:09:14,500 --> 00:09:21,500
+and B can go To C or D. And C can only go to E and on one, alright. And D can go to
+
+90
+00:09:31,720 --> 00:09:38,610
+F on and input of zero and so on. We fill in the rest of the table and this table is
+
+91
+00:09:38,610 --> 00:09:43,040
+guaranteed to be relatively small because the number of states is limited by the
+
+92
+00:09:43,040 --> 00:09:49,250
+number of states in the NFA and the size of the input alphabet. Once again, we
+
+93
+00:09:49,250 --> 00:09:53,360
+could do a sharing of common rows and, and other tricks like that to compress the
+
+94
+00:09:53,360 --> 00:10:00,360
+table if we like. But now, the inner loop for simulating this automaton is gonna be
+
+95
+00:10:01,620 --> 00:10:06,100
+much more expensive because we have to deal with sets of states rather than
+
+96
+00:10:06,100 --> 00:10:13,100
+single states. So in every point in time where we can be tracking a set of states
+
+97
+00:10:13,450 --> 00:10:17,029
+and when we're going to do a move, we have to look up for every state in the set
+
+98
+00:10:17,029 --> 00:10:22,000
+where it can potentially go including things like the epsilon moves and carry
+
+99
+00:10:22,000 --> 00:10:25,850
+out all possible epsilon moves so we always have an accurate assessment of the
+
+100
+00:10:25,850 --> 00:10:31,230
+complete set of states if the NFA could reach. So while this sav es a lot of space
+
+101
+00:10:31,230 --> 00:10:36,630
+in terms of the tables, in terms of the size of the tables it can be much slower
+
+102
+00:10:36,630 --> 00:10:43,630
+to execute than deterministic automaton. Summarize, a key idea in the
+
+103
+00:10:45,550 --> 00:10:50,500
+implementation of lexical specifications is the conversion of nondeterministic
+
+104
+00:10:50,500 --> 00:10:55,000
+finite automaton to deterministic finite automaton. This is what takes a general
+
+105
+00:10:55,000 --> 00:10:59,310
+high level specification use of regular expressions and confer to them to
+
+106
+00:10:59,310 --> 00:11:05,620
+something as completely deterministic and only uses a few operations per input
+
+107
+00:11:05,620 --> 00:11:12,620
+character. Now, in practice, tools provide tradeoffs between speed and space. So, so
+
+108
+00:11:13,019 --> 00:11:20,019
+DFA's are faster And less compact so the tables can be very large and, and at times
+
+109
+00:11:21,720 --> 00:11:28,720
+that's a practical problem and NFAs are slower to, to implement but more concise.
+
+110
+00:11:32,290 --> 00:11:37,320
+And the tools give you generally a series of options often in the form of
+
+111
+00:11:37,320 --> 00:11:43,190
+configuration files or command lines which is, that allow you to, to choose whether
+
+112
+00:11:43,190 --> 00:11:48,649
+you want to be closer to a full DFA, something that's faster and perhaps bigger
+
+113
+00:11:48,649 --> 00:11:53,230
+or to a pure NFAs, something that's slower but consumes less space.

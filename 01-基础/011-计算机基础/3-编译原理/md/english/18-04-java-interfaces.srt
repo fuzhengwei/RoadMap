@@ -1,0 +1,407 @@
+0
+00:00:03,620 --> 00:00:10,450
+In this short video, we're gonna take a look at interfaces in Java. Interfaces
+
+1
+00:00:10,450 --> 00:00:15,960
+specify relationships between classes without using inheritance. So, here is an
+
+2
+00:00:15,960 --> 00:00:20,009
+example: uh, we have an interface here called the point interface. And a point
+
+3
+00:00:20,009 --> 00:00:24,950
+interface can have a, a bunch of methods in it, and, and we just declare the, the
+
+4
+00:00:24,950 --> 00:00:28,399
+signature of those methods. You can also have other things besides methods, but uh,
+
+5
+00:00:28,399 --> 00:00:33,620
+the main thing that uh, they're used for usually is for a, a method interface. So
+
+6
+00:00:33,620 --> 00:00:37,030
+uh, here's an example of a particular method, the move method, and it takes some
+
+7
+00:00:37,030 --> 00:00:42,140
+arguments and has a particular return type. Now any other class, or any class,
+
+8
+00:00:42,140 --> 00:00:45,899
+excuse me, that's going to implement the point interface has to provide a method
+
+9
+00:00:45,899 --> 00:00:50,429
+uh, with the same signature. So, if this, see because the point interface has a move
+
+10
+00:00:50,429 --> 00:00:55,969
+method, the. A class will have to have a move method with the same signature, as
+
+11
+00:00:55,969 --> 00:00:59,909
+the move method in the declared interface. And if the point interface had other
+
+12
+00:00:59,909 --> 00:01:04,180
+methods ah, then the point class would also have to implement those methods by,
+
+13
+00:01:04,180 --> 00:01:08,020
+you know having a method of the same name ah, with the appropriate types of
+
+14
+00:01:08,020 --> 00:01:14,970
+arguments and result. Now it says in the Java language manual that Java programs
+
+15
+00:01:14,970 --> 00:01:19,050
+can use interfaces to make it unnecessary for related classes to share a common
+
+16
+00:01:19,050 --> 00:01:24,640
+abstract super class or to add methods to objects. And the translation of that is
+
+17
+00:01:24,640 --> 00:01:29,280
+that interfaces play the same role as multiple inheritance in c plus, plus. So
+
+18
+00:01:29,280 --> 00:01:36,280
+interfaces uh, are really analogous uh, to, to multiple inheritance. And the
+
+19
+00:01:36,570 --> 00:01:41,040
+reason for that, is that, a, a class can implement multiple interfaces. So, if I
+
+20
+00:01:41,040 --> 00:01:46,790
+have a class x and it implements a three interfaces a, b, and c. This means an
+
+21
+00:01:46,790 --> 00:01:51,960
+extra object can be treated as an A object or B object or a C object in the
+
+22
+00:01:51,960 --> 00:01:58,560
+appropriate context. So it's like or almost as if X has three superclasses A, B
+
+23
+00:01:58,560 --> 00:02:03,140
+and C. Now uh, there are some important differences uh, but there is the effect,
+
+24
+00:02:03,140 --> 00:02:08,310
+and so if I wanted to have a class that gets functionality or implements a
+
+25
+00:02:08,310 --> 00:02:14,629
+functionality uh, several uh, uh, interfaces that's, I mean we do very
+
+26
+00:02:14,629 --> 00:02:18,370
+directly in java just by saying if the classes going to implement all those
+
+27
+00:02:18,370 --> 00:02:23,879
+interfaces. >> Now here is an example of an application of that, so think about a
+
+28
+00:02:23,879 --> 00:02:29,079
+graduate student ah, working at Stanford or some other university, so ah, typically
+
+29
+00:02:29,079 --> 00:02:33,969
+graduate students are students, okay they take classes and have property's that
+
+30
+00:02:33,969 --> 00:02:38,689
+students ah, have they get degrees and grades and things like that. >> Graduate
+
+31
+00:02:38,689 --> 00:02:42,010
+students also work for the University? >> They are often teaching assistants in
+
+32
+00:02:42,010 --> 00:02:46,099
+classes or research assistant [inaudible] so there [inaudible] another role which is
+
+33
+00:02:46,099 --> 00:02:53,099
+university employee, and if I have gone to ah, trouble ah, in my. I, university
+
+34
+00:02:53,859 --> 00:02:59,139
+personnel management software to implement functionality to deal with students and to
+
+35
+00:02:59,139 --> 00:03:02,599
+implement functionality to deal with employees. Well, then I would like to make
+
+36
+00:03:02,599 --> 00:03:07,560
+use of that when I get around to thinking about how I'm going to implement uh, the
+
+37
+00:03:07,560 --> 00:03:11,659
+functionality for graduate students and one way to do that. Would be if I had a
+
+38
+00:03:11,659 --> 00:03:16,249
+class with implement, if I had, excuse me, an interface for employees and interface
+
+39
+00:03:16,249 --> 00:03:21,279
+for student, and I would say that graduate student could be both, okay. So a graduate
+
+40
+00:03:21,279 --> 00:03:26,590
+student can implement both the employee interface and student interface. And, and
+
+41
+00:03:26,590 --> 00:03:30,769
+the reason that's this is a good idea, is it is actually hard to do this if ah, you
+
+42
+00:03:30,769 --> 00:03:35,209
+only have single inheritance. If you think about it, if I had set things up so that I
+
+43
+00:03:35,209 --> 00:03:38,859
+had some employee classes and some student classes and now I want to make graduate
+
+44
+00:03:38,859 --> 00:03:43,639
+students. Well now what am I going to do? Well if I have my employee class. I can
+
+45
+00:03:43,639 --> 00:03:48,569
+make grad students a subclass of that but now how do I get the student functionality
+
+46
+00:03:48,569 --> 00:03:55,529
+and similarly. If I have a student class, I can make graduate student a subclass of
+
+47
+00:03:55,529 --> 00:03:58,730
+that. But now, how do I get the employee functionality? So in single inheritance,
+
+48
+00:03:58,730 --> 00:04:03,980
+you're forced to choose a single class to inherit from. And the advantage of
+
+49
+00:04:03,980 --> 00:04:08,249
+interfaces is that it will let you get functionality or implement functionality,
+
+50
+00:04:08,249 --> 00:04:14,159
+or express the relationship, at least, of functionality to multiple kinds of things.
+
+51
+00:04:14,159 --> 00:04:18,239
+And so I can have one, uh, graduate student class that implements both the
+
+52
+00:04:18,238 --> 00:04:25,239
+employee and the student functionality. So how are interfaces different from
+
+53
+00:04:26,180 --> 00:04:30,900
+inheritance? Well, probably the biggest difference is that it's not possible to
+
+54
+00:04:30,900 --> 00:04:35,770
+implement interfaces as efficiently as inheritance. And that's why you have both.
+
+55
+00:04:35,770 --> 00:04:40,139
+So you'd prefer to use inheritance, uh, if you can, because it's going to be more
+
+56
+00:04:40,139 --> 00:04:43,940
+efficient than interfaces. And what makes interfaces less efficient? Well, the
+
+57
+00:04:43,940 --> 00:04:48,340
+primary thing. Is that if the class is implementing interfaces need not be at
+
+58
+00:04:48,340 --> 00:04:53,860
+fixed offsets. In fact, we will not be able, in general, uh, to assign methods in
+
+59
+00:04:53,860 --> 00:04:59,750
+interfaces to fixed offsets inside of a class implementation or an object
+
+60
+00:04:59,750 --> 00:05:04,919
+implementation. So let's take a look at an example. Here's our point interface again.
+
+61
+00:05:04,919 --> 00:05:09,580
+Now say we have one class point when we saw this one before [inaudible]. And it
+
+62
+00:05:09,580 --> 00:05:12,919
+implements the move method has to implement the move method. And then we
+
+63
+00:05:12,919 --> 00:05:16,139
+have another class that also points to point interface but it also implements
+
+64
+00:05:16,139 --> 00:05:20,550
+some other stuff. Okay so, it might implement some other methods that aren't
+
+65
+00:05:20,550 --> 00:05:26,550
+part of that interface. So now how would we decide you know, where to put the move
+
+66
+00:05:26,550 --> 00:05:32,659
+method. Well the natural thing, that, that we've discussed. [inaudible] Say of course
+
+67
+00:05:32,659 --> 00:05:36,669
+[inaudible] is that the methods ah, would be laid out in the order in which they are
+
+68
+00:05:36,669 --> 00:05:40,919
+declared, so if we did that clearly the move method will not be ah, in the first
+
+69
+00:05:40,919 --> 00:05:46,889
+position in both of these classes. Now. We could imagine, uh, a separate compiler
+
+70
+00:05:46,889 --> 00:05:51,479
+pass, that we're trying to sort the methods. So that, say, all the methods of
+
+71
+00:05:51,479 --> 00:05:55,539
+the point interface always appeared in the same position and in the same order in any
+
+72
+00:05:55,539 --> 00:06:01,139
+class, implements the point interface. But that doesn't work as soon as we have, um,
+
+73
+00:06:01,139 --> 00:06:05,639
+multiple interfaces being implemented. So let's say that the point two class here
+
+74
+00:06:05,639 --> 00:06:12,639
+implemented another interface A. So, how can we then implement interfaces? Well,
+
+75
+00:07:10,159 --> 00:07:15,189
+so, it's going to be a little more complex than usual to implement in this batch, say
+
+76
+00:07:15,189 --> 00:07:22,189
+to a method f, where e has some interface type. So if e is typed as having some
+
+77
+00:07:23,300 --> 00:07:27,189
+interface and now we're calling it the f method of that interface, then we're going
+
+78
+00:07:27,189 --> 00:07:30,460
+to have to do a little bit more work. And so here's one approach, this approach is
+
+79
+00:07:30,460 --> 00:07:35,889
+actually quite inefficient, but you will see that it will work. And there are other
+
+80
+00:07:35,889 --> 00:07:39,569
+approaches that are more efficient, but that's not particularly important, so
+
+81
+00:07:39,569 --> 00:07:43,500
+here's one way that can work. So each class of implements interface is going to
+
+82
+00:07:43,500 --> 00:07:47,900
+have a look-up table associated with it that maps method names, the string names
+
+83
+00:07:47,900 --> 00:07:53,389
+of methods, to those methods themselves. And then. Uh, we can hash the method names
+
+84
+00:07:53,389 --> 00:07:57,710
+for faster look-up and we can actually compute. Uh, those hashes at compile time.
+
+85
+00:07:57,710 --> 00:08:02,699
+And so the idea would be that if when we have an object. Ah, somewhere in the
+
+86
+00:08:02,699 --> 00:08:06,210
+object, probably at the dispatch pointer. The dispatch pointer you know will point
+
+87
+00:08:06,210 --> 00:08:11,210
+off to a list of methods, sort of the normal methods of the class. But somewhere
+
+88
+00:08:11,210 --> 00:08:15,240
+say maybe at the end of the dispatch table there will be another pointer to some kind
+
+89
+00:08:15,240 --> 00:08:22,240
+of look up table that maps names. Two, two methods to quote. Okay. So, somehow
+
+90
+00:08:24,759 --> 00:08:29,039
+associated with every object of every class ah, we will have this look up table
+
+91
+00:08:29,039 --> 00:08:34,620
+that will map ah, the, the names of interface methods to the actual codes for
+
+92
+00:08:34,620 --> 00:08:35,789
+those methods that influence them. All right and we'd already decided uh, that
+
+93
+00:08:35,789 --> 00:08:35,889
+the, for the point interface that the move method should go first. It should be the
+
+94
+00:08:35,889 --> 00:08:35,899
+first method in the class. Well, if we had made a similar decision for the a
+
+95
+00:08:35,899 --> 00:08:35,909
+interface, some method in that interface that should always be listed first in the
+
+96
+00:08:35,909 --> 00:08:35,919
+give to all the methods and all the interfaces so that they can be maintained
+
+97
+00:08:35,919 --> 00:08:35,930
+across all of the uh, classes that implement those interfaces. At least
+
+98
+00:08:35,929 --> 00:08:35,940
+classes that are declared and all the interfaces that are declared. And that's
+
+99
+00:08:35,940 --> 00:08:35,950
+kind of un-Java. And that we don't want to uh, force people to declare all the
+
+100
+00:08:35,950 --> 00:08:35,959
+classes and the interfaces once and not be able to extend them in the future. Alright
+
+101
+00:08:35,958 --> 00:08:36,209
+so the bottom line is that methods in interfaces do not live at fixed process in

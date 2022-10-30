@@ -1,0 +1,523 @@
+0
+00:00:03,879 --> 00:00:06,790
+In this video, we're gonna begin our discussion of parsing technology with
+
+1
+00:00:06,790 --> 00:00:13,790
+context-free grammars. Now as we know, not all strings of tokens are actually valid
+
+2
+00:00:15,920 --> 00:00:21,409
+programs and the parser has to tell the difference. It has to know which strings
+
+3
+00:00:21,409 --> 00:00:25,009
+of tokens are valid and which ones are invalid and give error messages for the
+
+4
+00:00:25,009 --> 00:00:29,769
+invalid ones. So, we need some way of describing the valid strings of tokens and
+
+5
+00:00:29,769 --> 00:00:33,660
+then some kind of algorithm for distinguishing the valid and invalid
+
+6
+00:00:33,660 --> 00:00:40,660
+strings of tokens from each other. Now we've also discussed that programming
+
+7
+00:00:41,230 --> 00:00:46,090
+languages have a natural recursive structure, So for example in Cool, an
+
+8
+00:00:46,090 --> 00:00:50,530
+expression That can be anyone of a very large number of things. So two of the
+
+9
+00:00:50,530 --> 00:00:54,410
+things that can be are an if expression and a while expression but these
+
+10
+00:00:54,410 --> 00:00:59,050
+expressions are themselves recursively composed of other expressions. So for
+
+11
+00:00:59,050 --> 00:01:03,040
+example, the predicate of an if is a, a [inaudible] expression as is the then
+
+12
+00:01:03,040 --> 00:01:09,579
+branch and the else branch and in a while loop the termination test is an expression
+
+13
+00:01:09,579 --> 00:01:15,009
+and so is the loop body. And context-free grammars are in natural notation for
+
+14
+00:01:15,009 --> 00:01:22,009
+describing such recursive structures. So within a context-free grammar so formally
+
+15
+00:01:23,210 --> 00:01:30,210
+it consist a set of terminals t, a set of nonterminals n, a start symbol s and s is
+
+16
+00:01:30,479 --> 00:01:36,170
+one of the nonterminals and a set of productions and what's a production? A
+
+17
+00:01:36,170 --> 00:01:43,170
+production is a symbol followed by an arrow followed by a list of symbols. And
+
+18
+00:01:44,039 --> 00:01:49,369
+these symbols, there are certain rules about them so the x thing on the left hand
+
+19
+00:01:49,369 --> 00:01:53,479
+side of the arrow has to be a nonterminal. That's what it means to be on the left
+
+20
+00:01:53,479 --> 00:01:57,770
+hand side so the set of things on the left hand side of productions are exactly the
+
+21
+00:01:57,770 --> 00:02:03,359
+nonterminals. And then the right hand side every yi on the right hand side can be
+
+22
+00:02:03,359 --> 00:02:08,539
+either a nonterminal or it can be a terminal or it can be the special symbol
+
+23
+00:02:08,538 --> 00:02:15,539
+epsilon. So let's do a simple example of a Context-free Grammar. Strings of balanced
+
+24
+00:02:18,360 --> 00:02:23,630
+parenthesis which we discussed in an earlier video can be expressed as follows.
+
+25
+00:02:23,630 --> 00:02:30,200
+So, we have our start symbol and. One possibility for a string o f balanced
+
+26
+00:02:30,200 --> 00:02:34,750
+parentheses is that it consists of an open paren on another string of balanced
+
+27
+00:02:34,750 --> 00:02:39,780
+parentheses and a close paren. And, the other possibility for a string of balanced
+
+28
+00:02:39,780 --> 00:02:44,000
+parentheses that is empty because the empty string is also a string of balanced
+
+29
+00:02:44,000 --> 00:02:49,290
+parentheses. So, there are two productions for this grammar and just to go over the
+
+30
+00:02:49,290 --> 00:02:55,760
+to, to relate this example to the formal definition we gave on the previous slide,
+
+31
+00:02:55,760 --> 00:03:02,760
+what is our set of nine terminals, it's just. The singles nonterminal s, what our
+
+32
+00:03:04,280 --> 00:03:10,710
+terminal symbols in this context-free grammar is just open and close paren. No
+
+33
+00:03:10,710 --> 00:03:15,690
+other symbols. What's the start symbol? Well, it's s. It's the only nonterminal so
+
+34
+00:03:15,690 --> 00:03:20,900
+it has to be the start symbol but generally we will, when we give grammars
+
+35
+00:03:20,900 --> 00:03:24,260
+the first production will name a start symbol so rather than name and explicitly
+
+36
+00:03:24,260 --> 00:03:28,960
+whichever production occurs first the symbol on the left hand side will be the
+
+37
+00:03:28,960 --> 00:03:35,820
+nonterminal for that particular context-free grammar. And then finally,
+
+38
+00:03:35,820 --> 00:03:39,340
+what are the productions with the, we said there could be a set of productions and
+
+39
+00:03:39,340 --> 00:03:46,340
+here are the two productions for this particular Context-Free Grammar. Now,
+
+40
+00:03:47,510 --> 00:03:52,260
+productions can be read as rules. So, let's write down one of our productions
+
+41
+00:03:52,260 --> 00:03:58,350
+from the from the example grammar and what does this mean? This means wherever we see
+
+42
+00:03:58,350 --> 00:04:05,100
+an s, we can replace it by the string of symbols on the right hand side. So,
+
+43
+00:04:05,100 --> 00:04:09,850
+Wherever I see an s I can substitute and I can take the s out. If that important, I
+
+44
+00:04:09,850 --> 00:04:14,780
+remove the s that appears on the left side and I replace it by the string of symbols
+
+45
+00:04:14,780 --> 00:04:18,569
+on the right hand side so productions can be read as replacement rule so right hand
+
+46
+00:04:18,569 --> 00:04:25,370
+side replaces the left hand side. So here's a little more formal description of
+
+47
+00:04:25,370 --> 00:04:29,380
+that process. We begin with the string that has only the start symbol s, so we
+
+48
+00:04:29,380 --> 00:04:36,350
+always start with just the start symbol. And now, we look at our string initially
+
+49
+00:04:36,350 --> 00:04:39,780
+it's just a start symbol but it changes overtime, and we can replace any
+
+50
+00:04:39,780 --> 00:04:44,100
+non-terminal in the string by the right hand side, side of some production for
+
+51
+00:04:44,100 --> 00:04:48,250
+that non-terminal. So for exam ple, I can replace a non-terminal x by the right hand
+
+52
+00:04:48,250 --> 00:04:54,910
+side of some production for x. X in this case, x goes to y1 through yn. And then we
+
+53
+00:04:54,910 --> 00:04:59,520
+just repeat step two over and over again until there are no non-terminals left
+
+54
+00:04:59,520 --> 00:05:05,370
+until the string consist of only terminals. And at that point, we're done.
+
+55
+00:05:05,370 --> 00:05:11,040
+So, to write this out slightly more formally, a single step here consist of a
+
+56
+00:05:11,040 --> 00:05:16,690
+state which is a, which is a string of symbols, so this can be terminals and
+
+57
+00:05:16,690 --> 00:05:23,690
+non-terminals. And, somewhere in the string is a non-terminal x and there is a
+
+58
+00:05:24,030 --> 00:05:30,440
+production for x, in our grammar. So this is part of the grammar, okay? This is a
+
+59
+00:05:30,440 --> 00:05:37,440
+production And we can use now production to take a step from, to a new state Where
+
+60
+00:05:42,700 --> 00:05:49,700
+we have replaced X by the right hand side of the production, Okay? So this is one
+
+61
+00:05:53,440 --> 00:06:00,440
+step of a context-free derivation. So now if you wanted to do multiple steps, we
+
+62
+00:06:03,880 --> 00:06:10,580
+could have a bunch of steps, alpha zero goes to alpha one goes to alpha two and
+
+63
+00:06:10,580 --> 00:06:15,690
+these are strings now. Alpha i's are all strings and as we go along we eventually
+
+64
+00:06:15,690 --> 00:06:22,690
+get to some strong alpha n, alright. And then we say that alpha zero rewrites in
+
+65
+00:06:22,840 --> 00:06:28,930
+zero or more steps to alpha n so this means n zero, greater than or equal to
+
+66
+00:06:28,930 --> 00:06:35,110
+zero steps. Okay. So this is just a short hand for saying there is some sequence of
+
+67
+00:06:35,110 --> 00:06:40,070
+individual productions. Individual rules being applied to a string that gets us
+
+68
+00:06:40,070 --> 00:06:43,960
+from the string alpha string zero to the string alpha n and remember that in
+
+69
+00:06:43,960 --> 00:06:47,240
+general we start with just the start symbol and so we have a whole bunch of
+
+70
+00:06:47,240 --> 00:06:54,240
+sequence of steps like this that get us from start symbol to some other string. So
+
+71
+00:06:56,270 --> 00:07:01,510
+finally, we can define the language of a Context-Free Grammar. So, [inaudible]
+
+72
+00:07:01,510 --> 00:07:06,229
+context-free grammar has a start symbol s, so then the language of the context-free
+
+73
+00:07:06,229 --> 00:07:12,160
+grammar is gonna be the string of symbols alpha one through alpha n such that for
+
+74
+00:07:12,160 --> 00:07:19,070
+all i. Alpha i is an element of the terminals of g, okay. So t here is the set
+
+75
+00:07:19,070 --> 00:07:26,070
+of terminals of g and s goes, the start symbol s goes in zero or more steps to
+
+76
+00:07:27,010 --> 00:07:33,680
+alpha one, I'm sorry a1 to an, okay. And so we're just saying, this is just saying
+
+77
+00:07:33,680 --> 00:07:37,910
+that all the strings of terminals that I can derive beginning with just the start
+
+78
+00:07:37,910 --> 00:07:44,910
+symbol, those are the strings in the language. So the name terminal comes from
+
+79
+00:07:46,360 --> 00:07:49,759
+the fact that once terminals are included in the string, there is no rule of
+
+80
+00:07:49,759 --> 00:07:54,610
+replacing them. That is once the terminal is generated, it's a permanent feature of
+
+81
+00:07:54,610 --> 00:07:58,770
+the string and in applications to programming languages and context-free
+
+82
+00:07:58,770 --> 00:08:03,919
+grammars, the terminals are to be the tokens of the language that we are
+
+83
+00:08:03,919 --> 00:08:09,900
+modeling with our context-free grammar. With that in mind, let's try the
+
+84
+00:08:09,900 --> 00:08:14,509
+context-free grammar for a fragment of [inaudible]. So, [inaudible] expressions,
+
+85
+00:08:14,509 --> 00:08:18,850
+we talked about these earlier, but one possibility for a [inaudible] expression
+
+86
+00:08:18,850 --> 00:08:25,850
+is that it's an if statement or an if expression. And, we call that [inaudible]
+
+87
+00:08:28,180 --> 00:08:35,180
+if statements have three parts. And they end with the keyword [inaudible] which is
+
+88
+00:08:36,270 --> 00:08:42,120
+a little bit unusual. And so looking at this looking at this particular rule, we
+
+89
+00:08:42,120 --> 00:08:45,870
+can see some conventions that way, that are pretty standard and that we'll use so
+
+90
+00:08:45,870 --> 00:08:50,210
+that non-terminals are in all caps. Okay, so in this case was just [inaudible] we'll
+
+91
+00:08:50,210 --> 00:08:56,960
+try that in caps and then the terminal symbols are in, in lower case, all right?
+
+92
+00:08:56,960 --> 00:09:03,960
+And another possibility Is that it could be a while expression. And finally the
+
+93
+00:09:12,790 --> 00:09:19,790
+last possibility Is that it could be identifier id and there actually many,
+
+94
+00:09:20,050 --> 00:09:26,020
+many more possibilities and lots of other cases for expressions and let me just show
+
+95
+00:09:26,020 --> 00:09:32,260
+you one bit of notation to make things look a little bit nicer. So we have many
+
+96
+00:09:32,260 --> 00:09:36,270
+we have many productions for the same non-terminal. We usually group those
+
+97
+00:09:36,270 --> 00:09:41,120
+together in the grammar and we only write a non-terminal on the right hand side once
+
+98
+00:09:41,120 --> 00:09:45,450
+and then we write explicit alternative. So this is actually. Completely the same as
+
+99
+00:09:45,450 --> 00:09:50,750
+writing out expert arrow two more times but we here we just is, this is just a way
+
+100
+00:09:50,750 --> 00:09:54,350
+of grouping these three productions together and saying that expr- is the
+
+101
+00:09:54,350 --> 00:10:00,810
+non-terminal for all three right hand sides. Let's take a look at some of the
+
+102
+00:10:00,810 --> 00:10:04,880
+strings on the language of this Context- Free Grammar. So, a valid Kuhl expression
+
+103
+00:10:04,880 --> 00:10:09,790
+is just a single identifier and that's easy to see because EXPR is our start
+
+104
+00:10:09,790 --> 00:10:14,029
+symbol, I'll call it EXPR. And, so the production it does says it goes to id. So
+
+105
+00:10:14,029 --> 00:10:17,540
+I can take the start symbol directly to a string of terminals, a single variable
+
+106
+00:10:17,540 --> 00:10:24,540
+name is a valid Kuhl expression. Another example is an e-th expression where e-th
+
+107
+00:10:24,790 --> 00:10:30,550
+of the subexpressions is just a variable name. So this is perfectly fine structure
+
+108
+00:10:30,550 --> 00:10:35,810
+for a Kuhl expression. Similarly I can do the same thing with the while expression.
+
+109
+00:10:35,810 --> 00:10:40,330
+I can take the structure of a while and then replace each of the subexpressions
+
+110
+00:10:40,330 --> 00:10:45,649
+just with a single variable name and that would be a syntactically valid cool while
+
+111
+00:10:45,649 --> 00:10:51,420
+loop. There are more complicated expressions so for example, here we have a
+
+112
+00:10:51,420 --> 00:10:54,930
+why loop as the predicate of an if expression. That's something you might
+
+113
+00:10:54,930 --> 00:10:59,810
+normally think or writing but perfectly well form and tactically. Similarly, I
+
+114
+00:10:59,810 --> 00:11:04,380
+could have an if statement or an if expression as the predicate of and if it's
+
+115
+00:11:04,380 --> 00:11:09,610
+inside of an if expression. So, so nested if expressions like this one are also
+
+116
+00:11:09,610 --> 00:11:16,610
+syntactically valid. Let's do another grammar, this time for simple arithmetic
+
+117
+00:11:18,180 --> 00:11:21,790
+expressions. So, we'll have our start symbol and only non-terminal for this
+
+118
+00:11:21,790 --> 00:11:27,390
+grammar be called e and one of the possibilities while e could be the sum of
+
+119
+00:11:27,390 --> 00:11:32,330
+expressions. Or and remember this is an alternative notation for e arrow. It's
+
+120
+00:11:32,330 --> 00:11:36,920
+just a way of saying I'm going to use the nonterminal for another production. We can
+
+121
+00:11:36,920 --> 00:11:40,480
+have a sum of two expressions or we could have the Multiplication of two
+
+122
+00:11:40,480 --> 00:11:44,580
+expressions. And then we could have expressions that appear inside the
+
+123
+00:11:44,580 --> 00:11:48,800
+parentheses, so parenthesized expressions. And just to keep things simple, we could
+
+124
+00:11:48,800 --> 00:11:54,540
+just have as our base, only base case simple identifier so variable names. And
+
+125
+00:11:54,540 --> 00:12:01,540
+here's a small grammar over plus and times to see and in parentheses and variable
+
+126
+00:12:01,550 --> 00:12:06,240
+names. [inaudible] a few elements of this language. So for example, a single
+
+127
+00:12:06,240 --> 00:12:13,240
+variable name is a perfectly good element of the language id + id is also in this
+
+128
+00:12:14,720 --> 00:12:21,720
+language. Which s is id + id id and we could also use parens to group things so
+
+129
+00:12:24,430 --> 00:12:31,200
+we could say id + id id that's also something you can generate using these
+
+130
+00:12:31,200 --> 00:12:35,560
+rules and so on and so forth. There are many, many more strings in this language.

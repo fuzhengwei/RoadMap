@@ -1,0 +1,569 @@
+0
+00:00:04,000 --> 00:00:08,200
+欢迎回来, 在这个视频中我们将结束关于词汇的介绍
+Welcome back, In this video we're going to wrap up our presentations on lexical
+
+1
+00:00:08,200 --> 00:00:12,550
+通过对我们如何实现有限自动机的讨论进行分析
+analysis with the discussion of how we implement Finite Automata, using a variety
+
+2
+00:00:12,550 --> 00:00:19,550
+不同的技术, 回顾一下, 这是我们的小流程图
+of different techniques. Just to review, here's our little flow chart of how
+
+3
+00:00:19,950 --> 00:00:25,119
+词法分析程序被构建, 今天我们将重点关注这个问题
+lexical analyzers are constructed. And today we're going to be focusing on this
+
+4
+00:00:25,119 --> 00:00:31,859
+最后一步, DFA的实现实际上我应该说这个图表是
+last step. The implementation of DFA's and actually I should say that this chart is
+
+5
+00:00:31,859 --> 00:00:35,739
+不是完全准确的因为有时候我们不会一直走到
+not quite completely accurate because sometimes we don't go all the way to
+
+6
+00:00:35,739 --> 00:00:39,960
+DFA, 我们停止使用NFA我们直接实现它们所以我们会稍微讲一下
+DFA's. We stop with NFA's and we implement them directly and so we'll talk a little
+
+7
+00:00:39,960 --> 00:00:44,370
+关于这个, 如果我们不想建立一个DFA并且想要建立我们的基础
+bit about that. What if we didn't want to build a DFA and instead wanted to base our
+
+8
+00:00:44,370 --> 00:00:51,370
+直接在NFA上的词汇分析器, 所以, 从DFA开始, 它非常简单
+lexical analyzers directly on an NFA. So, beginning now with DFA's, It's very simple
+
+9
+00:00:53,510 --> 00:00:59,370
+要实现一个确定性的有限自动机作为一个数组, 这是一个维度
+to implement a deterministic finite automaton as an array. There's dimensional
+
+10
+00:00:59,370 --> 00:01:06,370
+数组和其中一个维度是状态, 所以这里可能有状态
+array and one of the dimensions will be the state. So we might have states here
+
+11
+00:01:07,070 --> 00:01:14,070
+另一个维度是输入符号, 所以我可能有一个状态I和
+and the other dimension will be the input symbols. And so I might have a state i and
+
+12
+00:01:17,659 --> 00:01:24,659
+然后输入A, 我只要向上看这个位置就会有下一个状态
+then input A and I simply look up in that position and there will be the next state
+
+13
+00:01:25,170 --> 00:01:32,170
+我们要移动的k, 所以表格存储在每个特定的输入中
+k to which we're going to move. So the table stores at every particular input
+
+14
+00:01:32,380 --> 00:01:39,380
+符号和状态, 机器将移动到的下一个状态, 我们来做一个
+symbol and state, the next state that the machine will move to. So, let's do an
+
+15
+00:01:41,400 --> 00:01:45,729
+将确定性自动机转换为表驱动的例子
+example of converting a deterministic automaton into a table driven
+
+16
+00:01:45,729 --> 00:01:51,229
+这里是我们上节课讲过的自动机
+implementation so here is the automaton that we built last time and recall that
+
+17
+00:01:51,229 --> 00:01:55,180
+几个视频之前, 我们从一个正则表达式开始我们将它转换为a
+several videos ago. We started with a regular expression which we convert into a
+
+18
+00:01:55,180 --> 00:01:59,649
+非确定性有限自动机然后我们把它转换为一个确定的
+non-deterministic finite automaton and then we converted it to a deterministic
+
+19
+00:01:59,649 --> 00:02:04,450
+在上个视频中, 自动机, 这里, 我们再来讨论一下
+automaton just in the last video. And here it is again and now let's talk about how
+
+20
+00:02:04,450 --> 00:02:09,590
+要把它看成是一个表格, 所以画一个二维的表格有三个
+to realize it as a table. So draw 2-dimensional table and there are three
+
+21
+00:02:09,590 --> 00:02:16,590
+所以我们需要三行, 然后标记这些行, T, U, 然后
+states so we will need three rows. And just label these rows S, T, and U and then
+
+22
+00:02:19,260 --> 00:02:25,620
+有两个输入, 0和1现在让我们填入表格中的项。
+there are two inputs, zero and one and now let's fill in the entries in the table.
+
+23
+00:02:25,620 --> 00:02:32,620
+所以, 在输入0的状态S中, 我们要去哪里？我们进入状态t, 所以, 在
+So, in state S on input zero, where do we go? We go to state T. So, the entry in the
+
+24
+00:02:33,930 --> 00:02:40,930
+S0的输入将是t, 一些来自于状态的输入将会在状态u中结束。
+S0 entry will be T. And some really from state S input one will wind up in state U.
+
+25
+00:02:44,629 --> 00:02:51,629
+所以S1项是U, 对吧？然后是另一个
+So on so the S1 entry will be U, okay? And then certainly for the other the other
+
+26
+00:02:53,099 --> 00:03:00,099
+表格的行让我们在第一行上做T行我们到U上, 在0处停留
+rows of the table let's do the T row next on one we go to U and on zero we stay in
+
+27
+00:03:01,769 --> 00:03:08,769
+所以, 这一行也是TU, 最后是U, 在0处发生了什么
+T. So, this, this row is also TU. And finally for U, what happens well, on zero
+
+28
+00:03:10,659 --> 00:03:17,659
+我们到T上, 在这里, 我们呆在U里所以这一行也是TU, 这是我们的表格
+we go to T and on one we stay in U so this row is also TU and there's our table. That
+
+29
+00:03:18,830 --> 00:03:24,250
+描述了自动机的转换关系, 现在如果我们想一下
+describes the transition relation of the automaton. And now if we would think about
+
+30
+00:03:24,250 --> 00:03:30,940
+我们如何在一个程序中使用这种过渡关系, 你可以很容易地想象。
+how we would use this transition relation in a program, you can easily imagine. We
+
+31
+00:03:30,940 --> 00:03:37,940
+我们将从输入索引开始, 将其移植到输入的开始
+would start out say with our input index. Porting to the beginning of the input and
+
+32
+00:03:38,799 --> 00:03:44,129
+我们称它为零我们可以有一个当前状态, 我们从
+let's call that zero and we can have to have a current state and we start at the
+
+33
+00:03:44,129 --> 00:03:48,879
+开始状态, 我们设这是第0行所以在本例中是行
+start state, let's just say that that's row zero so in this case that would be row
+
+34
+00:03:48,879 --> 00:03:55,879
+然后, 当我们想要做的时候, 我们想要越过输入, 检查一下
+S. And then while what we wanted to do, we wanted to walk over the input. And check
+
+35
+00:03:58,959 --> 00:04:04,290
+是否, 检查它, 你知道并对每个元素进行转换
+whether, and checking on it, you know and make the transitions for each element of
+
+36
+00:04:04,290 --> 00:04:09,530
+每次输入一次我们想在输入为空时停止, 所以
+the input one at a time and we want to stop when the input is empty. So while
+
+37
+00:04:09,530 --> 00:04:13,939
+仍然有输入, 假设我们有一组字符, 那就是我们的
+there is still as input, let's say we have an array of characters that is our, that
+
+38
+00:04:13,939 --> 00:04:20,620
+是我们的输入, 当数组中的条目不是空的时候, 让我们做下面的操作。
+is our input and while the entry in that array is not null, let's do the following.
+
+39
+00:04:20,620 --> 00:04:26,770
+我们将更新状态, 在每一步中我们要更新它, 让我们
+We're gonna update the state. At each step and what are we gonna update it to let's
+
+40
+00:04:26,770 --> 00:04:32,630
+给这个数组一个名字, 我们把它叫做数组a, 所以, 我们要查一下
+give this array a name. Let's call this array A. So, we're gonna look up in our
+
+41
+00:04:32,630 --> 00:04:37,169
+过渡关系A和我们要用什么？好吧, 我们要查一下
+transition relation A and what are we going to use? Well, we're gonna look up
+
+42
+00:04:37,169 --> 00:04:44,169
+现在的状态, 我们要查一下输入, 在这个条目中, 我想, 
+the current state, And we're going to look up the input. And in that entry I think,
+
+43
+00:04:47,020 --> 00:04:50,120
+你知道吗, 使用当前状态和当前输入, 我们将转换
+you know? Using the, the current state and the current input, we're gonna transition
+
+44
+00:04:50,120 --> 00:04:54,710
+对于一个新状态我们也想增加输入指针, 我们会这样做
+to a new state and we also wanted to increment the input pointer. So we'll do
+
+45
+00:04:54,710 --> 00:05:01,710
+与此同时, 我们的循环会根据输入来处理输入
+that at the same time. And there is our loop that processes an input according to
+
+46
+00:05:04,440 --> 00:05:10,009
+过渡表a, 你们可以看到这是一个非常紧凑, 非常高效的
+the transition table A. And as you can see this is a very compact, very efficient
+
+47
+00:05:10,009 --> 00:05:17,009
+过程, 只是一点点的索引运算和一个两张表
+process. Just really, just a little bit of index arithmetic and one two table look
+
+48
+00:05:17,050 --> 00:05:22,520
+ups, 一个用于输入, 一个用于状态转换表的每个字符
+ups, one for the input and one for the state transition table per character of
+
+49
+00:05:22,520 --> 00:05:26,870
+输入, 所以很难想象有一个过程要快得多
+input. So that's really hard to imagine having a process that's much faster or
+
+50
+00:05:26,870 --> 00:05:33,870
+比这个更紧凑, 这是实现确定性的一种策略
+more compact than this. Now that was one strategy for implementing a deterministic
+
+51
+00:05:35,699 --> 00:05:40,880
+有限自动机你可能已经注意到它的一个缺点
+finite automaton and you may have noticed that one disadvantage of that particular
+
+52
+00:05:40,880 --> 00:05:45,570
+方法是在表中有很多重复的行。
+approach was that there were a lot of duplicate rows in the table. In fact all
+
+53
+00:05:45,570 --> 00:05:52,570
+表格的行是完全一样的我们可以通过使用来节省一些空间
+the rows of the table were exactly the same and we could save some space by using
+
+54
+00:05:53,330 --> 00:05:58,940
+一个稍微不同的表示, 所以不是有一个二维的表格, 
+a slightly different representation. So instead of having a 2-dimensional table,
+
+55
+00:05:58,940 --> 00:06:05,940
+我们可以有一个1维的表格和这个表格, 这是一个
+we can just have a 1-dimensional table and this table again. Would be one entry for
+
+56
+00:06:07,949 --> 00:06:14,949
+每个状态S, T, 和u, 这个表格包含的是一个指向a的指针
+each state so S, T, and U. And what this table would contain is a pointer to a
+
+57
+00:06:16,169 --> 00:06:22,789
+这个特定状态的移动矢量, 这里会有一个指针
+vector of moves for that particular state. So, there will be a pointer here and it
+
+58
+00:06:22,789 --> 00:06:28,360
+会指向另一个表, 另一个一维表格, 它会说我们
+would point to another. Table, another one dimensional table that would say what we
+
+59
+00:06:28,360 --> 00:06:33,669
+应该做零和我们应该做什么, 所以在S的情况下, 我们想要
+should do zero and what we should do on one. So in the case of S, we wanted to
+
+60
+00:06:33,669 --> 00:06:40,669
+如果它是0的话, 移动到状态T如果它是1的话, 现在我们
+move to state T if it was a zero and to state U if it was a one. And now when we
+
+61
+00:06:40,960 --> 00:06:46,100
+去填入T的项, 我们知道我们不需要复制这一行, 我们可以
+go to fill in the entry for T, we see we don't need to duplicate this row. We can
+
+62
+00:06:46,100 --> 00:06:50,949
+实际上, 只是共享这一行, 同样的, 对于u, 这个表格, 这个
+actually just share this row and similarly for U. And so this table, this
+
+63
+00:06:50,949 --> 00:06:54,919
+表示形式实际上更紧凑, 只需要共享这些行
+representation is actually much more compact which just share the rows that are
+
+64
+00:06:54,919 --> 00:06:59,039
+在自动机中复制, 结果是我们在自动装置中
+duplicated in the automaton. And it turns out that in the kinds of automata that we
+
+65
+00:06:59,039 --> 00:07:04,139
+看看词法分析, 有重复的行是非常常见的。
+look at for lexical analysis it's very, very common to have duplicated rows. And
+
+66
+00:07:04,139 --> 00:07:08,660
+这实际上可以解决表格的重要压缩
+so this can actually resolve the significant compaction of the table
+
+67
+00:07:08,660 --> 00:07:13,389
+特别是当你考虑一些可能的状态时, 记住可能有。
+particularly when you consider a number of possible states. Remember there could be.
+
+68
+00:07:13,389 --> 00:07:20,389
+对于DFA的N-1个状态, 对于一个有结束状态的NFA, 当爆炸发生的时候
+To the N - one states in a DFA. For an NFA with end states. And while the blow up is
+
+69
+00:07:26,319 --> 00:07:32,150
+通常不是最坏的情况它可以是非常大的, 所以二维表格
+often not the worst case it can be very substantial. So the two dimensional table
+
+70
+00:07:32,150 --> 00:07:35,569
+在之前的幻灯片中, 我们已经有了相当大的规模
+we had on the, in the previous slide could actually be quite, quite large and we
+
+71
+00:07:35,569 --> 00:07:39,940
+保持, 我们有时可以用小技巧来表示更紧凑的表示
+keep, we can sometimes have a much more compact representation by little tricks
+
+72
+00:07:39,940 --> 00:07:44,610
+就像这样, 现在这个特殊的表示的优势是这个额外的
+like this. Now in this advantage of this particular representation is this extra
+
+73
+00:07:44,610 --> 00:07:48,470
+互动, 就在这里, 我的意思是这些指针实际上需要时间
+interaction, right here. I mean these pointers actually take time to the
+
+74
+00:07:48,470 --> 00:07:52,759
+参考, 现在在我们的循环中会稍微慢一些, 我们, 我们, 我们必须这样做
+reference and so now in our loop will be a little bit slower. We, we, we have to do
+
+75
+00:07:52,759 --> 00:07:56,669
+表格查找参考。指针做另一个标签页查找然后我们就可以了
+table look up the reference. Pointer do another tab le look up and then we can
+
+76
+00:07:56,669 --> 00:08:03,669
+最后, 也有可能我们不希望转换为DFA
+make the move. Finally, it's also possible that we might not want to convert to a DFA
+
+77
+00:08:05,080 --> 00:08:09,830
+总而言之, 我们给出的特定规格是非常昂贵的
+at all. It might be that the particular specification we gave is very expensive to
+
+78
+00:08:09,830 --> 00:08:15,580
+变成一个DFA, 这个桌子变得非常大我们可能会更好
+turn into a DFA. The table has just become truly huge and we might be better off just
+
+79
+00:08:15,580 --> 00:08:21,780
+直接使用NFA, 你可以想象一个NFA的实现
+using the NFA directly. And so, one can imagine an implementation of an NFA as
+
+80
+00:08:21,780 --> 00:08:28,780
+嗯, 我们也可以通过表格来实现, 在这种情况下, 我们必须要有
+well. We can also implement that via a table. In this case, we would have to have
+
+81
+00:08:28,849 --> 00:08:35,849
+NFA中的每个状态的一行, 我们不会在这里全部完成, 但是我们可以
+a row for each state in the NFA. And we won't do them all here. But we could have
+
+82
+00:08:37,760 --> 00:08:42,080
+对NFA的每个状态的行数然后, 你知道我们要去哪里
+Rows for every state of the NFA and then, you know where we're going to go if the
+
+83
+00:08:42,080 --> 00:08:49,080
+输入是零, 或者输入是1, 在这种情况下, 我差点忘了
+input is zero or if the input is one. And so in this case, And I almost forgot we
+
+84
+00:08:49,110 --> 00:08:52,890
+也需要一个最天真或最直接的过渡
+would also need a transition in the most naive or the most straight forward
+
+85
+00:08:52,890 --> 00:08:58,910
+实现, 如果是, 如果是epsilon, 现在, 记住
+implementation of, where we would go if, if an epsilon. And, and now, remember
+
+86
+00:08:58,910 --> 00:09:02,950
+因为这些都是NFAs, 这将是一组状态因为我们可能
+because these are NFAs in general, this will be a set of states because we might
+
+87
+00:09:02,950 --> 00:09:07,440
+在0和1上有多于一个的跃迁或多于一个的跃迁。
+have more than one epsilon transition or more than one transition on zero and one.
+
+88
+00:09:07,440 --> 00:09:14,440
+因此, 在这种情况下, A可以到B, 所以这是状态B的集合
+And so, in this case an epsilon A can go to B. So this would be the set of states B
+
+89
+00:09:14,500 --> 00:09:21,500
+B可以转到C或D, C只能到E和1, 好的, D可以转到
+and B can go To C or D. And C can only go to E and on one, alright. And D can go to
+
+90
+00:09:31,720 --> 00:09:38,610
+F on和输入0等等, 我们把表格的其余部分填满这张表是
+F on and input of zero and so on. We fill in the rest of the table and this table is
+
+91
+00:09:38,610 --> 00:09:43,040
+保证是相对较小的因为国家的数量受限于
+guaranteed to be relatively small because the number of states is limited by the
+
+92
+00:09:43,040 --> 00:09:49,250
+NFA的状态数和输入字母表的大小, 再一次, 我们
+number of states in the NFA and the size of the input alphabet. Once again, we
+
+93
+00:09:49,250 --> 00:09:53,360
+可以对公共行进行共享, 以及其他类似的技巧来压缩
+could do a sharing of common rows and, and other tricks like that to compress the
+
+94
+00:09:53,360 --> 00:10:00,360
+如果我们喜欢的话。但是现在, 模拟这个自动机的内部循环将会是
+table if we like. But now, the inner loop for simulating this automaton is gonna be
+
+95
+00:10:01,620 --> 00:10:06,100
+更贵的原因是我们必须处理一系列的州而不是
+much more expensive because we have to deal with sets of states rather than
+
+96
+00:10:06,100 --> 00:10:13,100
+单个状态, 所以在每个时间点上我们可以追踪一组状态
+single states. So in every point in time where we can be tracking a set of states
+
+97
+00:10:13,450 --> 00:10:17,029
+当我们要移动的时候, 我们需要查找集合中的每个状态
+and when we're going to do a move, we have to look up for every state in the set
+
+98
+00:10:17,029 --> 00:10:22,000
+它可能会包括像epsilon移动和进位这样的东西
+where it can potentially go including things like the epsilon moves and carry
+
+99
+00:10:22,000 --> 00:10:25,850
+所有可能的极小移动因此我们总是对其进行准确的评估
+out all possible epsilon moves so we always have an accurate assessment of the
+
+100
+00:10:25,850 --> 00:10:31,230
+如果NFA能够到达, 那么完整的状态集, 所以虽然这是一个很大的空间
+complete set of states if the NFA could reach. So while this sav es a lot of space
+
+101
+00:10:31,230 --> 00:10:36,630
+就表格而言, 就表格的大小而言它可能要慢得多
+in terms of the tables, in terms of the size of the tables it can be much slower
+
+102
+00:10:36,630 --> 00:10:43,630
+要执行, 而不是确定性自动机。总结一下, 一个关键的概念
+to execute than deterministic automaton. Summarize, a key idea in the
+
+103
+00:10:45,550 --> 00:10:50,500
+词汇规范的实现是不确定性的转换
+implementation of lexical specifications is the conversion of nondeterministic
+
+104
+00:10:50,500 --> 00:10:55,000
+有限自动机到确定性有限自动机, 这是一般情况下的
+finite automaton to deterministic finite automaton. This is what takes a general
+
+105
+00:10:55,000 --> 00:10:59,310
+高级规范使用正则表达式并授予它们
+high level specification use of regular expressions and confer to them to
+
+106
+00:10:59,310 --> 00:11:05,620
+它是完全确定的并且只在每个输入中使用几个操作
+something as completely deterministic and only uses a few operations per input
+
+107
+00:11:05,620 --> 00:11:12,620
+现在, 在实践中, 工具提供了速度和空间之间的权衡, 所以
+character. Now, in practice, tools provide tradeoffs between speed and space. So, so
+
+108
+00:11:13,019 --> 00:11:20,019
+DFA的速度更快, 更紧凑, 所以表格可以非常大, 有时也会非常大
+DFA's are faster And less compact so the tables can be very large and, and at times
+
+109
+00:11:21,720 --> 00:11:28,720
+这是一个实际的问题, 而NFAs的执行速度较慢, 但更简洁。
+that's a practical problem and NFAs are slower to, to implement but more concise.
+
+110
+00:11:32,290 --> 00:11:37,320
+这些工具通常会给你一系列的选择
+And the tools give you generally a series of options often in the form of
+
+111
+00:11:37,320 --> 00:11:43,190
+配置文件或命令行, 允许您选择是否
+configuration files or command lines which is, that allow you to, to choose whether
+
+112
+00:11:43,190 --> 00:11:48,649
+你想要更接近完整的DFA, 这是更快更大的
+you want to be closer to a full DFA, something that's faster and perhaps bigger
+
+113
+00:11:48,649 --> 00:11:53,230
+或者是一个纯粹的NFAs, 它的速度较慢但消耗的空间更少。
+or to a pure NFAs, something that's slower but consumes less space.

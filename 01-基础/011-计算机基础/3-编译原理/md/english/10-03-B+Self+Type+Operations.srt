@@ -1,0 +1,43 @@
+0
+00:00:00,530 --> 00:00:03,679
+So now, let's move on to the least upper bound operation. And once again, T and
+
+1
+00:00:03,679 --> 00:00:08,500
+T prime will be any types except self-type. The least upper bound of self-type
+
+2
+00:00:08,500 --> 00:00:12,530
+with itself is just self-type, and I think that that's pret ty clear. The
+
+3
+00:00:12,530 --> 00:00:17,550
+least upper bound of self-types of C and T will be the least upper bound of the class
+
+4
+00:00:17,550 --> 00:00:22,300
+C and T. And once again, this is because C is the largest type, that self-type could
+
+5
+00:00:22,300 --> 00:00:28,180
+be. And therefore, the largest type is guaranteed to cover both self-types of C.
+
+6
+00:00:28,180 --> 00:00:35,180
+And T is going to be the least upper bound of C and T. And least of our bounds is the
+
+7
+00:00:35,339 --> 00:00:41,449
+symmetric operations, so if I reverse these two arguments, the answer is the same.
+
+8
+00:00:41,449 --> 00:00:44,649
+And finally if self-type is not one of the arguments at least upper bound then
+
+9
+00:00:44,649 --> 00:00:48,809
+we just do what we do before. The self-type, the least upper bound definition
+
+10
+00:00:48,809 --> 00:00:53,719
+excuse me, has not changed for class names for type names other than self-type.

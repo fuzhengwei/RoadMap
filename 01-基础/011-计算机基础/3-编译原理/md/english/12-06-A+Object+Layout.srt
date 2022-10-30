@@ -1,0 +1,615 @@
+0
+00:00:04,049 --> 00:00:06,870
+In the last several videos, we have discussed code generation for a various
+
+1
+00:00:06,870 --> 00:00:11,099
+simple programming language. In this video, we are going to take a look at code
+
+2
+00:00:11,099 --> 00:00:17,849
+generation for more advanced feature objects. Fortunately, this dated code
+
+3
+00:00:17,849 --> 00:00:22,289
+generation strategy for objects is really just an extension of what we've already
+
+4
+00:00:22,289 --> 00:00:25,179
+learned. So, everything that you learn before we're going to be using and then
+
+5
+00:00:25,179 --> 00:00:29,919
+there's going to be some additional things that we do specifically for objects And,
+
+6
+00:00:29,919 --> 00:00:34,810
+the important thing to know about objects is slogan that you hear. When people
+
+7
+00:00:34,810 --> 00:00:41,230
+talked about object oriented programming is this one. So if b is a subclass of a
+
+8
+00:00:41,230 --> 00:00:46,840
+then an object of class b can be used wherever an object of class a as expected.
+
+9
+00:00:46,840 --> 00:00:51,359
+So there's a substitutability property. If I have a piece of code that can work on
+
+10
+00:00:51,359 --> 00:00:58,359
+a's then it could also work on b's and any other subclass of a. What this means for
+
+11
+00:00:58,719 --> 00:01:04,390
+the, for the case of code generation is that the code that we generate for class
+
+12
+00:01:04,390 --> 00:01:10,570
+a. So, the code that we produced for method in class a, has to work unmodified
+
+13
+00:01:10,570 --> 00:01:16,850
+for an object to class b And to see this, keep in mind that when we compile a, when
+
+14
+00:01:16,850 --> 00:01:23,140
+we compile class a, I, we may not even know all the subclasses of a. So, those
+
+15
+00:01:23,140 --> 00:01:26,460
+maybe not even have been defined yet. So, in the future some programs may come
+
+16
+00:01:26,460 --> 00:01:33,460
+along. To find a subclass of a then our compiled version of a will have to work
+
+17
+00:01:35,140 --> 00:01:42,140
+with that new subclass. So, there really only two questions that we have to answer
+
+18
+00:01:42,230 --> 00:01:47,550
+to give a complete description of how to generate code for objects. The first one
+
+19
+00:01:47,550 --> 00:01:52,630
+is how our object represented in memory. So, we need to decide a layout and
+
+20
+00:01:52,630 --> 00:01:56,990
+representation for objects And the second one is how is dynamic dispatch implemented
+
+21
+00:01:56,990 --> 00:02:01,490
+so that's the characteristic feature of using objects just so we can dispatch in
+
+22
+00:02:01,490 --> 00:02:08,490
+the method of an object and we need an implementation of that. So, to be
+
+23
+00:02:08,729 --> 00:02:13,890
+concrete, we're going to use this little example throughout this video and I'll
+
+24
+00:02:13,890 --> 00:02:17,830
+just take a moment here to, to point out some features of it. So, we have three
+
+25
+00:02:17,830 --> 00:02:24,830
+classes, classes am b, and c And notice that a, is a base class and b and c both
+
+26
+00:02:26,090 --> 00:02:33,090
+inherit from a, And all three classes define some attributes, some fields and
+
+27
+00:02:33,870 --> 00:02:39,490
+also some methods. Now, a couple of important features here is that notice
+
+28
+00:02:39,490 --> 00:02:44,450
+that because b inherits from a, and c inherits from a, they all, they both
+
+29
+00:02:44,450 --> 00:02:50,910
+inherit, both of those classes inherit the attributes a, and d from class a. So these
+
+30
+00:02:50,910 --> 00:02:57,910
+two attributes that are defined in class a are available in class b and in class c So
+
+31
+00:02:58,790 --> 00:03:05,790
+even though there's no mention Of a, and d in the definition say of class b. The
+
+32
+00:03:06,069 --> 00:03:11,930
+methods in class b can still refer to those attributes. They are part of the
+
+33
+00:03:11,930 --> 00:03:17,819
+attributes of class b. They are just copied over or inherited from a. Another
+
+34
+00:03:17,819 --> 00:03:22,180
+feature of this example that I like to point out is that all of the methods refer
+
+35
+00:03:22,180 --> 00:03:27,720
+to the attribute a so actually referred into this method and this one referred
+
+36
+00:03:27,720 --> 00:03:34,720
+twice in this method and also in this method. And the significance of this is
+
+37
+00:03:34,790 --> 00:03:40,750
+just what we discussed a couple of slides ago. For all of these methods to work
+
+38
+00:03:40,750 --> 00:03:46,740
+attribute a, is going to have to live in some place and some place where all of
+
+39
+00:03:46,740 --> 00:03:53,490
+them can find it they generate a code run. Some particular less considered the method
+
+40
+00:03:53,490 --> 00:04:00,490
+f. So the method f exists in all three classes. All three classes when it runs,
+
+41
+00:04:01,680 --> 00:04:07,660
+it will refer to attribute a, and even though the objects would be different. In
+
+42
+00:04:07,660 --> 00:04:11,880
+one case it might be running on an object and in another case on a c object. It
+
+43
+00:04:11,880 --> 00:04:15,630
+would need to be able to find the attribute a, and so therefore the
+
+44
+00:04:15,630 --> 00:04:22,159
+attribute a, has to be in the same place in each object And so, how do we
+
+45
+00:04:22,159 --> 00:04:25,509
+accomplish that? Well, the first principle is the objects are laid out to in
+
+46
+00:04:25,509 --> 00:04:32,509
+contiguous memory. So, an object is just a block of memory. Okay with no gaps and all
+
+47
+00:04:33,629 --> 00:04:39,029
+the data for the object is stored in the words of that lock of memory. And each
+
+48
+00:04:39,029 --> 00:04:44,009
+attribute is stored at a fixed off set in the objects. So for example, there may be
+
+49
+00:04:44,009 --> 00:04:51,009
+a place in this object for attribute a On this case it's at in the middle of the
+
+50
+00:04:51,460 --> 00:04:57,180
+object is in the, in the fourth position And, no matter what kind of object it is,
+
+51
+00:04:57,180 --> 00:05:03,259
+whether it's an a. B or c objects and are example as with a we always live with that
+
+52
+00:05:03,259 --> 00:05:08,979
+position so that any piece of code that refers to a, any method that refers a can
+
+53
+00:05:08,979 --> 00:05:15,860
+find can find the a attribute. Now the other thing that's important to understand
+
+54
+00:05:15,860 --> 00:05:19,969
+and this is you know slight digression from what we're talking about but it's a
+
+55
+00:05:19,969 --> 00:05:26,330
+key aspect of code generation for object is that when a method is invoked, the
+
+56
+00:05:26,330 --> 00:05:33,050
+object itself is the self parameter. So the self parameter is the entire object so
+
+57
+00:05:33,050 --> 00:05:39,219
+self. When a function is involved, it will refer to the entire object so you think
+
+58
+00:05:39,219 --> 00:05:43,150
+itself is going to be appointed to the entire object. Remember that self is like
+
+59
+00:05:43,150 --> 00:05:50,150
+that this variable or this name in Java. And then the fields we refer to particular
+
+60
+00:05:51,240 --> 00:05:54,830
+or the attributes of the object will refer to particular position within the objects.
+
+61
+00:05:54,830 --> 00:06:01,550
+So, for example, the attributes, we decided to leave it there. So here is the
+
+62
+00:06:01,550 --> 00:06:07,419
+particular object layout used in Kuhl. So the first three words of a Kuhl object
+
+63
+00:06:07,419 --> 00:06:13,759
+contain header information and every Kuhl object always has these three entries. The
+
+64
+00:06:13,759 --> 00:06:18,729
+first position is a class tag and also at zero then the next word it also four is
+
+65
+00:06:18,729 --> 00:06:23,580
+the size of the object and then something called the dispatch pointer and then all
+
+66
+00:06:23,580 --> 00:06:30,580
+of the attributes. Now the class tag is an integer which just identifies the class of
+
+67
+00:06:31,779 --> 00:06:36,979
+the object. So the compiler will number all of the classes. So in our example we
+
+68
+00:06:36,979 --> 00:06:41,150
+have three classes a, b, and c and the compiler for example might assign them the
+
+69
+00:06:41,150 --> 00:06:46,869
+numbers one, two, and three. It doesn't matter what these numbers are As long as
+
+70
+00:06:46,869 --> 00:06:50,960
+they are different from each other. So, it doesn't have these numbers consecutively
+
+71
+00:06:50,960 --> 00:06:55,529
+or anything like that The important thing is of the class tag is a unique identifier
+
+72
+00:06:55,529 --> 00:07:00,229
+for a class, each class has its own unique bit pattern that tells you what kind of
+
+73
+00:07:00,229 --> 00:07:06,529
+class the object is And the other fields here the object size is also an integer
+
+74
+00:07:06,529 --> 00:07:11,339
+which is just a size of the object in words and the dispatch pointer. Is a
+
+75
+00:07:11,339 --> 00:07:16,680
+pointer to a table of methods so the methods are stored off to the side and the
+
+76
+00:07:16,680 --> 00:07:21,439
+dispatch pointer is a pointer to that table and we'll talk about this more later
+
+77
+00:07:21,439 --> 00:07:26,369
+and then all the attributes are laid out in the sub-sequence slots in some order
+
+78
+00:07:26,369 --> 00:07:30,360
+that's determined by the compiler so the compiler will fix and order for the
+
+79
+00:07:30,360 --> 00:07:34,309
+attributes in the class and then all the objects of that class will have the
+
+80
+00:07:34,309 --> 00:07:39,259
+attributes of that class in the same order. And again all of this is laid out
+
+81
+00:07:39,259 --> 00:07:46,259
+in the continuous chunk of memory. Now, I'm ready to talk about how inheritance
+
+82
+00:07:46,539 --> 00:07:52,300
+works. So, the basic ideas like given a layout for class a, a layout for a
+
+83
+00:07:52,300 --> 00:07:58,460
+subclass b, so this is a subclass of a can be defined by extending the layout of a.
+
+84
+00:07:58,460 --> 00:08:05,460
+So, we don't need to move any of the attribute of a, we can just add more
+
+85
+00:08:05,629 --> 00:08:10,879
+fields onto the end of a's layout. And so, that's going to leave the layout of a
+
+86
+00:08:10,879 --> 00:08:17,110
+unchanged which is a great property because this is how the position of an
+
+87
+00:08:17,110 --> 00:08:21,069
+attribute in the a object will always be the same for all the subclasses. So
+
+88
+00:08:21,069 --> 00:08:26,819
+essentially, we will never, once we decide where an attribute lives in a class it
+
+89
+00:08:26,819 --> 00:08:30,949
+will never change for any of the subclasses of that object. So b is just
+
+90
+00:08:30,949 --> 00:08:36,519
+going to be an extension of the layout of a. So, let's take a look at our example
+
+91
+00:08:36,519 --> 00:08:43,039
+here and see how that, that works. Let me just write down here a little bit about
+
+92
+00:08:43,039 --> 00:08:46,440
+these classes because we don't have the example on the screen. So we have a class
+
+93
+00:08:46,440 --> 00:08:52,709
+a, and class a, had two attributes, a, and d, okay? And it doesn't matter what their
+
+94
+00:08:52,709 --> 00:08:57,029
+types are or what the methods were here. We're just looking at the class names and
+
+95
+00:08:57,029 --> 00:09:02,050
+the names of the attributes that are defined in the class. And then we have b.
+
+96
+00:09:02,050 --> 00:09:09,050
+Which inherits from a and b added a attribute b and then we had c which also
+
+97
+00:09:10,399 --> 00:09:17,399
+inherits from a but has no relationship to b. And class c define an attribute little
+
+98
+00:09:19,480 --> 00:09:26,480
+c. Alright. So, that's the structure of our example is relevant to the layout of
+
+99
+00:09:28,199 --> 00:09:34,990
+the objects. Okay. So Let's talk about the layout of class a. So, in position zero at
+
+100
+00:09:34,990 --> 00:09:39,050
+all sub zero, there'll be a tag for a that will be some small integer at the compiler
+
+101
+00:09:39,050 --> 00:09:44,160
+picks. There'll be a size of a, we'll come back to that in just a se cond. There will
+
+102
+00:09:44,160 --> 00:09:48,579
+be a dispatch pointer again, which we're going to talk about later. And then come
+
+103
+00:09:48,579 --> 00:09:53,810
+the attributes of a, and it just laid out the compiler, the way it's done in the,
+
+104
+00:09:53,810 --> 00:09:58,089
+the Kuhl c implementations is that they are laid out in the order in which they
+
+105
+00:09:58,089 --> 00:10:03,360
+appear textually in the class. So, in this case, first the attribute a, And then the
+
+106
+00:10:03,360 --> 00:10:10,050
+attribute d all sets twelve and sixteen And now since the object, there are two
+
+107
+00:10:10,050 --> 00:10:14,310
+attributes and three header words that means the size of the object is five words
+
+108
+00:10:14,310 --> 00:10:21,310
+and so it's a five that goes in the size field for a objects. Now, let's take a
+
+109
+00:10:21,959 --> 00:10:27,959
+look at b. Okay? So b is going to have a different tag, b objects will have a
+
+110
+00:10:27,959 --> 00:10:32,930
+different tag so they to distinguish them from a objects. There's going to be extra
+
+111
+00:10:32,930 --> 00:10:37,019
+fields so the size will be one bigger But now the layout preserves the layout of a.
+
+112
+00:10:37,019 --> 00:10:41,990
+So the attributes of a appears in the same position. So you can think of there being
+
+113
+00:10:41,990 --> 00:10:48,990
+an a object Actually embedded inside of the b object. If I were to strip off the
+
+114
+00:10:49,930 --> 00:10:56,930
+end here that were just you know cover up this last bit here b I would say that this
+
+115
+00:10:57,250 --> 00:11:02,370
+object here has the same size and the same attributes as an a object so any piece of
+
+116
+00:11:02,370 --> 00:11:08,500
+code that could work on an a object will also make sense running on a b object. Now
+
+117
+00:11:08,500 --> 00:11:12,740
+Of course, the tag is different because it actually is a subclass and you know, and
+
+118
+00:11:12,740 --> 00:11:15,709
+there is an extra field so the, the size is different but the point is that any
+
+119
+00:11:15,709 --> 00:11:21,680
+code that it refer is just to the fields here will still work just fine. So any a
+
+120
+00:11:21,680 --> 00:11:26,540
+method that was compiled that refer to the methods of an a object will still find
+
+121
+00:11:26,540 --> 00:11:31,259
+those attributes in the same place at the b object and afterwards, there is also one
+
+122
+00:11:31,259 --> 00:11:37,629
+more field here. Which is the new attribute b It just gets laid out after
+
+123
+00:11:37,629 --> 00:11:41,639
+all of a's fields. So after all of a's fields come all of b's fields in the same
+
+124
+00:11:41,639 --> 00:11:45,959
+order which they appear textually in the class because there's just only one,
+
+125
+00:11:45,959 --> 00:11:49,819
+there's just one new field there. And now looking with class c or the story with
+
+126
+00:11:49,819 --> 00:11:54,680
+class c is very similar so c has its own distinct tag and also has one more
+
+127
+00:11:54,680 --> 00:11:59,930
+attribute than a so it has size six. And now again the a attributes were on the
+
+128
+00:11:59,930 --> 00:12:05,339
+same position and now the c attribute just comes after the a attribute. And so notice
+
+129
+00:12:05,339 --> 00:12:11,259
+here that a methods again will work just fine on c objects because the attributes
+
+130
+00:12:11,259 --> 00:12:15,649
+are on the same places and so the methods will find the attributes where they expect
+
+131
+00:12:15,649 --> 00:12:22,649
+to. You cannot however call a method of class b on an object to class c. Okay
+
+132
+00:12:23,509 --> 00:12:28,779
+because they have different attributes in the third position. We may have completely
+
+133
+00:12:28,779 --> 00:12:33,329
+different types. It may not make sense to invoke a b method on c object but that's
+
+134
+00:12:33,329 --> 00:12:37,790
+just fine because if we look at our inheritance hierarchy over here we'll see that b and
+
+135
+00:12:37,790 --> 00:12:42,480
+c are actually unrelated. They are both subclasses of a but they have no
+
+136
+00:12:42,480 --> 00:12:47,100
+relationship to each other. B is not a subclass of c and c is not a subclass of b
+
+137
+00:12:47,100 --> 00:12:52,800
+and so anything beyond their shared ancestry with a can be completely
+
+138
+00:12:52,800 --> 00:12:59,620
+different in the layout. So, more generally, if we have a chain of
+
+139
+00:12:59,620 --> 00:13:05,110
+inheritance relationship, so let's say, we have a base class a1 and a1 inherits some
+
+140
+00:13:05,110 --> 00:13:12,110
+a1 and a3 inherits some a2 and so on with some class a and inheriting at the bottom
+
+141
+00:13:12,949 --> 00:13:18,100
+of this of this chain after some long sequence of, of other intermediate. Some
+
+142
+00:13:18,100 --> 00:13:23,000
+classes, you know, what is the layout of all these classes going to look like.
+
+143
+00:13:23,000 --> 00:13:26,750
+Well, there's going to be a header. Okay, the three word header and that will be
+
+144
+00:13:26,750 --> 00:13:32,240
+followed by a1's attributes. And then followed by a2's attributes followed by
+
+145
+00:13:32,240 --> 00:13:39,240
+a3's attributes and so on all the way down to an's attributes down here. Okay. And if
+
+146
+00:13:40,699 --> 00:13:46,839
+you look again so what we talked about before each prefix. Of this header is
+
+147
+00:13:46,839 --> 00:13:52,740
+essentially a valid object a valid one of these objects. If I look at the first set
+
+148
+00:13:52,740 --> 00:13:56,420
+of attributes, everything up to the end of a1 and attributes, that forms a valid
+
+149
+00:13:56,420 --> 00:13:59,860
+layout for one object is I stop with the a2 attributes. I have a, I have a, I have
+
+150
+00:13:59,860 --> 00:14:04,139
+a valid layout for a2 object going all the way from the header down to you know,
+
+151
+00:14:04,139 --> 00:14:10,959
+including the a1 and a2 objects. And then a3 includes all a1, a2 and a3's attributes
+
+152
+00:14:10,959 --> 00:14:17,959
+and so on. Okay? So, each prefix Of, of this object, Of this a and object has a
+
+153
+00:14:21,170 --> 00:14:25,009
+correct layout for some for some super class of A n.

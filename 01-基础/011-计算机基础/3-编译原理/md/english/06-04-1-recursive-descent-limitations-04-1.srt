@@ -1,0 +1,407 @@
+0
+00:00:00,560 --> 00:00:04,080
+In this video, I'm going to cover a limitation of the Recursive Descent
+
+1
+00:00:04,080 --> 00:00:09,750
+Algorithm that I presented last time. Here's the grammar from our last
+
+2
+00:00:09,750 --> 00:00:14,790
+presentation, and here's its implementation again, as a set of
+
+3
+00:00:14,790 --> 00:00:18,390
+mutually recursive function that together, implement this simple recursive
+
+4
+00:00:18,390 --> 00:00:21,789
+descent strategy. And now, let's think about what happens.
+
+5
+00:00:21,789 --> 00:00:28,310
+When we go to parse the input int, simplest possible input strength.
+
+6
+00:00:28,310 --> 00:00:33,060
+Well, let's work through it. So remember, we start with the function
+
+7
+00:00:33,060 --> 00:00:38,320
+that implements all the productions for the non-terminal e.
+
+8
+00:00:38,320 --> 00:00:40,700
+And so what we're going to do here, we're going to call e.
+
+9
+00:00:40,700 --> 00:00:43,760
+And that will try calling E1. All right?
+
+10
+00:00:43,760 --> 00:00:46,520
+And what is E1 going to do? E1 is going to call T.
+
+11
+00:00:46,520 --> 00:00:50,050
+Because, of course, the first production is E goes to T.
+
+12
+00:00:50,050 --> 00:00:56,110
+So let's take a look at what T does. T is going to try out the production of
+
+13
+00:00:56,110 --> 00:01:00,500
+T1, all right? And what does T1 do?
+
+14
+00:01:00,500 --> 00:01:05,609
+Well, T1 recognizes an int. Okay, so that's good.
+
+15
+00:01:05,609 --> 00:01:11,119
+And it will match it and return, okay, and then E will return and we will
+
+16
+00:01:11,119 --> 00:01:13,770
+succeed in parsing. And I forgot to mention it, also the
+
+17
+00:01:13,770 --> 00:01:20,130
+process, the input point will be moved across the int, and so when we're done
+
+18
+00:01:20,130 --> 00:01:24,079
+you will return, and we will have succeeded in parsing the string int
+
+19
+00:01:24,079 --> 00:01:29,979
+because E return true the production for E return true, and we consumed all of the
+
+20
+00:01:29,979 --> 00:01:31,539
+input. All right?
+
+21
+00:01:31,539 --> 00:01:38,539
+So now, let's consider a slightly more complicated example, okay?
+
+22
+00:01:39,920 --> 00:01:46,920
+So let's try the input string Int times int.
+
+23
+00:01:47,600 --> 00:01:51,729
+All right? So again, we start with the production E.
+
+24
+00:01:51,729 --> 00:01:55,409
+Okay? And the first thing we'll do, is we'll
+
+25
+00:01:55,409 --> 00:01:58,630
+try the production E1. Same thing we did last time.
+
+26
+00:01:58,630 --> 00:02:05,630
+E1 is going to call the function T. And T is going to try the first
+
+27
+00:02:05,850 --> 00:02:09,259
+production for T. Which, again, is the production int.
+
+28
+00:02:09,258 --> 00:02:11,659
+Okay? And the input pointer, of course, is
+
+29
+00:02:11,659 --> 00:02:16,510
+here, and then it will try to match that against an int.
+
+30
+00:02:16,510 --> 00:02:18,569
+Okay? If I match the first token in the input
+
+31
+00:02:18,569 --> 00:02:22,150
+stream against the, the terminal int. And it will succeed.
+
+32
+00:02:22,150 --> 00:02:25,290
+Okay? So the input pointer will be moved over.
+
+33
+00:02:25,290 --> 00:02:28,230
+So T1 will return true. All right?
+
+34
+00:02:28,230 --> 00:02:33,409
+And as a result. This right hand side here of the function
+
+35
+00:02:33,409 --> 00:02:37,769
+T will also succeed, because T1 returns true, so T will return true.
+
+36
+00:02:37,769 --> 00:02:43,040
+Okay? Therefore, E1 will return true and E, E1
+
+37
+00:02:43,040 --> 00:02:45,159
+returning true will cause E to return true.
+
+38
+00:02:45,159 --> 00:02:48,879
+And in fact that will be the end of the execution of the program will terminate.
+
+39
+00:02:48,879 --> 00:02:53,799
+E will return true and the input player will only have advanced as far as int,
+
+40
+00:02:53,799 --> 00:02:58,010
+and so we will reject the parse. This is actually, ends up getting
+
+41
+00:02:58,010 --> 00:03:02,620
+rejected. And the question of course is what
+
+42
+00:03:02,620 --> 00:03:05,750
+happened? All right.
+
+43
+00:03:05,750 --> 00:03:10,159
+Why didn't we succeed in parsing this input?
+
+44
+00:03:10,159 --> 00:03:12,900
+Which is clearly in the language of this grammar.
+
+45
+00:03:12,900 --> 00:03:16,219
+Well, the story here is actually a little bit interesting.
+
+46
+00:03:16,219 --> 00:03:23,219
+What happened is down here when we discovered that Int matched the first
+
+47
+00:03:23,250 --> 00:03:26,859
+production for T, we said that T was done.
+
+48
+00:03:26,859 --> 00:03:31,489
+Okay, T had succeeded, had matched it's input.
+
+49
+00:03:31,489 --> 00:03:36,760
+And then, when E ultimately returns and the whole parse fails, because we haven't
+
+50
+00:03:36,760 --> 00:03:42,010
+consumed the input, we don't have a way to back track and try another alternative
+
+51
+00:03:42,010 --> 00:03:45,709
+for T. If we were going to succeed we would have
+
+52
+00:03:45,709 --> 00:03:50,819
+to say, oh, well even though, we found a production for T that matched part of the
+
+53
+00:03:50,819 --> 00:03:53,609
+input. Since the overall parts fail, that must
+
+54
+00:03:53,609 --> 00:03:57,900
+not have been the right production to choose for T.
+
+55
+00:03:57,900 --> 00:04:00,129
+Maybe we should try some other productions for T.
+
+56
+00:04:00,129 --> 00:04:04,370
+And in fact if we'd tried the second production for T, T2.
+
+57
+00:04:04,370 --> 00:04:09,370
+We would have matched Int times T, and then we probably would of succeeded.
+
+58
+00:04:09,370 --> 00:04:11,420
+We would have been able to manage int times int.
+
+59
+00:04:11,420 --> 00:04:13,780
+Okay? And so, the problem here is that even
+
+60
+00:04:13,780 --> 00:04:18,579
+though there is backtracking within a production; while we're trying to find a
+
+61
+00:04:18,579 --> 00:04:21,150
+production that works for a given non-terminals.
+
+62
+00:04:21,149 --> 00:04:25,800
+So, while there is backtracking For a non-terminal during the time that we're
+
+63
+00:04:25,800 --> 00:04:29,380
+trying to find a production that works for that non-terminal, but there is no
+
+64
+00:04:29,380 --> 00:04:33,780
+backtracking once we have found a production that succeeds for
+
+65
+00:04:33,780 --> 00:04:36,139
+non-terminals. So once a non-terminal commits and
+
+66
+00:04:36,139 --> 00:04:41,380
+returns and says, I have found a way to parse part of the input using one of my
+
+67
+00:04:41,380 --> 00:04:43,720
+productions. There's no way, in this particular
+
+68
+00:04:43,720 --> 00:04:47,470
+structure, this particular algorithm, to go back and revisit that decision and try
+
+69
+00:04:47,470 --> 00:04:50,990
+a different production. All right?
+
+70
+00:04:50,990 --> 00:04:54,870
+So the problem is that if a production for non-terminal x succeeds, there's no
+
+71
+00:04:54,870 --> 00:04:58,460
+way to backtrack to try a different production for x later.
+
+72
+00:04:58,460 --> 00:05:01,180
+So once x, once the function for x has returned.
+
+73
+00:05:01,180 --> 00:05:03,580
+And we're really committed to that production.
+
+74
+00:05:03,580 --> 00:05:08,870
+Now that means that the particularly Recursive Descent Algorithm that I showed
+
+75
+00:05:08,870 --> 00:05:13,000
+in the last video, is not completely general, and Recursive Descent is a
+
+76
+00:05:13,000 --> 00:05:16,530
+general technique. There are algorithms for Resursive
+
+77
+00:05:16,530 --> 00:05:20,669
+Descent parsing that can parse any grammar.
+
+78
+00:05:20,669 --> 00:05:24,090
+That can implement the full language of any grammar.
+
+79
+00:05:24,090 --> 00:05:28,870
+And they have more sophisticated backtracking, than what I showed in the
+
+80
+00:05:28,870 --> 00:05:33,930
+algorithm that I presented last time. Now the reason for showing this
+
+81
+00:05:33,930 --> 00:05:37,370
+particular algorithm is that it's easy to implement by hand.
+
+82
+00:05:37,370 --> 00:05:40,970
+So this is actually an algorithm, or approach to Recursive Descent that while
+
+83
+00:05:40,970 --> 00:05:45,300
+it has this limitation, as you can see, it's very mechanical and very
+
+84
+00:05:45,300 --> 00:05:52,259
+straightforward to design a parser for a given for a given grammar.
+
+85
+00:05:52,259 --> 00:05:55,240
+And it will work for a rather large class, class of grammar.
+
+86
+00:05:55,240 --> 00:06:00,210
+So in particular, it'll work for any grammar where for any non-terminal at
+
+87
+00:06:00,210 --> 00:06:03,620
+most one production can succeed. So if you know from the way that you've
+
+88
+00:06:03,620 --> 00:06:07,949
+built your grammar, that in any situation, that the grammar can get into
+
+89
+00:06:07,949 --> 00:06:12,750
+or the Recursive Descent Algorithm can get into during parsing, that at most one
+
+90
+00:06:12,750 --> 00:06:17,830
+production can succeed. Then it this, this parsing is gradually
+
+91
+00:06:17,830 --> 00:06:20,360
+will be sufficient, because there will never be, once you find a production that
+
+92
+00:06:20,360 --> 00:06:24,650
+succeeds, there will never be a need to go back and revisit that decision,
+
+93
+00:06:24,650 --> 00:06:28,160
+because it must be the case that none of the other productions could have
+
+94
+00:06:28,160 --> 00:06:31,889
+succeeded. And it turns out that the example grammar
+
+95
+00:06:31,889 --> 00:06:36,800
+that we're working with in the last couple of videos could actually be
+
+96
+00:06:36,800 --> 00:06:39,949
+written to work with this algorithm. All right.
+
+97
+00:06:39,949 --> 00:06:41,650
+And we would have to left factor the grammar.
+
+98
+00:06:41,650 --> 00:06:45,129
+Well, actually there's more than one way to rewrite the grammar to work with this
+
+99
+00:06:45,129 --> 00:06:48,840
+Recursive Decent Algorithm but one way to do it Is to left factor it.
+
+100
+00:06:48,840 --> 00:06:53,080
+I'm not going to say any more about left factoring in this video, because that's
+
+101
+00:06:53,080 --> 00:06:55,809
+going to be a topic of a video that's coming up shortly.

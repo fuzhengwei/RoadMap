@@ -1,0 +1,499 @@
+0
+00:00:04,019 --> 00:00:08,100
+In this video we're gonna continue our discussion on self-type, by talking about
+
+1
+00:00:08,100 --> 00:00:12,119
+the type-level operations that are available on self-type. And this will help
+
+2
+00:00:12,119 --> 00:00:19,119
+to clarify what self-type actually is, and it's role in the type system. Let's begin
+
+3
+00:00:20,630 --> 00:00:23,690
+by thinking about the example that we discussed last time and if you've
+
+4
+00:00:23,690 --> 00:00:27,150
+forgotten what that is, let me just write it down quickly. We had a class called
+
+5
+00:00:27,150 --> 00:00:34,150
+count, and count had one. Field an integer I that was initialized to zero and it had
+
+6
+00:00:36,700 --> 00:00:43,700
+one method called INC that returned something itself type and all it did was
+
+7
+00:00:45,149 --> 00:00:52,149
+to increment the counter field and return the self-objects. And I've probably made
+
+8
+00:00:52,270 --> 00:00:56,800
+some syntax errors here but that's not really important. That's basic code for
+
+9
+00:00:56,800 --> 00:01:01,480
+the CAL class. And the question is what can be the dynamic type of the object
+
+10
+00:01:01,480 --> 00:01:06,930
+that's actually returned by INC. And the answer here is it could be whatever is the
+
+11
+00:01:06,930 --> 00:01:13,369
+type of this self-object. Whatever is the dynamic type of the self-object. And if we
+
+12
+00:01:13,369 --> 00:01:18,729
+think about a big program where there is multiple classes that inherit from count.
+
+13
+00:01:18,729 --> 00:01:25,729
+Then the answer is that INC could return count. Or any subclass of count. So it's
+
+14
+00:01:33,289 --> 00:01:37,969
+going to return something that's at least, at most count, and, but it could return
+
+15
+00:01:37,969 --> 00:01:40,740
+something more specific. The dynamic type, could be something more specific, it
+
+16
+00:01:40,740 --> 00:01:46,560
+could be a sub classic count, or a sub class of a sub class of count. Anything
+
+17
+00:01:46,560 --> 00:01:52,520
+that inherits directly or indirectly from count is a possibility. So what's the
+
+18
+00:01:52,520 --> 00:01:58,749
+general case? Well, let's think about a class c. And in this class C, there's some
+
+19
+00:01:58,749 --> 00:02:05,749
+expression buried somewhere inside of it that has the type self-type. It doesn't
+
+20
+00:02:05,889 --> 00:02:09,720
+really matter how that expression got the type, self-type or what it is. Let's just
+
+21
+00:02:09,720 --> 00:02:16,170
+say that it has that type somehow. Well, what are the possible dynamic types of the
+
+22
+00:02:16,170 --> 00:02:20,370
+expression e. And from our discussion on the previous slide, it seems clear the
+
+23
+00:02:20,370 --> 00:02:25,450
+dynamic type of e, when you run e, you're going to get back something that's a
+
+24
+00:02:25,450 --> 00:02:30,660
+subtype of the class c, the enclosing class in which the self-type appears. And
+
+25
+00:02:30,660 --> 00:02:34,180
+that's interestin g because it shows us that the, the meaning of self-type
+
+26
+00:02:34,180 --> 00:02:39,420
+actually depends on the context. So, what this self-type means, this self-type means
+
+27
+00:02:39,420 --> 00:02:45,010
+a subtype of the class C. If I'd written self-type in a class D, in the de,
+
+28
+00:02:45,010 --> 00:02:49,300
+somewhere in the definition of class D, there it would mean a subtype of the class
+
+29
+00:02:49,300 --> 00:02:55,500
+D. And so to remind ourselves, what class we're talking about, what enclosing class
+
+30
+00:02:55,500 --> 00:02:59,620
+we're talking about, we're gonna subscript occurrences of self-type with a class
+
+31
+00:02:59,620 --> 00:03:04,960
+name. So self-types of c here is going to refer to a syntactic occurrence of the
+
+32
+00:03:04,960 --> 00:03:10,250
+keyword self-type in the body of the class c. And this also suggests a very simple
+
+33
+00:03:10,250 --> 00:03:15,440
+typing rule. And really the first useful fact about self-type, which is that
+
+34
+00:03:15,440 --> 00:03:22,440
+self-types of c is a sub type of c. And this is really a key idea here that a
+
+35
+00:03:22,850 --> 00:03:29,280
+self-typing class C is some sub-type of the class C, because it also helps
+
+36
+00:03:29,280 --> 00:03:32,940
+illustrate what self-type really is. The best way to think of an occurrence of
+
+37
+00:03:32,940 --> 00:03:38,490
+self-type is that it's a type variable that ranges over all the sub-classes of
+
+38
+00:03:38,490 --> 00:03:41,500
+the class in which it appears. So self-types of C you should think of as a
+
+39
+00:03:41,500 --> 00:03:45,800
+type variable, it's something that doesn't have a fixed type, but is guaranteed to be
+
+40
+00:03:45,800 --> 00:03:51,210
+some type founded by C, so it's gonna be only one of the class. That inherits
+
+41
+00:03:51,210 --> 00:03:58,210
+directly or indirectly from the class c. Now that rule that self-types of c is a
+
+42
+00:03:59,650 --> 00:04:03,750
+sub type of the class c has an important consequence. It means that when we're
+
+43
+00:04:03,750 --> 00:04:09,319
+doing type checking with self-type, it is always safe, always safe to replace
+
+44
+00:04:09,319 --> 00:04:13,980
+self-types of c by c. So I say, it's okay to promote any self-types of c, which
+
+45
+00:04:13,980 --> 00:04:19,470
+could be c or a sub type of c, to just say, okay, we're just going to say it's c.
+
+46
+00:04:19,470 --> 00:04:24,770
+And that suggests one way to handle self-type which is just to replace all the
+
+47
+00:04:24,770 --> 00:04:29,789
+occurrences of self-type sub C by C. Now unfortunately that turns out not to be
+
+48
+00:04:29,789 --> 00:04:33,770
+very useful. Its sound, it's correct to do that, but that's really just like not
+
+49
+00:04:33,770 --> 00:04:38,870
+having self-type at all. That's as if we went back to the example we did in the
+
+50
+00:04:38,870 --> 00:04:43,360
+last video where we started out without self-type and we found out we couldn't use
+
+51
+00:04:43,360 --> 00:04:49,360
+inheritance in the way we expected. So to do better than just throwing all the
+
+52
+00:04:49,360 --> 00:04:54,499
+self-types away, we need to incorporate self-type into the type system. And the
+
+53
+00:04:54,499 --> 00:04:58,490
+way we're going to do that is by looking at the operations that work on types in
+
+54
+00:04:58,490 --> 00:05:01,680
+the type system, and there are two of them. There's the sub-type relationship
+
+55
+00:05:01,680 --> 00:05:05,349
+that we've talked about before, so when one type is a sub-type of another, and
+
+56
+00:05:05,349 --> 00:05:09,819
+there's the least upper bound operation that tells us what the smallest type is
+
+57
+00:05:09,819 --> 00:05:14,909
+that's bigger than both of two argument types. And, all we have to do and what
+
+58
+00:05:14,909 --> 00:05:20,050
+we're going to do now is extend these operations to handle the type self-type.
+
+59
+00:05:20,050 --> 00:05:24,300
+So let's begin with a sub-type relationship and in our definition here
+
+60
+00:05:24,300 --> 00:05:28,229
+we're going to use sub-types T and T', and these are just normal class names. They
+
+61
+00:05:28,229 --> 00:05:35,229
+are class names but not self-types. So one possibility is that we have self on both
+
+62
+00:05:35,309 --> 00:05:42,309
+sides of. Convince yourself of this. Think of self-type again, as a variable. And we
+
+63
+00:05:49,990 --> 00:05:55,449
+can plug in, for that variable, any sub-type of C. But, just like variables in
+
+64
+00:05:55,449 --> 00:06:00,169
+algebra, if we plug in one particular class for an occurrence of this variable,
+
+65
+00:06:00,169 --> 00:06:02,639
+we have to pick the same one for every occurrence of the variable. So in
+
+66
+00:06:02,639 --> 00:06:08,990
+particular, now if we pick some sub-class A of C, then we wind up with A. Is the sub
+
+67
+00:06:08,990 --> 00:06:12,879
+type of A. If we plug in A for both sides we can see if their relationship holds
+
+68
+00:06:12,879 --> 00:06:17,699
+similarly C is the sub type of C and for any sub type we might pick, if we bind the
+
+69
+00:06:17,699 --> 00:06:22,589
+variable to that sub type we can see that this relationship will be true. Now
+
+70
+00:06:22,589 --> 00:06:26,949
+another thing you might think is what if the self-type sub-C is compared with
+
+71
+00:06:26,949 --> 00:06:32,349
+self-type from another class? Say self-type sub-D. And it turns out in the
+
+72
+00:06:32,349 --> 00:06:36,509
+cool type rules this will just never come up. The cool type rules are written in
+
+73
+00:06:36,509 --> 00:06:41,279
+such a way that we never need to compare self-types from different classes. And I
+
+74
+00:06:41,279 --> 00:06:44,360
+haven't shown you that, that's the case yet. But when we actually go through the
+
+75
+00:06:44,360 --> 00:06:51,360
+type rules for self-type you'll see that is true. Now another possibility is that
+
+76
+00:06:52,479 --> 00:06:56,180
+we have self-type on one side and the n a regular type on the other side. So when is
+
+77
+00:06:56,180 --> 00:07:02,949
+self-types of c a type of t? Well, we're going to say if that's true if C is the
+
+78
+00:07:02,949 --> 00:07:07,889
+subtype of T. And here we're using our rule that it's always safe to replace
+
+79
+00:07:07,889 --> 00:07:14,889
+self-type by the class that, that index is in. So in this case C is a super-type of
+
+80
+00:07:15,369 --> 00:07:20,419
+anything that self-type C could be. Clearly if C is a sub-type of T if T is at
+
+81
+00:07:20,419 --> 00:07:24,749
+least C or possibly something higher in the class higher key, then T would be a
+
+82
+00:07:24,749 --> 00:07:31,749
+super-type of anything that self-types of C could stand for. Another case is when we
+
+83
+00:07:31,919 --> 00:07:36,089
+have a regular class name on the left hand side of the sub typing relationship and
+
+84
+00:07:36,089 --> 00:07:41,119
+self-type on the right hand side. And in this case it turns out we have to say that
+
+85
+00:07:41,119 --> 00:07:47,289
+this relationship is false. That so T is never, a regular class name is never. A
+
+86
+00:07:47,289 --> 00:07:51,610
+sub type of self-type sub C. And to see this just think about the possibilities.
+
+87
+00:07:51,610 --> 00:07:56,689
+So where can C and T be in the type hierarchy? So, if T and C are
+
+88
+00:07:56,689 --> 00:08:02,169
+unrelated. You know, if they are inherent from object and they have nothing to do
+
+89
+00:08:02,169 --> 00:08:08,349
+with each other. Well, than clearly T can't be a sub type of self-type sub C.
+
+90
+00:08:08,349 --> 00:08:12,719
+They are just two unregulated classes. So, the only way that this could
+
+91
+00:08:12,719 --> 00:08:18,039
+possibility work out is if they are related somehow. Now if. If T is a sub
+
+92
+00:08:18,039 --> 00:08:23,119
+type of C well then you might think that could work out. But it turns out that we
+
+93
+00:08:23,119 --> 00:08:28,439
+can't allow it even in that case. And here's the reason why, think about a
+
+94
+00:08:28,439 --> 00:08:35,439
+hierarchy where T has some subclass, let's just say that it has a subclass A. And now
+
+95
+00:08:36,539 --> 00:08:43,330
+because self-types of C ranges over all the possible subtypes of C, we could plug
+
+96
+00:08:43,330 --> 00:08:49,840
+in A here and T is not a subtype of A, they're in the wrong relationship. And so
+
+97
+00:08:49,840 --> 00:08:55,090
+it doesn't work for all the possible values of subtypes of C we can't say that
+
+98
+00:08:55,090 --> 00:09:01,030
+this is true we have to say that it is false. Now there is one very special case.
+
+99
+00:09:01,030 --> 00:09:07,590
+Where one could argue that we should allow this to be true. And that is in the case
+
+100
+00:09:07,590 --> 00:09:12,870
+where T is actually a leaf of the class hierarchy. And let me actually draw this a
+
+101
+00:09:12,870 --> 00:09:18,430
+little bit differently just to emphasize this. Let's say t hat C. Is a class up
+
+102
+00:09:18,430 --> 00:09:24,030
+here and then T you know, is through some chain of inheritance relationships is a
+
+103
+00:09:24,030 --> 00:09:27,570
+subtype of C. So it's not immediate but there might be other classes in between.
+
+104
+00:09:27,570 --> 00:09:31,330
+Just emphasize, this isn't, doesn't, this relationship doesn't have to be immediate
+
+105
+00:09:31,330 --> 00:09:36,770
+inheritance. It could be transitive inheritance. And now if T is a leaf. Of
+
+106
+00:09:36,770 --> 00:09:43,770
+the hierarchy. If n is the only leaf of c, if c has no other sub classes then in
+
+107
+00:09:44,910 --> 00:09:51,700
+fact T is a subtype of SELF_TYPE sub C. Because it is the unique minimal type that
+
+108
+00:09:51,700 --> 00:09:58,320
+is in the subtype hierarchy of C. But the problem is that this is extremely fragile,
+
+109
+00:09:58,320 --> 00:10:02,740
+and doesn't work, if you modify the program. In particular, a programmer might
+
+110
+00:10:02,740 --> 00:10:09,740
+come along, and add some class A over here that's unrelated to T, but is also a
+
+111
+00:10:09,830 --> 00:10:15,280
+subclass of C. And now this would no longer work. Because if I plug in A for
+
+112
+00:10:15,280 --> 00:10:20,430
+SELF_TYPE sub C, then I see that T is not a subtype of A. Right, so, we can allow
+
+113
+00:10:20,430 --> 00:10:25,300
+it, at a very special K. That C had only a chain of inheritance. Not a general tree
+
+114
+00:10:25,300 --> 00:10:30,630
+under it. And, that T was the least of that chain. But that is so fragile. To
+
+115
+00:10:30,630 --> 00:10:34,660
+future program extensions. And we, you know, if you, if you broke it by
+
+116
+00:10:34,660 --> 00:10:38,160
+adding another class over here, all of sudden you would get type errors and
+
+117
+00:10:38,160 --> 00:10:42,290
+pieces of codes that had previously been typed check to work and hadn't changed at
+
+118
+00:10:42,290 --> 00:10:48,340
+all. It just wouldn't be a very nice language design. So, summarize, T, is
+
+119
+00:10:48,340 --> 00:10:55,340
+never a sub type of self-types of C. And finally if we're comparing two normal
+
+120
+00:10:56,190 --> 00:11:00,440
+types with not self-type then we just use the rules that we gave before. So the
+
+121
+00:11:00,440 --> 00:11:04,490
+self-typing rules we had for normal class names haven't changed at all. And that
+
+122
+00:11:04,490 --> 00:11:08,370
+covers all four cases, we can have self-type on both sides, we can have
+
+123
+00:11:08,370 --> 00:11:12,250
+self-type just on the left side or just on the right side, and finally we can have a
+
+124
+00:11:12,250 --> 00:11:14,570
+subtyping relationship with no self-type at all.

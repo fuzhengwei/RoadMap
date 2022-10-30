@@ -1,0 +1,739 @@
+0
+00:00:03,970 --> 00:00:07,880
+In this video, we are going to move beyond our discussion of Run-time Organization
+
+1
+00:00:07,880 --> 00:00:13,020
+and begin talking about code generation And in this first you know, it was
+
+2
+00:00:13,020 --> 00:00:16,320
+probably quite a long series of videos on code generation, we are gonna talk about
+
+3
+00:00:16,320 --> 00:00:23,320
+the simplest model for code generation which is called a stack machine. So, in a
+
+4
+00:00:25,869 --> 00:00:30,199
+stack machine, you might guess that the primary storage is some kind of a stack
+
+5
+00:00:30,199 --> 00:00:34,000
+and you would be right. In fact, the only storage that the stack machine has is the
+
+6
+00:00:34,000 --> 00:00:40,720
+stack And the way the stack machine works is that it executed an instruction, and
+
+7
+00:00:40,720 --> 00:00:46,110
+all instruction have the form. There's some function of some arguments and they
+
+8
+00:00:46,110 --> 00:00:52,690
+produce one result. And what that does is it'll pop in upper hands for the stack so
+
+9
+00:00:52,690 --> 00:00:58,260
+the arguments a1 through an are stored at the top of the stack. It will then compute
+
+10
+00:00:58,260 --> 00:01:04,970
+the function f using those operands and it will push the result r back on top of the
+
+11
+00:01:04,970 --> 00:01:10,150
+stack. Okay, So, let's take a look at a simple example. Let's see how we would
+
+12
+00:01:10,150 --> 00:01:17,150
+compute seven plus five using a stack machine. So, we would have our stack And
+
+13
+00:01:18,860 --> 00:01:23,350
+initially the stack might have, already have some stuff on it but we don't care
+
+14
+00:01:23,350 --> 00:01:29,020
+what that stuff is and so it will execute seven plus five. What we would do, well
+
+15
+00:01:29,020 --> 00:01:32,390
+first we will have to get the seven and the five out of the stack so as we get
+
+16
+00:01:32,390 --> 00:01:36,080
+pushed on stack and we'll see more about how that happens in a minute. And let's
+
+17
+00:01:36,080 --> 00:01:40,190
+say that seven and five were both on the stack. And so now we wanted to compute the
+
+18
+00:01:40,190 --> 00:01:45,370
+addition on seven and five so, addition takes two arguments so we would pop the
+
+19
+00:01:45,370 --> 00:01:51,860
+two arguments off the stack. And we wined up with the five and the seven Pop-up the
+
+20
+00:01:51,860 --> 00:01:57,650
+stack. We will perform the operation plus and then the result will get push back
+
+21
+00:01:57,650 --> 00:02:03,740
+under the stack. So this would be good to twelve and then twelve will get push back
+
+22
+00:02:03,740 --> 00:02:10,740
+on to our stack. Okay. And I noticed that I did indicate that there might be some
+
+23
+00:02:11,569 --> 00:02:16,209
+other stuff on this stack already. Let me give that stuff a name. And let me talk
+
+24
+00:02:16,209 --> 00:02:20,459
+about one very important property of the stack machine. So, those we have evaluated
+
+25
+00:02:20,459 --> 00:02:26,290
+seve n+5, we round up in the situation where the results of that operation was on
+
+26
+00:02:26,290 --> 00:02:29,990
+top of the stop of the stack. Okay, and the initial stack contents was unchanged.
+
+27
+00:02:29,990 --> 00:02:34,770
+This stack, the stack that was below the arguments that we are interested in didn't
+
+28
+00:02:34,770 --> 00:02:41,510
+get modified. Okay. So, we have survived through all the operations unchanged. And
+
+29
+00:02:41,510 --> 00:02:46,700
+this is an important property of the stack machine. That we will exploit and the
+
+30
+00:02:46,700 --> 00:02:52,930
+general to say what the general property is when you evaluate an expression the
+
+31
+00:02:52,930 --> 00:02:56,230
+result of the expression will be on top of the stack and the contents of the stack
+
+32
+00:02:56,230 --> 00:03:03,230
+prior to the beginning evaluation of the expression will be preserved. So, now
+
+33
+00:03:04,360 --> 00:03:09,520
+let's take by how we could program a stack machine. So, let's have a language with
+
+34
+00:03:09,520 --> 00:03:15,110
+just two instructions in it. We can push an engine run to the stack and then we
+
+35
+00:03:15,110 --> 00:03:19,030
+have the operation add which will add the two integers on the top of the stack. And
+
+36
+00:03:19,030 --> 00:03:23,660
+now, let's take a look at this program which pushes seven and then pushes five
+
+37
+00:03:23,660 --> 00:03:28,480
+and then does an add. So, let's think about how this program would work. Okay,
+
+38
+00:03:28,480 --> 00:03:34,519
+so we have our stack contents and now, and the first instruction is to push seven. So
+
+39
+00:03:34,519 --> 00:03:40,590
+wined up with the seven on the stack, added to the stack and now we push five.
+
+40
+00:03:40,590 --> 00:03:47,590
+Okay. And so the next step, we'll have five and seven on top of the stack then
+
+41
+00:03:47,849 --> 00:03:52,870
+we'll perform the add and then we'll pop these two elements off the stack and add
+
+42
+00:03:52,870 --> 00:03:59,870
+them and push the result back on. And we'll wind up with twelve on the stack and
+
+43
+00:04:01,099 --> 00:04:08,099
+again the original stack contents are preserved. Now, what interesting property
+
+44
+00:04:08,860 --> 00:04:13,840
+of stack machine code is that the location of the upper hands and result is not
+
+45
+00:04:13,840 --> 00:04:17,879
+exquisitely stated in the instruction. And that's because these instructions always
+
+46
+00:04:17,879 --> 00:04:22,970
+refer to the top of the stack. And this is in contrast were register machine or
+
+47
+00:04:22,970 --> 00:04:29,280
+register instructions that explicitly name where they take their upper hands from and
+
+48
+00:04:29,280 --> 00:04:34,110
+where they put the results. So for example you might be familiar from seeing some
+
+49
+00:04:34,110 --> 00:04:38,650
+machine code or assembly code in the past or and add instruction by typically take
+
+50
+00:04:38,650 --> 00:04:43,080
+three registers, two for the arguments, two for the registered
+
+51
+00:04:43,080 --> 00:04:47,840
+arguments are gonna be added together and one for the destination for the result
+
+52
+00:04:47,840 --> 00:04:54,440
+where in the stack machine we just have. A single word add and no explicit naming of
+
+53
+00:04:54,440 --> 00:04:58,240
+the arguments because it's fixed, where the arguments will come from. The
+
+54
+00:04:58,240 --> 00:05:01,750
+arguments will always be popped from the stack and the result will always be placed
+
+55
+00:05:01,750 --> 00:05:06,280
+back on top of the stack. And. The interesting property here is that it leads
+
+56
+00:05:06,280 --> 00:05:11,220
+to more compact programs because we have to say less in the instructions the
+
+57
+00:05:11,220 --> 00:05:15,520
+programs themselves are actually quite a bit smaller than register machine
+
+58
+00:05:15,520 --> 00:05:21,210
+programs. And this is one of the reason, reasons that Java bytecode uses a stack
+
+59
+00:05:21,210 --> 00:05:26,460
+evaluation model because it leads to more compact programs and especially in the
+
+60
+00:05:26,460 --> 00:05:32,090
+early days of Java when it was very expensive to ship these programs around
+
+61
+00:05:32,090 --> 00:05:37,780
+the Internet to download them, having very small compact code was a good property.
+
+62
+00:05:37,780 --> 00:05:43,430
+And by we might wonder why would we prefer register machine and the answer is that
+
+63
+00:05:43,430 --> 00:05:48,000
+register machine code is generally faster because we can place the data exactly
+
+64
+00:05:48,000 --> 00:05:52,919
+where we wanted to be. We will generally have fewer, you know, immediate operations
+
+65
+00:05:52,919 --> 00:05:56,660
+and less manipulation of the stack, pushing and popping stuff to get to the
+
+66
+00:05:56,660 --> 00:06:01,289
+data that we want. And then it turns out that there isn't inter-media point between
+
+67
+00:06:01,289 --> 00:06:04,740
+a pure stack machine and a pure register machine, that's interesting. This is
+
+68
+00:06:04,740 --> 00:06:09,389
+called an N register stack machine. And conceptually, the idea of the N register
+
+69
+00:06:09,389 --> 00:06:15,759
+stack machine is to keep the. Top end locations of the stack in registers. And
+
+70
+00:06:15,759 --> 00:06:20,000
+the particular variant of the un-resourced stack machine that we particularly
+
+71
+00:06:20,000 --> 00:06:23,460
+interested in is the one register stack machine because the terms that you get
+
+72
+00:06:23,460 --> 00:06:29,509
+widely benefit by even having a single register that's dedicated to the top of
+
+73
+00:06:29,509 --> 00:06:34,500
+the stack. This register is called the accumulator so the dedicated registry here
+
+74
+00:06:34,500 --> 00:06:38,600
+is called the accumulator. It's called that because intuitively it accumulates
+
+75
+00:06:38,600 --> 00:06:45,600
+the results of operations and then all the other data lives on the stack. So, what is
+
+76
+00:06:46,610 --> 00:06:50,830
+the advantage of a one register stack machine? Well, let's think about the add
+
+77
+00:06:50,830 --> 00:06:54,750
+instruction and how it works in a pure stack machine? So, in the pure stack
+
+78
+00:06:54,750 --> 00:07:01,100
+machine, what is the add instruction going to do it's going to pop two arguments from
+
+79
+00:07:01,100 --> 00:07:07,780
+the stacks, a five and seven. And it's going to add them and then it's gonna put
+
+80
+00:07:07,780 --> 00:07:14,380
+the result back onto the stack. And let's just name the rest of the stack contents
+
+81
+00:07:14,380 --> 00:07:19,430
+there. And that requires three memory operations. After load, two arguments and
+
+82
+00:07:19,430 --> 00:07:25,740
+then store one result. But in the one razor stack machine, the add operation
+
+83
+00:07:25,740 --> 00:07:31,830
+actually does a lot of its work out of the one register. So, the one of the arguments
+
+84
+00:07:31,830 --> 00:07:35,889
+is already stored in the register because that's the conceptually the top of the, of
+
+85
+00:07:35,889 --> 00:07:39,759
+the stack. And, the result will be pushed back on the top of the stack which again
+
+86
+00:07:39,759 --> 00:07:44,710
+is just the accumulated register. So here, one of the arguments in the right are both
+
+87
+00:07:44,710 --> 00:07:48,620
+taking from registers and there's only one memory reference to get the second
+
+88
+00:07:48,620 --> 00:07:55,620
+argument from the portion of the stack that's stored in the memory. So in
+
+89
+00:07:56,069 --> 00:08:00,610
+general, let's think about how we would evaluate and arbitrary expression using a
+
+90
+00:08:00,610 --> 00:08:04,349
+stack machine. So now this isn't I should say, you know, just stack machine called
+
+91
+00:08:04,349 --> 00:08:08,360
+like we're looking at it before. This is not just a sequence of bytecode level
+
+92
+00:08:08,360 --> 00:08:12,490
+operations, this is actually a full expression as you might find in Kuhl so
+
+93
+00:08:12,490 --> 00:08:18,560
+there are other complex expressions nested inside of some operation. All right. And
+
+94
+00:08:18,560 --> 00:08:21,979
+so, forget the operation that takes N arguments and those arguments are
+
+95
+00:08:21,979 --> 00:08:26,110
+expression that themselves needs to be evaluated so here's a general strategy for
+
+96
+00:08:26,110 --> 00:08:30,970
+doing that with the stack machines. So, for each of the sub-expression, each of
+
+97
+00:08:30,970 --> 00:08:36,179
+the arguments in order we're going to evaluate it recursively using the same
+
+98
+00:08:36,179 --> 00:08:43,179
+stack machine strategy and that will end up putting the result when we evaluate EI,
+
+99
+00:08:43,188 --> 00:08:47,829
+recursively the results will be in the accumulator. And so the results is in the
+
+100
+00:08:47,829 --> 00:08:53,519
+accumulator, alright. And then we're going to push that results onto the memory
+
+101
+00:08:53,519 --> 00:08:55,929
+stack. So we'r e going to take that results and we're gonna free up the
+
+102
+00:08:55,929 --> 00:09:02,699
+accumulator and save it on the stack, the portion of stack that's in memory, okay.
+
+103
+00:09:02,699 --> 00:09:07,819
+So we do this evaluating the sub-expressions for the first and -one
+
+104
+00:09:07,819 --> 00:09:11,779
+arguments. So everything except the last one, okay. We're gonna use the same
+
+105
+00:09:11,779 --> 00:09:18,779
+strategy, for the last one, for en. We just evaluate. We don't push the result on
+
+106
+00:09:19,869 --> 00:09:25,389
+the stack. That just means that the result is left in the accumulator okay so now we
+
+107
+00:09:25,389 --> 00:09:29,499
+have one of the arguments of the accumulator. The last one we evaluated and
+
+108
+00:09:29,499 --> 00:09:33,850
+the other in line as one are o the top of the portion of the stack that's in memory.
+
+109
+00:09:33,850 --> 00:09:39,050
+So that what we all have to do is we pop in -one values from the stack and combine
+
+110
+00:09:39,050 --> 00:09:43,939
+any compute up using the -one values plus the value of the accumulator and we store
+
+111
+00:09:43,939 --> 00:09:48,489
+the result back into the accumulator, okay. So that's the general strategy for
+
+112
+00:09:48,489 --> 00:09:55,489
+evaluating an expression using a stack machine. So let's do this now for a simple
+
+113
+00:09:55,639 --> 00:09:59,850
+example. Let's take our same example that we've been using and let's evaluate the
+
+114
+00:09:59,850 --> 00:10:04,850
+expression seven plus five. So, how we're gonna do that? Well, we're evaluating a
+
+115
+00:10:04,850 --> 00:10:09,079
+plus expression and that takes two arguments, two expression as the way to
+
+116
+00:10:09,079 --> 00:10:12,639
+evaluate each of those. So first we evaluate the expression seven. Let me
+
+117
+00:10:12,639 --> 00:10:19,639
+actually, let me draw our stack here. Okay, so we have our initial content to
+
+118
+00:10:19,660 --> 00:10:23,879
+the stack, we have our initial accumulator. And so now we're evaluating
+
+119
+00:10:23,879 --> 00:10:29,079
+seven, okay? And of course a constant loose evaluate to itself and the result is
+
+120
+00:10:29,079 --> 00:10:33,649
+toward the accumulator, okay? So that's the first step after evaluating seven. And
+
+121
+00:10:33,649 --> 00:10:37,350
+now because that's the first argument to plus, it has to get pushed on to the
+
+122
+00:10:37,350 --> 00:10:43,759
+stack, the portion of the stack in main memory. So. Now, we have a situation that
+
+123
+00:10:43,759 --> 00:10:49,480
+looks like this. All right, in the course to seven is still in the accumulator but
+
+124
+00:10:49,480 --> 00:10:53,639
+we're now about to override it, we're not gonna use that value again. Because the
+
+125
+00:10:53,639 --> 00:10:57,739
+next thing we're gonna do is evaluate the second argument to plus and that happens
+
+126
+00:10:57,739 --> 00:11:01,999
+to be in this case also a constant expression five and so that will get
+
+127
+00:11:01,999 --> 00:11:05,720
+evaluated and then stored in the accumulator. Okay, so I will override the
+
+128
+00:11:05,720 --> 00:11:12,720
+seven. This will be five there, all right? And now, we have evaluated both arguments.
+
+129
+00:11:13,139 --> 00:11:17,499
+Okay, remember in the case of just having two arguments. The first argument gets
+
+130
+00:11:17,499 --> 00:11:21,059
+evaluated and saved on the stack so it doesn't, so we don't lose the value when
+
+131
+00:11:21,059 --> 00:11:24,509
+we evaluate the second argument. And the second argument we uses is the last one we
+
+132
+00:11:24,509 --> 00:11:31,509
+can just leave in the accumulator And that way actually evaluates the plus. Okay, so
+
+133
+00:11:31,879 --> 00:11:38,879
+we do the accumulator gets the accumulator plus the top of the memory stack. So in
+
+134
+00:11:41,809 --> 00:11:48,759
+this case, that results in adding seven and five. And we line up and of course we
+
+135
+00:11:48,759 --> 00:11:54,100
+pop the argument from the memory stack, right. So we have just the original
+
+136
+00:11:54,100 --> 00:12:01,100
+contents there and now the value twelve in the accumulator. So, as I think you would
+
+137
+00:12:03,549 --> 00:12:10,429
+see from the example, the invariant that we're gonna maintain with the stack
+
+138
+00:12:10,429 --> 00:12:15,329
+machine is that after we evaluate an expression e, the accumulator holds the
+
+139
+00:12:15,329 --> 00:12:19,920
+value of e so the result of evaluating e winds up in the accumulator and the stack is
+
+140
+00:12:19,920 --> 00:12:26,040
+unchanged. And so the stack, the memory portion of the stack is whatever it was
+
+141
+00:12:26,040 --> 00:12:31,899
+before we start of evaluating e. And this is a very, very important property,
+
+142
+00:12:31,899 --> 00:12:38,899
+expression evaluation preserves the stack. So, now let's look at a more elaborated
+
+143
+00:12:41,549 --> 00:12:48,549
+example, just slightly more elaborate, three+7+5. And the interesting thing about
+
+144
+00:12:48,689 --> 00:12:55,119
+this example. Is that now one of the arguments to the other plus is itself a
+
+145
+00:12:55,119 --> 00:12:58,269
+compound expression. So it would have to be, that would have to be evaluated
+
+146
+00:12:58,269 --> 00:13:03,019
+recursively as part of evaluating the entire expression so let's see how this
+
+147
+00:13:03,019 --> 00:13:07,290
+works. So the first thing that's going to happen or evaluating the outer plus, we're
+
+148
+00:13:07,290 --> 00:13:11,459
+gonna evaluate the first argument to that plus that's just the constant three so
+
+149
+00:13:11,459 --> 00:13:17,149
+we're gonna load it into the accumulator. And that's the result of evaluating three.
+
+150
+00:13:17,149 --> 00:13:21,089
+And now because it's the first argument to the plus, we have to save it before we can
+
+151
+00:13:21,089 --> 00:13:27,199
+get around to evaluating the addition itself. So that result is pushed on to the
+
+152
+00:13:27,199 --> 00:13:34,199
+stack. And now we're g onna evaluate the second argument to the outer plus and that
+
+153
+00:13:35,220 --> 00:13:40,230
+itself has two arguments. And the first argument to that, to the inner plus is
+
+154
+00:13:40,230 --> 00:13:43,809
+seven. And so that winds up getting stored in the accumulator, that's the result of
+
+155
+00:13:43,809 --> 00:13:48,230
+evaluating seven. And then because the inner plus has two arguments, we have to
+
+156
+00:13:48,230 --> 00:13:52,220
+evaluate the second, evaluate the second argument to the inner plus, the seven has
+
+157
+00:13:52,220 --> 00:13:56,519
+to get saved to the stack. So now, the stack has seven three and whenever it had
+
+158
+00:13:56,519 --> 00:14:03,519
+before we start it. Next, we're gonna evaluate the second argument to the inner
+
+159
+00:14:03,809 --> 00:14:09,669
+plus And so evaluating a constant five will result in five being loaded in the
+
+160
+00:14:09,669 --> 00:14:14,519
+accumulator and now, we have evaluated all the arguments to the inner plus, okay. And
+
+161
+00:14:14,519 --> 00:14:20,540
+so we know from our stack discipline that the last arguments is in the accumulator
+
+162
+00:14:20,540 --> 00:14:24,029
+and the first argument will be on top of the stack. So the next thing that will
+
+163
+00:14:24,029 --> 00:14:28,059
+happen is that we'll pop that second argument from the stack added to the
+
+164
+00:14:28,059 --> 00:14:32,389
+accumulator and store back into the accumulator and so now we have the results
+
+165
+00:14:32,389 --> 00:14:39,389
+of the inner plus in the accumulator. We also have the pop, the seven from the
+
+166
+00:14:39,459 --> 00:14:46,459
+stack, okay and finally now we've evaluated the second argument to the outer
+
+167
+00:14:47,660 --> 00:14:52,679
+plus. So now we can perform the outer edition. And what is that involve that
+
+168
+00:14:52,679 --> 00:14:56,329
+takes the stack contents then adds it to the value that is currently on the top of
+
+169
+00:14:56,329 --> 00:15:01,829
+the stack which is the value three which is what we saved a long time ago now to,
+
+170
+00:15:01,829 --> 00:15:06,980
+to remember it from what it was to do the other addition and we wind up. After we
+
+171
+00:15:06,980 --> 00:15:12,249
+pop the stack with fifteen in the accumulator, that's the results of the
+
+172
+00:15:12,249 --> 00:15:17,589
+entire expression, and notice it's the same stack that we started with. Okay? So
+
+173
+00:15:17,589 --> 00:15:22,589
+evaluating this entire expression, resulted in the, result in any accumulator
+
+174
+00:15:22,589 --> 00:15:27,600
+and the stack being unchanged And if you looked at that the sub-expression, you can
+
+175
+00:15:27,600 --> 00:15:32,399
+see that the same things happened. So let's take a look at the evaluation of
+
+176
+00:15:32,399 --> 00:15:39,399
+seven plus five. So where that take place that started here. Okay. Started at this
+
+177
+00:15:39,669 --> 00:15:46,669
+instruction. And, it lasted down to here and you can see that the evaluation of
+
+178
+00:15:46,790 --> 00:15:51,889
+seven + five which encompasses these five expressions resulted in twelve being put
+
+179
+00:15:51,889 --> 00:15:56,179
+on top of the stack, that's the result of seven + five and it didn't affect the
+
+180
+00:15:56,179 --> 00:16:01,339
+contents I'm sorry. It resulted in twelve being placed in the accumulator and it
+
+181
+00:16:01,339 --> 00:16:05,509
+will left the stack unchanged to where it was when the evaluation of seven plus five
+
+182
+00:16:05,509 --> 00:16:09,549
+began. So here is where it began and the value we had saved three was on the top of
+
+183
+00:16:09,549 --> 00:16:13,459
+the stack and when we're done evaluating seven plus five indeed again the value
+
+184
+00:16:13,459 --> 00:16:18,709
+three and. All the other stuff that was there before are still on the stack.

@@ -1,0 +1,135 @@
+0
+00:00:01,079 --> 00:00:03,850
+So next we're going to talk about code generation for if then else
+
+1
+00:00:03,850 --> 00:00:08,950
+expressions And to do that we're going to need some control flow instructions. So
+
+2
+00:00:08,950 --> 00:00:13,780
+we'll have, we'll need two in fact. So here's the branch equal instruction, and
+
+3
+00:00:13,780 --> 00:00:18,270
+this jumps to a label if the contents of two registers are equal And then we'll
+
+4
+00:00:18,270 --> 00:00:22,150
+also need an unconditional jump. So this just does an unconditional branch, not
+
+5
+00:00:22,150 --> 00:00:29,150
+branch, an unconditional jump to a particular assembly instruction. So let's
+
+6
+00:00:30,640 --> 00:00:35,159
+look at the code generation for the expression if E1 is equal to E2 then
+
+7
+00:00:35,159 --> 00:00:41,830
+evaluate three otherwise evaluate four. So first we have to evaluate the predicate
+
+8
+00:00:41,830 --> 00:00:47,100
+and in order to evaluate the predicate, we first have to evaluate E1. And by now this
+
+9
+00:00:47,100 --> 00:00:51,440
+pattern for binary operation should be familiar. So we evaluate the first
+
+10
+00:00:51,440 --> 00:00:55,890
+sub-expression we save the result on a stack, so we push it on to the stack. It
+
+11
+00:00:55,890 --> 00:00:59,650
+takes two operations, one to save the result of the cumulate on the stack and
+
+12
+00:00:59,650 --> 00:01:06,650
+the other cumulate stack later. Then we evaluate E2. Now we have evaluate d both
+
+13
+00:01:06,970 --> 00:01:12,280
+of the arguments to the predicate. The result of E2 is in the accumulator and the
+
+14
+00:01:12,280 --> 00:01:16,930
+result of E1 is at the top of the stack because again, the evaluation of E2 will
+
+15
+00:01:16,930 --> 00:01:22,680
+preserve the stack. So now we load the value of E One back into a temporary
+
+16
+00:01:22,680 --> 00:01:27,930
+register. And we pop the stack And then we can actually do the comparison. So now we
+
+17
+00:01:27,930 --> 00:01:32,390
+do a branch equal. So if the value of E One is equal. Sorry this is actually the
+
+18
+00:01:32,390 --> 00:01:35,780
+value of E Two and E Zero and if that's equal to the value of E One. Then we
+
+19
+00:01:35,780 --> 00:01:42,270
+branch to the true branch. Otherwise we're going to fall through if there not equal.
+
+20
+00:01:42,270 --> 00:01:47,520
+Okay And so we'll call that the false branch And what are we going to do if we
+
+21
+00:01:47,520 --> 00:01:51,409
+fall through, if this test fails, well then we want to evaluate E4. And that will
+
+22
+00:01:51,409 --> 00:01:55,880
+leave the value of E4 in the accumulator and that will be the value of the entire
+
+23
+00:01:55,880 --> 00:02:00,460
+if then else in the case where the predicate is false. So when we're done,
+
+24
+00:02:00,460 --> 00:02:05,229
+we're going to branch now to some code that we'll just clean up and end the if
+
+25
+00:02:05,229 --> 00:02:10,200
+statement. We'll see what that does in a moment. Otherwise, we still need to
+
+26
+00:02:10,199 --> 00:02:13,450
+implement the true branch, so we'll stick the label for the true branch here And
+
+27
+00:02:13,450 --> 00:02:19,590
+what do we do on the true branch? We just evaluate E3. Okay And then the and if,
+
+28
+00:02:19,590 --> 00:02:25,410
+Well, actually, there is no cleanup to do Because, E3 and E4 both preserve the
+
+29
+00:02:25,410 --> 00:02:28,440
+stack, and they leave the result of their expressions of the accumulator. So we
+
+30
+00:02:28,440 --> 00:02:34,190
+reach and if, from E3 if we executed the true branch And then, in which case, the
+
+31
+00:02:34,190 --> 00:02:39,310
+value in the accumulator is the value of E3 And we reach and if, through this
+
+32
+00:02:39,310 --> 00:02:44,090
+branch if we executed the false branch And then the value in the accumulator is the
+
+33
+00:02:44,090 --> 00:02:48,680
+value of E4 And so this correctly implements an if then else expression.

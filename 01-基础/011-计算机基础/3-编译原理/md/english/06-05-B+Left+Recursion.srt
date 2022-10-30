@@ -1,0 +1,59 @@
+0
+00:00:01,250 --> 00:00:05,940
+So to summarize our discussion of Recursive Descent Parsing, it's a simple in general
+
+1
+00:00:05,940 --> 00:00:10,980
+parsing strategy. You can parse any Context-Free Grammar using Recursive Descent,
+
+2
+00:00:10,980 --> 00:00:14,960
+so it's very general in that respect. It cannot work with Left-Recursive
+
+3
+00:00:14,960 --> 00:00:19,470
+Grammar so you must eliminate The Left Recursion. Now in principle,
+
+4
+00:00:19,470 --> 00:00:22,789
+this can be automatically. You can have Algorithms that will eliminate the
+
+5
+00:00:22,789 --> 00:00:27,760
+Left Recursion. In practice, people eliminate the Left Recursion by hand and the
+
+6
+00:00:27,760 --> 00:00:31,240
+reason for that is that you need to know what the grammar is that you're using
+
+7
+00:00:31,240 --> 00:00:35,000
+so that you can write the semantic actions. And we haven't talked about semantic
+
+8
+00:00:35,000 --> 00:00:41,440
+actions yet but we will see them shortly. And because you wanted to know exactly
+
+9
+00:00:41,440 --> 00:00:45,329
+what grammar, form of grammar it has, people generally do the elimination of
+
+10
+00:00:45,329 --> 00:00:50,399
+left-recursion on their own. But that's not difficult to do. And in fact, recursion
+
+11
+00:00:50,399 --> 00:00:54,620
+descent is a popular strategy in practice. There are a lot to be more complicated,
+
+12
+00:00:54,620 --> 00:00:58,140
+but actually compilers in fact with complicated grammars use recursive
+
+13
+00:00:58,140 --> 00:01:02,219
+descent because it is so general. So, for example GCC is front-end
+
+14
+00:01:02,219 --> 00:01:04,350
+is a handwritten Recursive Descent Parser.

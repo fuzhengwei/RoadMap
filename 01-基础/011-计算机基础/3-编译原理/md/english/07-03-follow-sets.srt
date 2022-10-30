@@ -1,0 +1,759 @@
+0
+00:00:03,620 --> 00:00:07,100
+In this video, we're going to continue our discussion of the construction of
+
+1
+00:00:07,100 --> 00:00:14,100
+[laugh](1) parsing tables by taking a look at how we build the follow sets. So here's
+
+2
+00:00:14,860 --> 00:00:21,860
+the definition of follow of x, and recall that the follow set for a given symbol in
+
+3
+00:00:22,300 --> 00:00:26,439
+the grammar isn't really about what that symbol can generate, really, doesn't
+
+4
+00:00:26,439 --> 00:00:29,989
+depend necessarily at all on what the symbol can generate. It depends on where
+
+5
+00:00:29,989 --> 00:00:34,570
+that symbol can appear, where that symbol is used in the grammar. And we say that t
+
+6
+00:00:34,570 --> 00:00:40,760
+is in the follow of x if there is some place in the grammar, some derivation,
+
+7
+00:00:40,760 --> 00:00:44,530
+where that terminal t can appear immediately after the symbol x. Okay, so
+
+8
+00:00:44,530 --> 00:00:51,530
+for all such. E. They make up the follow set of x. And here's some intuition about
+
+9
+00:00:51,890 --> 00:00:57,069
+how we would compute follow sets. Let's say we have a situation where X goes to
+
+10
+00:00:57,069 --> 00:01:04,069
+two symbols A, B, right? And then anything that B can produce in the first position
+
+11
+00:01:04,290 --> 00:01:11,290
+will clearly be in the follow of A. So if we have X goes to AB. And then through
+
+12
+00:01:14,510 --> 00:01:21,510
+some more, steps, we can get something like, this A goes, B goes to T beta, then
+
+13
+00:01:25,160 --> 00:01:28,960
+we have a situation where the T comes immediately after the A, and so clearly,
+
+14
+00:01:28,960 --> 00:01:33,350
+something that was in the first of B, is in the follow of A. So, so the basic rule
+
+15
+00:01:33,350 --> 00:01:37,520
+is that you have two symbols that are adjunct somewhere, the first of the second
+
+16
+00:01:37,520 --> 00:01:44,520
+one is in the follow of the first one. Hm, now Another interesting effect here is
+
+17
+00:01:47,850 --> 00:01:52,250
+that, if we have, a symbol at the end of a production. Let's take a look at the B
+
+18
+00:01:52,250 --> 00:01:57,640
+here for a moment, okay? And a claim here that anything that's in the follow of the
+
+19
+00:01:57,640 --> 00:02:02,100
+left hand side is gonna be in the follow of B. In this case, that the follow of X
+
+20
+00:02:02,100 --> 00:02:06,110
+is a subset of the follow of B. And let's take a look at that. Let's say that we
+
+21
+00:02:06,110 --> 00:02:10,619
+have, a situation where we have a derivation from the start symbol, okay? We
+
+22
+00:02:10,619 --> 00:02:15,700
+wind up with X followed by T. It can, it can be other stuff around the [inaudible]
+
+23
+00:02:15,700 --> 00:02:19,709
+let's ignore that for the moment, let's just focus on the XT. Then we can use this
+
+24
+00:02:19,709 --> 00:02:26,709
+production X goes to AB and in one step we can get to ABT. And then we see T was in
+
+25
+00:02:27,900 --> 00:02:32,590
+the follow of X a nd also, T is in the follow of B as a result, Okay. So,
+
+26
+00:02:32,590 --> 00:02:38,319
+anything in the follow of X would also be in the follow of B. And we can generalize
+
+27
+00:02:38,319 --> 00:02:41,629
+this observation about what occurs at the end of a production. So anything that
+
+28
+00:02:41,629 --> 00:02:45,849
+occurs at the end of the production, it, its follow set will include the follow set
+
+29
+00:02:45,849 --> 00:02:49,810
+of the symbol on the left hand side of the production. Well, what is the end of the
+
+30
+00:02:49,810 --> 00:02:56,749
+production? If, if B can go to epsilon, if B can disappear, then A will appear at the
+
+31
+00:02:56,749 --> 00:03:00,810
+end of the production. Okay, so if B can go to epsilon, then it will also happen
+
+32
+00:03:00,810 --> 00:03:07,019
+that the follow of X, would be in the follow of A. And following up here in our
+
+33
+00:03:07,019 --> 00:03:12,090
+example, so we. Or up here we start with the start symbol. We got to XT. In one
+
+34
+00:03:12,090 --> 00:03:17,469
+step we got to ABT and so T was in the follow of B. But now, B can go into
+
+35
+00:03:17,469 --> 00:03:24,469
+epsilon and so we can also get to AT and therefore T is also in the follow of A.
+
+36
+00:03:26,109 --> 00:03:29,719
+And finally there's one special case. Remember that we have our special symbol
+
+37
+00:03:29,719 --> 00:03:35,069
+marking the end of the input, and what can that follow? Well the end of the input is
+
+38
+00:03:35,069 --> 00:03:39,469
+in the follow of the start symbol, alright? And this is just a way again of
+
+39
+00:03:39,469 --> 00:03:44,159
+keeping track of what we're going to do when we run out of input. And we'll see
+
+40
+00:03:44,159 --> 00:03:49,099
+how that's used when we built the parsing tables but we always add as an initial
+
+41
+00:03:49,099 --> 00:03:56,099
+condition, that dollar sign is in the follow of the start symbol. So now, let's
+
+42
+00:03:57,379 --> 00:04:01,599
+take a look at and sketch of the algorithm for computing follows. So that's, as we
+
+43
+00:04:01,599 --> 00:04:07,939
+just said, the dollar sign is in the follow of the start symbol. And now we
+
+44
+00:04:07,939 --> 00:04:13,609
+take a look at each production. Okay, A goes to alpha X beta, we're, we're
+
+45
+00:04:13,609 --> 00:04:17,049
+focusing here on the X. Okay, if we look at every production and we look at every
+
+46
+00:04:17,048 --> 00:04:24,049
+symbol on the right hand side of that production. And the first of beta, okay,
+
+47
+00:04:24,690 --> 00:04:30,500
+the thing that can follow x in this in this production, the first of that will be
+
+48
+00:04:30,500 --> 00:04:35,199
+in the follow of x, and also we just subtract out epsilon if it was in the
+
+49
+00:04:35,199 --> 00:04:39,990
+first sub-beta. We're not interested anymore in the epsilons for the purposes
+
+50
+00:04:39,990 --> 00:04:44,620
+of follow sites, epsilon never appears in follow sites, so follow sites are always
+
+51
+00:04:44,620 --> 00:04:50,840
+just sets of terminals. And now the second part of the algorithm is it if we have
+
+52
+00:04:50,840 --> 00:04:55,150
+some suffix of a production beta that can go to Epsilon, so Epsilon is in the first
+
+53
+00:04:55,150 --> 00:05:00,270
+beta. Alright, this suffix of the production can completely disappear, then
+
+54
+00:05:00,270 --> 00:05:05,409
+as we saw on the previous slide the follow of left hand side symbol will be in the
+
+55
+00:05:05,409 --> 00:05:12,409
+follow of X. And that's it in terms of the rules for computing follow sets. So now
+
+56
+00:05:14,009 --> 00:05:18,750
+let's work through an example. So here's our grammar again. And we're going to
+
+57
+00:05:18,750 --> 00:05:24,379
+compute, the follow sets for each of the symbols of the grammar. So let's begin,
+
+58
+00:05:24,379 --> 00:05:30,009
+with the, with the start symbol. We'll start with the follow of E. And by
+
+59
+00:05:30,009 --> 00:05:36,690
+definition, we know that dollar is in the follow of E. So we get that one easily.
+
+60
+00:05:36,690 --> 00:05:40,370
+And now the question is what else could be in the follow of E, Alright? So in order
+
+61
+00:05:40,370 --> 00:05:45,039
+to figure that out we have to look at where E is used in the grammar, Alright?
+
+62
+00:05:45,039 --> 00:05:51,330
+So remember always at follow sets are about where the symbol is used. Not what
+
+63
+00:05:51,330 --> 00:05:58,330
+it produces. Alright? So here. Is a place where E is used, and we can see that it is
+
+64
+00:05:58,460 --> 00:06:04,220
+merely followed by a terminal symbol, so certainly close paren is in the follow of
+
+65
+00:06:04,220 --> 00:06:09,639
+E, right? And there's one other place where E is used, and that's over here. And
+
+66
+00:06:09,639 --> 00:06:13,830
+it appears that the right end of the production, and so then we know that
+
+67
+00:06:13,830 --> 00:06:18,569
+anything that's in the follow of X is also gonna be in the follow of E. And that's a
+
+68
+00:06:18,569 --> 00:06:23,289
+constraint, and so we'll right that down over here 'coz this is just a property of
+
+69
+00:06:23,289 --> 00:06:29,199
+the relationship. That the follow sets, will have when we're done computing them.
+
+70
+00:06:29,199 --> 00:06:34,189
+This doesn't immediately tell us anything new that's in the follow of E. But we know
+
+71
+00:06:34,189 --> 00:06:38,039
+that as we go along, and we learn about things that are in the follow of X, we'll
+
+72
+00:06:38,039 --> 00:06:42,849
+have to add them to the follow of E. And let me just divide up. The slide here so
+
+73
+00:06:42,849 --> 00:06:46,310
+we will put our properties that we know about relationships between fallocates
+
+74
+00:06:46,310 --> 00:06:50,099
+over on the left hand side and we'll put the actual fallocates over here on the
+
+75
+00:06:50,099 --> 00:06:54,930
+right side. So, now to make, that's the only two places, those are the only two pl
+
+76
+00:06:54,930 --> 00:06:59,659
+aces where E is used in the grammar and to make further progress we need to know
+
+77
+00:06:59,659 --> 00:07:03,969
+something about the follow of X. Okay, if we want to make further progress on the
+
+78
+00:07:03,969 --> 00:07:07,219
+follow of E then we need to figure out what's in the follow of X. So, let's focus
+
+79
+00:07:07,219 --> 00:07:11,280
+on that for a minute. So, where's X used in the grammar, well it's used in only one
+
+80
+00:07:11,280 --> 00:07:17,099
+place and that's here, Okay? Where it appears at the right end of a production.
+
+81
+00:07:17,099 --> 00:07:21,449
+And what, and so therefore, the symbol on the left hand side will be a subset of the
+
+82
+00:07:21,449 --> 00:07:28,449
+follow set of X. So we're gonna know that the follow of E is a subset of the follow
+
+83
+00:07:29,099 --> 00:07:36,099
+of X. Alright? And what does that mean? Well, so follow of X is a subset of follow
+
+84
+00:07:36,199 --> 00:07:40,090
+of E. And follow of E is a subset of the follow of X. So that really means that
+
+85
+00:07:40,090 --> 00:07:44,830
+these two sets are equal. The follow of X and the follow of E, whatever they wind up
+
+86
+00:07:44,830 --> 00:07:50,099
+being, are gonna have to be the same set. And now we've looked at all the places
+
+87
+00:07:50,099 --> 00:07:54,349
+where E is used in the grammar. We've looked at all the places where X is used
+
+88
+00:07:54,349 --> 00:08:00,509
+in the grammar. We can't learn anything more about what is in the sets, the follow
+
+89
+00:08:00,509 --> 00:08:05,749
+sets of E and X. We're not forced to add anything else, to either set, and so we're
+
+90
+00:08:05,749 --> 00:08:10,599
+done. And so we can close off this set. And we know the follow of E consists of
+
+91
+00:08:10,599 --> 00:08:17,599
+dollar sign and closed paren. And we also know that X. Has the same set, the same
+
+92
+00:08:18,319 --> 00:08:25,319
+follow set. Alright, so now let's move on to the follow of T, All right. So what's
+
+93
+00:08:30,020 --> 00:08:34,140
+going to be in the follow of T? Well we, again we have to look at where T is used
+
+94
+00:08:34,140 --> 00:08:39,219
+in the grammar. So T is used in two places. The first one is here in the first
+
+95
+00:08:39,219 --> 00:08:43,849
+production. And so what's going to be in the follow of T? Well it could be anything
+
+96
+00:08:43,849 --> 00:08:49,240
+that is in the first of X. Okay? Cuz X comes immediately after T. And if you
+
+97
+00:08:49,240 --> 00:08:53,320
+recall from the previous video, there were only two things in the first of X. One was
+
+98
+00:08:53,320 --> 00:08:58,870
+plus. So this plus is definitely in the follow of T and let's just review. [cough]
+
+99
+00:08:58,870 --> 00:09:05,870
+Excuse me. How that can happen, so we can go from E. To TX, okay? I'm using the
+
+100
+00:09:07,010 --> 00:09:10,730
+first production. And now we see the X comes after the T. And then in one more
+
+101
+00:09:10,730 --> 00:09:17,070
+step, we can go to T plus E. And now we have a derivation where plus follows T.
+
+102
+00:09:17,070 --> 00:09:23,320
+And that's how we, that's, that's Y pluses in the follow of T. Alright? So the other
+
+103
+00:09:23,320 --> 00:09:26,589
+thing that was in the first of X was epsilon, because there's an epsilon
+
+104
+00:09:26,589 --> 00:09:32,040
+production for X over here. But remember that we're not interested in, we don't
+
+105
+00:09:32,040 --> 00:09:38,709
+include epsilon in follow sets. And so X doesn't contribute anything else, to the,
+
+106
+00:09:38,709 --> 00:09:43,850
+to the follow of T. But since X can go to epsilon, remember what that means. That
+
+107
+00:09:43,850 --> 00:09:47,870
+means that over here, looking back at this first use of T again in the grammar, this
+
+108
+00:09:47,870 --> 00:09:54,079
+X can disappear. Right and that means that anything it is in the follow of E is also
+
+109
+00:09:54,079 --> 00:09:59,399
+in the follow of T. Now we already know the follow of E. So we can just add those
+
+110
+00:09:59,399 --> 00:10:03,089
+things in. Okay? And let me write that down over here, just so that we don't
+
+111
+00:10:03,089 --> 00:10:09,579
+forget it. So, to follow. Of, of E is a subset of the follow of T. We won't really
+
+112
+00:10:09,579 --> 00:10:15,320
+need this fact again but, useful to write it down, perhaps. Alright and now we are
+
+113
+00:10:15,320 --> 00:10:19,130
+done with this use of x. We've included everything implied by this production that
+
+114
+00:10:19,130 --> 00:10:25,360
+we can in the follow of T and so now have to look at the other place where T is used
+
+115
+00:10:25,360 --> 00:10:30,899
+and that's over here. Okay, and so here we're going to see that T is in the right
+
+116
+00:10:30,899 --> 00:10:36,600
+end of a production, so anything that is in the follow Y can also be in the follow
+
+117
+00:10:36,600 --> 00:10:43,600
+of T, alright? So the follow of Y. Is going to be a subset of the follow of T,
+
+118
+00:10:45,850 --> 00:10:51,440
+alright. So now we can go off and work on the follow of Y. We have to in order to
+
+119
+00:10:51,440 --> 00:10:54,760
+figure out what the follow of T is going to be, we're gonna have to know the follow
+
+120
+00:10:54,760 --> 00:10:58,620
+of Y. So where is Y used in the grammar? Well there is only one place and that's
+
+121
+00:10:58,620 --> 00:11:03,680
+over here. And also Y appears in the right hand of production which means that the
+
+122
+00:11:03,680 --> 00:11:09,310
+left hand side symbol it's follow set will be included in the follow of Y. >> And so
+
+123
+00:11:09,310 --> 00:11:16,310
+the follow of t will be a subset of the follow of y. All right? And now again, we
+
+124
+00:11:16,510 --> 00:11:20,570
+have two follow sets that are subsets of each other. Follow of y is a subset of
+
+125
+00:11:20,570 --> 00:11:25,480
+follow of t, and follow of t is a subset of follow of y. And so these two sets, we
+
+126
+00:11:25,480 --> 00:11:32,480
+know are going to have to be equal. Okay? So we can write down here. At the follow
+
+127
+00:11:33,079 --> 00:11:40,079
+of Y, includes plus, dollar, enclose parette. Just like the follow of T. And
+
+128
+00:11:41,510 --> 00:11:46,019
+now we're done. We've, we've, follow of T, and follow of Y. We've followed all the
+
+129
+00:11:46,019 --> 00:11:52,360
+implications of, how the follow of T gets things into, what can be included in the
+
+130
+00:11:52,360 --> 00:11:57,100
+follow of T. We've worked out all the places where Y is used in the grammar, and
+
+131
+00:11:57,100 --> 00:12:03,779
+added all the things that we can, based on, it's context. And there's nothing more
+
+132
+00:12:03,779 --> 00:12:08,649
+that we're forced to add either said. So we can go ahead and close these sets off.
+
+133
+00:12:08,649 --> 00:12:15,649
+They're finished, Alright. So now We've done the follow of E, X, T, and Y. So
+
+134
+00:12:16,139 --> 00:12:19,740
+we've taken care of all the terminal symbols. But, I'm sorry, All the
+
+135
+00:12:19,740 --> 00:12:23,730
+non-terminal symbols. But we still need to compute the follow sets for the terminal
+
+136
+00:12:23,730 --> 00:12:28,440
+symbols. And unlike the case with first sets, the follow sets for terminal symbols
+
+137
+00:12:28,440 --> 00:12:34,940
+can actually be interesting. So let's take a look, at the follow of open paren. Okay,
+
+138
+00:12:34,940 --> 00:12:39,529
+what can follow an open paren in a derivation? Well open paren is only used
+
+139
+00:12:39,529 --> 00:12:44,670
+in one places. It's here. Okay. And so, what can follow in open parens is whatever
+
+140
+00:12:44,670 --> 00:12:51,170
+is in the first of E. And remember that the first of E, was the same as the first
+
+141
+00:12:51,170 --> 00:12:55,920
+of T, because T always produces something in the first position. And the first of T
+
+142
+00:12:55,920 --> 00:13:02,720
+was what? It was open paren. An int, 'kay? And if you think about this for a minute,
+
+143
+00:13:02,720 --> 00:13:08,149
+this makes complete sense. What can come after an at any valid, at any valid string
+
+144
+00:13:08,149 --> 00:13:12,579
+in this grammar, while it's going to be another nested parenthize expression, or
+
+145
+00:13:12,579 --> 00:13:16,389
+is it going to be an integer. In particular, you couldn't have a times or a
+
+146
+00:13:16,389 --> 00:13:20,889
+plus immediately after an and you couldn't absolutely have the end of the input, you
+
+147
+00:13:20,889 --> 00:13:25,660
+couldn't have the input stop after an and have a valid string. So now let's take a
+
+148
+00:13:25,660 --> 00:13:32,660
+look at the follow of. Okay? So what's in that set? Again, we look at where the
+
+149
+00:13:33,620 --> 00:13:38,269
+symbol is used. It's only used here, in this one production. So and, because it
+
+150
+00:13:38,269 --> 00:13:41,050
+appears at the right end of the production, we know that whatever is in
+
+151
+00:13:41,050 --> 00:13:46,910
+the follow of T is going to be in the follow of ), all right. And so what was in
+
+152
+00:13:46,910 --> 00:13:53,910
+the follow of T, [cough], that was +$), Okay. So, now let's move on and take a
+
+153
+00:13:57,779 --> 00:14:04,779
+look at the operators. Let's look at the follow of plus. So where's plus used?
+
+154
+00:14:05,079 --> 00:14:10,779
+Well, it's only used here. So whatever's in the first of E is going to be in the
+
+155
+00:14:10,779 --> 00:14:16,069
+follow of plus. And we already know what the first of E was. That was an open
+
+156
+00:14:16,069 --> 00:14:23,069
+[inaudible], An int, Okay. And remember also that E cannot go to Epsilon. So, E
+
+157
+00:14:23,459 --> 00:14:29,120
+cannot ever disappear completely because T always produces at least one terminal.
+
+158
+00:14:29,120 --> 00:14:34,139
+Therefore, only the things that are in the first of year in the follow of plus.
+
+159
+00:14:34,139 --> 00:14:39,170
+Because E can't go to Epsilon, we only have to include the things that are in the
+
+160
+00:14:39,170 --> 00:14:42,690
+first of E, in the follow of plus. Again, if you think about it for a minute this
+
+161
+00:14:42,690 --> 00:14:45,829
+makes complete sense. What could come after a plus? Well, it could be an
+
+162
+00:14:45,829 --> 00:14:50,470
+integer, the second argument to an addition, or it could be the beginning of
+
+163
+00:14:50,470 --> 00:14:55,370
+another nested expression. And it couldn't be a times. It certainly couldn't be the
+
+164
+00:14:55,370 --> 00:15:02,329
+end of the input cuz you always have to have an argument after the plus. And, >>
+
+165
+00:15:02,329 --> 00:15:09,329
+And I think that's it. I think that's all the other possibilities. >> Okay, Alright.
+
+166
+00:15:11,509 --> 00:15:16,790
+Now let's take a look at the follow of times. What can come after a times. Where
+
+167
+00:15:16,790 --> 00:15:21,100
+is times used, it's used here. So things that are in the first of t. Are gonna be
+
+168
+00:15:21,100 --> 00:15:24,519
+in the follow of times again, alright? [inaudible] we already know what that is.
+
+169
+00:15:24,519 --> 00:15:28,839
+That's the same as the first of E. That's open paren and ints. And again, this makes
+
+170
+00:15:28,839 --> 00:15:31,110
+complete sense. What can come after a times? It's either the beginning of
+
+171
+00:15:31,110 --> 00:15:35,209
+another [inaudible] expression or an integer. It's certainly not a plus or the
+
+172
+00:15:35,209 --> 00:15:39,329
+end of the input, okay? And again, T cannot go to epsilon, and so that's the
+
+173
+00:15:39,329 --> 00:15:43,810
+only thing. Those are the only things that can be in the follow of times. And now we
+
+174
+00:15:43,810 --> 00:15:50,790
+just have one more symbol to go. We have to look at the follow of an integer, of an
+
+175
+00:15:50,790 --> 00:15:56,660
+int. Okay, where is that used in the grammar? Well, it's right here, Alright.
+
+176
+00:15:56,660 --> 00:15:59,410
+So the, what's gonna be in the follow [inaudible], what 's going to include
+
+177
+00:15:59,410 --> 00:16:04,699
+everything in the first of Y. Okay. What's in the first of Y, well times was in the
+
+178
+00:16:04,699 --> 00:16:09,370
+first of Y, and epsilon was in the first of Y but remember, we don't include
+
+179
+00:16:09,370 --> 00:16:16,199
+epsilons in follow sets. So, Y contributes times to the follow of int. But now,
+
+180
+00:16:16,199 --> 00:16:20,350
+because Y could go to the epsilon and epsilon could [inaudible], that means that
+
+181
+00:16:20,350 --> 00:16:25,980
+this int could wind up being at the right end of this production. Okay, it could,
+
+182
+00:16:25,980 --> 00:16:30,610
+the Y could disappear and then whatever could follow the T could also follow the
+
+183
+00:16:30,610 --> 00:16:35,699
+int. Right, so we have to include the things in the follow of T. In the follow
+
+184
+00:16:35,699 --> 00:16:41,839
+of it, and what was in the follow of T where that was a plus. It was a dollar.
+
+185
+00:16:41,839 --> 00:16:47,100
+And it was a close paren, okay? And what does that tell us? Well it tells us, okay
+
+186
+00:16:47,100 --> 00:16:52,490
+for most anything to follow an int but as an open paren cannot follow an int. So you
+
+187
+00:16:52,490 --> 00:16:55,690
+can't have another nesit expression with a, begin right after an int without an
+
+188
+00:16:55,690 --> 00:17:01,779
+intervening operator, Alright? And that completes the computation of the follow
+
+189
+00:17:01,779 --> 00:17:03,040
+sets for this example.
