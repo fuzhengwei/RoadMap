@@ -26,10 +26,10 @@
 - 011-计算机基础
     - [x] [1-计算机网络](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/011-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/1-%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C/%E8%AE%A1%E7%AE%97%E6%9C%BA%E7%BD%91%E7%BB%9C.md)
     - [x] [2-操作系统](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/011-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/2-%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F/%E6%93%8D%E4%BD%9C%E7%B3%BB%E7%BB%9F.md)
-    - [ ] 3-编译原理
+    - [x] [3-编译原理](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/011-%E8%AE%A1%E7%AE%97%E6%9C%BA%E5%9F%BA%E7%A1%80/3-%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86/%E7%BC%96%E8%AF%91%E5%8E%9F%E7%90%86.md)
 - 012-编程基础
     - [x] [1-数据结构](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/012-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/1-%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84/%E6%95%B0%E6%8D%AE%E7%BB%93%E6%9E%84.md)
-    - [ ] 2-数学逻辑
+    - [x] [2-数学逻辑](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/012-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2-%E6%95%B0%E5%AD%A6%E9%80%BB%E8%BE%91/%E6%95%B0%E5%AD%A6%E9%80%BB%E8%BE%91.md)
     - [x] [3-设计模式](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/012-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/3-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.md)
 - 013-后端语言
     - [ ] 1-C语言
