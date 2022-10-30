@@ -71,16 +71,16 @@
 ### 04-环境
 
 - 041-代码托管
-    - [ ] 1-Github
-    - [ ] 2-Gitcode
-    - [ ] 3-Gitee
+    - [x] [1-Github](https://github.com/)
+    - [x] [2-Gitcode](https://gitcode.net/)
+    - [x] [3-Gitee](https://gitee.com/)
 - 041-版本控制
-    - [ ] 1-Git
+    - [x] [1-Git](https://git-scm.com/book/zh/v2/)
     - [ ] 2-SVN
 - 042-开发工具
-    - [ ] 1-IntelliJ IDEA
-    - [ ] 2-JetBrains Fleet
-    - [ ] 3-Navicat
+    - [x] [1-IntelliJ IDEA](https://www.jetbrains.com/zh-cn/idea/)
+    - [x] [2-JetBrains Fleet](https://www.jetbrains.com/fleet/)
+    - [x] [3-Navicat](https://www.navicat.com.cn/)
 - 043-依赖管理
     - [ ] 1-Maven
     - [ ] 2-Gradle
