@@ -32,7 +32,7 @@
     - [x] [2-数学逻辑](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/012-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/2-%E6%95%B0%E5%AD%A6%E9%80%BB%E8%BE%91/%E6%95%B0%E5%AD%A6%E9%80%BB%E8%BE%91.md)
     - [x] [3-设计模式](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/012-%E7%BC%96%E7%A8%8B%E5%9F%BA%E7%A1%80/3-%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F/%E8%AE%BE%E8%AE%A1%E6%A8%A1%E5%BC%8F.md)
 - 013-后端语言
-    - [x] [1-C语言](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/013-%E5%90%8E%E7%AB%AF%E8%AF%AD%E8%A8%80/README.md)
+    - [x] [1-C语言](https://github.com/fuzhengwei/RoadMap/blob/main/01-%E5%9F%BA%E7%A1%80/013-%E5%90%8E%E7%AB%AF%E8%AF%AD%E8%A8%80/1-C%E8%AF%AD%E8%A8%80/README.md)
     - [ ] 2-Java
 - 014-前端语言
     - [ ] 1-HTML
